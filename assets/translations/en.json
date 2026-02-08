@@ -1,4 +1,7 @@
 {
+    "now": "Now",
+    "passed": "Passed",
+    "upcoming": "Upcoming",
     "select_multiple": "Select multiple (audio will play with slight delay)",
     "offset_seconds": "Delay",
     "seconds_after": "seconds delay",

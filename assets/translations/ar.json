@@ -1,4 +1,7 @@
 {
+    "now": "الآن",
+    "passed": "انتهى",
+    "upcoming": "قادم",
     "select_multiple": "اختر عدة أذكار (سيتم تشغيلها بفارق ثواني)",
     "offset_seconds": "الفارق",
     "seconds_after": "ثانية بعد",

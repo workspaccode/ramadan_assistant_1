@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
+import 'package:ramadan_assistant/presentation/screens/adhan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -161,6 +162,7 @@ class BackgroundTaskService {
 class NotificationActionHandler {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
+  static bool _isAdhanScreenActive = false;
 
   static Future<void> initialize() async {
     // Listen for notification actions
@@ -168,6 +170,7 @@ class NotificationActionHandler {
       onActionReceivedMethod: onActionReceivedMethod,
       onNotificationCreatedMethod: onNotificationCreatedMethod,
       onNotificationDisplayedMethod: onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod: onDismissActionReceivedMethod,
     );
   }
 
@@ -182,7 +185,15 @@ class NotificationActionHandler {
   static Future<void> onNotificationDisplayedMethod(
     ReceivedNotification receivedNotification,
   ) async {
-    // Called when notification is displayed
+    // Try to show full screen when notification is displayed
+    final payload = receivedNotification.payload;
+    if (payload != null &&
+        payload['type'] == 'adhan' &&
+        !_isAdhanScreenActive) {
+      final prayer = payload['prayer'] ?? 'Prayer';
+      final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
+      await _showAdhanScreen(prayer, delay);
+    }
   }
 
   @pragma("vm:entry-point")
@@ -196,15 +207,50 @@ class NotificationActionHandler {
       final prayer = payload['prayer'];
       final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
 
-      if (type == 'adhan') {
-        // Navigate to Adhan screen
-        navigatorKey.currentState?.pushNamed(
-          '/adhan',
-          arguments: {'prayer': prayer, 'delay': delay},
-        );
+      if (receivedAction.buttonKeyPressed == 'OPEN_ADHAN') {
+        await _showAdhanScreen(prayer ?? 'Prayer', delay);
+      } else if (receivedAction.buttonKeyPressed == 'DISMISS') {
+        _isAdhanScreenActive = false;
+        await AwesomeNotifications().cancelAll();
+      } else if (type == 'adhan') {
+        // Default tap on adhan notification
+        await _showAdhanScreen(prayer ?? 'Prayer', delay);
       } else if (type == 'iqama') {
         navigatorKey.currentState?.pushNamed('/iqama', arguments: prayer);
       }
     }
+  }
+
+  @pragma("vm:entry-point")
+  static Future<void> onDismissActionReceivedMethod(
+    ReceivedAction receivedAction,
+  ) async {
+    _isAdhanScreenActive = false;
+  }
+
+  static Future<void> _showAdhanScreen(
+    String prayerName,
+    int iqamaDelay,
+  ) async {
+    if (_isAdhanScreenActive) return;
+    _isAdhanScreenActive = true;
+
+    try {
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => AdhanScreen(
+            prayerName: prayerName,
+            iqamaDelayMinutes: iqamaDelay,
+          ),
+          fullscreenDialog: true,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error showing Adhan screen: $e');
+    }
+  }
+
+  static void markAdhanScreenClosed() {
+    _isAdhanScreenActive = false;
   }
 }

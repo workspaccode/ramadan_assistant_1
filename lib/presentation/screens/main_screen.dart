@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const PrayerTimesScreen(),
+    PrayerTimesScreen(),
     const TasbihScreen(),
     const RemindersScreen(),
     const UmrahGuideScreen(),
