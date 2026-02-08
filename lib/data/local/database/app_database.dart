@@ -1,0 +1,63 @@
+import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
+
+part 'app_database.g.dart';
+
+class PrayerLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get prayerName => text()();
+  DateTimeColumn get prayerTime => dateTime()();
+  BoolColumn get completed => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+}
+
+class TasbihSessions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get dhikrName => text()();
+  IntColumn get count => integer()();
+  IntColumn get targetCount => integer()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+}
+
+class Reminders extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get reminderTypes => text()(); // comma-separated dhikr IDs
+  TextColumn get offsets =>
+      text().nullable()(); // comma-separated offsets in seconds
+  IntColumn get intervalMinutes => integer()();
+  IntColumn get repeatCount => integer().nullable()();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  TextColumn get audioPaths =>
+      text().nullable()(); // comma-separated audio paths
+}
+
+class UmrahProgress extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get step => text()();
+  BoolColumn get completed => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get completedAt => dateTime().nullable()();
+}
+
+class Duas extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get category => text()(); // umrah, daily, etc.
+  TextColumn get arabicText => text()();
+  TextColumn get transliteration => text().nullable()();
+  TextColumn get translation => text()();
+  TextColumn get audioPath => text().nullable()();
+}
+
+@DriftDatabase(
+  tables: [PrayerLogs, TasbihSessions, Reminders, UmrahProgress, Duas],
+)
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  static QueryExecutor _openConnection() {
+    return driftDatabase(name: 'ramadan_assistant_db');
+  }
+}
