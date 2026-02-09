@@ -99,6 +99,19 @@
     "Allahu Akbar": "اللہ اکبر",
     "La ilaha illallah": "لا الہ الا اللہ",
     "Astaghfirullah": "استغفر اللہ",
+    "salawat": "اے اللہ! محمد ﷺ اور آل محمد پر رحمت نازل فرما",
+    "subhanallah": "اللہ پاک ہے",
+    "alhamdulillah": "تمام تعریفیں اللہ کے لیے ہیں",
+    "allahakbar": "اللہ سب سے بڑا ہے",
+    "lailaha": "اللہ کے سوا کوئی معبود نہیں",
+    "astaghfirullah": "میں اللہ سے معافی مانگتا ہوں",
+    "lahawla": "اللہ کے بغیر نہ کوئی طاقت ہے نہ کوئی قوت",
+    "subhanallah_wabihamdihi": "اللہ پاک ہے اور اس کی حمد ہے",
+    "subhanallah_wabihamdihi_azeem": "اللہ پاک ہے اور اس کی حمد ہے، اللہ عظیم پاک ہے",
+    "astaghfirullah_wa_atubu": "میں اللہ سے معافی مانگتا ہوں اور اس کی طرف توبہ کرتا ہوں",
+    "alhmadullilah_rabbil_alameen": "تمام تعریفیں اللہ کے لیے ہیں جو تمام جہانوں کا رب ہے",
+    "ya_lateef": "اے بہت مہربان",
+    "ya_hayyu_ya_qayyum": "اے زندہ اور قائم رہنے والے، تیری رحمت کے ذریعے میں فریاد کرتا ہوں",
     "continuous": "مسلسل",
     "minute": "منٹ",
     "hour": "گھنٹہ",
@@ -186,5 +199,7 @@
     "التقصير أو الحلق والتحلل": "بال کٹوانا اور احرام کھولنا",
     "hijri_suffix": "ھ",
     "something_went_wrong": "کچھ غلط ہو گیا",
-    "error_prefix": "خرابی: {}"
+    "error_prefix": "خرابی: {}",
+    "cancel": "منسوخ",
+    "audio": "آواز"
 }

@@ -99,6 +99,19 @@
     "Allahu Akbar": "الله أكبر",
     "La ilaha illallah": "لا إله إلا الله",
     "Astaghfirullah": "أستغفر الله",
+    "salawat": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
+    "subhanallah": "سُبْحَانَ اللهِ",
+    "alhamdulillah": "الحَمْدُ لِلَّهِ",
+    "allahakbar": "اللهُ أَكْبَرُ",
+    "lailaha": "لَا إِلَٰهَ إِلَّا اللهُ",
+    "astaghfirullah": "أَسْتَغْفِرُ اللهَ",
+    "lahawla": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ",
+    "subhanallah_wabihamdihi": "سُبْحَانَ اللهِ وَبِحَمْدِهِ",
+    "subhanallah_wabihamdihi_azeem": "سُبْحَانَ اللهِ وَبِحَمْدِهِ سُبْحَانَ اللهِ الْعَظِيمِ",
+    "astaghfirullah_wa_atubu": "أَسْتَغْفِرُ اللهَ وَأَتُوبُ إِلَيْهِ",
+    "alhmadullilah_rabbil_alameen": "الحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+    "ya_lateef": "يا لطيف",
+    "ya_hayyu_ya_qayyum": "يا حي يا قيوم برحمتك أستغيث",
     "continuous": "مستمر",
     "minute": "دقيقة",
     "hour": "ساعة",
@@ -186,5 +199,7 @@
     "التقصير أو الحلق والتحلل": "التقصير أو الحلق والتحلل",
     "hijri_suffix": "هـ",
     "something_went_wrong": "حدث خطأ ما",
-    "error_prefix": "خطأ: {}"
+    "error_prefix": "خطأ: {}",
+    "cancel": "إلغاء",
+    "audio": "صوت"
 }

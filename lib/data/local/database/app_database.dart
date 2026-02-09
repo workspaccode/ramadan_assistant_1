@@ -55,7 +55,36 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (m) async {
+        await m.createAll();
+      },
+      onUpgrade: (m, from, to) async {
+        if (from < 2) {
+          // Migration from 1 to 2
+          try {
+            await customStatement(
+              'ALTER TABLE reminders ADD COLUMN reminder_types TEXT NOT NULL DEFAULT "salawat"',
+            );
+            await m.addColumn(reminders, reminders.offsets);
+            await m.addColumn(reminders, reminders.audioPaths);
+          } catch (e) {
+            // Ignore errors if columns already exist
+          }
+        }
+
+        if (from < 3) {
+          // Migration to 3: Cleanly recreate table to fix any naming conflicts (reminder_type vs reminder_types)
+          await m.deleteTable(reminders.actualTableName);
+          await m.createTable(reminders);
+        }
+      },
+    );
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'ramadan_assistant_db');

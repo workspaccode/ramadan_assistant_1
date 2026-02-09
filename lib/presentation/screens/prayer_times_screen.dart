@@ -8,6 +8,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
 import 'package:ramadan_assistant/presentation/blocs/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/prayer_times_state.dart';
+import 'package:ramadan_assistant/presentation/screens/adhan_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/qibla_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen.dart';
 
@@ -21,6 +22,9 @@ class PrayerTimesScreen extends StatefulWidget {
 class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   Timer? _timer;
   DateTime _currentTime = DateTime.now();
+  bool _isAdhanScreenShowing = false;
+  String?
+  _lastTriggeredPrayer; // Track which prayer we already triggered adhan for
 
   @override
   void initState() {
@@ -40,7 +44,50 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         setState(() {
           _currentTime = DateTime.now();
         });
+        _checkAndShowAdhan();
       }
+    });
+  }
+
+  void _checkAndShowAdhan() {
+    if (_isAdhanScreenShowing) return;
+
+    final state = context.read<PrayerTimesBloc>().state;
+    if (state is! PrayerTimesLoaded) return;
+
+    final times = state.prayerTimes;
+    final nextPrayer = times.nextPrayer();
+    final nextPrayerTime = _getNextPrayerTime(times, nextPrayer);
+    final timeUntilNext = nextPrayerTime.difference(_currentTime);
+    final prayerKey = _getNextPrayerKey(times);
+
+    // When countdown reaches zero (within 2 seconds window), show adhan screen
+    // Only trigger if just crossed zero, not if it's been negative for a long time
+    if (timeUntilNext.inSeconds <= 0 && timeUntilNext.inSeconds > -30) {
+      // Don't trigger again for the same prayer
+      if (_lastTriggeredPrayer == prayerKey) return;
+      _lastTriggeredPrayer = prayerKey;
+      _showAdhanScreen(prayerKey);
+    } else if (timeUntilNext.inSeconds > 0) {
+      // Reset the trigger when we're counting down to a new prayer
+      if (_lastTriggeredPrayer != prayerKey) {
+        _lastTriggeredPrayer = null;
+      }
+    }
+  }
+
+  void _showAdhanScreen(String prayerKey) {
+    if (_isAdhanScreenShowing) return;
+    _isAdhanScreenShowing = true;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AdhanScreen(prayerName: prayerKey),
+        fullscreenDialog: true,
+      ),
+    ).then((_) {
+      _isAdhanScreenShowing = false;
     });
   }
 
@@ -67,17 +114,14 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   Widget _buildContent(BuildContext context, PrayerTimesLoaded state) {
     final times = state.prayerTimes;
     final formatter = DateFormat.jm();
-    final nextPrayer = times.nextPrayer();
-    final nextPrayerTime = _getNextPrayerTime(times, nextPrayer);
+    final nextPrayerInfo = _getNextPrayerInfo(times);
+    final nextPrayerTime = nextPrayerInfo['time'] as DateTime;
     final timeUntilNext = nextPrayerTime.difference(_currentTime);
 
-    return Stack(
+    return Column(
       children: [
-        Positioned.fill(
-          child: Image.asset('assets/image/background1.jpg', fit: BoxFit.cover),
-        ),
         Container(
-          height: 320,
+          height: 360,
           decoration: const BoxDecoration(
             color: AppTheme.primaryColor,
             borderRadius: BorderRadius.only(
@@ -178,7 +222,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '${'next_prayer'.tr()}: ${_getNextPrayerKey(times).tr()}',
+                          '${'next_prayer'.tr()}: ${(nextPrayerInfo['key'] as String).tr()}',
                           style: const TextStyle(
                             color: AppTheme.secondaryColor,
                             fontSize: 16,
@@ -208,9 +252,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
             ),
           ),
         ),
-
-        Padding(
-          padding: const EdgeInsets.only(top: 300),
+        Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
@@ -281,43 +323,64 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
-  DateTime _getNextPrayerTime(PrayerTimes times, Prayer next) {
+  /// Returns a map with 'time' (DateTime) and 'key' (String) for the next prayer.
+  /// When all prayers have passed for today, it returns tomorrow's Fajr.
+  Map<String, dynamic> _getNextPrayerInfo(PrayerTimes times) {
+    final next = times.nextPrayer();
+    DateTime prayerTime;
+    String prayerKey;
+
     switch (next) {
       case Prayer.fajr:
-        return times.fajr.toLocal();
+        prayerTime = times.fajr.toLocal();
+        prayerKey = 'fajr';
+        break;
       case Prayer.sunrise:
-        return times.sunrise.toLocal();
+        prayerTime = times.sunrise.toLocal();
+        prayerKey = 'sunrise';
+        break;
       case Prayer.dhuhr:
-        return times.dhuhr.toLocal();
+        prayerTime = times.dhuhr.toLocal();
+        prayerKey = 'dhuhr';
+        break;
       case Prayer.asr:
-        return times.asr.toLocal();
+        prayerTime = times.asr.toLocal();
+        prayerKey = 'asr';
+        break;
       case Prayer.maghrib:
-        return times.maghrib.toLocal();
+        prayerTime = times.maghrib.toLocal();
+        prayerKey = 'maghrib';
+        break;
       case Prayer.isha:
-        return times.isha.toLocal();
+        prayerTime = times.isha.toLocal();
+        prayerKey = 'isha';
+        break;
       default:
-        return times.fajr.toLocal();
+        // All prayers have passed — next is tomorrow's Fajr
+        prayerTime = times.fajr.toLocal().add(const Duration(days: 1));
+        prayerKey = 'fajr';
+        break;
     }
+
+    // Safety check: if the resolved prayer time is still in the past,
+    // it means all today's prayers passed, so target tomorrow's Fajr
+    if (prayerTime.isBefore(_currentTime)) {
+      prayerTime = times.fajr.toLocal().add(const Duration(days: 1));
+      prayerKey = 'fajr';
+    }
+
+    return {'time': prayerTime, 'key': prayerKey};
+  }
+
+  // Keep these for backward compatibility with _checkAndShowAdhan
+  DateTime _getNextPrayerTime(PrayerTimes times, Prayer next) {
+    final info = _getNextPrayerInfo(times);
+    return info['time'] as DateTime;
   }
 
   String _getNextPrayerKey(PrayerTimes times) {
-    final next = times.nextPrayer();
-    switch (next) {
-      case Prayer.fajr:
-        return 'fajr';
-      case Prayer.sunrise:
-        return 'sunrise';
-      case Prayer.dhuhr:
-        return 'dhuhr';
-      case Prayer.asr:
-        return 'asr';
-      case Prayer.maghrib:
-        return 'maghrib';
-      case Prayer.isha:
-        return 'isha';
-      default:
-        return 'fajr';
-    }
+    final info = _getNextPrayerInfo(times);
+    return info['key'] as String;
   }
 
   String _getPrayerStatus(DateTime prayerTime) {
@@ -372,7 +435,6 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     String status,
     DateTime prayerTime,
   ) {
-    final isPassed = status == 'passed';
     final isNow = status == 'now';
     final isUpcoming = status == 'upcoming';
     final remaining = prayerTime.difference(_currentTime);
@@ -431,15 +493,24 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                 ],
               ),
             ),
-            Text(
-              time,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isPassed ? Colors.grey : AppTheme.primaryColor,
-                decoration: isPassed ? TextDecoration.lineThrough : null,
+            if (isUpcoming)
+              Text(
+                _formatCountdown(remaining),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
+              )
+            else
+              Text(
+                time,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  //color: AppTheme.primaryColor,
+                ),
               ),
-            ),
           ],
         ),
       ),

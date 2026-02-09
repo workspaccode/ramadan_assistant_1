@@ -99,6 +99,19 @@
     "Allahu Akbar": "Allahu Akbar",
     "La ilaha illallah": "La ilaha illallah",
     "Astaghfirullah": "Astaghfirullah",
+    "salawat": "Blessings upon the Prophet",
+    "subhanallah": "SubhanAllah",
+    "alhamdulillah": "Alhamdulillah",
+    "allahakbar": "Allahu Akbar",
+    "lailaha": "La ilaha illallah",
+    "astaghfirullah": "Astaghfirullah",
+    "lahawla": "There is no power nor strength except with Allah",
+    "subhanallah_wabihamdihi": "SubhanAllahi wa bihamdihi",
+    "subhanallah_wabihamdihi_azeem": "SubhanAllahi wa bihamdihi SubhanAllahil Azeem",
+    "astaghfirullah_wa_atubu": "Astaghfirullah wa atubu ilayh",
+    "alhmadullilah_rabbil_alameen": "Alhamdulillah Rabbil Alameen",
+    "ya_lateef": "O Most Gentle",
+    "ya_hayyu_ya_qayyum": "O Ever-Living, O Self-Sustaining",
     "continuous": "Continuous",
     "minute": "minute",
     "hour": "hour",
@@ -186,5 +199,7 @@
     "التقصير أو الحلق والتحلل": "Tahlul (Haircut)",
     "hijri_suffix": "AH",
     "something_went_wrong": "Something went wrong",
-    "error_prefix": "Error: {}"
+    "error_prefix": "Error: {}",
+    "cancel": "Cancel",
+    "audio": "Audio"
 }

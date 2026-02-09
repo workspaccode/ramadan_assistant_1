@@ -1,6 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
@@ -187,12 +188,19 @@ class NotificationActionHandler {
   ) async {
     // Try to show full screen when notification is displayed
     final payload = receivedNotification.payload;
-    if (payload != null &&
-        payload['type'] == 'adhan' &&
-        !_isAdhanScreenActive) {
-      final prayer = payload['prayer'] ?? 'Prayer';
-      final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
-      await _showAdhanScreen(prayer, delay);
+    if (payload != null) {
+      if (payload['type'] == 'adhan' && !_isAdhanScreenActive) {
+        final prayer = payload['prayer'] ?? 'Prayer';
+        final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
+        await _showAdhanScreen(prayer, delay);
+      } else if (payload['type'] == 'dhikr') {
+        final audioPath = payload['audioPath'];
+        if (audioPath != null && audioPath.isNotEmpty) {
+          // Play dhikr sound in background
+          final audioService = AudioService();
+          await audioService.playDhikr(audioPath);
+        }
+      }
     }
   }
 

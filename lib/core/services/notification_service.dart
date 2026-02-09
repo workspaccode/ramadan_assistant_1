@@ -34,7 +34,9 @@ class NotificationService {
           channelDescription: 'Notifications for dhikr and other reminders',
           defaultColor: AppTheme.primaryColor,
           ledColor: AppTheme.secondaryColor,
-          importance: NotificationImportance.Default,
+          importance: NotificationImportance.High,
+          playSound: true,
+          channelShowBadge: true,
         ),
       ],
       debug: true,
@@ -162,16 +164,20 @@ class NotificationService {
     required int id,
     required String dhikrText,
     required int intervalMinutes,
+    String? audioPath,
   }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'reminders',
         title: 'notification_dhikr_title'.tr(),
-        body: dhikrText
-            .tr(), // Use key if it looks like a key, or keep original
+        body: dhikrText.tr(),
         category: NotificationCategory.Reminder,
-        payload: {'type': 'dhikr', 'id': id.toString()},
+        payload: {
+          'type': 'dhikr',
+          'id': id.toString(),
+          'audioPath': ?audioPath,
+        },
       ),
       schedule: NotificationInterval(
         interval: Duration(minutes: intervalMinutes),

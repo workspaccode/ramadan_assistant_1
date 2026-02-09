@@ -102,6 +102,24 @@ class DhikrPresets {
       'category': 'Tasbih',
       'audioFile': 'zakr/alhamdu-lillah-rabbil-aalameen.wav',
     },
+    {
+      'id': 'ya_lateef',
+      'arabic': 'يَا لَطِيفُ',
+      'transliteration': 'Ya Lateef',
+      'translation': 'O Most Gentle',
+      'urdu': 'اے بہت مہربان',
+      'category': 'Asmaul Husna',
+    },
+    {
+      'id': 'ya_hayyu_ya_qayyum',
+      'arabic': 'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ',
+      'transliteration': 'Ya Hayyu Ya Qayyum bi rahmatika astagheeth',
+      'translation':
+          'O Ever-Living, O Self-Sustaining, by Your mercy I seek help',
+      'urdu':
+          'اے زندہ اور قائم رہنے والے، تیری رحمت کے ذریعے میں فریاد کرتا ہوں',
+      'category': 'Special',
+    },
   ];
 
   /// Audio file names for different sounds
@@ -147,15 +165,27 @@ class DhikrPresets {
     return '$count times';
   }
 
-  /// Get translation based on language code
+  /// Get translation based on language code with better fallbacks
   static String getTranslation(Map<String, String> dhikr, String langCode) {
+    String? translation;
     switch (langCode) {
       case 'ar':
-        return dhikr['arabic'] ?? '';
+        translation = dhikr['arabic'];
+        break;
       case 'ur':
-        return dhikr['urdu'] ?? dhikr['translation'] ?? '';
+        translation = dhikr['urdu'] ?? dhikr['translation'];
+        break;
       default:
-        return dhikr['translation'] ?? '';
+        translation = dhikr['translation'];
     }
+
+    // Comprehensive fallback:
+    // If specific translation is missing, try general translation,
+    // then Arabic, then Arabic key itself.
+    return translation?.isNotEmpty == true
+        ? translation!
+        : (dhikr['translation']?.isNotEmpty == true
+              ? dhikr['translation']!
+              : (dhikr['arabic']?.isNotEmpty == true ? dhikr['arabic']! : ''));
   }
 }
