@@ -186,19 +186,28 @@ class NotificationActionHandler {
   static Future<void> onNotificationDisplayedMethod(
     ReceivedNotification receivedNotification,
   ) async {
-    // Try to show full screen when notification is displayed
     final payload = receivedNotification.payload;
     if (payload != null) {
-      if (payload['type'] == 'adhan' && !_isAdhanScreenActive) {
+      final type = payload['type'];
+
+      if (type == 'adhan' && !_isAdhanScreenActive) {
         final prayer = payload['prayer'] ?? 'Prayer';
         final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
+
+        // Always show adhan screen for adhan notifications
         await _showAdhanScreen(prayer, delay);
-      } else if (payload['type'] == 'dhikr') {
+
+        // Play adhan audio in background
+        final isFajr = prayer.toLowerCase() == 'fajr';
+        await AudioService.playAdhanInBackground(isFajr: isFajr);
+      } else if (type == 'iqama') {
+        // Play iqama reminder sound in background
+        await AudioService.playIqamaReminderInBackground();
+      } else if (type == 'dhikr') {
         final audioPath = payload['audioPath'];
         if (audioPath != null && audioPath.isNotEmpty) {
-          // Play dhikr sound in background
-          final audioService = AudioService();
-          await audioService.playDhikr(audioPath);
+          // Play dhikr sound in background using static method
+          await AudioService.playDhikrInBackground(audioPath);
         }
       }
     }

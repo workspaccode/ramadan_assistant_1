@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
+import 'package:ramadan_assistant/core/utils/date_time_picker.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/data/models/dhikr_presets.dart';
 import 'package:ramadan_assistant/presentation/blocs/reminders_bloc.dart';
@@ -41,7 +42,7 @@ class RemindersView extends StatelessWidget {
         title: Text(
           'reminders_title'.tr(),
           style: TextStyle(
-            fontSize: 34,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black,
           ),
@@ -97,6 +98,38 @@ class RemindersView extends StatelessWidget {
             style: TextStyle(color: Colors.grey[500], fontSize: 15),
           ),
           const SizedBox(height: 30),
+          // Example usage of DateTimePicker
+          CupertinoButton(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            color: AppTheme.primaryColor,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(CupertinoIcons.clock, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'schedule_reminder'.tr(),
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
+            onPressed: () async {
+              final selectedDate = await showIosDateTimePicker(
+                context,
+                initialDateTime: DateTime.now(),
+              );
+
+              if (selectedDate != null) {
+                // Use the selected date for scheduling
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Selected: ${selectedDate.toString()}'),
+                    backgroundColor: AppTheme.primaryColor,
+                  ),
+                );
+              }
+            },
+          ),
           CupertinoButton.filled(
             onPressed: () => _showAddReminderSheet(context),
             child: Row(
@@ -227,29 +260,27 @@ class RemindersView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   // Info chips row
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       _buildIOSChip(
                         CupertinoIcons.timer,
                         _localizeInterval(reminder.intervalMinutes),
                         isDark,
                       ),
-                      const SizedBox(width: 8),
                       _buildIOSChip(
                         CupertinoIcons.repeat,
                         _localizeRepeat(reminder.repeatCount ?? 0),
                         isDark,
                       ),
-                      if (audioPaths.isNotEmpty &&
-                          audioPaths.first.isNotEmpty) ...[
-                        const SizedBox(width: 8),
+                      if (audioPaths.isNotEmpty && audioPaths.first.isNotEmpty)
                         _buildIOSChip(
                           CupertinoIcons.speaker_2_fill,
                           'audio'.tr(),
                           isDark,
                           isActive: true,
                         ),
-                      ],
                     ],
                   ),
                   // Interval & Repeat selectors when active
@@ -610,11 +641,11 @@ class RemindersView extends StatelessWidget {
   }
 
   String _localizeInterval(int minutes) {
-    if (minutes < 60) return '$minutes ${'minute'.tr()}';
+    if (minutes < 60) return '$minutes ${'minute'.tr()}  ';
     int hours = minutes ~/ 60;
     int remainingMinutes = minutes % 60;
-    if (remainingMinutes == 0) return '$hours ${'hour'.tr()}';
-    return '$hours ${'hour'.tr()} $remainingMinutes ${'minute'.tr()}';
+    if (remainingMinutes == 0) return '$hours ${'hour'.tr()}  ';
+    return '$hours ${'hour'.tr()} $remainingMinutes ${'minute'.tr()}  ';
   }
 
   String _localizeRepeat(int count) {
@@ -1139,17 +1170,41 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
                 ),
               ),
               Expanded(
-                child: CupertinoTimerPicker(
-                  mode: CupertinoTimerPickerMode.hm,
-                  initialTimerDuration: _selectedInterval,
-                  minuteInterval: 1,
-                  onTimerDurationChanged: (Duration duration) {
-                    setState(() {
-                      _selectedInterval = duration.inMinutes < 1
-                          ? const Duration(minutes: 1)
-                          : duration;
-                    });
-                  },
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    textTheme: Theme.of(context).textTheme.copyWith(
+                      bodyLarge: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                        height: 1.2,
+                      ),
+                      bodyMedium: TextStyle(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.3,
+                        height: 1.1,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoTimerPicker(
+                    mode: CupertinoTimerPickerMode.hm,
+                    initialTimerDuration: _selectedInterval,
+                    minuteInterval: 1,
+                    backgroundColor: isDark
+                        ? const Color(0xFF1C1C1E)
+                        : Colors.white,
+                    itemExtent: 45,
+                    onTimerDurationChanged: (Duration duration) {
+                      setState(() {
+                        _selectedInterval = duration.inMinutes < 1
+                            ? const Duration(minutes: 1)
+                            : duration;
+                      });
+                    },
+                  ),
                 ),
               ),
             ],

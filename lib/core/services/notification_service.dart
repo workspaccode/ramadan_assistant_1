@@ -35,8 +35,11 @@ class NotificationService {
           defaultColor: AppTheme.primaryColor,
           ledColor: AppTheme.secondaryColor,
           importance: NotificationImportance.High,
-          playSound: true,
+          playSound: false, // We'll handle audio ourselves
           channelShowBadge: true,
+          criticalAlerts: true,
+          enableLights: true,
+          enableVibration: true,
         ),
       ],
       debug: true,
@@ -173,6 +176,7 @@ class NotificationService {
         title: 'notification_dhikr_title'.tr(),
         body: dhikrText.tr(),
         category: NotificationCategory.Reminder,
+        wakeUpScreen: true,
         payload: {
           'type': 'dhikr',
           'id': id.toString(),

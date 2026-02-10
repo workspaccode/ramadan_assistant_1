@@ -20,7 +20,7 @@ class AudioService {
 
   /// Play Iqama reminder sound
   Future<void> playIqamaReminder() async {
-    await _playAsset('iqama_reminder.mp3');
+    await _playAsset('MakkahIQamah.mp3');
   }
 
   /// Play Tasbih click sound
@@ -36,6 +36,70 @@ class AudioService {
   /// Play Dhikr audio by file name
   Future<void> playDhikr(String audioFileName) async {
     await _playAsset(audioFileName);
+  }
+
+  /// Play Dhikr audio in background (for notifications)
+  @pragma('vm:entry-point')
+  static Future<void> playDhikrInBackground(String audioFileName) async {
+    try {
+      final audioPlayer = AudioPlayer();
+      await audioPlayer.play(AssetSource('audio/$audioFileName'));
+
+      // Auto-dispose after playback completes
+      audioPlayer.onPlayerComplete.listen((_) {
+        audioPlayer.dispose();
+      });
+
+      // Timeout disposal after 30 seconds in case of issues
+      Future.delayed(const Duration(seconds: 30), () {
+        audioPlayer.dispose();
+      });
+    } catch (e) {
+      debugPrint('Error playing background audio $audioFileName: $e');
+    }
+  }
+
+  /// Play Adhan audio in background (for notifications)
+  @pragma('vm:entry-point')
+  static Future<void> playAdhanInBackground({bool isFajr = false}) async {
+    try {
+      final audioPlayer = AudioPlayer();
+      final fileName = isFajr ? 'azanfajr.mp3' : 'azan8.mp3';
+      await audioPlayer.play(AssetSource('audio/$fileName'));
+
+      // Auto-dispose after playback completes
+      audioPlayer.onPlayerComplete.listen((_) {
+        audioPlayer.dispose();
+      });
+
+      // Timeout disposal after 60 seconds for adhan (longer audio)
+      Future.delayed(const Duration(seconds: 60), () {
+        audioPlayer.dispose();
+      });
+    } catch (e) {
+      debugPrint('Error playing background adhan: $e');
+    }
+  }
+
+  /// Play Iqama reminder sound in background
+  @pragma('vm:entry-point')
+  static Future<void> playIqamaReminderInBackground() async {
+    try {
+      final audioPlayer = AudioPlayer();
+      await audioPlayer.play(AssetSource('audio/MakkahIQamah.mp3'));
+
+      // Auto-dispose after playback completes
+      audioPlayer.onPlayerComplete.listen((_) {
+        audioPlayer.dispose();
+      });
+
+      // Timeout disposal after 15 seconds for iqama reminder
+      Future.delayed(const Duration(seconds: 15), () {
+        audioPlayer.dispose();
+      });
+    } catch (e) {
+      debugPrint('Error playing background iqama reminder: $e');
+    }
   }
 
   /// Play asset file
