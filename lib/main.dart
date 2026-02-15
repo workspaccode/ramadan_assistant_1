@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
@@ -11,26 +12,21 @@ import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
-import 'package:ramadan_assistant/presentation/blocs/prayer_times_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/prayer_times_event.dart';
-import 'package:ramadan_assistant/presentation/blocs/settings_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/settings_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
-import 'package:ramadan_assistant/presentation/screens/adhan_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/iqama_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/main_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/main_screen/main_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
+import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await setupServiceLocator();
 
   // Initialize Services
   await NotificationService.initialize();
-  await requestAllPermissions(); // Centralized permissions
+  await requestAllPermissions();
 
   BackgroundTaskService.initialize();
   BackgroundTaskService.scheduleDailyUpdate();
@@ -41,71 +37,42 @@ void main() async {
   // Schedule today's prayer notifications
   await BackgroundTaskService.scheduleNotificationsNow();
 
-  final database = AppDatabase();
-  final locationService = LocationService();
-  final prayerService = PrayerService();
-
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar'), Locale('ur')],
       path: 'assets/translations',
       fallbackLocale: const Locale('ar'),
       saveLocale: true,
-      child: MyApp(
-        database: database,
-        locationService: locationService,
-        prayerService: prayerService,
-      ),
+      child: const MyApp(),
     ),
   );
 }
 
 Future<void> requestAllPermissions() async {
-  // Request Notification Permission
-
-  // Request Location Permission
   var locationStatus = await Permission.location.status;
   if (!locationStatus.isGranted) {
     await Permission.location.request();
   }
   await NotificationService.requestPermissions();
-  // Request Ignore Battery Optimizations (Optional, for reliable alarms)
-  // await Permission.ignoreBatteryOptimizations.request();
 }
 
 class MyApp extends StatelessWidget {
-  final AppDatabase database;
-  final LocationService locationService;
-  final PrayerService prayerService;
-
-  const MyApp({
-    super.key,
-    required this.database,
-    required this.locationService,
-    required this.prayerService,
-  });
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider.value(value: database),
-        RepositoryProvider.value(value: locationService),
-        RepositoryProvider.value(value: prayerService),
+        RepositoryProvider.value(value: sl<AppDatabase>()),
+        RepositoryProvider.value(value: sl<LocationService>()),
+        RepositoryProvider.value(value: sl<PrayerService>()),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) =>
-                PrayerTimesBloc(locationService, prayerService)
+                PrayerTimesBloc(sl<LocationService>(), sl<PrayerService>())
                   ..add(LoadPrayerTimes()),
-          ),
-          BlocProvider(
-            create: (context) =>
-                UmrahGuideBloc(database)..add(LoadUmrahProgress()),
-          ),
-          BlocProvider(
-            create: (context) => SettingsBloc()..add(LoadSettings()),
           ),
           BlocProvider(create: (context) => ThemeBloc()..add(LoadTheme())),
           BlocProvider(
@@ -124,44 +91,50 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
+            BlocListener<ThemeBloc, ThemeState>(
+              listener: (context, state) {
+                // Theme is already handled by BlocBuilder in MaterialApp
+              },
+            ),
           ],
-          child: BlocBuilder<ThemeBloc, ThemeState>(
-            builder: (context, state) {
-              bool isDark = false;
-              if (state is ThemeLoaded) {
-                isDark = state.isDarkMode;
-              }
+          child: Builder(
+            builder: (localeContext) {
+              return BlocBuilder<ThemeBloc, ThemeState>(
+                builder: (themeContext, themeState) {
+                  final fontSizeMultiplier = themeState is ThemeLoaded
+                      ? themeState.fontSizeMultiplier
+                      : 1.0;
+                  final colorPaletteId = themeState is ThemeLoaded
+                      ? themeState.colorPaletteId
+                      : null;
+                  final isManualDarkMode = themeState is ThemeLoaded
+                      ? themeState.isDarkMode
+                      : false;
 
-              return Builder(
-                builder: (localeContext) {
                   return MaterialApp(
+                    key: ValueKey(
+                      '${localeContext.locale}_${colorPaletteId}_$fontSizeMultiplier',
+                    ),
                     title: 'Ramadan Assistant',
                     debugShowCheckedModeBanner: false,
-                    theme: AppTheme.lightTheme,
-                    darkTheme: AppTheme.darkTheme,
-                    themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+                    theme: AppTheme.getTheme(
+                      isDarkMode: false,
+                      fontSizeMultiplier: fontSizeMultiplier,
+                      colorPaletteId: colorPaletteId,
+                    ),
+                    darkTheme: AppTheme.getTheme(
+                      isDarkMode: true,
+                      fontSizeMultiplier: fontSizeMultiplier,
+                      colorPaletteId: colorPaletteId,
+                    ),
+                    themeMode: isManualDarkMode
+                        ? ThemeMode.dark
+                        : ThemeMode.light,
                     navigatorKey: NotificationActionHandler.navigatorKey,
                     localizationsDelegates: localeContext.localizationDelegates,
                     supportedLocales: localeContext.supportedLocales,
                     locale: localeContext.locale,
                     home: const MainScreen(),
-                    routes: {
-                      '/adhan': (context) {
-                        final args =
-                            ModalRoute.of(context)?.settings.arguments
-                                as Map<String, dynamic>?;
-                        return AdhanScreen(
-                          prayerName: args?['prayer'] ?? 'Prayer',
-                          iqamaDelayMinutes: args?['delay'] ?? 10,
-                        );
-                      },
-                      '/iqama': (context) {
-                        final args =
-                            ModalRoute.of(context)?.settings.arguments
-                                as String?;
-                        return IqamaScreen(prayerName: args ?? 'Prayer');
-                      },
-                    },
                   );
                 },
               );

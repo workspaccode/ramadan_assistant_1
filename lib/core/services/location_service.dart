@@ -1,3 +1,4 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
@@ -25,5 +26,20 @@ class LocationService {
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  Future<Placemark?> getAddressFromCoordinates(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+      if (placemarks.isNotEmpty) {
+        return placemarks.first;
+      }
+    } catch (e) {
+      print("Error getting address: $e");
+    }
+    return null;
   }
 }

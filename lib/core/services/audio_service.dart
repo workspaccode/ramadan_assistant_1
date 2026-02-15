@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for playing Islamic audio files (Adhan, Iqama, Dhikr)
 class AudioService {
@@ -13,14 +14,28 @@ class AudioService {
   bool get isPlaying => _isPlaying;
 
   /// Play Adhan audio
-  Future<void> playAdhan({bool isFajr = false}) async {
-    final fileName = isFajr ? 'azanfajr.mp3' : 'azan8.mp3';
+  Future<void> playAdhan({bool isFajr = false, String? customSound}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final fileName =
+        customSound ??
+        (isFajr
+            ? (prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3')
+            : (prefs.getString('other_adhan_sound') ?? 'azan8.mp3'));
     await _playAsset(fileName);
   }
 
   /// Play Iqama reminder sound
-  Future<void> playIqamaReminder() async {
-    await _playAsset('MakkahIQamah.mp3');
+  Future<void> playIqamaReminder({
+    bool isFajr = false,
+    String? customSound,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final fileName =
+        customSound ??
+        (isFajr
+            ? (prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3')
+            : (prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3'));
+    await _playAsset(fileName);
   }
 
   /// Play Tasbih click sound
@@ -45,12 +60,10 @@ class AudioService {
       final audioPlayer = AudioPlayer();
       await audioPlayer.play(AssetSource('audio/$audioFileName'));
 
-      // Auto-dispose after playback completes
       audioPlayer.onPlayerComplete.listen((_) {
         audioPlayer.dispose();
       });
 
-      // Timeout disposal after 30 seconds in case of issues
       Future.delayed(const Duration(seconds: 30), () {
         audioPlayer.dispose();
       });
@@ -63,16 +76,18 @@ class AudioService {
   @pragma('vm:entry-point')
   static Future<void> playAdhanInBackground({bool isFajr = false}) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final fileName = isFajr
+          ? (prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3')
+          : (prefs.getString('other_adhan_sound') ?? 'azan8.mp3');
+
       final audioPlayer = AudioPlayer();
-      final fileName = isFajr ? 'azanfajr.mp3' : 'azan8.mp3';
       await audioPlayer.play(AssetSource('audio/$fileName'));
 
-      // Auto-dispose after playback completes
       audioPlayer.onPlayerComplete.listen((_) {
         audioPlayer.dispose();
       });
 
-      // Timeout disposal after 60 seconds for adhan (longer audio)
       Future.delayed(const Duration(seconds: 60), () {
         audioPlayer.dispose();
       });
@@ -83,17 +98,22 @@ class AudioService {
 
   /// Play Iqama reminder sound in background
   @pragma('vm:entry-point')
-  static Future<void> playIqamaReminderInBackground() async {
+  static Future<void> playIqamaReminderInBackground({
+    bool isFajr = false,
+  }) async {
     try {
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.play(AssetSource('audio/MakkahIQamah.mp3'));
+      final prefs = await SharedPreferences.getInstance();
+      final fileName = isFajr
+          ? (prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3')
+          : (prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3');
 
-      // Auto-dispose after playback completes
+      final audioPlayer = AudioPlayer();
+      await audioPlayer.play(AssetSource('audio/$fileName'));
+
       audioPlayer.onPlayerComplete.listen((_) {
         audioPlayer.dispose();
       });
 
-      // Timeout disposal after 15 seconds for iqama reminder
       Future.delayed(const Duration(seconds: 15), () {
         audioPlayer.dispose();
       });

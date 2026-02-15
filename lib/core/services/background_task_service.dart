@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,7 +7,7 @@ import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
-import 'package:ramadan_assistant/presentation/screens/adhan_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -54,41 +56,47 @@ Future<void> _scheduleDayPrayerNotifications(
     {'name': 'Isha', 'time': prayerTimes.isha, 'id': 5},
   ];
 
+  final delaysJson = prefs.getString('iqama_delays_map');
+  final Map<String, int> delays = delaysJson != null
+      ? Map<String, int>.from(jsonDecode(delaysJson))
+      : {'fajr': 20, 'dhuhr': 15, 'asr': 15, 'maghrib': 5, 'isha': 10};
+
   for (final prayer in prayers) {
     final prayerTime = prayer['time'] as DateTime;
     final prayerId = prayer['id'] as int;
     final prayerName = prayer['name'] as String;
 
-    int delay = manualDelay;
+    int delay = delays[prayerName.toLowerCase()] ?? manualDelay;
+
     if (iqamaSystem == 'preset') {
       if (iqamaPreset == 'saudi') {
         switch (prayerName) {
           case 'Fajr':
-            delay = 25;
+            delay = 15;
             break;
           case 'Dhuhr':
-            delay = 20;
+            delay = 12;
             break;
           case 'Asr':
-            delay = 20;
-            break;
-          case 'Maghrib':
             delay = 10;
             break;
+          case 'Maghrib':
+            delay = 7;
+            break;
           case 'Isha':
-            delay = 20;
+            delay = 15;
             break;
         }
       } else if (iqamaPreset == 'egypt') {
         switch (prayerName) {
           case 'Fajr':
-            delay = 20;
+            delay = 10;
             break;
           case 'Dhuhr':
-            delay = 15;
+            delay = 10;
             break;
           case 'Asr':
-            delay = 15;
+            delay = 8;
             break;
           case 'Maghrib':
             delay = 5;
@@ -202,7 +210,9 @@ class NotificationActionHandler {
         await AudioService.playAdhanInBackground(isFajr: isFajr);
       } else if (type == 'iqama') {
         // Play iqama reminder sound in background
-        await AudioService.playIqamaReminderInBackground();
+        final prayer = payload['prayer'] ?? '';
+        final isFajr = prayer.toLowerCase() == 'fajr';
+        await AudioService.playIqamaReminderInBackground(isFajr: isFajr);
       } else if (type == 'dhikr') {
         final audioPath = payload['audioPath'];
         if (audioPath != null && audioPath.isNotEmpty) {
