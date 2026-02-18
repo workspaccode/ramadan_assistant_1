@@ -416,8 +416,9 @@ class SettingsScreenBloc
           final city = placemark.locality ?? placemark.subAdministrativeArea;
 
           final prefs = await SharedPreferences.getInstance();
-          if (country != null)
+          if (country != null) {
             await prefs.setString('current_country', country);
+          }
           if (city != null) await prefs.setString('current_city', city);
 
           emit(

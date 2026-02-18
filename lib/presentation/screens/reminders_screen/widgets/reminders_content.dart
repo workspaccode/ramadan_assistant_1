@@ -797,10 +797,11 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
         ),
         onTap: () {
           setState(() {
-            if (isSelected)
+            if (isSelected) {
               _selectedDhikrs.remove(dhikr['id']);
-            else
+            } else {
               _selectedDhikrs.add(dhikr['id']!);
+            }
           });
         },
       ),

@@ -2,8 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/qibla_screen/bloc/qibla_screen_bloc.dart';
@@ -50,15 +50,60 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
     if (state is QiblaScreenInitial || state is QiblaScreenLoading) {
       return _buildLoadingState(context);
     } else if (state is QiblaLocationRequired) {
-      return LocationErrorWidget(
-        error: 'location_required_msg'.tr(),
-        callback: () =>
-            context.read<QiblaScreenBloc>().add(StartQiblaUpdates()),
-      );
+      if (state.status == LocationPermission.denied ||
+          state.status == LocationPermission.deniedForever) {
+        return LocationErrorWidget(
+          error: 'location_required_msg'.tr(),
+          callback: () =>
+              context.read<QiblaScreenBloc>().add(StartQiblaUpdates()),
+        );
+      }
+      return _buildLoadingState(context);
     } else if (state is QiblaScreenLoaded) {
-      return _isMapView
-          ? _buildMapView(context, state)
-          : _buildQiblaContent(context, state.direction);
+      // Calculate offset manually: how much to turn
+      // qiblaDirection is absolute angle of Kaaba from North
+      // deviceHeading is absolute angle of Device from North
+      // needle should point to (qibla - heading) relative to device top
+      final offset = state.qiblaDirection - state.deviceHeading;
+
+      return Column(
+        children: [
+          if (state.accuracy != null && state.accuracy! > 15)
+            _buildCalibrationWarning(context),
+
+          if (!state.hasCompass)
+            Container(
+              width: double.infinity,
+              color: Colors.orange.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.gps_fixed, size: 16, color: Colors.orange),
+                  const SizedBox(width: 8),
+                  Text(
+                    "GPS Mode: Walk to update heading",
+                    style: TextStyle(
+                      color: Colors.orange[800],
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          Expanded(
+            child: _isMapView
+                ? _buildMapView(context, state)
+                : _buildQiblaContent(
+                    context,
+                    state.qiblaDirection,
+                    state.deviceHeading,
+                  ),
+          ),
+        ],
+      );
     } else if (state is QiblaScreenError) {
       return Center(
         child: Column(
@@ -148,7 +193,19 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
     );
   }
 
-  Widget _buildQiblaContent(BuildContext context, QiblahDirection data) {
+  Widget _buildQiblaContent(
+    BuildContext context,
+    double qiblaDirection,
+    double deviceHeading,
+  ) {
+    // Offset is the angle difference between Qibla and Device Heading
+    // Normalized to -180 to 180 for display interpretation if needed,
+    // but for UI logic:
+    // Needle rotation = (Qibla - Heading)
+    double offset = qiblaDirection - deviceHeading;
+    if (offset > 180) offset -= 360;
+    if (offset < -180) offset += 360;
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -159,14 +216,19 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
           Stack(
             alignment: Alignment.center,
             children: [
-              // Compass Rose (The background SVG)
+              // Compass Rose (The background SVG) - Rotates with device heading (points North)
               TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: data.direction),
+                tween: Tween(begin: 0, end: deviceHeading),
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
                 builder: (context, angle, child) {
                   return Transform.rotate(
-                    angle: (angle * (pi / 180) * -1),
+                    angle:
+                        (angle *
+                        (pi / 180) *
+                        -1), // Rotate opposite to heading to keep North up? No.
+                    // If device heads 90 (East), North is at -90 (Left).
+                    // So we rotate background by -heading. Correct.
                     child: child,
                   );
                 },
@@ -177,9 +239,10 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                 ),
               ),
 
-              // Qibla Needle (The arrow SVG)
+              // Qibla Needle (The arrow SVG) - Points to Qibla relative to device
+              // Angle should be (qibla - heading)
               TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: data.qiblah),
+                tween: Tween(begin: 0, end: (qiblaDirection - deviceHeading)),
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
                 builder: (context, angle, child) {
@@ -207,7 +270,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withValues(alpha: 0.3),
+                      color: Colors.green.withOpacity(0.3),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),
@@ -234,7 +297,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                 child: Column(
                   children: [
                     Text(
-                      '${data.qiblah.toStringAsFixed(1)}°',
+                      '${qiblaDirection.toStringAsFixed(1)}°',
                       style: TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
@@ -252,14 +315,14 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                     _buildInfoRow(
                       context,
                       'current_heading'.tr(),
-                      '${data.direction.toStringAsFixed(1)}°',
+                      '${deviceHeading.toStringAsFixed(1)}°',
                     ),
                     const SizedBox(height: 12),
                     _buildInfoRow(
                       context,
                       'offset_label'.tr(),
-                      '${data.offset.toStringAsFixed(1)}°',
-                      valueColor: data.offset.abs() < 5
+                      '${offset.toStringAsFixed(1)}°',
+                      valueColor: offset.abs() < 5
                           ? Colors.green
                           : Colors.orange,
                     ),
@@ -313,6 +376,57 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
             ),
           ),
           const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalibrationWarning(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      color: Colors.orange.withValues(alpha: 0.1),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.orange),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'calibration_instruction'.tr(),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.orange,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => _showCalibrationDialog(context),
+            child: Text('retry'.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCalibrationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('calibrating_compass'.tr()),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.vibration, size: 48, color: Colors.orange),
+            const SizedBox(height: 16),
+            Text('calibration_instruction'.tr()),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('got_it'.tr()),
+          ),
         ],
       ),
     );
