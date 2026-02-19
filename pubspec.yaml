@@ -101,6 +101,7 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/translations/
     - assets/audio/zakr/
     - assets/compass.svg
     - assets/needle.svg

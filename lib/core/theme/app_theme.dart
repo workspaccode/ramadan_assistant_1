@@ -1,149 +1,767 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'ramadan_theme_extension.dart';
+
 class AppTheme {
-  // Emerald Gold (Default)
-  static const Color primaryEmerald = Color(0xFF06402B);
-  static const Color secondaryGold = Color(0xFFD4AF37);
+  AppTheme._();
 
-  // Midnight Royal
-  static const Color primaryNavy = Color(0xFF001F3F);
-  static const Color secondarySilver = Color(0xFFC0C0C0);
+  // ─── iOS System Colors ────────────────────────────────────────
+  static const Color iosSystemGreen = Color(0xFF34C759);
+  static const Color iosSystemRed = Color(0xFFFF3B30);
+  static const Color iosSystemOrange = Color(0xFFFF9500);
+  static const Color iosSystemBlue = Color(0xFF007AFF);
+  static const Color iosSystemIndigo = Color(0xFF5856D6);
 
-  // Desert Rose
-  static const Color primarySand = Color(0xFFC2B280);
-  static const Color secondaryMaroon = Color(0xFF800000);
+  static Color get primaryColor => _lightEmerald.primary;
+  static Color get secondaryColor => _lightEmerald.secondary;
 
-  // Backward compatibility
-  static Color get primaryColor => primaryEmerald;
-  static Color get secondaryColor => secondaryGold;
+  // ─── DARK Extensions ─────────────────────────────────────────
 
-  static ThemeData get lightTheme => getTheme(isDarkMode: false);
-  static ThemeData get darkTheme => getTheme(isDarkMode: true);
+  static const _darkEmerald = RamadanThemeExtension(
+    primary: Color(0xFFD4AF37), // Gold (أبرز على خلفية داكنة)
+    secondary: Color(0xFF06402B),
+    background: Color(0xFF000000),
+    background2: Color(0xFF1C1C1E),
+    cardSurface: Color(0xFF1C1C1E),
+    glassSurface: Color(0x1AFFFFFF),
+    borderColor: Color(0xFF2C2C2E),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFFD4AF37),
+    textPrimary: Colors.white,
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFF48484A),
+  );
 
-  static ThemeData getTheme({
-    required bool isDarkMode,
+  static const _darkMidnight = RamadanThemeExtension(
+    primary: Color(0xFFC0C0C0),
+    secondary: Color(0xFF001F3F),
+    background: Color(0xFF000000),
+    background2: Color(0xFF1C1C1E),
+    cardSurface: Color(0xFF1C1C1E),
+    glassSurface: Color(0x1AFFFFFF),
+    borderColor: Color(0xFF2C2C2E),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFFC0C0C0),
+    textPrimary: Colors.white,
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFF48484A),
+  );
+
+  static const _darkDesert = RamadanThemeExtension(
+    primary: Color(0xFFC2B280),
+    secondary: Color(0xFF800000),
+    background: Color(0xFF000000),
+    background2: Color(0xFF1C1C1E),
+    cardSurface: Color(0xFF1C1C1E),
+    glassSurface: Color(0x1AFFFFFF),
+    borderColor: Color(0xFF2C2C2E),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFFC2B280),
+    textPrimary: Colors.white,
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFF48484A),
+  );
+
+  static const _darkOcean = RamadanThemeExtension(
+    primary: Color(0xFF2EC4B6),
+    secondary: Color(0xFF0D4F6B),
+    background: Color(0xFF000000),
+    background2: Color(0xFF1C1C1E),
+    cardSurface: Color(0xFF1C1C1E),
+    glassSurface: Color(0x1AFFFFFF),
+    borderColor: Color(0xFF2C2C2E),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFF2EC4B6),
+    textPrimary: Colors.white,
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFF48484A),
+  );
+
+  // ─── LIGHT Extensions ─────────────────────────────────────────
+
+  static const _lightEmerald = RamadanThemeExtension(
+    primary: Color(0xFF06402B),
+    secondary: Color(0xFFD4AF37),
+    background: Color(0xFFF2F2F7),
+    background2: Color(0xFFFFFFFF),
+    cardSurface: Color(0xFFFFFFFF),
+    glassSurface: Color(0x1A000000),
+    borderColor: Color(0xFFE5E5EA),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFFD4AF37),
+    textPrimary: Color(0xFF1C1C1E),
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFFC7C7CC),
+  );
+
+  static const _lightMidnight = RamadanThemeExtension(
+    primary: Color(0xFF001F3F),
+    secondary: Color(0xFFC0C0C0),
+    background: Color(0xFFF2F2F7),
+    background2: Color(0xFFFFFFFF),
+    cardSurface: Color(0xFFFFFFFF),
+    glassSurface: Color(0x1A000000),
+    borderColor: Color(0xFFE5E5EA),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFF001F3F),
+    textPrimary: Color(0xFF1C1C1E),
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFFC7C7CC),
+  );
+
+  static const _lightDesert = RamadanThemeExtension(
+    primary: Color(0xFF800000),
+    secondary: Color(0xFFC2B280),
+    background: Color(0xFFF2F2F7),
+    background2: Color(0xFFFFFFFF),
+    cardSurface: Color(0xFFFFFFFF),
+    glassSurface: Color(0x1A000000),
+    borderColor: Color(0xFFE5E5EA),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFF800000),
+    textPrimary: Color(0xFF1C1C1E),
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFFC7C7CC),
+  );
+
+  static const _lightOcean = RamadanThemeExtension(
+    primary: Color(0xFF0D4F6B),
+    secondary: Color(0xFF2EC4B6),
+    background: Color(0xFFF2F2F7),
+    background2: Color(0xFFFFFFFF),
+    cardSurface: Color(0xFFFFFFFF),
+    glassSurface: Color(0x1A000000),
+    borderColor: Color(0xFFE5E5EA),
+    success: Color(0xFF34C759),
+    error: Color(0xFFFF3B30),
+    warning: Color(0xFFFF9500),
+    info: Color(0xFF007AFF),
+    accent: Color(0xFF0D4F6B),
+    textPrimary: Color(0xFF1C1C1E),
+    textSecondary: Color(0xFF8E8E93),
+    textDim: Color(0xFFC7C7CC),
+  );
+
+  // ─── Palette Info (for Settings UI) ──────────────────────────
+
+  static List<PaletteInfo> get availablePalettes => [
+    PaletteInfo(
+      id: 'emerald',
+      nameAr: 'زمردي ذهبي',
+      nameEn: 'Emerald Gold',
+      primary: _lightEmerald.primary,
+      secondary: _lightEmerald.secondary,
+    ),
+    PaletteInfo(
+      id: 'midnight',
+      nameAr: 'ليلي ملكي',
+      nameEn: 'Midnight Royal',
+      primary: _lightMidnight.primary,
+      secondary: _lightMidnight.secondary,
+    ),
+    PaletteInfo(
+      id: 'desert',
+      nameAr: 'وردة صحراوية',
+      nameEn: 'Desert Rose',
+      primary: _lightDesert.primary,
+      secondary: _lightDesert.secondary,
+    ),
+    PaletteInfo(
+      id: 'ocean',
+      nameAr: 'هدوء المحيط',
+      nameEn: 'Ocean Calm',
+      primary: _lightOcean.primary,
+      secondary: _lightOcean.secondary,
+    ),
+  ];
+
+  // ─── Public API ───────────────────────────────────────────────
+
+  static ThemeData getDarkTheme(
+    Locale locale, {
+    String paletteId = 'emerald',
     double fontSizeMultiplier = 1.0,
-    String? colorPaletteId,
   }) {
-    Color primary = isDarkMode ? secondaryGold : primaryEmerald;
-    Color secondary = isDarkMode ? primaryEmerald : secondaryGold;
-    Color background = isDarkMode
-        ? const Color(0xFF121212)
-        : const Color(0xFFFDFCF0);
-    Color surface = isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
+    return _buildTheme(
+      ext: _getDarkExtension(paletteId),
+      isDarkMode: true,
+      locale: locale,
+      fontSizeMultiplier: fontSizeMultiplier,
+    );
+  }
 
-    if (colorPaletteId == 'midnight') {
-      primary = isDarkMode ? secondarySilver : primaryNavy;
-      secondary = isDarkMode ? primaryNavy : secondarySilver;
-    } else if (colorPaletteId == 'desert') {
-      primary = isDarkMode ? secondaryMaroon : primarySand;
-      secondary = isDarkMode ? primarySand : secondaryMaroon;
+  static ThemeData getLightTheme(
+    Locale locale, {
+    String paletteId = 'emerald',
+    double fontSizeMultiplier = 1.0,
+  }) {
+    return _buildTheme(
+      ext: _getLightExtension(paletteId),
+      isDarkMode: false,
+      locale: locale,
+      fontSizeMultiplier: fontSizeMultiplier,
+    );
+  }
+
+  // ─── Extension Resolvers ──────────────────────────────────────
+
+  static RamadanThemeExtension _getDarkExtension(String id) {
+    switch (id) {
+      case 'midnight':
+        return _darkMidnight;
+      case 'desert':
+        return _darkDesert;
+      case 'ocean':
+        return _darkOcean;
+      default:
+        return _darkEmerald;
     }
+  }
 
-    final TextTheme baseTextTheme = isDarkMode
+  static RamadanThemeExtension _getLightExtension(String id) {
+    switch (id) {
+      case 'midnight':
+        return _lightMidnight;
+      case 'desert':
+        return _lightDesert;
+      case 'ocean':
+        return _lightOcean;
+      default:
+        return _lightEmerald;
+    }
+  }
+
+  // ─── Font Family ──────────────────────────────────────────────
+
+  static String? _getFontFamily(Locale locale) {
+    // Cairo للعربي، يمكن تغييره لأي لغة أخرى
+    return locale.languageCode == 'ar'
+        ? GoogleFonts.cairo().fontFamily
+        : GoogleFonts.cairo().fontFamily;
+  }
+
+  // ─── Core Theme Builder ───────────────────────────────────────
+
+  static ThemeData _buildTheme({
+    required RamadanThemeExtension ext,
+    required bool isDarkMode,
+    required Locale locale,
+    double fontSizeMultiplier = 1.0,
+  }) {
+    final fontFamily = _getFontFamily(locale);
+    final baseTextTheme = isDarkMode
         ? ThemeData.dark().textTheme
         : ThemeData.light().textTheme;
 
-    TextTheme textTheme = GoogleFonts.cairoTextTheme(baseTextTheme);
+    final textTheme = _buildTextTheme(
+      base: baseTextTheme,
+      fontFamily: fontFamily,
+      textPrimary: ext.textPrimary,
+      textSecondary: ext.textSecondary,
+      multiplier: fontSizeMultiplier,
+    );
 
-    // Scale all fonts
-    textTheme = _scaleTextTheme(textTheme, fontSizeMultiplier);
-
-    // Apply Amiri for headlines
-    textTheme = textTheme.copyWith(
-      displayLarge: GoogleFonts.cairo(
-        fontSize: (textTheme.displayLarge?.fontSize ?? 32),
-        fontWeight: FontWeight.bold,
-        // color: primary,
-      ),
-      headlineMedium: GoogleFonts.cairo(
-        fontSize: (textTheme.headlineMedium?.fontSize ?? 24),
-        fontWeight: FontWeight.w600,
-        // color: primary,
-      ),
+    final colorScheme = ColorScheme(
+      brightness: isDarkMode ? Brightness.dark : Brightness.light,
+      primary: ext.primary,
+      onPrimary: Colors.white,
+      primaryContainer: ext.primary.withValues(alpha: 0.15),
+      onPrimaryContainer: ext.primary,
+      secondary: ext.secondary,
+      onSecondary: isDarkMode ? Colors.black : Colors.white,
+      secondaryContainer: ext.secondary.withValues(alpha: 0.15),
+      onSecondaryContainer: ext.secondary,
+      surface: ext.cardSurface,
+      onSurface: ext.textPrimary,
+      surfaceContainerHighest: isDarkMode
+          ? const Color(0xFF2C2C2E)
+          : const Color(0xFFE5E5EA),
+      error: ext.error,
+      onError: Colors.white,
+      outline: ext.borderColor,
+      outlineVariant: ext.borderColor.withValues(alpha: 0.5),
     );
 
     return ThemeData(
       useMaterial3: true,
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
-      primaryColor: primary,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primary,
-        brightness: isDarkMode ? Brightness.dark : Brightness.light,
-        primary: primary,
-        secondary: secondary,
-        surface: surface,
-      ),
-      scaffoldBackgroundColor: background,
-      cardTheme: CardThemeData(color: surface, surfaceTintColor: surface),
+      primaryColor: ext.primary,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: ext.background,
+      fontFamily: fontFamily,
       textTheme: textTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
-        foregroundColor: secondary,
+      extensions: [ext],
+
+      // ─── Card ────────────────────────────────────────────────
+      cardTheme: CardThemeData(
+        color: ext.cardSurface,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: ext.borderColor, width: 0.5),
+        ),
       ),
+
+      // ─── AppBar ───────────────────────────────────────────────
+      appBarTheme: AppBarTheme(
+        backgroundColor: ext.background2.withValues(alpha: 0.94),
+        foregroundColor: ext.textPrimary,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.41,
+          color: ext.textPrimary,
+        ),
+        iconTheme: IconThemeData(color: ext.primary, size: 22),
+        systemOverlayStyle: isDarkMode
+            ? const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.light,
+              )
+            : const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.dark,
+              ),
+      ),
+
+      // ─── Bottom Navigation ────────────────────────────────────
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: ext.background2,
+        selectedItemColor: ext.primary,
+        unselectedItemColor: ext.textSecondary,
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        selectedLabelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 10 * fontSizeMultiplier,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 10 * fontSizeMultiplier,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      // ─── Bottom Sheet ─────────────────────────────────────────
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: ext.background2,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+        ),
+        showDragHandle: true,
+        dragHandleColor: ext.textDim,
+        dragHandleSize: const Size(36, 5),
+      ),
+
+      // ─── Dialog ───────────────────────────────────────────────
+      dialogTheme: DialogThemeData(
+        backgroundColor: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          fontWeight: FontWeight.w600,
+          color: ext.textPrimary,
+        ),
+      ),
+
+      // ─── Elevated Button ──────────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          // backgroundColor: secondary,
-          // foregroundColor: primary,
+          backgroundColor: ext.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          textStyle: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 17 * fontSizeMultiplier,
+            fontWeight: FontWeight.w600,
+          ),
         ),
+      ),
+
+      // ─── Text Button ──────────────────────────────────────────
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: ext.primary,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 17 * fontSizeMultiplier,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ),
+
+      // ─── Outlined Button ──────────────────────────────────────
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: ext.primary,
+          side: BorderSide(color: ext.primary.withValues(alpha: 0.3)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 15 * fontSizeMultiplier,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // ─── Switch ───────────────────────────────────────────────
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.all(Colors.white),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return iosSystemGreen;
+          return isDarkMode
+              ? Colors.white.withValues(alpha: 0.15)
+              : const Color(0xFFE9E9EB);
+        }),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+      ),
+
+      // ─── List Tile ────────────────────────────────────────────
+      listTileTheme: ListTileThemeData(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        minVerticalPadding: 12,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          fontWeight: FontWeight.w400,
+          color: ext.textPrimary,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 13 * fontSizeMultiplier,
+          fontWeight: FontWeight.w400,
+          color: ext.textSecondary,
+        ),
+      ),
+
+      // ─── Divider ──────────────────────────────────────────────
+      dividerTheme: DividerThemeData(
+        color: isDarkMode
+            ? ext.borderColor
+            : ext.borderColor.withValues(alpha: 0.5),
+        thickness: 0.5,
+        indent: 16,
+        endIndent: 0,
+      ),
+
+      // ─── Input ────────────────────────────────────────────────
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isDarkMode
+            ? Colors.white.withValues(alpha: 0.08)
+            : const Color(0xFFF2F2F7),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: ext.primary, width: 1),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+        hintStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          fontWeight: FontWeight.w400,
+          color: ext.textDim,
+        ),
+      ),
+
+      // ─── TabBar ───────────────────────────────────────────────
+      tabBarTheme: TabBarThemeData(
+        labelColor: ext.primary,
+        unselectedLabelColor: ext.textSecondary,
+        indicatorColor: ext.primary,
+        indicatorSize: TabBarIndicatorSize.label,
+        labelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 13 * fontSizeMultiplier,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 13 * fontSizeMultiplier,
+          fontWeight: FontWeight.w400,
+        ),
+        dividerColor: Colors.transparent,
+      ),
+
+      // ─── Chip ─────────────────────────────────────────────────
+      chipTheme: ChipThemeData(
+        backgroundColor: isDarkMode
+            ? Colors.white.withValues(alpha: 0.08)
+            : const Color(0xFFF2F2F7),
+        selectedColor: ext.primary.withValues(alpha: 0.15),
+        labelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 13 * fontSizeMultiplier,
+          fontWeight: FontWeight.w500,
+          color: ext.textPrimary,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        side: BorderSide.none,
+      ),
+
+      // ─── Slider ───────────────────────────────────────────────
+      sliderTheme: SliderThemeData(
+        activeTrackColor: ext.primary,
+        inactiveTrackColor: isDarkMode
+            ? Colors.white.withValues(alpha: 0.15)
+            : const Color(0xFFE5E5EA),
+        thumbColor: Colors.white,
+        overlayColor: ext.primary.withValues(alpha: 0.12),
+        trackHeight: 4,
+        thumbShape: const RoundSliderThumbShape(
+          enabledThumbRadius: 14,
+          elevation: 3,
+        ),
+      ),
+
+      // ─── SnackBar ─────────────────────────────────────────────
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDarkMode
+            ? const Color(0xFF2C2C2E)
+            : const Color(0xFF1C1C1E),
+        contentTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 14 * fontSizeMultiplier,
+          color: Colors.white,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        behavior: SnackBarBehavior.floating,
+      ),
+
+      // ─── Progress Indicator ───────────────────────────────────
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: ext.primary,
+        linearMinHeight: 4,
+        linearTrackColor: isDarkMode
+            ? Colors.white.withValues(alpha: 0.1)
+            : const Color(0xFFE5E5EA),
+        circularTrackColor: isDarkMode
+            ? Colors.white.withValues(alpha: 0.1)
+            : const Color(0xFFE5E5EA),
+      ),
+
+      // ─── FAB ──────────────────────────────────────────────────
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: ext.primary,
+        foregroundColor: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+
+      // ─── Icons ────────────────────────────────────────────────
+      iconTheme: IconThemeData(color: ext.textPrimary, size: 22),
+
+      // ─── Checkbox ─────────────────────────────────────────────
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return ext.primary;
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        side: BorderSide(color: ext.textDim, width: 1.5),
+      ),
+
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
+        },
       ),
     );
   }
 
-  static TextTheme _scaleTextTheme(TextTheme base, double multiplier) {
+  // ─── Text Theme Builder ───────────────────────────────────────
+
+  static TextTheme _buildTextTheme({
+    required TextTheme base,
+    required String? fontFamily,
+    required Color textPrimary,
+    required Color textSecondary,
+    double multiplier = 1.0,
+  }) {
+    TextStyle make(
+      double size,
+      FontWeight weight,
+      Color color, {
+      double? letterSpacing,
+    }) {
+      return TextStyle(
+        fontFamily: fontFamily,
+        fontSize: size * multiplier,
+        fontWeight: weight,
+        color: color,
+        letterSpacing: letterSpacing,
+      );
+    }
+
     return base.copyWith(
-      displayLarge: base.displayLarge?.copyWith(
-        fontSize: (base.displayLarge?.fontSize ?? 32) * multiplier,
+      displayLarge: make(34, FontWeight.w700, textPrimary, letterSpacing: 0.37),
+      displayMedium: make(
+        28,
+        FontWeight.w700,
+        textPrimary,
+        letterSpacing: 0.36,
       ),
-      displayMedium: base.displayMedium?.copyWith(
-        fontSize: (base.displayMedium?.fontSize ?? 28) * multiplier,
+      displaySmall: make(24, FontWeight.w700, textPrimary, letterSpacing: 0.35),
+      headlineLarge: make(
+        22,
+        FontWeight.w700,
+        textPrimary,
+        letterSpacing: 0.35,
       ),
-      displaySmall: base.displaySmall?.copyWith(
-        fontSize: (base.displaySmall?.fontSize ?? 24) * multiplier,
+      headlineMedium: make(
+        20,
+        FontWeight.w600,
+        textPrimary,
+        letterSpacing: 0.38,
       ),
-      headlineLarge: base.headlineLarge?.copyWith(
-        fontSize: (base.headlineLarge?.fontSize ?? 32) * multiplier,
-      ),
-      headlineMedium: base.headlineMedium?.copyWith(
-        fontSize: (base.headlineMedium?.fontSize ?? 28) * multiplier,
-      ),
-      headlineSmall: base.headlineSmall?.copyWith(
-        fontSize: (base.headlineSmall?.fontSize ?? 24) * multiplier,
-      ),
-      titleLarge: base.titleLarge?.copyWith(
-        fontSize: (base.titleLarge?.fontSize ?? 22) * multiplier,
-      ),
-      titleMedium: base.titleMedium?.copyWith(
-        fontSize: (base.titleMedium?.fontSize ?? 16) * multiplier,
-      ),
-      titleSmall: base.titleSmall?.copyWith(
-        fontSize: (base.titleSmall?.fontSize ?? 14) * multiplier,
-      ),
-      bodyLarge: base.bodyLarge?.copyWith(
-        fontSize: (base.bodyLarge?.fontSize ?? 16) * multiplier,
-      ),
-      bodyMedium: base.bodyMedium?.copyWith(
-        fontSize: (base.bodyMedium?.fontSize ?? 14) * multiplier,
-      ),
-      bodySmall: base.bodySmall?.copyWith(
-        fontSize: (base.bodySmall?.fontSize ?? 12) * multiplier,
-      ),
-      labelLarge: base.labelLarge?.copyWith(
-        fontSize: (base.labelLarge?.fontSize ?? 14) * multiplier,
-      ),
-      labelMedium: base.labelMedium?.copyWith(
-        fontSize: (base.labelMedium?.fontSize ?? 12) * multiplier,
-      ),
-      labelSmall: base.labelSmall?.copyWith(
-        fontSize: (base.labelSmall?.fontSize ?? 11) * multiplier,
+      headlineSmall: make(18, FontWeight.w600, textPrimary),
+      titleLarge: make(17, FontWeight.w600, textPrimary, letterSpacing: -0.41),
+      titleMedium: make(15, FontWeight.w600, textPrimary),
+      titleSmall: make(13, FontWeight.w600, textPrimary),
+      bodyLarge: make(17, FontWeight.w400, textPrimary, letterSpacing: -0.41),
+      bodyMedium: make(15, FontWeight.w400, textPrimary, letterSpacing: -0.24),
+      bodySmall: make(13, FontWeight.w400, textSecondary, letterSpacing: -0.08),
+      labelLarge: make(15, FontWeight.w600, textPrimary),
+      labelMedium: make(12, FontWeight.w500, textSecondary),
+      labelSmall: make(11, FontWeight.w400, textSecondary, letterSpacing: 0.07),
+    );
+  }
+
+  // ─── Cupertino Theme ──────────────────────────────────────────
+
+  static CupertinoThemeData getCupertinoTheme({
+    required bool isDarkMode,
+    String paletteId = 'emerald',
+    Locale locale = const Locale('ar'),
+    double fontSizeMultiplier = 1.0,
+  }) {
+    final ext = isDarkMode
+        ? _getDarkExtension(paletteId)
+        : _getLightExtension(paletteId);
+    final fontFamily = _getFontFamily(locale);
+    final textColor = isDarkMode
+        ? CupertinoColors.white
+        : CupertinoColors.black;
+
+    return CupertinoThemeData(
+      brightness: isDarkMode ? Brightness.dark : Brightness.light,
+      primaryColor: ext.primary,
+      scaffoldBackgroundColor: isDarkMode
+          ? CupertinoColors.black
+          : CupertinoColors.systemGroupedBackground,
+      barBackgroundColor: ext.background2.withValues(alpha: 0.94),
+      textTheme: CupertinoTextThemeData(
+        primaryColor: ext.primary,
+        navLargeTitleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 34 * fontSizeMultiplier,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.37,
+          color: textColor,
+        ),
+        navTitleTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+        textStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          letterSpacing: -0.41,
+          color: textColor,
+        ),
+        actionTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 17 * fontSizeMultiplier,
+          color: ext.primary,
+        ),
+        tabLabelTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 10 * fontSizeMultiplier,
+          color: textColor,
+        ),
       ),
     );
   }
+}
+
+// ─── Palette Info ─────────────────────────────────────────────────
+
+class PaletteInfo {
+  const PaletteInfo({
+    required this.id,
+    required this.nameAr,
+    required this.nameEn,
+    required this.primary,
+    required this.secondary,
+  });
+
+  final String id;
+  final String nameAr;
+  final String nameEn;
+  final Color primary;
+  final Color secondary;
 }

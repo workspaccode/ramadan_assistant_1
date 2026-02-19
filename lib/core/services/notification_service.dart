@@ -177,11 +177,7 @@ class NotificationService {
         body: dhikrText.tr(),
         category: NotificationCategory.Reminder,
         wakeUpScreen: true,
-        payload: {
-          'type': 'dhikr',
-          'id': id.toString(),
-          'audioPath': ?audioPath,
-        },
+        payload: {'type': 'dhikr', 'id': id.toString(), 'audioPath': audioPath},
       ),
       schedule: NotificationInterval(
         interval: Duration(minutes: intervalMinutes),

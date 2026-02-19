@@ -20,13 +20,13 @@ class LocationErrorWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.red[50],
+                color: Theme.of(context).colorScheme.errorContainer,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.location_off_rounded,
                 size: 80,
-                color: Colors.red[400],
+                color: Theme.of(context).colorScheme.error,
               ),
             ),
 
@@ -37,7 +37,7 @@ class LocationErrorWidget extends StatelessWidget {
               'location_error_title'.tr(),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.red[700],
+                color: Theme.of(context).colorScheme.error,
               ),
             ),
 
@@ -49,7 +49,7 @@ class LocationErrorWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurface,
                 height: 1.5,
               ),
             ),
@@ -62,8 +62,8 @@ class LocationErrorWidget extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded),
               label: Text('try_again'.tr()),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 16,
@@ -83,7 +83,9 @@ class LocationErrorWidget extends StatelessWidget {
               },
               icon: const Icon(Icons.settings),
               label: Text('open_location_settings'.tr()),
-              style: TextButton.styleFrom(foregroundColor: Colors.blue),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).primaryColor,
+              ),
             ),
 
             const SizedBox(height: 24),
@@ -92,7 +94,7 @@ class LocationErrorWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -102,7 +104,7 @@ class LocationErrorWidget extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.info_outline,
-                        color: Colors.blue[700],
+                        color: Theme.of(context).primaryColor,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -110,7 +112,7 @@ class LocationErrorWidget extends StatelessWidget {
                         'tips_title'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                     ],
@@ -120,7 +122,7 @@ class LocationErrorWidget extends StatelessWidget {
                     'location_tips'.tr(),
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.blue[900],
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.5,
                     ),
                   ),

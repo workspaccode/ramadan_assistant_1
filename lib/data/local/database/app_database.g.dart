@@ -1978,6 +1978,427 @@ class DuasCompanion extends UpdateCompanion<Dua> {
   }
 }
 
+class $WirdProgressTable extends WirdProgress
+    with TableInfo<$WirdProgressTable, WirdProgressData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WirdProgressTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _planTypeMeta = const VerificationMeta(
+    'planType',
+  );
+  @override
+  late final GeneratedColumn<String> planType = GeneratedColumn<String>(
+    'plan_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _planValueMeta = const VerificationMeta(
+    'planValue',
+  );
+  @override
+  late final GeneratedColumn<int> planValue = GeneratedColumn<int>(
+    'plan_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedPagesMeta = const VerificationMeta(
+    'completedPages',
+  );
+  @override
+  late final GeneratedColumn<int> completedPages = GeneratedColumn<int>(
+    'completed_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lastUpdatedMeta = const VerificationMeta(
+    'lastUpdated',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastUpdated = GeneratedColumn<DateTime>(
+    'last_updated',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isCompletedMeta = const VerificationMeta(
+    'isCompleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isCompleted = GeneratedColumn<bool>(
+    'is_completed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_completed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    planType,
+    planValue,
+    completedPages,
+    lastUpdated,
+    isCompleted,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'wird_progress';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WirdProgressData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('plan_type')) {
+      context.handle(
+        _planTypeMeta,
+        planType.isAcceptableOrUnknown(data['plan_type']!, _planTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_planTypeMeta);
+    }
+    if (data.containsKey('plan_value')) {
+      context.handle(
+        _planValueMeta,
+        planValue.isAcceptableOrUnknown(data['plan_value']!, _planValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_planValueMeta);
+    }
+    if (data.containsKey('completed_pages')) {
+      context.handle(
+        _completedPagesMeta,
+        completedPages.isAcceptableOrUnknown(
+          data['completed_pages']!,
+          _completedPagesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_updated')) {
+      context.handle(
+        _lastUpdatedMeta,
+        lastUpdated.isAcceptableOrUnknown(
+          data['last_updated']!,
+          _lastUpdatedMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastUpdatedMeta);
+    }
+    if (data.containsKey('is_completed')) {
+      context.handle(
+        _isCompletedMeta,
+        isCompleted.isAcceptableOrUnknown(
+          data['is_completed']!,
+          _isCompletedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WirdProgressData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WirdProgressData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      planType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}plan_type'],
+      )!,
+      planValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}plan_value'],
+      )!,
+      completedPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_pages'],
+      )!,
+      lastUpdated: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_updated'],
+      )!,
+      isCompleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_completed'],
+      )!,
+    );
+  }
+
+  @override
+  $WirdProgressTable createAlias(String alias) {
+    return $WirdProgressTable(attachedDatabase, alias);
+  }
+}
+
+class WirdProgressData extends DataClass
+    implements Insertable<WirdProgressData> {
+  final int id;
+  final String planType;
+  final int planValue;
+  final int completedPages;
+  final DateTime lastUpdated;
+  final bool isCompleted;
+  const WirdProgressData({
+    required this.id,
+    required this.planType,
+    required this.planValue,
+    required this.completedPages,
+    required this.lastUpdated,
+    required this.isCompleted,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['plan_type'] = Variable<String>(planType);
+    map['plan_value'] = Variable<int>(planValue);
+    map['completed_pages'] = Variable<int>(completedPages);
+    map['last_updated'] = Variable<DateTime>(lastUpdated);
+    map['is_completed'] = Variable<bool>(isCompleted);
+    return map;
+  }
+
+  WirdProgressCompanion toCompanion(bool nullToAbsent) {
+    return WirdProgressCompanion(
+      id: Value(id),
+      planType: Value(planType),
+      planValue: Value(planValue),
+      completedPages: Value(completedPages),
+      lastUpdated: Value(lastUpdated),
+      isCompleted: Value(isCompleted),
+    );
+  }
+
+  factory WirdProgressData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WirdProgressData(
+      id: serializer.fromJson<int>(json['id']),
+      planType: serializer.fromJson<String>(json['planType']),
+      planValue: serializer.fromJson<int>(json['planValue']),
+      completedPages: serializer.fromJson<int>(json['completedPages']),
+      lastUpdated: serializer.fromJson<DateTime>(json['lastUpdated']),
+      isCompleted: serializer.fromJson<bool>(json['isCompleted']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'planType': serializer.toJson<String>(planType),
+      'planValue': serializer.toJson<int>(planValue),
+      'completedPages': serializer.toJson<int>(completedPages),
+      'lastUpdated': serializer.toJson<DateTime>(lastUpdated),
+      'isCompleted': serializer.toJson<bool>(isCompleted),
+    };
+  }
+
+  WirdProgressData copyWith({
+    int? id,
+    String? planType,
+    int? planValue,
+    int? completedPages,
+    DateTime? lastUpdated,
+    bool? isCompleted,
+  }) => WirdProgressData(
+    id: id ?? this.id,
+    planType: planType ?? this.planType,
+    planValue: planValue ?? this.planValue,
+    completedPages: completedPages ?? this.completedPages,
+    lastUpdated: lastUpdated ?? this.lastUpdated,
+    isCompleted: isCompleted ?? this.isCompleted,
+  );
+  WirdProgressData copyWithCompanion(WirdProgressCompanion data) {
+    return WirdProgressData(
+      id: data.id.present ? data.id.value : this.id,
+      planType: data.planType.present ? data.planType.value : this.planType,
+      planValue: data.planValue.present ? data.planValue.value : this.planValue,
+      completedPages: data.completedPages.present
+          ? data.completedPages.value
+          : this.completedPages,
+      lastUpdated: data.lastUpdated.present
+          ? data.lastUpdated.value
+          : this.lastUpdated,
+      isCompleted: data.isCompleted.present
+          ? data.isCompleted.value
+          : this.isCompleted,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WirdProgressData(')
+          ..write('id: $id, ')
+          ..write('planType: $planType, ')
+          ..write('planValue: $planValue, ')
+          ..write('completedPages: $completedPages, ')
+          ..write('lastUpdated: $lastUpdated, ')
+          ..write('isCompleted: $isCompleted')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    planType,
+    planValue,
+    completedPages,
+    lastUpdated,
+    isCompleted,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WirdProgressData &&
+          other.id == this.id &&
+          other.planType == this.planType &&
+          other.planValue == this.planValue &&
+          other.completedPages == this.completedPages &&
+          other.lastUpdated == this.lastUpdated &&
+          other.isCompleted == this.isCompleted);
+}
+
+class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
+  final Value<int> id;
+  final Value<String> planType;
+  final Value<int> planValue;
+  final Value<int> completedPages;
+  final Value<DateTime> lastUpdated;
+  final Value<bool> isCompleted;
+  const WirdProgressCompanion({
+    this.id = const Value.absent(),
+    this.planType = const Value.absent(),
+    this.planValue = const Value.absent(),
+    this.completedPages = const Value.absent(),
+    this.lastUpdated = const Value.absent(),
+    this.isCompleted = const Value.absent(),
+  });
+  WirdProgressCompanion.insert({
+    this.id = const Value.absent(),
+    required String planType,
+    required int planValue,
+    this.completedPages = const Value.absent(),
+    required DateTime lastUpdated,
+    this.isCompleted = const Value.absent(),
+  }) : planType = Value(planType),
+       planValue = Value(planValue),
+       lastUpdated = Value(lastUpdated);
+  static Insertable<WirdProgressData> custom({
+    Expression<int>? id,
+    Expression<String>? planType,
+    Expression<int>? planValue,
+    Expression<int>? completedPages,
+    Expression<DateTime>? lastUpdated,
+    Expression<bool>? isCompleted,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (planType != null) 'plan_type': planType,
+      if (planValue != null) 'plan_value': planValue,
+      if (completedPages != null) 'completed_pages': completedPages,
+      if (lastUpdated != null) 'last_updated': lastUpdated,
+      if (isCompleted != null) 'is_completed': isCompleted,
+    });
+  }
+
+  WirdProgressCompanion copyWith({
+    Value<int>? id,
+    Value<String>? planType,
+    Value<int>? planValue,
+    Value<int>? completedPages,
+    Value<DateTime>? lastUpdated,
+    Value<bool>? isCompleted,
+  }) {
+    return WirdProgressCompanion(
+      id: id ?? this.id,
+      planType: planType ?? this.planType,
+      planValue: planValue ?? this.planValue,
+      completedPages: completedPages ?? this.completedPages,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (planType.present) {
+      map['plan_type'] = Variable<String>(planType.value);
+    }
+    if (planValue.present) {
+      map['plan_value'] = Variable<int>(planValue.value);
+    }
+    if (completedPages.present) {
+      map['completed_pages'] = Variable<int>(completedPages.value);
+    }
+    if (lastUpdated.present) {
+      map['last_updated'] = Variable<DateTime>(lastUpdated.value);
+    }
+    if (isCompleted.present) {
+      map['is_completed'] = Variable<bool>(isCompleted.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WirdProgressCompanion(')
+          ..write('id: $id, ')
+          ..write('planType: $planType, ')
+          ..write('planValue: $planValue, ')
+          ..write('completedPages: $completedPages, ')
+          ..write('lastUpdated: $lastUpdated, ')
+          ..write('isCompleted: $isCompleted')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1986,6 +2407,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RemindersTable reminders = $RemindersTable(this);
   late final $UmrahProgressTable umrahProgress = $UmrahProgressTable(this);
   late final $DuasTable duas = $DuasTable(this);
+  late final $WirdProgressTable wirdProgress = $WirdProgressTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1996,6 +2418,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     reminders,
     umrahProgress,
     duas,
+    wirdProgress,
   ];
 }
 
@@ -3041,6 +3464,225 @@ typedef $$DuasTableProcessedTableManager =
       Dua,
       PrefetchHooks Function()
     >;
+typedef $$WirdProgressTableCreateCompanionBuilder =
+    WirdProgressCompanion Function({
+      Value<int> id,
+      required String planType,
+      required int planValue,
+      Value<int> completedPages,
+      required DateTime lastUpdated,
+      Value<bool> isCompleted,
+    });
+typedef $$WirdProgressTableUpdateCompanionBuilder =
+    WirdProgressCompanion Function({
+      Value<int> id,
+      Value<String> planType,
+      Value<int> planValue,
+      Value<int> completedPages,
+      Value<DateTime> lastUpdated,
+      Value<bool> isCompleted,
+    });
+
+class $$WirdProgressTableFilterComposer
+    extends Composer<_$AppDatabase, $WirdProgressTable> {
+  $$WirdProgressTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get planType => $composableBuilder(
+    column: $table.planType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get planValue => $composableBuilder(
+    column: $table.planValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedPages => $composableBuilder(
+    column: $table.completedPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isCompleted => $composableBuilder(
+    column: $table.isCompleted,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$WirdProgressTableOrderingComposer
+    extends Composer<_$AppDatabase, $WirdProgressTable> {
+  $$WirdProgressTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get planType => $composableBuilder(
+    column: $table.planType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get planValue => $composableBuilder(
+    column: $table.planValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedPages => $composableBuilder(
+    column: $table.completedPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isCompleted => $composableBuilder(
+    column: $table.isCompleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$WirdProgressTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WirdProgressTable> {
+  $$WirdProgressTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get planType =>
+      $composableBuilder(column: $table.planType, builder: (column) => column);
+
+  GeneratedColumn<int> get planValue =>
+      $composableBuilder(column: $table.planValue, builder: (column) => column);
+
+  GeneratedColumn<int> get completedPages => $composableBuilder(
+    column: $table.completedPages,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isCompleted => $composableBuilder(
+    column: $table.isCompleted,
+    builder: (column) => column,
+  );
+}
+
+class $$WirdProgressTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WirdProgressTable,
+          WirdProgressData,
+          $$WirdProgressTableFilterComposer,
+          $$WirdProgressTableOrderingComposer,
+          $$WirdProgressTableAnnotationComposer,
+          $$WirdProgressTableCreateCompanionBuilder,
+          $$WirdProgressTableUpdateCompanionBuilder,
+          (
+            WirdProgressData,
+            BaseReferences<_$AppDatabase, $WirdProgressTable, WirdProgressData>,
+          ),
+          WirdProgressData,
+          PrefetchHooks Function()
+        > {
+  $$WirdProgressTableTableManager(_$AppDatabase db, $WirdProgressTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WirdProgressTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$WirdProgressTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$WirdProgressTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> planType = const Value.absent(),
+                Value<int> planValue = const Value.absent(),
+                Value<int> completedPages = const Value.absent(),
+                Value<DateTime> lastUpdated = const Value.absent(),
+                Value<bool> isCompleted = const Value.absent(),
+              }) => WirdProgressCompanion(
+                id: id,
+                planType: planType,
+                planValue: planValue,
+                completedPages: completedPages,
+                lastUpdated: lastUpdated,
+                isCompleted: isCompleted,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String planType,
+                required int planValue,
+                Value<int> completedPages = const Value.absent(),
+                required DateTime lastUpdated,
+                Value<bool> isCompleted = const Value.absent(),
+              }) => WirdProgressCompanion.insert(
+                id: id,
+                planType: planType,
+                planValue: planValue,
+                completedPages: completedPages,
+                lastUpdated: lastUpdated,
+                isCompleted: isCompleted,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$WirdProgressTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WirdProgressTable,
+      WirdProgressData,
+      $$WirdProgressTableFilterComposer,
+      $$WirdProgressTableOrderingComposer,
+      $$WirdProgressTableAnnotationComposer,
+      $$WirdProgressTableCreateCompanionBuilder,
+      $$WirdProgressTableUpdateCompanionBuilder,
+      (
+        WirdProgressData,
+        BaseReferences<_$AppDatabase, $WirdProgressTable, WirdProgressData>,
+      ),
+      WirdProgressData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3054,4 +3696,6 @@ class $AppDatabaseManager {
   $$UmrahProgressTableTableManager get umrahProgress =>
       $$UmrahProgressTableTableManager(_db, _db.umrahProgress);
   $$DuasTableTableManager get duas => $$DuasTableTableManager(_db, _db.duas);
+  $$WirdProgressTableTableManager get wirdProgress =>
+      $$WirdProgressTableTableManager(_db, _db.wirdProgress);
 }

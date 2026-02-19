@@ -91,43 +91,47 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
   }
 
   void _onIncrementCounter(IncrementCounter event, Emitter<TasbihState> emit) {
-    if (state is TasbihCounting) {
-      final currentState = state as TasbihCounting;
-      final newCount = currentState.count + 1;
+    final currentState = state;
+    final newCount = currentState.count + 1;
 
-      // Haptic feedback
+    // Haptic feedback
+    if (newCount % 33 == 0 || newCount == currentState.target) {
+      Vibration.vibrate(pattern: [0, 100, 50, 100]);
+    } else {
       Vibration.vibrate(duration: 50);
+    }
 
-      if (newCount >= currentState.target) {
-        // Special vibration on target reached
-        Vibration.vibrate(pattern: [0, 100, 50, 100]);
-
+    if (newCount >= currentState.target) {
+      emit(
+        TasbihCompleted(
+          count: newCount,
+          target: currentState.target,
+          currentDhikr: currentState.currentDhikr,
+        ),
+      );
+    } else {
+      if (currentState is TasbihCounting) {
+        emit(currentState.copyWith(count: newCount));
+      } else {
         emit(
-          TasbihCompleted(
+          TasbihCounting(
             count: newCount,
             target: currentState.target,
             currentDhikr: currentState.currentDhikr,
           ),
         );
-      } else {
-        emit(currentState.copyWith(count: newCount));
       }
     }
   }
 
   void _onResetCounter(ResetCounter event, Emitter<TasbihState> emit) {
-    if (state is TasbihCounting) {
-      final currentState = state as TasbihCounting;
-      emit(currentState.copyWith(count: 0));
-    } else if (state is TasbihCompleted) {
-      emit(
-        TasbihCounting(
-          count: 0,
-          target: state.target,
-          currentDhikr: state.currentDhikr,
-        ),
-      );
-    }
+    emit(
+      TasbihCounting(
+        count: 0,
+        target: state.target,
+        currentDhikr: state.currentDhikr,
+      ),
+    );
   }
 
   void _onChangeDhikr(ChangeDhikr event, Emitter<TasbihState> emit) {
@@ -141,9 +145,12 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
   }
 
   void _onChangeTarget(ChangeTarget event, Emitter<TasbihState> emit) {
-    if (state is TasbihCounting) {
-      final currentState = state as TasbihCounting;
-      emit(currentState.copyWith(target: event.newTarget));
-    }
+    emit(
+      TasbihCounting(
+        count: state.count,
+        target: event.newTarget,
+        currentDhikr: state.currentDhikr,
+      ),
+    );
   }
 }

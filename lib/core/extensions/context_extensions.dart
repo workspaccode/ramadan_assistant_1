@@ -1,5 +1,8 @@
+import 'dart:ui' as ui;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
 
 extension ContextExtensions on BuildContext {
   // Theme
@@ -7,6 +10,8 @@ extension ContextExtensions on BuildContext {
   TextTheme get textTheme => theme.textTheme;
   ColorScheme get colorScheme => theme.colorScheme;
   bool get isDark => theme.brightness == Brightness.dark;
+  RamadanThemeExtension get ramadanTheme =>
+      theme.extension<RamadanThemeExtension>()!;
 
   // Typography
   TextStyle? get displayLarge => textTheme.displayLarge;
@@ -37,7 +42,7 @@ extension ContextExtensions on BuildContext {
     return key.tr(args: args, namedArgs: namedArgs, gender: gender);
   }
 
-  bool get isRtl => Directionality.of(this) == TextDirection.RTL;
+  bool get isRtl => Directionality.of(this) == ui.TextDirection.rtl;
 
   // Dimensions
   double get width => MediaQuery.of(this).size.width;

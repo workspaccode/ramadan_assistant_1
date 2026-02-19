@@ -9,6 +9,7 @@ import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/praye
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/tasbih_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_guide_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.dart';
 
 class MainScreenContent extends StatelessWidget {
   const MainScreenContent({super.key});
@@ -36,6 +37,7 @@ class MainScreenContent extends StatelessWidget {
                         children: const [
                           PrayerTimesScreen(),
                           TasbihScreen(),
+                          WirdScreen(),
                           RemindersScreen(),
                           UmrahGuideScreen(),
                         ],
@@ -282,12 +284,12 @@ class MainScreenContent extends StatelessWidget {
               ),
               child: Icon(
                 selectedIndex == 2
-                    ? Icons.notifications
-                    : Icons.notifications_outlined,
+                    ? Icons.auto_stories
+                    : Icons.auto_stories_outlined,
                 size: 24,
               ),
             ),
-            label: 'reminders'.tr(),
+            label: 'wird_title'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Container(
@@ -299,7 +301,25 @@ class MainScreenContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                selectedIndex == 3 ? Icons.map : Icons.map_outlined,
+                selectedIndex == 3
+                    ? Icons.notifications
+                    : Icons.notifications_outlined,
+                size: 24,
+              ),
+            ),
+            label: 'reminders'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: selectedIndex == 4
+                    ? const Color(0xFF2E7D32).withOpacity(0.1)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                selectedIndex == 4 ? Icons.map : Icons.map_outlined,
                 size: 24,
               ),
             ),
@@ -308,20 +328,5 @@ class MainScreenContent extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getTabTitle(int index) {
-    switch (index) {
-      case 0:
-        return 'prayer_times'.tr();
-      case 1:
-        return 'tasbih'.tr();
-      case 2:
-        return 'reminders'.tr();
-      case 3:
-        return 'umrah_guide'.tr();
-      default:
-        return '';
-    }
   }
 }

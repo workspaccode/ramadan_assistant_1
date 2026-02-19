@@ -19,6 +19,9 @@ import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/main_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
+import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
+import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
+import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +76,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider.value(value: sl<AppDatabase>()),
         RepositoryProvider.value(value: sl<LocationService>()),
         RepositoryProvider.value(value: sl<PrayerService>()),
+
       ],
       child: MultiBlocProvider(
         providers: [
@@ -84,6 +88,13 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ThemeBloc()..add(LoadTheme())),
           BlocProvider(
             create: (context) => LanguageBloc()..add(LoadLanguage()),
+
+          ),
+          BlocProvider(
+            create: (context) => WirdBloc(sl())..add(LoadWirdProgress()),
+          ),
+          BlocProvider(
+            create: (context) => TasbihBloc()
           ),
         ],
         child: MultiBlocListener(
@@ -124,15 +135,15 @@ class MyApp extends StatelessWidget {
                     ),
                     title: 'Ramadan Assistant',
                     debugShowCheckedModeBanner: false,
-                    theme: AppTheme.getTheme(
-                      isDarkMode: false,
+                    theme: AppTheme.getLightTheme(
+                      localeContext.locale,
                       fontSizeMultiplier: fontSizeMultiplier,
-                      colorPaletteId: colorPaletteId,
+                      paletteId: colorPaletteId ?? 'emerald',
                     ),
-                    darkTheme: AppTheme.getTheme(
-                      isDarkMode: true,
+                    darkTheme: AppTheme.getDarkTheme(
+                      localeContext.locale,
                       fontSizeMultiplier: fontSizeMultiplier,
-                      colorPaletteId: colorPaletteId,
+                      paletteId: colorPaletteId ?? 'emerald',
                     ),
                     themeMode: isManualDarkMode
                         ? ThemeMode.dark

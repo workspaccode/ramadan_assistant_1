@@ -48,14 +48,30 @@ class Duas extends Table {
   TextColumn get audioPath => text().nullable()();
 }
 
+class WirdProgress extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get planType => text()(); // khatma, pagesPerPrayer, juzPerDay
+  IntColumn get planValue => integer()();
+  IntColumn get completedPages => integer().withDefault(const Constant(0))();
+  DateTimeColumn get lastUpdated => dateTime()();
+  BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
+}
+
 @DriftDatabase(
-  tables: [PrayerLogs, TasbihSessions, Reminders, UmrahProgress, Duas],
+  tables: [
+    PrayerLogs,
+    TasbihSessions,
+    Reminders,
+    UmrahProgress,
+    Duas,
+    WirdProgress,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -81,6 +97,10 @@ class AppDatabase extends _$AppDatabase {
           // Migration to 3: Cleanly recreate table to fix any naming conflicts (reminder_type vs reminder_types)
           await m.deleteTable(reminders.actualTableName);
           await m.createTable(reminders);
+        }
+
+        if (from < 4) {
+          await m.createTable(wirdProgress);
         }
       },
     );
