@@ -104,11 +104,15 @@ flutter:
     - assets/audio/zakr/
     - assets/compass.svg
     - assets/needle.svg
-    - assets/3.svg
-    - assets/4.svg
-    - assets/5.svg
-    - assets/translations/
+    - assets/ra1.svg
+    - assets/ra2.svg
+    - assets/ra3.svg
     - assets/image/
+    - assets/image/ramadan_moon.svg
+    - assets/image/islamic_pattern.svg
+    - assets/image/ramadan_star.svg
+    - assets/image/ramadan_lantern.svg
+    - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

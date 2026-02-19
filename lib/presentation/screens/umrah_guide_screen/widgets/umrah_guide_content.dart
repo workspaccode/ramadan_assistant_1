@@ -30,7 +30,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       backgroundColor: context.backgroundColor,
       appBar: AppBar(
         title: Text('umrah_title'.tr()),
-        backgroundColor: context.backgroundColor,
+        // backgroundColor: context.backgroundColor,
         elevation: 0,
         actions: [
           IconButton(

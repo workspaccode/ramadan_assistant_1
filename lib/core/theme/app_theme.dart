@@ -45,22 +45,22 @@ class AppTheme {
         ? ThemeData.dark().textTheme
         : ThemeData.light().textTheme;
 
-    TextTheme textTheme = GoogleFonts.interTextTheme(baseTextTheme);
+    TextTheme textTheme = GoogleFonts.cairoTextTheme(baseTextTheme);
 
     // Scale all fonts
     textTheme = _scaleTextTheme(textTheme, fontSizeMultiplier);
 
     // Apply Amiri for headlines
     textTheme = textTheme.copyWith(
-      displayLarge: GoogleFonts.amiri(
+      displayLarge: GoogleFonts.cairo(
         fontSize: (textTheme.displayLarge?.fontSize ?? 32),
         fontWeight: FontWeight.bold,
-        color: primary,
+        // color: primary,
       ),
-      headlineMedium: GoogleFonts.amiri(
+      headlineMedium: GoogleFonts.cairo(
         fontSize: (textTheme.headlineMedium?.fontSize ?? 24),
         fontWeight: FontWeight.w600,
-        color: primary,
+        // color: primary,
       ),
     );
 
@@ -79,15 +79,15 @@ class AppTheme {
       cardTheme: CardThemeData(color: surface, surfaceTintColor: surface),
       textTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: isDarkMode ? surface : primary,
+        backgroundColor: Colors.transparent,
         foregroundColor: secondary,
         elevation: 0,
         centerTitle: true,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: secondary,
-          foregroundColor: primary,
+          // backgroundColor: secondary,
+          // foregroundColor: primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

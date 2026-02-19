@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
@@ -15,55 +17,209 @@ class SettingsScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final today = HijriCalendar.now();
+    final isRamadan = today.hMonth == 9;
+
     return BlocBuilder<SettingsScreenBloc, SettingsScreenState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            title: Text(
-              'settings'.tr(),
-              style: TextStyle(
-                color: Theme.of(context).textTheme.titleLarge?.color,
-              ),
+          // backgroundColor: context.backgroundColor,
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: isRamadan
+                  ? LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        const Color(0xFF2E7D32).withOpacity(0.02),
+                        const Color(0xFF4CAF50).withOpacity(0.01),
+                      ],
+                    )
+                  : null,
             ),
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            child: CustomScrollView(
+              slivers: [
+                _buildRamadanAppBar(context, isRamadan),
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      if (state is SettingsScreenLoaded) ...[
+                        _buildRamadanCard(context, isRamadan),
+                        const SizedBox(height: 20),
+                        _buildLocationSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildAppearanceSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildPrayerSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildIqamaSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildAudioSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildAdminSection(context, state),
+                        const SizedBox(height: 20),
+                        _buildFooter(context),
+                        const SizedBox(height: 40),
+                      ] else
+                        _buildLoadingState(),
+                    ]),
+                  ),
+                ),
+              ],
+            ),
           ),
-          body: state is SettingsScreenLoaded
-              ? _buildSettingsContent(context, state)
-              : _buildLoadingState(),
         );
       },
     );
   }
 
-  Widget _buildLoadingState() {
-    return const Center(child: CircularProgressIndicator());
+  Widget _buildRamadanAppBar(BuildContext context, bool isRamadan) {
+    return SliverAppBar(
+      expandedHeight: 120,
+      floating: false,
+      pinned: true,
+      backgroundColor: isRamadan
+          ? const Color(0xFF2E7D32)
+          : const Color(0xFF1976D2),
+      flexibleSpace: FlexibleSpaceBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isRamadan) ...[
+              SvgPicture.asset(
+                'assets/image/ramadan_star.svg',
+                width: 24,
+                height: 24,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              'settings_title'.tr(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (isRamadan) ...[
+              const SizedBox(width: 8),
+              SvgPicture.asset(
+                'assets/image/ramadan_star.svg',
+                width: 24,
+                height: 24,
+                color: Colors.white,
+              ),
+            ],
+          ],
+        ),
+        titlePadding: const EdgeInsets.only(bottom: 16, right: 16, left: 16),
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isRamadan
+                  ? [const Color(0xFF2E7D32), const Color(0xFF4CAF50)]
+                  : [const Color(0xFF1976D2), const Color(0xFF42A5F5)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+            ),
+          ),
+          child: isRamadan
+              ? Center(
+                  child: Opacity(
+                    opacity: 0.1,
+                    child: SvgPicture.asset(
+                      'assets/image/islamic_pattern.svg',
+                      width: 200,
+                      height: 200,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
   }
 
-  Widget _buildSettingsContent(
-    BuildContext context,
-    SettingsScreenLoaded state,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildLocationSection(context, state),
-          const SizedBox(height: 20),
-          _buildAppearanceSection(context, state),
-          const SizedBox(height: 20),
-          _buildPrayerSection(context, state),
-          const SizedBox(height: 20),
-          _buildIqamaSection(context, state),
-          const SizedBox(height: 20),
-          _buildAudioSection(context, state),
-          const SizedBox(height: 20),
-          _buildAdminSection(context, state),
-          const SizedBox(height: 20),
-          _buildFooter(context),
-          const SizedBox(height: 40),
+  Widget _buildRamadanCard(BuildContext context, bool isRamadan) {
+    if (!isRamadan) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [const Color(0xFF2E7D32), const Color(0xFF4CAF50)],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF2E7D32).withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
         ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.nights_stay, color: Colors.white, size: 28),
+              const SizedBox(width: 12),
+              const Text(
+                'إعدادات رمضان',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.nights_stay, color: Colors.white, size: 28),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'شهر القرآن والرحمة والمغفرة',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'َنَصْبٌ فِي خَدِ الْعَدَالَةِ شَهْرُ رَمَضَانَ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2E7D32)),
       ),
     );
   }

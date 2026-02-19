@@ -851,15 +851,6 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
                                         'prayer_name_${prayer['name']}_${context.locale}',
                                       ),
                                       prayer['name'].toString().tr(),
-                                      style: TextStyle(
-                                        color: isNext
-                                            ? context.primaryColor
-                                            : (isDark
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
                                     ),
                                     if (prayer['time'] != null)
                                       Text(
