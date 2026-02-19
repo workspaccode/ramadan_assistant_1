@@ -26,4 +26,21 @@ class UpdateWirdProgress extends WirdEvent {
   List<Object?> get props => [pagesRead];
 }
 
+class UpdatePrayerProgress extends WirdEvent {
+  final String prayerName;
+  final int pagesRead;
+  const UpdatePrayerProgress(this.prayerName, this.pagesRead);
+
+  @override
+  List<Object?> get props => [prayerName, pagesRead];
+}
+
+class SetLastReadPage extends WirdEvent {
+  final int page;
+  const SetLastReadPage(this.page);
+
+  @override
+  List<Object?> get props => [page];
+}
+
 class ResetWirdProgress extends WirdEvent {}

@@ -128,7 +128,42 @@ Future<void> _scheduleDayPrayerNotifications(
         prayerName: prayerName,
         iqamaTime: iqamaTime,
       );
+
+      // Schedule Wird Reminder (if plan is pagesPerPrayer)
+      // We check shared prefs for active plan
+      final wirdPlanType = prefs.getString('wird_plan_type');
+      final wirdPlanValue = prefs.getInt('wird_plan_value');
+
+      if (wirdPlanType == 'pagesPerPrayer' && wirdPlanValue != null) {
+        // Schedule 20 mins after prayer (or 30, user didn't specify exact time, but "remind him *of* the prayer"
+        // usually means "don't forget what you have to do *at* this prayer")
+        // Since this is a "read *after* prayer" plan, a reminder 20-30m after prayer (or 10m after iqama) makes sense.
+        // Let's do 20 mins after prayer time.
+        final reminderTime = prayerTime.add(const Duration(minutes: 20));
+        await NotificationService.scheduleWirdReminder(
+          id: prayerId + 200, // Offset ID for Wird
+          prayerName: prayerName,
+          reminderTime: reminderTime,
+          pages: wirdPlanValue,
+        );
+      }
     }
+  }
+
+  // Daily Summary Check (Post-Isha)
+  final ishaTime =
+      prayers.firstWhere((p) => p['name'] == 'Isha')['time'] as DateTime;
+  if (ishaTime.isAfter(now)) {
+    final summaryTime = ishaTime.add(const Duration(hours: 1));
+    // Generic reminder to check progress if not done
+    // We can't easily check DB here without opening it, so we'll just schedule a generic "Daily Review"
+    // notification that deep links to Wird screen
+    await NotificationService.scheduleWirdReminder(
+      id: 300,
+      prayerName: 'Daily Review',
+      reminderTime: summaryTime,
+      pages: 0, // 0 indicates summary/review
+    );
   }
 }
 

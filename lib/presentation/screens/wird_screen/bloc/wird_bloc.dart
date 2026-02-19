@@ -4,6 +4,7 @@ import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/data/models/wird_plan.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WirdBloc extends Bloc<WirdEvent, WirdState> {
   final AppDatabase _database;
@@ -12,6 +13,8 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     on<LoadWirdProgress>(_onLoadProgress);
     on<SetWirdPlan>(_onSetPlan);
     on<UpdateWirdProgress>(_onUpdateProgress);
+    on<UpdatePrayerProgress>(_onUpdatePrayerProgress);
+    on<SetLastReadPage>(_onSetLastReadPage);
     on<ResetWirdProgress>(_onResetProgress);
   }
 
@@ -24,20 +27,41 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
       final progress = await (_database.select(
         _database.wirdProgress,
       )..limit(1)).getSingleOrNull();
+
       if (progress == null) {
         emit(WirdNoPlan());
-      } else {
-        emit(
-          WirdPlanActive(
-            plan: WirdPlan(
-              type: _parseType(progress.planType),
-              value: progress.planValue,
-            ),
-            completedPages: progress.completedPages,
-            lastUpdated: progress.lastUpdated,
-          ),
-        );
+        return;
       }
+
+      // Fetch today's log
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final dailyLog = await (_database.select(
+        _database.wirdDailyLogs,
+      )..where((t) => t.date.equals(today))).getSingleOrNull();
+
+      final prayerPages = <String, int>{};
+      if (dailyLog != null) {
+        prayerPages['fajr'] = dailyLog.fajrPages;
+        prayerPages['dhuhr'] = dailyLog.dhuhrPages;
+        prayerPages['asr'] = dailyLog.asrPages;
+        prayerPages['maghrib'] = dailyLog.maghribPages;
+        prayerPages['isha'] = dailyLog.ishaPages;
+        prayerPages['other'] = dailyLog.otherPages;
+      }
+
+      emit(
+        WirdPlanActive(
+          plan: WirdPlan(
+            type: _parseType(progress.planType),
+            value: progress.planValue,
+          ),
+          completedPages: progress.completedPages,
+          lastReadPage: progress.lastReadPage,
+          lastUpdated: progress.lastUpdated,
+          todayPrayerPages: prayerPages,
+        ),
+      );
     } catch (e) {
       emit(WirdError(e.toString()));
     }
@@ -47,6 +71,7 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     emit(WirdLoading());
     try {
       await _database.delete(_database.wirdProgress).go();
+      await _database.delete(_database.wirdDailyLogs).go();
       await _database
           .into(_database.wirdProgress)
           .insert(
@@ -56,6 +81,12 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
               lastUpdated: DateTime.now(),
             ),
           );
+
+      // Save plan to SharedPreferences for Background Task
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('wird_plan_type', event.plan.type.name);
+      await prefs.setInt('wird_plan_value', event.plan.value);
+
       add(LoadWirdProgress());
     } catch (e) {
       emit(WirdError(e.toString()));
@@ -86,12 +117,158 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     }
   }
 
+  Future<void> _onUpdatePrayerProgress(
+    UpdatePrayerProgress event,
+    Emitter<WirdState> emit,
+  ) async {
+    if (state is WirdPlanActive) {
+      try {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+
+        // Update or Insert Daily Log
+        final dailyLog = await (_database.select(
+          _database.wirdDailyLogs,
+        )..where((t) => t.date.equals(today))).getSingleOrNull();
+
+        int delta = 0;
+
+        if (dailyLog == null) {
+          // New entry, delta is the full value
+          delta = event.pagesRead;
+          await _database
+              .into(_database.wirdDailyLogs)
+              .insert(
+                WirdDailyLogsCompanion.insert(
+                  date: today,
+                  fajrPages: Value(
+                    event.prayerName == 'fajr' ? event.pagesRead : 0,
+                  ),
+                  dhuhrPages: Value(
+                    event.prayerName == 'dhuhr' ? event.pagesRead : 0,
+                  ),
+                  asrPages: Value(
+                    event.prayerName == 'asr' ? event.pagesRead : 0,
+                  ),
+                  maghribPages: Value(
+                    event.prayerName == 'maghrib' ? event.pagesRead : 0,
+                  ),
+                  ishaPages: Value(
+                    event.prayerName == 'isha' ? event.pagesRead : 0,
+                  ),
+                  otherPages: Value(
+                    event.prayerName == 'other' ? event.pagesRead : 0,
+                  ),
+                ),
+              );
+        } else {
+          // Existing entry, calculate delta and update with NEW absolute value
+          int oldPages = 0;
+          switch (event.prayerName) {
+            case 'fajr':
+              oldPages = dailyLog.fajrPages;
+              break;
+            case 'dhuhr':
+              oldPages = dailyLog.dhuhrPages;
+              break;
+            case 'asr':
+              oldPages = dailyLog.asrPages;
+              break;
+            case 'maghrib':
+              oldPages = dailyLog.maghribPages;
+              break;
+            case 'isha':
+              oldPages = dailyLog.ishaPages;
+              break;
+            default:
+              oldPages = dailyLog.otherPages;
+          }
+
+          delta = event.pagesRead - oldPages;
+
+          WirdDailyLogsCompanion companion;
+          switch (event.prayerName) {
+            case 'fajr':
+              companion = WirdDailyLogsCompanion(
+                fajrPages: Value(event.pagesRead),
+              );
+              break;
+            case 'dhuhr':
+              companion = WirdDailyLogsCompanion(
+                dhuhrPages: Value(event.pagesRead),
+              );
+              break;
+            case 'asr':
+              companion = WirdDailyLogsCompanion(
+                asrPages: Value(event.pagesRead),
+              );
+              break;
+            case 'maghrib':
+              companion = WirdDailyLogsCompanion(
+                maghribPages: Value(event.pagesRead),
+              );
+              break;
+            case 'isha':
+              companion = WirdDailyLogsCompanion(
+                ishaPages: Value(event.pagesRead),
+              );
+              break;
+            default:
+              companion = WirdDailyLogsCompanion(
+                otherPages: Value(event.pagesRead),
+              );
+          }
+
+          await (_database.update(
+            _database.wirdDailyLogs,
+          )..where((t) => t.id.equals(dailyLog.id))).write(companion);
+        }
+
+        // Update total progress with delta
+        if (delta != 0) {
+          add(UpdateWirdProgress(delta));
+        } else {
+          // Even if no delta to total, we reload to refresh UI with new daily breakdown if needed
+          add(LoadWirdProgress());
+        }
+      } catch (e) {
+        emit(WirdError(e.toString()));
+      }
+    }
+  }
+
+  Future<void> _onSetLastReadPage(
+    SetLastReadPage event,
+    Emitter<WirdState> emit,
+  ) async {
+    try {
+      await _database
+          .update(_database.wirdProgress)
+          .write(
+            WirdProgressCompanion(
+              lastReadPage: Value(event.page),
+              lastUpdated: Value(DateTime.now()),
+            ),
+          );
+      add(LoadWirdProgress());
+    } catch (e) {
+      emit(WirdError(e.toString()));
+    }
+  }
+
   Future<void> _onResetProgress(
     ResetWirdProgress event,
     Emitter<WirdState> emit,
   ) async {
     try {
       await _database.delete(_database.wirdProgress).go();
+      await _database.delete(_database.wirdDailyLogs).go();
+
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('wird_plan_type');
+      await prefs.remove('wird_plan_value');
+
       emit(WirdNoPlan());
     } catch (e) {
       emit(WirdError(e.toString()));

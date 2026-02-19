@@ -53,8 +53,20 @@ class WirdProgress extends Table {
   TextColumn get planType => text()(); // khatma, pagesPerPrayer, juzPerDay
   IntColumn get planValue => integer()();
   IntColumn get completedPages => integer().withDefault(const Constant(0))();
+  IntColumn get lastReadPage => integer().withDefault(const Constant(1))();
   DateTimeColumn get lastUpdated => dateTime()();
   BoolColumn get isCompleted => boolean().withDefault(const Constant(false))();
+}
+
+class WirdDailyLogs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get date => dateTime()();
+  IntColumn get fajrPages => integer().withDefault(const Constant(0))();
+  IntColumn get dhuhrPages => integer().withDefault(const Constant(0))();
+  IntColumn get asrPages => integer().withDefault(const Constant(0))();
+  IntColumn get maghribPages => integer().withDefault(const Constant(0))();
+  IntColumn get ishaPages => integer().withDefault(const Constant(0))();
+  IntColumn get otherPages => integer().withDefault(const Constant(0))();
 }
 
 @DriftDatabase(
@@ -65,13 +77,14 @@ class WirdProgress extends Table {
     UmrahProgress,
     Duas,
     WirdProgress,
+    WirdDailyLogs,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -101,6 +114,11 @@ class AppDatabase extends _$AppDatabase {
 
         if (from < 4) {
           await m.createTable(wirdProgress);
+        }
+
+        if (from < 5) {
+          await m.addColumn(wirdProgress, wirdProgress.lastReadPage);
+          await m.createTable(wirdDailyLogs);
         }
       },
     );

@@ -2031,6 +2031,18 @@ class $WirdProgressTable extends WirdProgress
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _lastReadPageMeta = const VerificationMeta(
+    'lastReadPage',
+  );
+  @override
+  late final GeneratedColumn<int> lastReadPage = GeneratedColumn<int>(
+    'last_read_page',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
   static const VerificationMeta _lastUpdatedMeta = const VerificationMeta(
     'lastUpdated',
   );
@@ -2063,6 +2075,7 @@ class $WirdProgressTable extends WirdProgress
     planType,
     planValue,
     completedPages,
+    lastReadPage,
     lastUpdated,
     isCompleted,
   ];
@@ -2103,6 +2116,15 @@ class $WirdProgressTable extends WirdProgress
         completedPages.isAcceptableOrUnknown(
           data['completed_pages']!,
           _completedPagesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_read_page')) {
+      context.handle(
+        _lastReadPageMeta,
+        lastReadPage.isAcceptableOrUnknown(
+          data['last_read_page']!,
+          _lastReadPageMeta,
         ),
       );
     }
@@ -2151,6 +2173,10 @@ class $WirdProgressTable extends WirdProgress
         DriftSqlType.int,
         data['${effectivePrefix}completed_pages'],
       )!,
+      lastReadPage: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_read_page'],
+      )!,
       lastUpdated: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_updated'],
@@ -2174,6 +2200,7 @@ class WirdProgressData extends DataClass
   final String planType;
   final int planValue;
   final int completedPages;
+  final int lastReadPage;
   final DateTime lastUpdated;
   final bool isCompleted;
   const WirdProgressData({
@@ -2181,6 +2208,7 @@ class WirdProgressData extends DataClass
     required this.planType,
     required this.planValue,
     required this.completedPages,
+    required this.lastReadPage,
     required this.lastUpdated,
     required this.isCompleted,
   });
@@ -2191,6 +2219,7 @@ class WirdProgressData extends DataClass
     map['plan_type'] = Variable<String>(planType);
     map['plan_value'] = Variable<int>(planValue);
     map['completed_pages'] = Variable<int>(completedPages);
+    map['last_read_page'] = Variable<int>(lastReadPage);
     map['last_updated'] = Variable<DateTime>(lastUpdated);
     map['is_completed'] = Variable<bool>(isCompleted);
     return map;
@@ -2202,6 +2231,7 @@ class WirdProgressData extends DataClass
       planType: Value(planType),
       planValue: Value(planValue),
       completedPages: Value(completedPages),
+      lastReadPage: Value(lastReadPage),
       lastUpdated: Value(lastUpdated),
       isCompleted: Value(isCompleted),
     );
@@ -2217,6 +2247,7 @@ class WirdProgressData extends DataClass
       planType: serializer.fromJson<String>(json['planType']),
       planValue: serializer.fromJson<int>(json['planValue']),
       completedPages: serializer.fromJson<int>(json['completedPages']),
+      lastReadPage: serializer.fromJson<int>(json['lastReadPage']),
       lastUpdated: serializer.fromJson<DateTime>(json['lastUpdated']),
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
     );
@@ -2229,6 +2260,7 @@ class WirdProgressData extends DataClass
       'planType': serializer.toJson<String>(planType),
       'planValue': serializer.toJson<int>(planValue),
       'completedPages': serializer.toJson<int>(completedPages),
+      'lastReadPage': serializer.toJson<int>(lastReadPage),
       'lastUpdated': serializer.toJson<DateTime>(lastUpdated),
       'isCompleted': serializer.toJson<bool>(isCompleted),
     };
@@ -2239,6 +2271,7 @@ class WirdProgressData extends DataClass
     String? planType,
     int? planValue,
     int? completedPages,
+    int? lastReadPage,
     DateTime? lastUpdated,
     bool? isCompleted,
   }) => WirdProgressData(
@@ -2246,6 +2279,7 @@ class WirdProgressData extends DataClass
     planType: planType ?? this.planType,
     planValue: planValue ?? this.planValue,
     completedPages: completedPages ?? this.completedPages,
+    lastReadPage: lastReadPage ?? this.lastReadPage,
     lastUpdated: lastUpdated ?? this.lastUpdated,
     isCompleted: isCompleted ?? this.isCompleted,
   );
@@ -2257,6 +2291,9 @@ class WirdProgressData extends DataClass
       completedPages: data.completedPages.present
           ? data.completedPages.value
           : this.completedPages,
+      lastReadPage: data.lastReadPage.present
+          ? data.lastReadPage.value
+          : this.lastReadPage,
       lastUpdated: data.lastUpdated.present
           ? data.lastUpdated.value
           : this.lastUpdated,
@@ -2273,6 +2310,7 @@ class WirdProgressData extends DataClass
           ..write('planType: $planType, ')
           ..write('planValue: $planValue, ')
           ..write('completedPages: $completedPages, ')
+          ..write('lastReadPage: $lastReadPage, ')
           ..write('lastUpdated: $lastUpdated, ')
           ..write('isCompleted: $isCompleted')
           ..write(')'))
@@ -2285,6 +2323,7 @@ class WirdProgressData extends DataClass
     planType,
     planValue,
     completedPages,
+    lastReadPage,
     lastUpdated,
     isCompleted,
   );
@@ -2296,6 +2335,7 @@ class WirdProgressData extends DataClass
           other.planType == this.planType &&
           other.planValue == this.planValue &&
           other.completedPages == this.completedPages &&
+          other.lastReadPage == this.lastReadPage &&
           other.lastUpdated == this.lastUpdated &&
           other.isCompleted == this.isCompleted);
 }
@@ -2305,6 +2345,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
   final Value<String> planType;
   final Value<int> planValue;
   final Value<int> completedPages;
+  final Value<int> lastReadPage;
   final Value<DateTime> lastUpdated;
   final Value<bool> isCompleted;
   const WirdProgressCompanion({
@@ -2312,6 +2353,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
     this.planType = const Value.absent(),
     this.planValue = const Value.absent(),
     this.completedPages = const Value.absent(),
+    this.lastReadPage = const Value.absent(),
     this.lastUpdated = const Value.absent(),
     this.isCompleted = const Value.absent(),
   });
@@ -2320,6 +2362,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
     required String planType,
     required int planValue,
     this.completedPages = const Value.absent(),
+    this.lastReadPage = const Value.absent(),
     required DateTime lastUpdated,
     this.isCompleted = const Value.absent(),
   }) : planType = Value(planType),
@@ -2330,6 +2373,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
     Expression<String>? planType,
     Expression<int>? planValue,
     Expression<int>? completedPages,
+    Expression<int>? lastReadPage,
     Expression<DateTime>? lastUpdated,
     Expression<bool>? isCompleted,
   }) {
@@ -2338,6 +2382,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
       if (planType != null) 'plan_type': planType,
       if (planValue != null) 'plan_value': planValue,
       if (completedPages != null) 'completed_pages': completedPages,
+      if (lastReadPage != null) 'last_read_page': lastReadPage,
       if (lastUpdated != null) 'last_updated': lastUpdated,
       if (isCompleted != null) 'is_completed': isCompleted,
     });
@@ -2348,6 +2393,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
     Value<String>? planType,
     Value<int>? planValue,
     Value<int>? completedPages,
+    Value<int>? lastReadPage,
     Value<DateTime>? lastUpdated,
     Value<bool>? isCompleted,
   }) {
@@ -2356,6 +2402,7 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
       planType: planType ?? this.planType,
       planValue: planValue ?? this.planValue,
       completedPages: completedPages ?? this.completedPages,
+      lastReadPage: lastReadPage ?? this.lastReadPage,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       isCompleted: isCompleted ?? this.isCompleted,
     );
@@ -2376,6 +2423,9 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
     if (completedPages.present) {
       map['completed_pages'] = Variable<int>(completedPages.value);
     }
+    if (lastReadPage.present) {
+      map['last_read_page'] = Variable<int>(lastReadPage.value);
+    }
     if (lastUpdated.present) {
       map['last_updated'] = Variable<DateTime>(lastUpdated.value);
     }
@@ -2392,8 +2442,506 @@ class WirdProgressCompanion extends UpdateCompanion<WirdProgressData> {
           ..write('planType: $planType, ')
           ..write('planValue: $planValue, ')
           ..write('completedPages: $completedPages, ')
+          ..write('lastReadPage: $lastReadPage, ')
           ..write('lastUpdated: $lastUpdated, ')
           ..write('isCompleted: $isCompleted')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $WirdDailyLogsTable extends WirdDailyLogs
+    with TableInfo<$WirdDailyLogsTable, WirdDailyLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WirdDailyLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fajrPagesMeta = const VerificationMeta(
+    'fajrPages',
+  );
+  @override
+  late final GeneratedColumn<int> fajrPages = GeneratedColumn<int>(
+    'fajr_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _dhuhrPagesMeta = const VerificationMeta(
+    'dhuhrPages',
+  );
+  @override
+  late final GeneratedColumn<int> dhuhrPages = GeneratedColumn<int>(
+    'dhuhr_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _asrPagesMeta = const VerificationMeta(
+    'asrPages',
+  );
+  @override
+  late final GeneratedColumn<int> asrPages = GeneratedColumn<int>(
+    'asr_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _maghribPagesMeta = const VerificationMeta(
+    'maghribPages',
+  );
+  @override
+  late final GeneratedColumn<int> maghribPages = GeneratedColumn<int>(
+    'maghrib_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _ishaPagesMeta = const VerificationMeta(
+    'ishaPages',
+  );
+  @override
+  late final GeneratedColumn<int> ishaPages = GeneratedColumn<int>(
+    'isha_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _otherPagesMeta = const VerificationMeta(
+    'otherPages',
+  );
+  @override
+  late final GeneratedColumn<int> otherPages = GeneratedColumn<int>(
+    'other_pages',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    date,
+    fajrPages,
+    dhuhrPages,
+    asrPages,
+    maghribPages,
+    ishaPages,
+    otherPages,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'wird_daily_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WirdDailyLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('fajr_pages')) {
+      context.handle(
+        _fajrPagesMeta,
+        fajrPages.isAcceptableOrUnknown(data['fajr_pages']!, _fajrPagesMeta),
+      );
+    }
+    if (data.containsKey('dhuhr_pages')) {
+      context.handle(
+        _dhuhrPagesMeta,
+        dhuhrPages.isAcceptableOrUnknown(data['dhuhr_pages']!, _dhuhrPagesMeta),
+      );
+    }
+    if (data.containsKey('asr_pages')) {
+      context.handle(
+        _asrPagesMeta,
+        asrPages.isAcceptableOrUnknown(data['asr_pages']!, _asrPagesMeta),
+      );
+    }
+    if (data.containsKey('maghrib_pages')) {
+      context.handle(
+        _maghribPagesMeta,
+        maghribPages.isAcceptableOrUnknown(
+          data['maghrib_pages']!,
+          _maghribPagesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('isha_pages')) {
+      context.handle(
+        _ishaPagesMeta,
+        ishaPages.isAcceptableOrUnknown(data['isha_pages']!, _ishaPagesMeta),
+      );
+    }
+    if (data.containsKey('other_pages')) {
+      context.handle(
+        _otherPagesMeta,
+        otherPages.isAcceptableOrUnknown(data['other_pages']!, _otherPagesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WirdDailyLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WirdDailyLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      fajrPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fajr_pages'],
+      )!,
+      dhuhrPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}dhuhr_pages'],
+      )!,
+      asrPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}asr_pages'],
+      )!,
+      maghribPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}maghrib_pages'],
+      )!,
+      ishaPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}isha_pages'],
+      )!,
+      otherPages: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}other_pages'],
+      )!,
+    );
+  }
+
+  @override
+  $WirdDailyLogsTable createAlias(String alias) {
+    return $WirdDailyLogsTable(attachedDatabase, alias);
+  }
+}
+
+class WirdDailyLog extends DataClass implements Insertable<WirdDailyLog> {
+  final int id;
+  final DateTime date;
+  final int fajrPages;
+  final int dhuhrPages;
+  final int asrPages;
+  final int maghribPages;
+  final int ishaPages;
+  final int otherPages;
+  const WirdDailyLog({
+    required this.id,
+    required this.date,
+    required this.fajrPages,
+    required this.dhuhrPages,
+    required this.asrPages,
+    required this.maghribPages,
+    required this.ishaPages,
+    required this.otherPages,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
+    map['fajr_pages'] = Variable<int>(fajrPages);
+    map['dhuhr_pages'] = Variable<int>(dhuhrPages);
+    map['asr_pages'] = Variable<int>(asrPages);
+    map['maghrib_pages'] = Variable<int>(maghribPages);
+    map['isha_pages'] = Variable<int>(ishaPages);
+    map['other_pages'] = Variable<int>(otherPages);
+    return map;
+  }
+
+  WirdDailyLogsCompanion toCompanion(bool nullToAbsent) {
+    return WirdDailyLogsCompanion(
+      id: Value(id),
+      date: Value(date),
+      fajrPages: Value(fajrPages),
+      dhuhrPages: Value(dhuhrPages),
+      asrPages: Value(asrPages),
+      maghribPages: Value(maghribPages),
+      ishaPages: Value(ishaPages),
+      otherPages: Value(otherPages),
+    );
+  }
+
+  factory WirdDailyLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WirdDailyLog(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      fajrPages: serializer.fromJson<int>(json['fajrPages']),
+      dhuhrPages: serializer.fromJson<int>(json['dhuhrPages']),
+      asrPages: serializer.fromJson<int>(json['asrPages']),
+      maghribPages: serializer.fromJson<int>(json['maghribPages']),
+      ishaPages: serializer.fromJson<int>(json['ishaPages']),
+      otherPages: serializer.fromJson<int>(json['otherPages']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+      'fajrPages': serializer.toJson<int>(fajrPages),
+      'dhuhrPages': serializer.toJson<int>(dhuhrPages),
+      'asrPages': serializer.toJson<int>(asrPages),
+      'maghribPages': serializer.toJson<int>(maghribPages),
+      'ishaPages': serializer.toJson<int>(ishaPages),
+      'otherPages': serializer.toJson<int>(otherPages),
+    };
+  }
+
+  WirdDailyLog copyWith({
+    int? id,
+    DateTime? date,
+    int? fajrPages,
+    int? dhuhrPages,
+    int? asrPages,
+    int? maghribPages,
+    int? ishaPages,
+    int? otherPages,
+  }) => WirdDailyLog(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    fajrPages: fajrPages ?? this.fajrPages,
+    dhuhrPages: dhuhrPages ?? this.dhuhrPages,
+    asrPages: asrPages ?? this.asrPages,
+    maghribPages: maghribPages ?? this.maghribPages,
+    ishaPages: ishaPages ?? this.ishaPages,
+    otherPages: otherPages ?? this.otherPages,
+  );
+  WirdDailyLog copyWithCompanion(WirdDailyLogsCompanion data) {
+    return WirdDailyLog(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      fajrPages: data.fajrPages.present ? data.fajrPages.value : this.fajrPages,
+      dhuhrPages: data.dhuhrPages.present
+          ? data.dhuhrPages.value
+          : this.dhuhrPages,
+      asrPages: data.asrPages.present ? data.asrPages.value : this.asrPages,
+      maghribPages: data.maghribPages.present
+          ? data.maghribPages.value
+          : this.maghribPages,
+      ishaPages: data.ishaPages.present ? data.ishaPages.value : this.ishaPages,
+      otherPages: data.otherPages.present
+          ? data.otherPages.value
+          : this.otherPages,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WirdDailyLog(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('fajrPages: $fajrPages, ')
+          ..write('dhuhrPages: $dhuhrPages, ')
+          ..write('asrPages: $asrPages, ')
+          ..write('maghribPages: $maghribPages, ')
+          ..write('ishaPages: $ishaPages, ')
+          ..write('otherPages: $otherPages')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    date,
+    fajrPages,
+    dhuhrPages,
+    asrPages,
+    maghribPages,
+    ishaPages,
+    otherPages,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WirdDailyLog &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.fajrPages == this.fajrPages &&
+          other.dhuhrPages == this.dhuhrPages &&
+          other.asrPages == this.asrPages &&
+          other.maghribPages == this.maghribPages &&
+          other.ishaPages == this.ishaPages &&
+          other.otherPages == this.otherPages);
+}
+
+class WirdDailyLogsCompanion extends UpdateCompanion<WirdDailyLog> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  final Value<int> fajrPages;
+  final Value<int> dhuhrPages;
+  final Value<int> asrPages;
+  final Value<int> maghribPages;
+  final Value<int> ishaPages;
+  final Value<int> otherPages;
+  const WirdDailyLogsCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.fajrPages = const Value.absent(),
+    this.dhuhrPages = const Value.absent(),
+    this.asrPages = const Value.absent(),
+    this.maghribPages = const Value.absent(),
+    this.ishaPages = const Value.absent(),
+    this.otherPages = const Value.absent(),
+  });
+  WirdDailyLogsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime date,
+    this.fajrPages = const Value.absent(),
+    this.dhuhrPages = const Value.absent(),
+    this.asrPages = const Value.absent(),
+    this.maghribPages = const Value.absent(),
+    this.ishaPages = const Value.absent(),
+    this.otherPages = const Value.absent(),
+  }) : date = Value(date);
+  static Insertable<WirdDailyLog> custom({
+    Expression<int>? id,
+    Expression<DateTime>? date,
+    Expression<int>? fajrPages,
+    Expression<int>? dhuhrPages,
+    Expression<int>? asrPages,
+    Expression<int>? maghribPages,
+    Expression<int>? ishaPages,
+    Expression<int>? otherPages,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (fajrPages != null) 'fajr_pages': fajrPages,
+      if (dhuhrPages != null) 'dhuhr_pages': dhuhrPages,
+      if (asrPages != null) 'asr_pages': asrPages,
+      if (maghribPages != null) 'maghrib_pages': maghribPages,
+      if (ishaPages != null) 'isha_pages': ishaPages,
+      if (otherPages != null) 'other_pages': otherPages,
+    });
+  }
+
+  WirdDailyLogsCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? date,
+    Value<int>? fajrPages,
+    Value<int>? dhuhrPages,
+    Value<int>? asrPages,
+    Value<int>? maghribPages,
+    Value<int>? ishaPages,
+    Value<int>? otherPages,
+  }) {
+    return WirdDailyLogsCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      fajrPages: fajrPages ?? this.fajrPages,
+      dhuhrPages: dhuhrPages ?? this.dhuhrPages,
+      asrPages: asrPages ?? this.asrPages,
+      maghribPages: maghribPages ?? this.maghribPages,
+      ishaPages: ishaPages ?? this.ishaPages,
+      otherPages: otherPages ?? this.otherPages,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (fajrPages.present) {
+      map['fajr_pages'] = Variable<int>(fajrPages.value);
+    }
+    if (dhuhrPages.present) {
+      map['dhuhr_pages'] = Variable<int>(dhuhrPages.value);
+    }
+    if (asrPages.present) {
+      map['asr_pages'] = Variable<int>(asrPages.value);
+    }
+    if (maghribPages.present) {
+      map['maghrib_pages'] = Variable<int>(maghribPages.value);
+    }
+    if (ishaPages.present) {
+      map['isha_pages'] = Variable<int>(ishaPages.value);
+    }
+    if (otherPages.present) {
+      map['other_pages'] = Variable<int>(otherPages.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WirdDailyLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('fajrPages: $fajrPages, ')
+          ..write('dhuhrPages: $dhuhrPages, ')
+          ..write('asrPages: $asrPages, ')
+          ..write('maghribPages: $maghribPages, ')
+          ..write('ishaPages: $ishaPages, ')
+          ..write('otherPages: $otherPages')
           ..write(')'))
         .toString();
   }
@@ -2408,6 +2956,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UmrahProgressTable umrahProgress = $UmrahProgressTable(this);
   late final $DuasTable duas = $DuasTable(this);
   late final $WirdProgressTable wirdProgress = $WirdProgressTable(this);
+  late final $WirdDailyLogsTable wirdDailyLogs = $WirdDailyLogsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2419,6 +2968,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     umrahProgress,
     duas,
     wirdProgress,
+    wirdDailyLogs,
   ];
 }
 
@@ -3470,6 +4020,7 @@ typedef $$WirdProgressTableCreateCompanionBuilder =
       required String planType,
       required int planValue,
       Value<int> completedPages,
+      Value<int> lastReadPage,
       required DateTime lastUpdated,
       Value<bool> isCompleted,
     });
@@ -3479,6 +4030,7 @@ typedef $$WirdProgressTableUpdateCompanionBuilder =
       Value<String> planType,
       Value<int> planValue,
       Value<int> completedPages,
+      Value<int> lastReadPage,
       Value<DateTime> lastUpdated,
       Value<bool> isCompleted,
     });
@@ -3509,6 +4061,11 @@ class $$WirdProgressTableFilterComposer
 
   ColumnFilters<int> get completedPages => $composableBuilder(
     column: $table.completedPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastReadPage => $composableBuilder(
+    column: $table.lastReadPage,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3552,6 +4109,11 @@ class $$WirdProgressTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get lastReadPage => $composableBuilder(
+    column: $table.lastReadPage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastUpdated => $composableBuilder(
     column: $table.lastUpdated,
     builder: (column) => ColumnOrderings(column),
@@ -3583,6 +4145,11 @@ class $$WirdProgressTableAnnotationComposer
 
   GeneratedColumn<int> get completedPages => $composableBuilder(
     column: $table.completedPages,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastReadPage => $composableBuilder(
+    column: $table.lastReadPage,
     builder: (column) => column,
   );
 
@@ -3632,6 +4199,7 @@ class $$WirdProgressTableTableManager
                 Value<String> planType = const Value.absent(),
                 Value<int> planValue = const Value.absent(),
                 Value<int> completedPages = const Value.absent(),
+                Value<int> lastReadPage = const Value.absent(),
                 Value<DateTime> lastUpdated = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
               }) => WirdProgressCompanion(
@@ -3639,6 +4207,7 @@ class $$WirdProgressTableTableManager
                 planType: planType,
                 planValue: planValue,
                 completedPages: completedPages,
+                lastReadPage: lastReadPage,
                 lastUpdated: lastUpdated,
                 isCompleted: isCompleted,
               ),
@@ -3648,6 +4217,7 @@ class $$WirdProgressTableTableManager
                 required String planType,
                 required int planValue,
                 Value<int> completedPages = const Value.absent(),
+                Value<int> lastReadPage = const Value.absent(),
                 required DateTime lastUpdated,
                 Value<bool> isCompleted = const Value.absent(),
               }) => WirdProgressCompanion.insert(
@@ -3655,6 +4225,7 @@ class $$WirdProgressTableTableManager
                 planType: planType,
                 planValue: planValue,
                 completedPages: completedPages,
+                lastReadPage: lastReadPage,
                 lastUpdated: lastUpdated,
                 isCompleted: isCompleted,
               ),
@@ -3683,6 +4254,263 @@ typedef $$WirdProgressTableProcessedTableManager =
       WirdProgressData,
       PrefetchHooks Function()
     >;
+typedef $$WirdDailyLogsTableCreateCompanionBuilder =
+    WirdDailyLogsCompanion Function({
+      Value<int> id,
+      required DateTime date,
+      Value<int> fajrPages,
+      Value<int> dhuhrPages,
+      Value<int> asrPages,
+      Value<int> maghribPages,
+      Value<int> ishaPages,
+      Value<int> otherPages,
+    });
+typedef $$WirdDailyLogsTableUpdateCompanionBuilder =
+    WirdDailyLogsCompanion Function({
+      Value<int> id,
+      Value<DateTime> date,
+      Value<int> fajrPages,
+      Value<int> dhuhrPages,
+      Value<int> asrPages,
+      Value<int> maghribPages,
+      Value<int> ishaPages,
+      Value<int> otherPages,
+    });
+
+class $$WirdDailyLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $WirdDailyLogsTable> {
+  $$WirdDailyLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fajrPages => $composableBuilder(
+    column: $table.fajrPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dhuhrPages => $composableBuilder(
+    column: $table.dhuhrPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get asrPages => $composableBuilder(
+    column: $table.asrPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get maghribPages => $composableBuilder(
+    column: $table.maghribPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get ishaPages => $composableBuilder(
+    column: $table.ishaPages,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get otherPages => $composableBuilder(
+    column: $table.otherPages,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$WirdDailyLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $WirdDailyLogsTable> {
+  $$WirdDailyLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fajrPages => $composableBuilder(
+    column: $table.fajrPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get dhuhrPages => $composableBuilder(
+    column: $table.dhuhrPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get asrPages => $composableBuilder(
+    column: $table.asrPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get maghribPages => $composableBuilder(
+    column: $table.maghribPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get ishaPages => $composableBuilder(
+    column: $table.ishaPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get otherPages => $composableBuilder(
+    column: $table.otherPages,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$WirdDailyLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WirdDailyLogsTable> {
+  $$WirdDailyLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get fajrPages =>
+      $composableBuilder(column: $table.fajrPages, builder: (column) => column);
+
+  GeneratedColumn<int> get dhuhrPages => $composableBuilder(
+    column: $table.dhuhrPages,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get asrPages =>
+      $composableBuilder(column: $table.asrPages, builder: (column) => column);
+
+  GeneratedColumn<int> get maghribPages => $composableBuilder(
+    column: $table.maghribPages,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get ishaPages =>
+      $composableBuilder(column: $table.ishaPages, builder: (column) => column);
+
+  GeneratedColumn<int> get otherPages => $composableBuilder(
+    column: $table.otherPages,
+    builder: (column) => column,
+  );
+}
+
+class $$WirdDailyLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WirdDailyLogsTable,
+          WirdDailyLog,
+          $$WirdDailyLogsTableFilterComposer,
+          $$WirdDailyLogsTableOrderingComposer,
+          $$WirdDailyLogsTableAnnotationComposer,
+          $$WirdDailyLogsTableCreateCompanionBuilder,
+          $$WirdDailyLogsTableUpdateCompanionBuilder,
+          (
+            WirdDailyLog,
+            BaseReferences<_$AppDatabase, $WirdDailyLogsTable, WirdDailyLog>,
+          ),
+          WirdDailyLog,
+          PrefetchHooks Function()
+        > {
+  $$WirdDailyLogsTableTableManager(_$AppDatabase db, $WirdDailyLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WirdDailyLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$WirdDailyLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$WirdDailyLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<int> fajrPages = const Value.absent(),
+                Value<int> dhuhrPages = const Value.absent(),
+                Value<int> asrPages = const Value.absent(),
+                Value<int> maghribPages = const Value.absent(),
+                Value<int> ishaPages = const Value.absent(),
+                Value<int> otherPages = const Value.absent(),
+              }) => WirdDailyLogsCompanion(
+                id: id,
+                date: date,
+                fajrPages: fajrPages,
+                dhuhrPages: dhuhrPages,
+                asrPages: asrPages,
+                maghribPages: maghribPages,
+                ishaPages: ishaPages,
+                otherPages: otherPages,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime date,
+                Value<int> fajrPages = const Value.absent(),
+                Value<int> dhuhrPages = const Value.absent(),
+                Value<int> asrPages = const Value.absent(),
+                Value<int> maghribPages = const Value.absent(),
+                Value<int> ishaPages = const Value.absent(),
+                Value<int> otherPages = const Value.absent(),
+              }) => WirdDailyLogsCompanion.insert(
+                id: id,
+                date: date,
+                fajrPages: fajrPages,
+                dhuhrPages: dhuhrPages,
+                asrPages: asrPages,
+                maghribPages: maghribPages,
+                ishaPages: ishaPages,
+                otherPages: otherPages,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$WirdDailyLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WirdDailyLogsTable,
+      WirdDailyLog,
+      $$WirdDailyLogsTableFilterComposer,
+      $$WirdDailyLogsTableOrderingComposer,
+      $$WirdDailyLogsTableAnnotationComposer,
+      $$WirdDailyLogsTableCreateCompanionBuilder,
+      $$WirdDailyLogsTableUpdateCompanionBuilder,
+      (
+        WirdDailyLog,
+        BaseReferences<_$AppDatabase, $WirdDailyLogsTable, WirdDailyLog>,
+      ),
+      WirdDailyLog,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3698,4 +4526,6 @@ class $AppDatabaseManager {
   $$DuasTableTableManager get duas => $$DuasTableTableManager(_db, _db.duas);
   $$WirdProgressTableTableManager get wirdProgress =>
       $$WirdProgressTableTableManager(_db, _db.wirdProgress);
+  $$WirdDailyLogsTableTableManager get wirdDailyLogs =>
+      $$WirdDailyLogsTableTableManager(_db, _db.wirdDailyLogs);
 }

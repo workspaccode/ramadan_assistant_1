@@ -188,6 +188,39 @@ class NotificationService {
     );
   }
 
+  /// Schedule Wird reminder after prayer
+  static Future<void> scheduleWirdReminder({
+    required int id,
+    required String prayerName,
+    required DateTime reminderTime,
+    required int pages,
+  }) async {
+    final localizedPrayer = prayerName.toLowerCase().tr();
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'reminders',
+        title: 'Daily Wird Reminder'.tr(),
+        body: 'Do not forget to read your {} pages for {}'.tr(
+          args: ['$pages', localizedPrayer],
+        ),
+        category: NotificationCategory.Reminder,
+        wakeUpScreen: true,
+        payload: {'type': 'wird', 'prayer': prayerName},
+      ),
+      schedule: NotificationCalendar(
+        year: reminderTime.year,
+        month: reminderTime.month,
+        day: reminderTime.day,
+        hour: reminderTime.hour,
+        minute: reminderTime.minute,
+        second: 0,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
   /// Cancel a specific notification
   static Future<void> cancelNotification(int id) async {
     await AwesomeNotifications().cancel(id);
