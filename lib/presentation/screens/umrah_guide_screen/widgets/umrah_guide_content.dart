@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:ramadan_assistant/core/constants/umrah_duas.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
+import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_state.dart';
 import 'package:ramadan_assistant/presentation/widgets/dua_widget.dart';
+import 'package:vibration/vibration.dart';
 
 class UmrahGuideView extends StatefulWidget {
   const UmrahGuideView({super.key});
@@ -18,24 +24,234 @@ class UmrahGuideView extends StatefulWidget {
   State<UmrahGuideView> createState() => _UmrahGuideViewState();
 }
 
+enum _SaiZone { safa, marwa, none }
+
 class _UmrahGuideViewState extends State<UmrahGuideView> {
   late PageController _pageController;
+  late MapController _mapController;
   int _tawafCircuits = 0;
   int _saiLaps = 0;
   bool _isPrayedAtMaqam = false;
   bool _isDrunkZamzam = false;
   bool _hasJumpedToCurrentStep = false;
 
+  // Auto-tracking state
+  bool _isAutoTracking = false;
+  StreamSubscription<Position>? _locationSubscription;
+  _SaiZone _currentZone = _SaiZone.none;
+  LatLng? _currentLatLng;
+
+  // Safa & Marwa Coordinates
+  static const double _safaLat = 21.422200;
+  static const double _safaLon = 39.827250;
+  static const double _marwaLat = 21.425950;
+  static const double _marwaLon = 39.827650;
+  static const double _proximityThreshold = 35.0; // meters
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _mapController = MapController();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _locationSubscription?.cancel();
     super.dispose();
+  }
+
+  void _updateLocationSubscription() {
+    _locationSubscription?.cancel();
+    if (_isAutoTracking) {
+      // Use standard context.read if LocationService is provided via RepositoryProvider or Bloc
+      // Assuming it's in the widget tree or we can instantiate it
+      final locationService = LocationService();
+      _locationSubscription = locationService.getLocationStream().listen(
+        _processLocationUpdate,
+        onError: (e) {
+          setState(() => _isAutoTracking = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('error_prefix'.tr(args: [e.toString()]))),
+          );
+        },
+      );
+    }
+  }
+
+  void _processLocationUpdate(Position position) {
+    setState(() {
+      _currentLatLng = LatLng(position.latitude, position.longitude);
+    });
+
+    // Auto-center map
+    if (_isAutoTracking) {
+      _mapController.move(_currentLatLng!, 17.5);
+    }
+
+    final double distToSafa = Geolocator.distanceBetween(
+      position.latitude,
+      position.longitude,
+      _safaLat,
+      _safaLon,
+    );
+    final double distToMarwa = Geolocator.distanceBetween(
+      position.latitude,
+      position.longitude,
+      _marwaLat,
+      _marwaLon,
+    );
+
+    if (distToSafa < _proximityThreshold) {
+      if (_currentZone != _SaiZone.safa) {
+        _onZoneReached(_SaiZone.safa);
+      }
+    } else if (distToMarwa < _proximityThreshold) {
+      if (_currentZone != _SaiZone.marwa) {
+        _onZoneReached(_SaiZone.marwa);
+      }
+    } else {
+      _currentZone = _SaiZone.none;
+    }
+  }
+
+  void _onZoneReached(_SaiZone zone) {
+    setState(() {
+      _currentZone = zone;
+      bool lapIncremented = false;
+      // Sai Laps: 0->1 (Safa to Marwa), 1->2 (Marwa to Safa), etc.
+      if (zone == _SaiZone.marwa && _saiLaps % 2 == 0 && _saiLaps < 7) {
+        _saiLaps++;
+        lapIncremented = true;
+      } else if (zone == _SaiZone.safa && _saiLaps % 2 != 0 && _saiLaps < 7) {
+        _saiLaps++;
+        lapIncremented = true;
+      }
+
+      if (lapIncremented) {
+        _onLapCompleted();
+      }
+    });
+  }
+
+  void _onLapCompleted() async {
+    if (await Vibration.hasVibrator()) {
+      Vibration.vibrate(pattern: [0, 500, 200, 500]);
+    }
+  }
+
+  Widget _buildSaiMap() {
+    final theme = context.ramadanTheme;
+    final safa = LatLng(_safaLat, _safaLon);
+    final marwa = LatLng(_marwaLat, _marwaLon);
+
+    return Container(
+      height: 240,
+      margin: const EdgeInsets.only(bottom: 20),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.primary.withOpacity(0.1), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          initialCenter: safa,
+          initialZoom: 17.0,
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.all,
+          ),
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.ramadan_assistant.app',
+          ),
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: [safa, marwa],
+                color: theme.primary.withOpacity(0.6),
+                strokeWidth: 4,
+              ),
+            ],
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: safa,
+                width: 40,
+                height: 40,
+                child: Column(
+                  children: [
+                    Icon(Icons.location_on, color: theme.secondary, size: 24),
+                    Text(
+                      'safa'.tr(),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Marker(
+                point: marwa,
+                width: 40,
+                height: 40,
+                child: Column(
+                  children: [
+                    Icon(Icons.location_on, color: Colors.red, size: 24),
+                    Text(
+                      'marwa'.tr(),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_currentLatLng != null)
+                Marker(
+                  point: _currentLatLng!,
+                  width: 40,
+                  height: 40,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blue.withOpacity(0.5),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -84,7 +300,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           padding: EdgeInsets.fromLTRB(20, context.paddingTop + 10, 20, 20),
           decoration: BoxDecoration(
             color: theme.primary,
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(32),
+            ),
             boxShadow: [
               BoxShadow(
                 color: theme.primary.withOpacity(0.2),
@@ -98,11 +316,14 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.white,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
-                   Text(
+                  Text(
                     'umrah_title'.tr(),
                     style: const TextStyle(
                       fontSize: 18,
@@ -111,7 +332,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                    icon: const Icon(
+                      Icons.refresh_rounded,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
                       setState(() {
                         _tawafCircuits = 0;
@@ -152,7 +376,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                           child: LinearProgressIndicator(
                             value: progress,
                             backgroundColor: Colors.white.withOpacity(0.2),
-                            valueColor: AlwaysStoppedAnimation<Color>(theme.secondary),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.secondary,
+                            ),
                             minHeight: 8,
                           ),
                         ),
@@ -161,7 +387,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   ),
                   const SizedBox(width: 20),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
@@ -185,11 +414,20 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         Expanded(
           child: PageView.builder(
             controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(), // Force sequential navigation
+            physics:
+                const NeverScrollableScrollPhysics(), // Force sequential navigation
             itemCount: steps.length,
             itemBuilder: (context, index) {
-              final isNext = !steps[index].completed && (index == 0 || (index > 0 && steps[index-1].completed));
-              return _buildStepPage(context, steps[index], index, steps.length, isNext);
+              final isNext =
+                  !steps[index].completed &&
+                  (index == 0 || (index > 0 && steps[index - 1].completed));
+              return _buildStepPage(
+                context,
+                steps[index],
+                index,
+                steps.length,
+                isNext,
+              );
             },
           ),
         ),
@@ -356,7 +594,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               onPressed: () {
                 if (!step.completed) {
                   if (_canCompleteStep(step.step)) {
-                    context.read<UmrahGuideBloc>().add(CompleteUmrahStep(step.id));
+                    context.read<UmrahGuideBloc>().add(
+                      CompleteUmrahStep(step.id),
+                    );
                     if (index < totalSteps - 1) {
                       _pageController.nextPage(
                         duration: const Duration(milliseconds: 500),
@@ -376,21 +616,29 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: step.completed ? theme.secondary : theme.primary,
+                backgroundColor: step.completed
+                    ? theme.secondary
+                    : theme.primary,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: 4,
-                shadowColor: (step.completed ? theme.secondary : theme.primary).withOpacity(0.4),
+                shadowColor: (step.completed ? theme.secondary : theme.primary)
+                    .withOpacity(0.4),
               ),
               child: Text(
                 step.completed
-                    ? (index < totalSteps - 1 ? 'next_step'.tr() : 'completed'.tr())
+                    ? (index < totalSteps - 1
+                          ? 'next_step'.tr()
+                          : 'completed'.tr())
                     : (step.step == 'الطواف' && !_canCompleteStep(step.step)
-                        ? 'complete_tawaf_first'.tr()
-                        : 'complete_button'.tr()),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ? 'complete_tawaf_first'.tr()
+                          : 'complete_button'.tr()),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -519,13 +767,20 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       }
 
       if (step == 'السعي' && index == 0 && !completed) {
-        return _buildCircularCounter(
-          context,
-          label: point,
-          current: _saiLaps,
-          max: 7,
-          onChanged: (val) => setState(() => _saiLaps = val),
-          successText: 'sai_done'.tr(),
+        return Column(
+          children: [
+            _buildAutoTrackingSwitch(),
+            const SizedBox(height: 16),
+            if (_isAutoTracking) _buildSaiMap(),
+            _buildCircularCounter(
+              context,
+              label: point,
+              current: _saiLaps,
+              max: 7,
+              onChanged: (val) => setState(() => _saiLaps = val),
+              successText: 'sai_done'.tr(),
+            ),
+          ],
         );
       }
 
@@ -551,6 +806,65 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     });
   }
 
+  Widget _buildAutoTrackingSwitch() {
+    final theme = context.ramadanTheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: _isAutoTracking
+            ? theme.primary.withOpacity(0.08)
+            : theme.cardSurface.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _isAutoTracking
+              ? theme.primary.withOpacity(0.2)
+              : theme.textDim.withOpacity(0.1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            _isAutoTracking
+                ? Icons.location_on_rounded
+                : Icons.location_off_rounded,
+            color: _isAutoTracking ? theme.primary : theme.textDim,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'التتبع الآلي للسعي',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _isAutoTracking ? theme.primary : theme.textPrimary,
+                  ),
+                ),
+                Text(
+                  _isAutoTracking
+                      ? 'جاري تتبع موقعك بين الصفا والمروة'
+                      : 'فعل التتبع لحساب الأشواط تلقائياً',
+                  style: TextStyle(fontSize: 11, color: theme.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: _isAutoTracking,
+            activeColor: theme.primary,
+            onChanged: (val) {
+              setState(() {
+                _isAutoTracking = val;
+                _updateLocationSubscription();
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCircularCounter(
     BuildContext context, {
     required String label,
@@ -570,7 +884,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         color: theme.cardSurface.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDone ? theme.success.withOpacity(0.4) : theme.secondary.withOpacity(0.2),
+          color: isDone
+              ? theme.success.withOpacity(0.4)
+              : theme.secondary.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -675,9 +991,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         height: 44,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isEnabled ? color.withOpacity(0.1) : theme.textDim.withOpacity(0.08),
+          color: isEnabled
+              ? color.withOpacity(0.1)
+              : theme.textDim.withOpacity(0.08),
           border: Border.all(
-            color: isEnabled ? color.withOpacity(0.3) : theme.textDim.withOpacity(0.15),
+            color: isEnabled
+                ? color.withOpacity(0.3)
+                : theme.textDim.withOpacity(0.15),
           ),
         ),
         child: Icon(
@@ -706,10 +1026,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               style: TextStyle(fontSize: 14, color: theme.textPrimary),
             ),
           ),
-          Switch.adaptive(
-            value: value,
-            onChanged: (v) => onChanged(v),
-          ),
+          Switch.adaptive(value: value, onChanged: (v) => onChanged(v)),
         ],
       ),
     );
@@ -758,7 +1075,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
   String _getDuaArabic(String? step) {
     switch (step) {
       case 'الإحرام':
-        return 'لَبَّيْكَ اللَّهُمَّ عُمْرَةً. لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لاَ شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لاَ شَرِيكَ لَكَ.';
+        return 'لَبَّيْكَ اللَّهُمَّ عُمْرَةً. لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لاَ شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعِّمَةَ لَكَ وَالْمُلْكَ، لاَ شَرِيكَ لَكَ.';
       case 'الطواف':
         return 'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.';
       case 'السعي':
@@ -894,7 +1211,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           child: Container(
             decoration: BoxDecoration(
               color: theme.cardSurface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Column(
               children: [
@@ -925,13 +1244,18 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   indicatorColor: theme.primary,
                   indicatorWeight: 3,
                   indicatorSize: TabBarIndicatorSize.label,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
                   tabs: categories.map((cat) => Tab(text: cat)).toList(),
                 ),
                 Expanded(
                   child: TabBarView(
                     children: categories.map((cat) {
-                      final catDuas = duas.where((d) => d.category == cat).toList();
+                      final catDuas = duas
+                          .where((d) => d.category == cat)
+                          .toList();
                       return ListView.separated(
                         padding: const EdgeInsets.all(20),
                         itemCount: catDuas.length,
@@ -1015,7 +1339,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 ),
                 child: Text(
                   'close'.tr(),
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
@@ -1058,7 +1385,7 @@ class _RingPainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-     canvas.drawArc(
+    canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -1.5708, // -90 degrees in radians
       progress * 2 * 3.14159, // 360 degrees in radians

@@ -28,6 +28,15 @@ class LocationService {
     return await Geolocator.getCurrentPosition();
   }
 
+  Stream<Position> getLocationStream() {
+    return Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+      ),
+    );
+  }
+
   Future<Placemark?> getAddressFromCoordinates(Position position) async {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(

@@ -19,7 +19,10 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
   ) async {
     emit(UmrahGuideLoading());
     try {
-      final progress = await _database.select(_database.umrahProgress).get();
+      final query = _database.select(_database.umrahProgress)
+        ..orderBy([(t) => OrderingTerm.asc(t.id)]);
+
+      var progress = await query.get();
 
       if (progress.isEmpty) {
         final steps = [
@@ -29,23 +32,28 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
           'السعي',
           'التقصير أو الحلق والتحلل',
         ];
-        for (final step in steps) {
-          await _database
-              .into(_database.umrahProgress)
-              .insert(
-                UmrahProgressCompanion.insert(
-                  step: step,
-                  completed: const Value(false),
-                ),
-              );
-        }
-        final freshProgress = await _database
-            .select(_database.umrahProgress)
-            .get();
-        emit(UmrahGuideLoaded(freshProgress));
-      } else {
-        emit(UmrahGuideLoaded(progress));
+
+        await _database.transaction(() async {
+          // Re-check inside transaction to prevent race conditions
+          final check = await _database.select(_database.umrahProgress).get();
+          if (check.isEmpty) {
+            for (final step in steps) {
+              await _database
+                  .into(_database.umrahProgress)
+                  .insert(
+                    UmrahProgressCompanion.insert(
+                      step: step,
+                      completed: const Value(false),
+                    ),
+                  );
+            }
+          }
+        });
+
+        progress = await query.get();
       }
+
+      emit(UmrahGuideLoaded(progress));
     } catch (e) {
       emit(UmrahGuideError(e.toString()));
     }
