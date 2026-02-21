@@ -41,6 +41,37 @@ class WirdPlanActive extends WirdState {
   ];
 }
 
+class WirdHistoryLoaded extends WirdPlanActive {
+  final List<dynamic> historyLogs;
+  final int currentStreak;
+  final int totalPagesRead;
+  final double averagePagesPerDay;
+  final Map<DateTime, int> readingDays;
+
+  const WirdHistoryLoaded({
+    required super.plan,
+    required super.completedPages,
+    required super.lastReadPage,
+    required super.lastUpdated,
+    super.todayPrayerPages,
+    required this.historyLogs,
+    required this.currentStreak,
+    required this.totalPagesRead,
+    required this.averagePagesPerDay,
+    required this.readingDays,
+  });
+
+  @override
+  List<Object?> get props => [
+    ...super.props,
+    historyLogs,
+    currentStreak,
+    totalPagesRead,
+    averagePagesPerDay,
+    readingDays,
+  ];
+}
+
 class WirdError extends WirdState {
   final String message;
   const WirdError(this.message);

@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ramadan_assistant/core/constants/umrah_duas.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
@@ -19,18 +18,31 @@ class UmrahGuideView extends StatefulWidget {
   State<UmrahGuideView> createState() => _UmrahGuideViewState();
 }
 
-class _UmrahGuideViewState extends State<UmrahGuideView>
-    with TickerProviderStateMixin {
+class _UmrahGuideViewState extends State<UmrahGuideView> {
+  late PageController _pageController;
   int _tawafCircuits = 0;
   int _saiLaps = 0;
   bool _isPrayedAtMaqam = false;
   bool _isDrunkZamzam = false;
-  int _expandedIndex = -1;
+  bool _hasJumpedToCurrentStep = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.ramadanTheme;
     return Scaffold(
-      backgroundColor: context.backgroundColor,
+      backgroundColor: theme.background,
       body: BlocBuilder<UmrahGuideBloc, UmrahGuideState>(
         builder: (context, state) {
           if (state is UmrahGuideInitial || state is UmrahGuideLoading) {
@@ -49,391 +61,341 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
   }
 
   Widget _buildBody(BuildContext context, List<UmrahProgressData> steps) {
+    if (!_hasJumpedToCurrentStep) {
+      final firstIncomplete = steps.indexWhere((s) => !s.completed);
+      if (firstIncomplete != -1) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_pageController.hasClients) {
+            _pageController.jumpToPage(firstIncomplete);
+          }
+        });
+      }
+      _hasJumpedToCurrentStep = true;
+    }
+
+    final theme = context.ramadanTheme;
     final completedCount = steps.where((s) => s.completed).length;
     final progress = completedCount / steps.length;
 
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        // iOS-style Large Title AppBar
-        SliverAppBar(
-          expandedHeight: 160,
-          floating: false,
-          pinned: true,
-          stretch: true,
-          backgroundColor: context.isDark
-              ? const Color(0xFF1A1A2E)
-              : context.primaryColor,
-          flexibleSpace: FlexibleSpaceBar(
-            centerTitle: true,
-            titlePadding: const EdgeInsets.only(
-              bottom: 16,
-              left: 20,
-              right: 20,
-            ),
-            title: Text(
-              'umrah_title'.tr(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
+    return Column(
+      children: [
+        // 1. Wizard Header with Progress
+        Container(
+          padding: EdgeInsets.fromLTRB(20, context.paddingTop + 10, 20, 20),
+          decoration: BoxDecoration(
+            color: theme.primary,
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+            boxShadow: [
+              BoxShadow(
+                color: theme.primary.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            background: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: context.isDark
-                      ? [const Color(0xFF1A1A2E), const Color(0xFF16213E)]
-                      : [
-                          context.primaryColor,
-                          context.primaryColor.withValues(alpha: 0.8),
-                        ],
-                ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 50),
-                  child: Row(
-                    children: [
-                      // Progress Ring
-                      SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            SizedBox(
-                              width: 56,
-                              height: 56,
-                              child: CircularProgressIndicator(
-                                value: progress,
-                                strokeWidth: 4,
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.2,
-                                ),
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                                strokeCap: StrokeCap.round,
-                              ),
-                            ),
-                            Text(
-                              '$completedCount/${steps.length}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              completedCount == steps.length
-                                  ? 'تقبل الله عمرتك 🤲'
-                                  : 'تقدّم العمرة',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                backgroundColor: Colors.white.withValues(
-                                  alpha: 0.2,
-                                ),
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  context.secondaryColor,
-                                ),
-                                minHeight: 6,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            ],
           ),
-          actions: [
-            IconButton(
-              tooltip: 'refresh_tooltip'.tr(),
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-              onPressed: () {
-                setState(() {
-                  _tawafCircuits = 0;
-                  _saiLaps = 0;
-                  _isPrayedAtMaqam = false;
-                  _isDrunkZamzam = false;
-                  _expandedIndex = -1;
-                });
-                context.read<UmrahGuideBloc>().add(ResetUmrahProgress());
-              },
-            ),
-          ],
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                   IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                   Text(
+                    'umrah_title'.tr(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        _tawafCircuits = 0;
+                        _saiLaps = 0;
+                        _isPrayedAtMaqam = false;
+                        _isDrunkZamzam = false;
+                      });
+                      context.read<UmrahGuideBloc>().add(ResetUmrahProgress());
+                      _pageController.animateToPage(
+                        0,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          completedCount == steps.length
+                              ? 'تقبل الله عمرتك 🤲'
+                              : 'تقدّم العمرة',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: Colors.white.withOpacity(0.2),
+                            valueColor: AlwaysStoppedAnimation<Color>(theme.secondary),
+                            minHeight: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '$completedCount/${steps.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
 
-        // Steps Timeline
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 40),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              final step = steps[index];
-              final isNext =
-                  !step.completed && (index == 0 || steps[index - 1].completed);
-              final isExpanded = _expandedIndex == index;
-              final isLast = index == steps.length - 1;
-
-              return _buildStepCard(
-                context,
-                step: step,
-                index: index,
-                isNext: isNext,
-                isExpanded: isExpanded,
-                isLast: isLast,
-                totalSteps: steps.length,
-              );
-            }, childCount: steps.length),
+        // 2. Steps PageView
+        Expanded(
+          child: PageView.builder(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(), // Force sequential navigation
+            itemCount: steps.length,
+            itemBuilder: (context, index) {
+              final isNext = !steps[index].completed && (index == 0 || (index > 0 && steps[index-1].completed));
+              return _buildStepPage(context, steps[index], index, steps.length, isNext);
+            },
           ),
         ),
       ],
     );
   }
 
-  Widget _buildStepCard(
-    BuildContext context, {
-    required UmrahProgressData step,
-    required int index,
-    required bool isNext,
-    required bool isExpanded,
-    required bool isLast,
-    required int totalSteps,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 0),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timeline indicator
-            SizedBox(
-              width: 48,
-              child: Column(
-                children: [
-                  // Step circle
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeOutCubic,
-                    width: isNext ? 44 : 38,
-                    height: isNext ? 44 : 38,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: step.completed
-                          ? const LinearGradient(
-                              colors: [Color(0xFF34C759), Color(0xFF30D158)],
-                            )
-                          : isNext
-                          ? LinearGradient(
-                              colors: [
-                                context.secondaryColor,
-                                context.secondaryColor.withValues(alpha: 0.8),
-                              ],
-                            )
-                          : null,
-                      color: step.completed || isNext
-                          ? null
-                          : context.isDark
-                          ? Colors.grey[800]
-                          : Colors.grey[200],
-                      boxShadow: isNext
-                          ? [
-                              BoxShadow(
-                                color: context.secondaryColor.withValues(
-                                  alpha: 0.4,
-                                ),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Center(
-                      child: step.completed
-                          ? const Icon(
-                              Icons.check_rounded,
-                              color: Colors.white,
-                              size: 20,
-                            )
-                          : (index + 1 >= 3 && index + 1 <= 5)
-                          ? SvgPicture.asset(
-                              'assets/${index + 1}.svg',
-                              width: 20,
-                              height: 20,
-                              colorFilter: ColorFilter.mode(
-                                isNext ? Colors.white : Colors.grey,
-                                BlendMode.srcIn,
-                              ),
-                            )
-                          : Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                color: isNext
-                                    ? Colors.white
-                                    : context.textTheme.bodyMedium?.color
-                                          ?.withValues(alpha: 0.6),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            ),
-                    ),
-                  ),
-                  // Connecting line
-                  if (!isLast)
-                    Expanded(
-                      child: Container(
-                        width: 2.5,
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(2),
-                          // gradient: LinearGradient(
-                          //   begin: Alignment.topCenter,
-                          //   end: Alignment.bottomCenter,
-                          //   colors: step.completed
-                          //       ? [
-                          //           const Color(0xFF34C759),
-                          //           const Color(
-                          //             0xFF34C759,
-                          //           ).withValues(alpha: 0.3),
-                          //         ]
-                          //       : [
-                          //           Colors.grey.withValues(alpha: 0.3),
-                          //           Colors.grey.withValues(alpha: 0.1),
-                          //         ],
-                          // ),
+  Widget _buildStepPage(
+    BuildContext context,
+    UmrahProgressData step,
+    int index,
+    int totalSteps,
+    bool isNext,
+  ) {
+    final theme = context.ramadanTheme;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Step Icon & Title
+          Center(
+            child: Container(
+              width: 80,
+              height: 80,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.primary.withOpacity(0.1),
+              ),
+              child: Center(
+                child: (index + 1 >= 3 && index + 1 <= 5)
+                    ? SvgPicture.asset(
+                        'assets/${index + 1}.svg',
+                        width: 40,
+                        height: 40,
+                        colorFilter: ColorFilter.mode(
+                          theme.primary,
+                          BlendMode.srcIn,
+                        ),
+                      )
+                    : Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: theme.primary,
                         ),
                       ),
-                    ),
-                ],
               ),
             ),
-            const SizedBox(width: 12),
+          ),
 
-            // Card content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _expandedIndex = isExpanded ? -1 : index;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    curve: Curves.easeOutCubic,
-                    decoration: BoxDecoration(
-                      color: context.isDark
-                          ? Colors.white.withValues(alpha: isNext ? 0.08 : 0.04)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      // border: Border.all(
-                      //   color: isNext
-                      //       ? context.secondaryColor.withValues(alpha: 0.5)
-                      //       : step.completed
-                      //       ? const Color(0xFF34C759).withValues(alpha: 0.3)
-                      //       : Colors.grey.withValues(alpha: 0.15),
-                      //   width: isNext ? 1.5 : 1,
-                      // ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isNext
-                              ? context.secondaryColor.withValues(alpha: 0.1)
-                              : Colors.black.withValues(
-                                  alpha: context.isDark ? 0.2 : 0.04,
-                                ),
-                          blurRadius: isNext ? 16 : 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Header
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      step.step.tr(),
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w700,
-                                        color: step.completed
-                                            ? Colors.grey
-                                            : context.onSurfaceColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    _buildStatusChip(context, step, isNext),
-                                  ],
-                                ),
-                              ),
-                              AnimatedRotation(
-                                duration: const Duration(milliseconds: 300),
-                                turns: isExpanded ? 0.5 : 0,
-                                child: Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  color: isNext
-                                      ? context.secondaryColor
-                                      : Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Expandable Content
-                        AnimatedCrossFade(
-                          firstChild: const SizedBox.shrink(),
-                          secondChild: _buildExpandedContent(
-                            context,
-                            step,
-                            index,
-                            isNext,
-                            totalSteps,
-                          ),
-                          crossFadeState: isExpanded
-                              ? CrossFadeState.showSecond
-                              : CrossFadeState.showFirst,
-                          duration: const Duration(milliseconds: 350),
-                          sizeCurve: Curves.easeOutCubic,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+          Center(
+            child: Text(
+              step.step.tr(),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: theme.textPrimary,
               ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(child: _buildStatusChip(context, step, isNext)),
+
+          const SizedBox(height: 32),
+
+          Text(
+            'guidelines_title'.tr(),
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+              color: theme.primary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ..._buildGuidelineWidgets(context, step.step, step.completed),
+
+          const SizedBox(height: 24),
+
+          // Action Buttons
+          if (step.step == 'الإحرام') ...[
+            _buildActionButton(
+              context,
+              icon: Icons.info_outline_rounded,
+              label: 'ishtirat_dua'.tr(),
+              color: theme.primary,
+              onPressed: () => _showIshtiratBottomSheet(context),
+            ),
+            const SizedBox(height: 12),
+            _buildActionButton(
+              context,
+              icon: Icons.menu_book_rounded,
+              label: 'أدعية الطواف والسعي الثابتة',
+              color: theme.secondary,
+              onPressed: () => _showDuasBottomSheet(context, step.step),
             ),
           ],
-        ),
+
+          if (step.step == 'الطواف' || step.step == 'السعي') ...[
+            const SizedBox(height: 12),
+            _buildActionButton(
+              context,
+              icon: Icons.menu_book_rounded,
+              label: step.step == 'السعي'
+                  ? 'أدعية السعي الشاملة'
+                  : 'أدعية الطواف الشاملة',
+              color: theme.secondary,
+              onPressed: () => _showDuasBottomSheet(context, step.step),
+            ),
+          ],
+
+          const SizedBox(height: 24),
+
+          // Duas Sections
+          if (step.step == 'السعي') ...[
+            _buildSectionTitle(context, 'dhikr_standing'.tr()),
+            const SizedBox(height: 12),
+            DuaWidget(
+              arabicText:
+                  'اللهُ أَكْبَر، اللهُ أَكْبَر، اللهُ أَكْبَر. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ، أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ الْأَعْزَابَ وَحْدَهُ.',
+              translation: 'dhikr_safa_marwa_standing_trans'.tr(),
+            ),
+            const SizedBox(height: 20),
+            _buildSectionTitle(context, 'dhikr_walking'.tr()),
+            const SizedBox(height: 12),
+            DuaWidget(
+              arabicText:
+                  'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.',
+              translation: 'dua_rabbana_atina_trans'.tr(),
+            ),
+            const SizedBox(height: 12),
+            DuaWidget(
+              arabicText:
+                  'رَبِّ اغْفِرْ وَارْحَمْ، وَتَجَاوَزْ عَمَّا تَعْلَمُ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ.',
+              translation: 'dua_rabbi_ighfir_trans'.tr(),
+            ),
+            const SizedBox(height: 12),
+            DuaWidget(
+              arabicText:
+                  'اللهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى.',
+              translation: 'dua_allahumma_inni_asaluka_trans'.tr(),
+            ),
+          ] else if (_getDuaArabic(step.step).isNotEmpty) ...[
+            _buildSectionTitle(context, 'adhkar_title'.tr()),
+            const SizedBox(height: 12),
+            DuaWidget(
+              arabicText: _getDuaArabic(step.step),
+              translation: _getDuaTranslation(step.step),
+            ),
+          ],
+
+          const SizedBox(height: 40),
+
+          // Primary Action Button (Complete / Next)
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: () {
+                if (!step.completed) {
+                  if (_canCompleteStep(step.step)) {
+                    context.read<UmrahGuideBloc>().add(CompleteUmrahStep(step.id));
+                    if (index < totalSteps - 1) {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    } else {
+                      _showCompletionBottomSheet(context);
+                    }
+                  }
+                } else {
+                  if (index < totalSteps - 1) {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: step.completed ? theme.secondary : theme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                shadowColor: (step.completed ? theme.secondary : theme.primary).withOpacity(0.4),
+              ),
+              child: Text(
+                step.completed
+                    ? (index < totalSteps - 1 ? 'next_step'.tr() : 'completed'.tr())
+                    : (step.step == 'الطواف' && !_canCompleteStep(step.step)
+                        ? 'complete_tawaf_first'.tr()
+                        : 'complete_button'.tr()),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
@@ -443,20 +405,21 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     UmrahProgressData step,
     bool isNext,
   ) {
-    Color chipColor;
+    final theme = context.ramadanTheme;
+    Color? chipColor;
     String label;
     IconData icon;
 
     if (step.completed) {
-      chipColor = context.onBackgroundColor;
+      chipColor = theme.secondary;
       label = 'completed'.tr();
       icon = Icons.check_circle_rounded;
     } else if (isNext) {
-      chipColor = context.secondaryColor;
+      chipColor = theme.secondary;
       label = 'current_stage'.tr();
       icon = Icons.play_circle_rounded;
     } else {
-      chipColor = context.isDark ? Colors.grey[400]! : Colors.grey[600]!;
+      chipColor = theme.textDim;
       label = 'waiting'.tr();
       icon = Icons.schedule_rounded;
     }
@@ -464,7 +427,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: chipColor.withValues(alpha: 0.12),
+        color: chipColor.withOpacity(0.12),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -485,122 +448,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     );
   }
 
-  Widget _buildExpandedContent(
-    BuildContext context,
-    UmrahProgressData step,
-    int index,
-    bool isNext,
-    int totalSteps,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Divider(color: Colors.grey.withValues(alpha: 0.2), height: 1),
-          const SizedBox(height: 16),
-
-          // Guidelines section
-          Text(
-            'guidelines_title'.tr(),
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 15,
-              color: context.primaryColor,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ..._buildGuidelineWidgets(context, step.step, step.completed),
-
-          const SizedBox(height: 16),
-
-          // Special buttons per step
-          if (step.step == 'الإحرام') ...[
-            _buildActionButton(
-              context,
-              icon: Icons.info_outline_rounded,
-              label: 'ishtirat_dua'.tr(),
-              color: context.primaryColor,
-              onPressed: () => _showIshtiratBottomSheet(context),
-            ),
-            const SizedBox(height: 8),
-            _buildActionButton(
-              context,
-              icon: Icons.menu_book_rounded,
-              label: 'أدعية الطواف والسعي الثابتة',
-              color: context.secondaryColor,
-              onPressed: () => _showDuasBottomSheet(context, step.step),
-            ),
-          ],
-
-          if (step.step == 'الطواف' || step.step == 'السعي') ...[
-            _buildActionButton(
-              context,
-              icon: Icons.menu_book_rounded,
-              label: step.step == 'السعي'
-                  ? 'أدعية السعي الشاملة'
-                  : 'أدعية الطواف الشاملة',
-              color: context.secondaryColor,
-              onPressed: () => _showDuasBottomSheet(context, step.step),
-            ),
-          ],
-
-          const SizedBox(height: 16),
-
-          // Duas inline
-          if (step.step == 'السعي') ...[
-            _buildSectionTitle('dhikr_standing'.tr()),
-            const SizedBox(height: 10),
-            DuaWidget(
-              arabicText:
-                  'اللهُ أَكْبَر، اللهُ أَكْبَر، اللهُ أَكْبَر. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ، أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ الْأَعْزَابَ وَحْدَهُ.',
-              translation: 'dhikr_safa_marwa_standing_trans'.tr(),
-            ),
-            const SizedBox(height: 12),
-            _buildSectionTitle('dhikr_walking'.tr()),
-            const SizedBox(height: 10),
-            DuaWidget(
-              arabicText:
-                  'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.',
-              translation: 'dua_rabbana_atina_trans'.tr(),
-            ),
-            const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'رَبِّ اغْفِرْ وَارْحَمْ، وَتَجَاوَزْ عَمَّا تَعْلَمُ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ.',
-              translation: 'dua_rabbi_ighfir_trans'.tr(),
-            ),
-            const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'اللهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى.',
-              translation: 'dua_allahumma_inni_asaluka_trans'.tr(),
-            ),
-          ] else if (_getDuaArabic(step.step).isNotEmpty) ...[
-            _buildSectionTitle('adhkar_title'.tr()),
-            const SizedBox(height: 10),
-            DuaWidget(
-              arabicText: _getDuaArabic(step.step),
-              translation: _getDuaTranslation(step.step),
-            ),
-          ],
-
-          const SizedBox(height: 20),
-
-          // Completion button
-          if (!step.completed && isNext)
-            _buildCompletionButton(context, step, index, totalSteps),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final theme = context.ramadanTheme;
     return Text(
       title,
       style: context.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w700,
-        color: context.primaryColor,
+        color: theme.primary,
       ),
     );
   }
@@ -620,7 +474,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
         label: Text(label, style: context.textTheme.labelLarge),
         style: TextButton.styleFrom(
           foregroundColor: color,
-          backgroundColor: color.withValues(alpha: 0.08),
+          backgroundColor: color.withOpacity(0.08),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -630,61 +484,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     );
   }
 
-  Widget _buildCompletionButton(
-    BuildContext context,
-    UmrahProgressData step,
-    int index,
-    int totalSteps,
-  ) {
-    final canComplete = _canCompleteStep(step.step);
-
-    return SizedBox(
-      width: double.infinity,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        child: ElevatedButton(
-          onPressed: canComplete
-              ? () {
-                  context.read<UmrahGuideBloc>().add(
-                    CompleteUmrahStep(step.id),
-                  );
-                  if (index == totalSteps - 1) {
-                    _showCompletionBottomSheet(context);
-                  }
-                }
-              : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: canComplete
-                ? context.primaryColor
-                : Colors.grey.withValues(alpha: 0.3),
-            foregroundColor: Colors.white,
-            disabledBackgroundColor: Colors.grey.withValues(alpha: 0.15),
-            disabledForegroundColor: Colors.grey,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            elevation: canComplete ? 2 : 0,
-            shadowColor: context.primaryColor.withValues(alpha: 0.3),
-          ),
-          child: Text(
-            step.step == 'الطواف' && !canComplete
-                ? 'complete_tawaf_first'.tr()
-                : 'complete_button'.tr(),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ─── Guideline Widgets ──────────────────────
-
   List<Widget> _buildGuidelineWidgets(
     BuildContext context,
-    String step,
+    String? step,
     bool completed,
   ) {
+    if (step == null) return [];
+    final theme = context.ramadanTheme;
     final points = _getGuidelinePoints(step);
 
     return List.generate(points.length, (index) {
@@ -734,7 +540,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
               height: 6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: context.primaryColor.withValues(alpha: 0.6),
+                color: theme.primary.withOpacity(0.6),
               ),
             ),
             const SizedBox(width: 10),
@@ -745,8 +551,6 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     });
   }
 
-  // ─── Circular Counter (iOS Activity Ring style) ──────
-
   Widget _buildCircularCounter(
     BuildContext context, {
     required String label,
@@ -755,6 +559,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     required Function(int) onChanged,
     required String successText,
   }) {
+    final theme = context.ramadanTheme;
     final progress = current / max;
     final isDone = current == max;
 
@@ -762,25 +567,22 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: context.isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : context.secondaryColor.withValues(alpha: 0.06),
+        color: theme.cardSurface.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDone
-              ? const Color(0xFF34C759).withValues(alpha: 0.4)
-              : context.secondaryColor.withValues(alpha: 0.2),
+          color: isDone ? theme.success.withOpacity(0.4) : theme.secondary.withOpacity(0.2),
         ),
       ),
       child: Column(
         children: [
           Text(
             label,
-            style: context.textTheme.titleMedium,
+            style: context.textTheme.titleMedium?.copyWith(
+              color: theme.textPrimary,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          // Ring progress
           SizedBox(
             width: 100,
             height: 100,
@@ -793,12 +595,8 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                   child: CustomPaint(
                     painter: _RingPainter(
                       progress: progress,
-                      ringColor: isDone
-                          ? const Color(0xFF34C759)
-                          : context.secondaryColor,
-                      trackColor: context.isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : const Color(0xFFE5E5EA),
+                      ringColor: isDone ? theme.success : theme.secondary,
+                      trackColor: theme.textDim.withOpacity(0.1),
                     ),
                   ),
                 ),
@@ -808,32 +606,34 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                     Text(
                       '$current',
                       style: context.textTheme.headlineLarge?.copyWith(
-                        color: isDone
-                            ? const Color(0xFF34C759)
-                            : context.secondaryColor,
+                        color: isDone ? theme.success : theme.secondary,
                       ),
                     ),
-                    Text('/ $max', style: context.textTheme.bodySmall),
+                    Text(
+                      '/ $max',
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: theme.textDim,
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          // +/- buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildCircularButton(
                 icon: Icons.remove_rounded,
                 onPressed: current > 0 ? () => onChanged(current - 1) : null,
-                color: context.primaryColor,
+                color: theme.primary,
               ),
               const SizedBox(width: 32),
               _buildCircularButton(
                 icon: Icons.add_rounded,
                 onPressed: current < max ? () => onChanged(current + 1) : null,
-                color: context.primaryColor,
+                color: theme.primary,
               ),
             ],
           ),
@@ -842,13 +642,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xFF34C759).withValues(alpha: 0.12),
+                color: theme.success.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 successText,
-                style: const TextStyle(
-                  color: Color(0xFF34C759),
+                style: TextStyle(
+                  color: theme.success,
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
@@ -865,6 +665,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     required VoidCallback? onPressed,
     required Color color,
   }) {
+    final theme = context.ramadanTheme;
     final isEnabled = onPressed != null;
     return GestureDetector(
       onTap: onPressed,
@@ -874,34 +675,27 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
         height: 44,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isEnabled
-              ? color.withValues(alpha: 0.1)
-              : Colors.grey.withValues(alpha: 0.08),
+          color: isEnabled ? color.withOpacity(0.1) : theme.textDim.withOpacity(0.08),
           border: Border.all(
-            color: isEnabled
-                ? color.withValues(alpha: 0.3)
-                : Colors.grey.withValues(alpha: 0.15),
+            color: isEnabled ? color.withOpacity(0.3) : theme.textDim.withOpacity(0.15),
           ),
         ),
         child: Icon(
           icon,
-          color: isEnabled ? color : Colors.grey.withValues(alpha: 0.4),
+          color: isEnabled ? color : theme.textDim.withOpacity(0.4),
           size: 22,
         ),
       ),
     );
   }
 
-  // ─── iOS Toggle Switch ──────
-
   Widget _buildIOSToggle(String text, bool value, Function(bool) onChanged) {
+    final theme = context.ramadanTheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: value
-            ? const Color(0xFF34C759).withValues(alpha: 0.08)
-            : Colors.transparent,
+        color: value ? theme.success.withOpacity(0.08) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -909,25 +703,19 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                fontSize: 14,
-                color: context.isDark ? Colors.grey[300] : Colors.grey[800],
-              ),
+              style: TextStyle(fontSize: 14, color: theme.textPrimary),
             ),
           ),
           Switch.adaptive(
             value: value,
             onChanged: (v) => onChanged(v),
-            activeColor: const Color(0xFF34C759),
           ),
         ],
       ),
     );
   }
 
-  // ─── Data Methods ──────
-
-  bool _canCompleteStep(String step) {
+  bool _canCompleteStep(String? step) {
     if (step == 'الطواف') {
       return _tawafCircuits == 7 && _isPrayedAtMaqam && _isDrunkZamzam;
     }
@@ -967,12 +755,12 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     return List.generate(count, (i) => '${keyPrefix}_${i + 1}'.tr());
   }
 
-  String _getDuaArabic(String step) {
+  String _getDuaArabic(String? step) {
     switch (step) {
       case 'الإحرام':
         return 'لَبَّيْكَ اللَّهُمَّ عُمْرَةً. لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لاَ شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لاَ شَرِيكَ لَكَ.';
       case 'الطواف':
-        return 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.';
+        return 'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.';
       case 'السعي':
         return 'إِنَّ الصَّفَا وَالْمَرْوَةَ مِنْ شَعَائِرِ اللَّهِ فَمَنْ حَجَّ الْبَيْتَ أَوِ اعْتَمَرَ فَلَا جُنَاحَ عَلَيْهِ أَنْ يَطَّوَّفَ بِهِمَا وَمَنْ تَطَوَّعَ خَيْرًا فَإِنَّ اللَّهَ شَاكِرٌ عَلِيمٌ.';
       default:
@@ -980,7 +768,8 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     }
   }
 
-  String _getDuaTranslation(String step) {
+  String _getDuaTranslation(String? step) {
+    if (step == null) return '';
     String key = '';
     switch (step) {
       case 'الإحرام':
@@ -997,9 +786,8 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     return key.tr();
   }
 
-  // ─── Bottom Sheets (iOS style) ──────
-
   void _showIshtiratBottomSheet(BuildContext context) {
+    final theme = context.ramadanTheme;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1010,18 +798,17 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
         maxChildSize: 0.9,
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: theme.cardSurface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [
-              // Handle
               Container(
                 margin: const EdgeInsets.only(top: 12),
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: theme.textDim.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -1032,7 +819,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: context.onSurfaceColor,
+                    color: theme.textPrimary,
                   ),
                 ),
               ),
@@ -1046,9 +833,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.6,
-                        color: context.isDark
-                            ? Colors.grey[300]
-                            : Colors.grey[700],
+                        color: theme.textSecondary,
                       ),
                       textAlign: TextAlign.justify,
                     ),
@@ -1078,7 +863,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     );
   }
 
-  void _showDuasBottomSheet(BuildContext context, String step) {
+  void _showDuasBottomSheet(BuildContext context, String? step) {
+    if (step == null) return;
+    final theme = context.ramadanTheme;
     final duas = step == 'الإحرام' ? UmrahDuas.tawafSaiDuas : UmrahDuas.saiDuas;
     final categories = duas.map((e) => e.category).toSet().toList();
 
@@ -1106,20 +893,17 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
           length: categories.length,
           child: Container(
             decoration: BoxDecoration(
-              color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
+              color: theme.cardSurface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: Column(
               children: [
-                // Handle
                 Container(
                   margin: const EdgeInsets.only(top: 12),
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 0.3),
+                    color: theme.textDim.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1130,30 +914,24 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: context.onSurfaceColor,
+                      color: theme.textPrimary,
                     ),
                   ),
                 ),
-                // Tab bar
                 TabBar(
                   isScrollable: true,
-                  labelColor: context.primaryColor,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: context.primaryColor,
+                  labelColor: theme.primary,
+                  unselectedLabelColor: theme.textDim,
+                  indicatorColor: theme.primary,
                   indicatorWeight: 3,
                   indicatorSize: TabBarIndicatorSize.label,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                  ),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                   tabs: categories.map((cat) => Tab(text: cat)).toList(),
                 ),
                 Expanded(
                   child: TabBarView(
                     children: categories.map((cat) {
-                      final catDuas = duas
-                          .where((d) => d.category == cat)
-                          .toList();
+                      final catDuas = duas.where((d) => d.category == cat).toList();
                       return ListView.separated(
                         padding: const EdgeInsets.all(20),
                         itemCount: catDuas.length,
@@ -1179,13 +957,14 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
   }
 
   void _showCompletionBottomSheet(BuildContext context) {
+    final theme = context.ramadanTheme;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: context.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: theme.cardSurface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -1196,7 +975,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.3),
+                color: theme.textDim.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1207,7 +986,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: context.onSurfaceColor,
+                color: theme.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1216,7 +995,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
               'accept_message'.tr(),
               style: TextStyle(
                 fontSize: 15,
-                color: Colors.grey[600],
+                color: theme.textSecondary,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -1227,7 +1006,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: context.primaryColor,
+                  backgroundColor: theme.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1236,10 +1015,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
                 ),
                 child: Text(
                   'close'.tr(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                 ),
               ),
             ),
@@ -1250,8 +1026,6 @@ class _UmrahGuideViewState extends State<UmrahGuideView>
     );
   }
 }
-
-// ─── Ring Painter (Activity Ring) ──────
 
 class _RingPainter extends CustomPainter {
   final double progress;
@@ -1270,7 +1044,6 @@ class _RingPainter extends CustomPainter {
     final radius = size.width / 2 - 6;
     const strokeWidth = 10.0;
 
-    // Track
     final trackPaint = Paint()
       ..color = trackColor
       ..style = PaintingStyle.stroke
@@ -1279,27 +1052,25 @@ class _RingPainter extends CustomPainter {
 
     canvas.drawCircle(center, radius, trackPaint);
 
-    // Progress arc
-    final progressPaint = Paint()
-      ..shader = SweepGradient(
-        startAngle: -pi / 2,
-        endAngle: 3 * pi / 2,
-        colors: [ringColor.withValues(alpha: 0.6), ringColor],
-      ).createShader(Rect.fromCircle(center: center, radius: radius))
+    final ringPaint = Paint()
+      ..color = ringColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawArc(
+     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -pi / 2,
-      2 * pi * progress,
+      -1.5708, // -90 degrees in radians
+      progress * 2 * 3.14159, // 360 degrees in radians
       false,
-      progressPaint,
+      ringPaint,
     );
   }
 
   @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.ringColor != ringColor;
+  bool shouldRepaint(covariant _RingPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.ringColor != ringColor ||
+        oldDelegate.trackColor != trackColor;
+  }
 }

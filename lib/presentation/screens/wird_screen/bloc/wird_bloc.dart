@@ -16,6 +16,7 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     on<UpdatePrayerProgress>(_onUpdatePrayerProgress);
     on<SetLastReadPage>(_onSetLastReadPage);
     on<ResetWirdProgress>(_onResetProgress);
+    on<LoadWirdHistory>(_onLoadHistory);
   }
 
   Future<void> _onLoadProgress(
@@ -270,6 +271,87 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
       await prefs.remove('wird_plan_value');
 
       emit(WirdNoPlan());
+    } catch (e) {
+      emit(WirdError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoadHistory(
+    LoadWirdHistory event,
+    Emitter<WirdState> emit,
+  ) async {
+    // Preserve current plan data
+    WirdPlanActive? currentPlanState;
+    if (state is WirdPlanActive) {
+      currentPlanState = state as WirdPlanActive;
+    }
+
+    // Do NOT emit WirdLoading() to avoid resetting TabController in UI
+
+    try {
+      final logs =
+          await (_database.select(_database.wirdDailyLogs)..orderBy([
+                (t) =>
+                    OrderingTerm(expression: t.date, mode: OrderingMode.desc),
+              ]))
+              .get();
+
+      int totalPages = 0;
+      int streak = 0;
+      DateTime? lastDate;
+
+      final readingDays = <DateTime, int>{};
+
+      for (var log in logs) {
+        final totalDaily =
+            log.fajrPages +
+            log.dhuhrPages +
+            log.asrPages +
+            log.maghribPages +
+            log.ishaPages +
+            log.otherPages;
+
+        if (totalDaily > 0) {
+          totalPages += totalDaily;
+          readingDays[log.date] = totalDaily;
+
+          // Streak Logic (simplified)
+          if (lastDate == null) {
+            streak = 1;
+            lastDate = log.date;
+          } else {
+            final difference = lastDate.difference(log.date).inDays;
+            if (difference == 1) {
+              streak++;
+              lastDate = log.date;
+            } else if (difference > 1) {
+              // Streak broken
+            }
+          }
+        }
+      }
+
+      double avg = logs.isNotEmpty ? totalPages / logs.length : 0;
+
+      if (currentPlanState != null) {
+        emit(
+          WirdHistoryLoaded(
+            plan: currentPlanState.plan,
+            completedPages: currentPlanState.completedPages,
+            lastReadPage: currentPlanState.lastReadPage,
+            lastUpdated: currentPlanState.lastUpdated,
+            todayPrayerPages: currentPlanState.todayPrayerPages,
+            historyLogs: logs,
+            currentStreak: streak,
+            totalPagesRead: totalPages,
+            averagePagesPerDay: avg,
+            readingDays: readingDays,
+          ),
+        );
+      } else {
+        // Fallback: If we somehow don't have plan state, try to load it or just load progress again
+        add(LoadWirdProgress());
+      }
     } catch (e) {
       emit(WirdError(e.toString()));
     }

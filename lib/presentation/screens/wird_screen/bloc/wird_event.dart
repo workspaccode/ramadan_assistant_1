@@ -10,6 +10,8 @@ abstract class WirdEvent extends Equatable {
 
 class LoadWirdProgress extends WirdEvent {}
 
+class LoadWirdHistory extends WirdEvent {}
+
 class SetWirdPlan extends WirdEvent {
   final WirdPlan plan;
   const SetWirdPlan(this.plan);

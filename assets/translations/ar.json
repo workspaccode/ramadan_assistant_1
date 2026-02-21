@@ -305,5 +305,11 @@
     "prayer_times": "مواقيت الصلاة",
     "location": "الموقع",
     "appearance": "المظهر",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "wird_tracker": "المتابع",
+    "wird_history": "السجل",
+    "wird_streak": "أيام متتالية",
+    "wird_total_pages": "إجمالي الصفحات",
+    "wird_weekly_activity": "النشاط الأسبوعي",
+    "wird_error_loading_history": "تعذر تحميل السجل."
 }

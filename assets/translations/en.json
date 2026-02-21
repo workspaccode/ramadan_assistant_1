@@ -300,5 +300,11 @@
     "isha_dua_1": "Allahumma qini 'adhabaka yawma tab'athu 'ibadaka",
     "isha_dua_2": "Allahumma bismika amutu wa ahya",
     "duha_dua_1": "Allahumma innaka 'afuwwun kareemun tuhibbu al-'afwa fa'fu 'anni",
-    "duha_dua_2": "Allahumma salli 'ala Muhammad wa 'ala ali Muhammad"
+    "duha_dua_2": "Allahumma salli 'ala Muhammad wa 'ala ali Muhammad",
+    "wird_tracker": "Tracker",
+    "wird_history": "History",
+    "wird_streak": "Current Streak",
+    "wird_total_pages": "Total Pages",
+    "wird_weekly_activity": "Weekly Activity",
+    "wird_error_loading_history": "Could not load history."
 }

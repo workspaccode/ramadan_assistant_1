@@ -58,4 +58,8 @@ extension ContextExtensions on BuildContext {
     String routeName, {
     Object? arguments,
   }) => Navigator.of(this).pushNamed(routeName, arguments: arguments);
+
+  // Safe Area
+  double get paddingTop => MediaQuery.paddingOf(this).top;
+  double get paddingBottom => MediaQuery.paddingOf(this).bottom;
 }

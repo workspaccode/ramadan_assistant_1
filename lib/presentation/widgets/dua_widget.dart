@@ -87,7 +87,7 @@ class _DuaContent extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Amiri',
                   height: 1.8,
-                  color: isDark ? secondaryColor : primaryColor,
+                  //  color: isDark ? secondaryColor : primaryColor,
                 ),
               ),
               if (transliteration != null) ...[
@@ -133,7 +133,7 @@ class _DuaContent extends StatelessWidget {
                   _buildIconButton(
                     context,
                     icon: Icons.volume_up_rounded,
-                    color: Colors.transparent,
+                    color: null,
                     onPressed: () =>
                         context.read<TTSBloc>().add(SpeakText(arabicText)),
                   ),
@@ -141,7 +141,7 @@ class _DuaContent extends StatelessWidget {
                   _buildIconButton(
                     context,
                     icon: Icons.stop_rounded,
-                    color: Colors.grey,
+                    color: null,
                     onPressed: () =>
                         context.read<TTSBloc>().add(StopSpeaking()),
                   ),
@@ -157,7 +157,7 @@ class _DuaContent extends StatelessWidget {
   Widget _buildIconButton(
     BuildContext context, {
     required IconData icon,
-    required Color color,
+    required Color? color,
     required VoidCallback onPressed,
   }) {
     return Material(
@@ -168,7 +168,7 @@ class _DuaContent extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 20),
