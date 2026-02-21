@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:drift/drift.dart' hide Column;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get_it/get_it.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
+import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
@@ -19,8 +23,12 @@ void callbackDispatcher() {
     final prayerService = PrayerService();
 
     try {
-      final position = await locationService.getCurrentLocation();
-      await _scheduleDayPrayerNotifications(position, prayerService);
+      if (task == "prayerUpdateTask" || task == Workmanager.iOSBackgroundTask) {
+        final position = await locationService.getCurrentLocation();
+        await _scheduleDayPrayerNotifications(position, prayerService);
+      } else if (task == "tasbihReportTask") {
+        await _sendIntelligentTasbihReport();
+      }
       return true;
     } catch (e) {
       print("Background Task Error: $e");
@@ -110,6 +118,14 @@ Future<void> _scheduleDayPrayerNotifications(
 
     // Schedule Adhan notification if time hasn't passed
     if (prayerTime.isAfter(now)) {
+      // 1. Prayer Nearing Reminder (10 mins before)
+      await NotificationService.schedulePrayerNearing(
+        id: prayerId,
+        prayerName: prayerName,
+        prayerTime: prayerTime,
+      );
+
+      // 2. Adhan Notification
       await NotificationService.schedulePrayerNotification(
         id: prayerId,
         prayerName: prayerName,
@@ -121,7 +137,7 @@ Future<void> _scheduleDayPrayerNotifications(
         },
       );
 
-      // Schedule Iqama reminder
+      // 3. Iqama Reminder
       final iqamaTime = prayerTime.add(Duration(minutes: delay));
       await NotificationService.scheduleIqamaReminder(
         id: prayerId + 100, // Offset ID for Iqama
@@ -129,41 +145,102 @@ Future<void> _scheduleDayPrayerNotifications(
         iqamaTime: iqamaTime,
       );
 
-      // Schedule Wird Reminder (if plan is pagesPerPrayer)
-      // We check shared prefs for active plan
+      // 4. Wird Reminder (if plan is pagesPerPrayer)
       final wirdPlanType = prefs.getString('wird_plan_type');
       final wirdPlanValue = prefs.getInt('wird_plan_value');
 
-      if (wirdPlanType == 'pagesPerPrayer' && wirdPlanValue != null) {
-        // Schedule 20 mins after prayer (or 30, user didn't specify exact time, but "remind him *of* the prayer"
-        // usually means "don't forget what you have to do *at* this prayer")
-        // Since this is a "read *after* prayer" plan, a reminder 20-30m after prayer (or 10m after iqama) makes sense.
-        // Let's do 20 mins after prayer time.
+      if ((wirdPlanType == 'pagesPerPrayer' || wirdPlanType == 'khatma') &&
+          wirdPlanValue != null) {
+        // For khatma (1/month), we aim for ~4 pages per prayer (total 21)
+        final pagesToRead = wirdPlanType == 'khatma' ? 4 : wirdPlanValue;
+
         final reminderTime = prayerTime.add(const Duration(minutes: 20));
         await NotificationService.scheduleWirdReminder(
           id: prayerId + 200, // Offset ID for Wird
           prayerName: prayerName,
           reminderTime: reminderTime,
-          pages: wirdPlanValue,
+          pages: pagesToRead,
         );
       }
     }
   }
 
-  // Daily Summary Check (Post-Isha)
-  final ishaTime =
-      prayers.firstWhere((p) => p['name'] == 'Isha')['time'] as DateTime;
+  // Daily Islamic Tip (e.g., at 10 AM)
+  final tipTime = DateTime(now.year, now.month, now.day, 10, 0);
+  if (tipTime.isAfter(now)) {
+    await NotificationService.scheduleIslamicTip(
+      id: 500,
+      tipTitle: 'Islamic Pearl of the Day'.tr(),
+      tipBody: 'Today is a gift from Allah. Make the most of it with Dhikr.'
+          .tr(),
+      scheduleTime: tipTime,
+    );
+  }
+
+  // Daily Summary & Tasbih Report (Post-Isha)
+  final ishaEntry = prayers.firstWhere((p) => p['name'] == 'Isha');
+  final ishaTime = ishaEntry['time'] as DateTime;
   if (ishaTime.isAfter(now)) {
     final summaryTime = ishaTime.add(const Duration(hours: 1));
-    // Generic reminder to check progress if not done
-    // We can't easily check DB here without opening it, so we'll just schedule a generic "Daily Review"
-    // notification that deep links to Wird screen
-    await NotificationService.scheduleWirdReminder(
-      id: 300,
-      prayerName: 'Daily Review',
-      reminderTime: summaryTime,
-      pages: 0, // 0 indicates summary/review
+    final delay = summaryTime.difference(now);
+
+    // Register a one-off task for the intelligent report
+    Workmanager().registerOneOffTask(
+      "daily-tasbih-report",
+      "tasbihReportTask",
+      initialDelay: delay,
+      constraints: Constraints(networkType: NetworkType.connected),
     );
+  }
+}
+
+Future<void> _sendIntelligentTasbihReport() async {
+  final db = GetIt.instance<AppDatabase>();
+  final now = DateTime.now();
+  final todayStart = DateTime(now.year, now.month, now.day);
+
+  try {
+    // Query completed sessions for today
+    final sessions =
+        await (db.select(db.tasbihSessions)..where(
+              (t) =>
+                  t.createdAt.isBiggerOrEqualValue(todayStart) &
+                  t.completedAt.isNotNull(),
+            ))
+            .get();
+
+    final totalDhikr = sessions.length;
+    final totalCount = sessions.fold<int>(0, (sum, s) => sum + s.count);
+
+    String title;
+    String message;
+
+    if (totalDhikr >= 5 || totalCount >= 150) {
+      // Tier 1: Advice (Positive)
+      title = 'ما شاء الله! يوم عامر بالذكر'.tr();
+      message = 'لقد أتممت {} جلسة تسبيح اليوم. هنيئاً لك هذا القرب من الله.'
+          .tr(args: [totalDhikr.toString()]);
+    } else if (totalDhikr > 0) {
+      // Tier 2: Guidance (Neutral)
+      title = 'خطوات مباركة في طريق الذكر'.tr();
+      message =
+          'بداية طيبة اليوم بـ {} جلسات. ما رأيك بزيادة الورد غداً لزيادة الطمأنينة؟'
+              .tr(args: [totalDhikr.toString()]);
+    } else {
+      // Tier 3: Admonishment (Gentle)
+      title = 'رسالة محب.. لا تنسَ ذكر الله'.tr();
+      message =
+          'مر اليوم دون تسجيل جلسات تسبيح. الذكر حياة القلوب، ابدأ الآن ولو بالقليل.'
+              .tr();
+    }
+
+    await NotificationService.showImmediateTasbihReport(
+      id: 600,
+      title: title,
+      message: message,
+    );
+  } finally {
+    await db.close();
   }
 }
 

@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
+import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:vibration/vibration.dart';
 
 abstract class TasbihState extends Equatable {
@@ -72,6 +74,8 @@ class ChangeTarget extends TasbihEvent {
 }
 
 class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
+  final AppDatabase _database;
+
   static const List<String> defaultDhikrs = [
     'SubhanAllah',
     'Alhamdulillah',
@@ -80,7 +84,7 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
     'Astaghfirullah',
   ];
 
-  TasbihBloc()
+  TasbihBloc(this._database)
     : super(
         const TasbihCounting(count: 0, target: 33, currentDhikr: 'SubhanAllah'),
       ) {
@@ -90,7 +94,28 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
     on<ChangeTarget>(_onChangeTarget);
   }
 
-  void _onIncrementCounter(IncrementCounter event, Emitter<TasbihState> emit) {
+  Future<void> _saveSession() async {
+    if (state.count > 0) {
+      await _database
+          .into(_database.tasbihSessions)
+          .insert(
+            TasbihSessionsCompanion.insert(
+              dhikrName: state.currentDhikr,
+              count: state.count,
+              targetCount: state.target,
+              createdAt: DateTime.now(),
+              completedAt: Value(
+                state is TasbihCompleted ? DateTime.now() : null,
+              ),
+            ),
+          );
+    }
+  }
+
+  Future<void> _onIncrementCounter(
+    IncrementCounter event,
+    Emitter<TasbihState> emit,
+  ) async {
     final currentState = state;
     final newCount = currentState.count + 1;
 
@@ -109,6 +134,7 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
           currentDhikr: currentState.currentDhikr,
         ),
       );
+      await _saveSession();
     } else {
       if (currentState is TasbihCounting) {
         emit(currentState.copyWith(count: newCount));
@@ -124,7 +150,11 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
     }
   }
 
-  void _onResetCounter(ResetCounter event, Emitter<TasbihState> emit) {
+  Future<void> _onResetCounter(
+    ResetCounter event,
+    Emitter<TasbihState> emit,
+  ) async {
+    await _saveSession();
     emit(
       TasbihCounting(
         count: 0,
@@ -134,7 +164,11 @@ class TasbihBloc extends Bloc<TasbihEvent, TasbihState> {
     );
   }
 
-  void _onChangeDhikr(ChangeDhikr event, Emitter<TasbihState> emit) {
+  Future<void> _onChangeDhikr(
+    ChangeDhikr event,
+    Emitter<TasbihState> emit,
+  ) async {
+    await _saveSession();
     emit(
       TasbihCounting(
         count: 0,

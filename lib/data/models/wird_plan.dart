@@ -16,6 +16,7 @@ class WirdPlan extends Equatable {
     switch (type) {
       case WirdType.khatma:
         // Total pages / 30 days * number of khatmas
+        // For 1 khatma/month: 604 / 30 = 20.13 -> 21 pages/day
         return (604 * value / 30).ceil();
       case WirdType.pagesPerPrayer:
         // pages * 5 prayers
@@ -23,6 +24,19 @@ class WirdPlan extends Equatable {
       case WirdType.juzPerDay:
         // 1 Juz is ~20 pages
         return value * 20;
+    }
+  }
+
+  int get pagesPerPrayerTarget {
+    switch (type) {
+      case WirdType.khatma:
+        // 21 pages / 5 prayers = 4.2 -> 4 pages primarily
+        return (dailyTargetPages / 5).floor();
+      case WirdType.pagesPerPrayer:
+        return value;
+      case WirdType.juzPerDay:
+        // 20 pages / 5 = 4 pages
+        return (dailyTargetPages / 5).floor();
     }
   }
 

@@ -76,7 +76,6 @@ class MyApp extends StatelessWidget {
         RepositoryProvider.value(value: sl<AppDatabase>()),
         RepositoryProvider.value(value: sl<LocationService>()),
         RepositoryProvider.value(value: sl<PrayerService>()),
-
       ],
       child: MultiBlocProvider(
         providers: [
@@ -88,14 +87,11 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ThemeBloc()..add(LoadTheme())),
           BlocProvider(
             create: (context) => LanguageBloc()..add(LoadLanguage()),
-
           ),
           BlocProvider(
             create: (context) => WirdBloc(sl())..add(LoadWirdProgress()),
           ),
-          BlocProvider(
-            create: (context) => TasbihBloc()
-          ),
+          BlocProvider(create: (context) => TasbihBloc(sl<AppDatabase>())),
         ],
         child: MultiBlocListener(
           listeners: [

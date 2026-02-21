@@ -41,6 +41,20 @@ class NotificationService {
           enableLights: true,
           enableVibration: true,
         ),
+        NotificationChannel(
+          channelKey: 'islamic_tips',
+          channelName: 'Islamic Facts & Tips',
+          channelDescription: 'Daily educational Islamic facts',
+          defaultColor: AppTheme.primaryColor,
+          importance: NotificationImportance.Default,
+        ),
+        NotificationChannel(
+          channelKey: 'daily_reports',
+          channelName: 'Daily Progress Reports',
+          channelDescription: 'Summary of your daily worship performance',
+          importance: NotificationImportance.High,
+          defaultColor: AppTheme.secondaryColor,
+        ),
       ],
       debug: true,
     );
@@ -116,9 +130,16 @@ class NotificationService {
         category: NotificationCategory.Alarm,
         criticalAlert: true,
         wakeUpScreen: true,
-        fullScreenIntent: true,
+        // Removed fullScreenIntent to make it less intrusive by default
         payload: payload ?? {'prayer': prayerName, 'type': 'adhan'},
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'OPEN_PRAYER_MODE',
+          label: 'وضع الصلاة (Interactive)'.tr(),
+          actionType: ActionType.Default,
+        ),
+      ],
       schedule: NotificationCalendar(
         year: prayerTime.year,
         month: prayerTime.month,
@@ -216,6 +237,111 @@ class NotificationService {
         minute: reminderTime.minute,
         second: 0,
         preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  static Future<void> schedulePrayerNearing({
+    required int id,
+    required String prayerName,
+    required DateTime prayerTime,
+  }) async {
+    final localizedPrayer = prayerName.toLowerCase().tr();
+    final nearingTime = prayerTime.subtract(const Duration(minutes: 10));
+
+    if (nearingTime.isBefore(DateTime.now())) return;
+
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id + 500, // Offset for nearing
+        channelKey: 'prayer_times',
+        title: 'اقتراب وقت الصلاة'.tr(),
+        body: 'بقي 10 دقائق على صلاة {}'.tr(args: [localizedPrayer]),
+        category: NotificationCategory.Reminder,
+        payload: {'type': 'nearing', 'prayer': prayerName},
+      ),
+      schedule: NotificationCalendar(
+        year: nearingTime.year,
+        month: nearingTime.month,
+        day: nearingTime.day,
+        hour: nearingTime.hour,
+        minute: nearingTime.minute,
+        second: 0,
+        preciseAlarm: true,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  /// Schedule a daily Islamic tip
+  static Future<void> scheduleIslamicTip({
+    required int id,
+    required String tipTitle,
+    required String tipBody,
+    required DateTime scheduleTime,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'islamic_tips',
+        title: tipTitle,
+        body: tipBody,
+        category: NotificationCategory.Status,
+        payload: {'type': 'tip'},
+      ),
+      schedule: NotificationCalendar(
+        year: scheduleTime.year,
+        month: scheduleTime.month,
+        day: scheduleTime.day,
+        hour: scheduleTime.hour,
+        minute: scheduleTime.minute,
+        second: 0,
+        allowWhileIdle: true,
+      ),
+    );
+  }
+
+  /// Schedule a daily tasbih report (Advice/Admonishment/Guidance)
+  static Future<void> showImmediateTasbihReport({
+    required int id,
+    required String title,
+    required String message,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'daily_reports',
+        title: title,
+        body: message,
+        category: NotificationCategory.Status,
+        payload: {'type': 'tasbih_report'},
+      ),
+    );
+  }
+
+  static Future<void> scheduleTasbihReport({
+    required int id,
+    required String title,
+    required String message,
+    required DateTime scheduleTime,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'daily_reports',
+        title: title,
+        body: message,
+        category: NotificationCategory.Status,
+        payload: {'type': 'tasbih_report'},
+      ),
+      schedule: NotificationCalendar(
+        year: scheduleTime.year,
+        month: scheduleTime.month,
+        day: scheduleTime.day,
+        hour: scheduleTime.hour,
+        minute: scheduleTime.minute,
+        second: 0,
         allowWhileIdle: true,
       ),
     );

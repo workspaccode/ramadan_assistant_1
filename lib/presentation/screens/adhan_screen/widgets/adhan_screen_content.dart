@@ -95,6 +95,10 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
   }
 
   Widget _buildContent(BuildContext context, AdhanScreenState state) {
+    if (state is AdhanScreenDhikr) {
+      return _buildDhikrView(context, state);
+    }
+
     final prayerName = state is AdhanScreenPlaying
         ? state.prayerName
         : (state is AdhanScreenCompleted ? state.prayerName : '');
@@ -170,27 +174,203 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
               ? _buildIqamaReminder(context)
               : _buildIqamaCountdown(context, state.iqamaCountdown),
 
-        const Spacer(),
-
-        // Stop Adhan button
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: ElevatedButton.icon(
-            onPressed: () {
-              context.read<AdhanScreenBloc>().add(StopAdhan());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.secondaryColor,
-              foregroundColor: context.primaryColor,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+        if (state is AdhanScreenCompleted)
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              'تقبل الله منا ومنكم صالح الأعمال'.tr(),
+              style: TextStyle(
+                color: context.secondaryColor,
+                fontSize: 20,
+                fontFamily: 'Amiri',
               ),
             ),
-            icon: const Icon(Icons.volume_off),
-            label: Text(
-              'stop_adhan'.tr(),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+
+        const Spacer(),
+
+        // Action Buttons
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            children: [
+              if (state is AdhanScreenPlaying)
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<AdhanScreenBloc>().add(StopAdhan());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.secondaryColor,
+                    foregroundColor: context.primaryColor,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  icon: const Icon(Icons.volume_off),
+                  label: Text(
+                    'stop_adhan'.tr(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              if (state is AdhanScreenPlaying && state.showIqamaReminder) ...[
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<AdhanScreenBloc>().add(StartDhikr());
+                    HapticFeedback.mediumImpact();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 56),
+                    side: BorderSide(color: context.secondaryColor, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  icon: const Icon(Icons.auto_awesome),
+                  label: Text(
+                    'start_dhikr'.tr(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+              if (state is AdhanScreenCompleted)
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<AdhanScreenBloc>().add(StartDhikr());
+                    HapticFeedback.mediumImpact();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.secondaryColor,
+                    foregroundColor: context.primaryColor,
+                    minimumSize: const Size(double.infinity, 56),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  icon: const Icon(Icons.auto_awesome),
+                  label: Text(
+                    'بدء أذكار الصلاة'.tr(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDhikrView(BuildContext context, AdhanScreenDhikr state) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  context.read<AdhanScreenBloc>().add(StopAdhan());
+                  Navigator.pop(context);
+                },
+              ),
+              Text(
+                'أذكار الصلاة'.tr(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 48), // Spacer
+            ],
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            context.read<AdhanScreenBloc>().add(IncrementDhikr());
+            HapticFeedback.lightImpact();
+          },
+          child: Column(
+            children: [
+              Text(
+                state.dhikrText,
+                style: TextStyle(
+                  color: context.secondaryColor,
+                  fontSize: 60,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Amiri',
+                ),
+              ),
+              const SizedBox(height: 40),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: CircularProgressIndicator(
+                      value: state.count / state.target,
+                      strokeWidth: 12,
+                      backgroundColor: Colors.white.withOpacity(0.1),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: context.secondaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${state.count}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '${'target'.tr()}: ${state.target}',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.7),
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.all(40),
+          child: Text(
+            'اضغط في أي مكان للتسبيح'.tr(),
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: 16,
+              fontStyle: FontStyle.italic,
             ),
           ),
         ),

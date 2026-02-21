@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -146,111 +147,285 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     final safa = LatLng(_safaLat, _safaLon);
     final marwa = LatLng(_marwaLat, _marwaLon);
 
+    // Determine target based on current lap (0-indexed _saiLaps)
+    // Lap 0, 2, 4, 6 -> Going to Marwa
+    // Lap 1, 3, 5 -> Going to Safa
+    final isGoingToMarwa = _saiLaps % 2 == 0;
+    final targetLatLng = isGoingToMarwa ? marwa : safa;
+    final startLatLng = isGoingToMarwa ? safa : marwa;
+
     return Container(
-      height: 240,
+      height: 280,
       margin: const EdgeInsets.only(bottom: 20),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: theme.primary.withOpacity(0.1), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: FlutterMap(
-        mapController: _mapController,
-        options: MapOptions(
-          initialCenter: safa,
-          initialZoom: 17.0,
-          interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.all,
-          ),
-        ),
+      child: Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.ramadan_assistant.app',
-          ),
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: [safa, marwa],
-                color: theme.primary.withOpacity(0.6),
-                strokeWidth: 4,
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: safa,
+              initialZoom: 17.5,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
               ),
-            ],
-          ),
-          MarkerLayer(
-            markers: [
-              Marker(
-                point: safa,
-                width: 40,
-                height: 40,
-                child: Column(
-                  children: [
-                    Icon(Icons.location_on, color: theme.secondary, size: 24),
-                    Text(
-                      'safa'.tr(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.ramadan_assistant.app',
+                tileBuilder: (context, tileWidget, tile) {
+                  return ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      theme.primary.withOpacity(0.05),
+                      BlendMode.srcATop,
                     ),
-                  ],
-                ),
+                    child: tileWidget,
+                  );
+                },
               ),
-              Marker(
-                point: marwa,
-                width: 40,
-                height: 40,
-                child: Column(
-                  children: [
-                    Icon(Icons.location_on, color: Colors.red, size: 24),
-                    Text(
-                      'marwa'.tr(),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              PolylineLayer(
+                polylines: [
+                  // Full Path (Background)
+                  Polyline(
+                    points: [safa, marwa],
+                    color: Colors.grey.withOpacity(0.3),
+                    strokeWidth: 6,
+                    strokeCap: StrokeCap.round,
+                  ),
+                  // Active Leg (Navigation Style)
+                  Polyline(
+                    points: [startLatLng, targetLatLng],
+                    color: Colors.blue.shade600,
+                    strokeWidth: 8,
+                    strokeCap: StrokeCap.round,
+                  ),
+                ],
               ),
-              if (_currentLatLng != null)
-                Marker(
-                  point: _currentLatLng!,
-                  width: 40,
-                  height: 40,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.5),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
+              MarkerLayer(
+                markers: [
+                  // Safa Premium Marker
+                  Marker(
+                    point: safa,
+                    width: 60,
+                    height: 60,
+                    child: _buildLocationMarker(
+                      label: 'safa'.tr(),
+                      icon: Icons.place_rounded,
+                      color: theme.secondary,
+                      isTarget: !isGoingToMarwa,
                     ),
                   ),
-                ),
+                  // Marwa Premium Marker
+                  Marker(
+                    point: marwa,
+                    width: 60,
+                    height: 60,
+                    child: _buildLocationMarker(
+                      label: 'marwa'.tr(),
+                      icon: Icons.place_rounded,
+                      color: Colors.redAccent,
+                      isTarget: isGoingToMarwa,
+                    ),
+                  ),
+                  // Directional Arrow (Pulse on path)
+                  if (_currentLatLng != null)
+                    Marker(
+                      point: _getMidPoint(_currentLatLng!, targetLatLng),
+                      width: 30,
+                      height: 30,
+                      child: Transform.rotate(
+                        angle: _getBearing(_currentLatLng!, targetLatLng),
+                        child: Icon(
+                          Icons.keyboard_arrow_up_rounded,
+                          color: Colors.white,
+                          size: 24,
+                          shadows: [
+                            Shadow(color: Colors.blue.shade900, blurRadius: 4),
+                          ],
+                        ),
+                      ),
+                    ),
+                  // User Real-time Marker
+                  if (_currentLatLng != null)
+                    Marker(
+                      point: _currentLatLng!,
+                      width: 45,
+                      height: 45,
+                      child: _buildUserMarker(),
+                    ),
+                ],
+              ),
             ],
+          ),
+          // Directional HUD
+          Positioned(
+            top: 12,
+            left: 12,
+            right: 12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.navigation_rounded,
+                      color: Colors.blue.shade600,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          isGoingToMarwa
+                              ? 'متوجه إلى المروة'
+                              : 'متوجه إلى الصفا',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'الشوط ${_saiLaps + 1} من 7',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLocationMarker({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required bool isTarget,
+  }) {
+    return Column(
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isTarget ? Colors.blue : color,
+              width: isTarget ? 3 : 2,
+            ),
+            boxShadow: isTarget
+                ? [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.4),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserMarker() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.2),
+        shape: BoxShape.circle,
+      ),
+      padding: const EdgeInsets.all(6),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.blue.shade600,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.withOpacity(0.5),
+              blurRadius: 12,
+              spreadRadius: 4,
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.person_pin_circle_rounded,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+    );
+  }
+
+  double _getBearing(LatLng start, LatLng end) {
+    final lat1 = start.latitude * (math.pi / 180.0);
+    final lon1 = start.longitude * (math.pi / 180.0);
+    final lat2 = end.latitude * (math.pi / 180.0);
+    final lon2 = end.longitude * (math.pi / 180.0);
+
+    final dLon = lon2 - lon1;
+    final y = math.sin(dLon) * math.cos(lat2);
+    final x =
+        math.cos(lat1) * math.sin(lat2) -
+        math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+    return math.atan2(y, x);
+  }
+
+  LatLng _getMidPoint(LatLng p1, LatLng p2) {
+    return LatLng(
+      (p1.latitude + p2.latitude) / 2,
+      (p1.longitude + p2.longitude) / 2,
     );
   }
 

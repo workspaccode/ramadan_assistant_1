@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
-import 'package:ramadan_assistant/data/models/wird_plan.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
@@ -246,9 +245,7 @@ class WirdTrackerView extends StatelessWidget {
         final prayer = prayers[index];
         final id = prayer['id'] as String;
         final pagesRead = state.todayPrayerPages[id] ?? 0;
-        final target = state.plan.type == WirdType.pagesPerPrayer
-            ? state.plan.value
-            : 0;
+        final target = state.plan.pagesPerPrayerTarget;
 
         return _buildPrayerLogCard(context, theme, prayer, pagesRead, target);
       },
@@ -389,10 +386,8 @@ class WirdTrackerView extends StatelessWidget {
       currentValue = state.todayPrayerPages[prayerId]!;
     }
 
-    // Default target if 0 pages read so far
-    final target = state.plan.type == WirdType.pagesPerPrayer
-        ? state.plan.value
-        : 0;
+    // Default target
+    final target = state.plan.pagesPerPrayerTarget;
     int selectedValue = currentValue > 0
         ? currentValue
         : (target > 0 ? target : 1);
