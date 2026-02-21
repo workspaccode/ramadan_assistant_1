@@ -35,38 +35,50 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
   Widget build(BuildContext context) {
     final theme = context.ramadanTheme;
 
-    return BlocBuilder<WirdBloc, WirdState>(
-      builder: (context, state) {
-        if (state is WirdLoading) {
-          return const Center(child: CircularProgressIndicator());
+    return BlocListener<WirdBloc, WirdState>(
+      listener: (context, state) {
+        if (state is WirdPlanActive) {
+          if (!isSameDay(_selectedDay, state.activeDate)) {
+            setState(() {
+              _selectedDay = state.activeDate;
+              _focusedDay = state.activeDate;
+            });
+          }
         }
+      },
+      child: BlocBuilder<WirdBloc, WirdState>(
+        builder: (context, state) {
+          if (state is WirdLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (state is WirdHistoryLoaded) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSummaryCards(context, theme, state),
-                const SizedBox(height: 24),
-                _buildCalendar(context, theme, state),
-                const SizedBox(height: 24),
-                _buildDayDetails(context, theme, state),
-                const SizedBox(height: 24),
-                _buildChartSection(context, theme, state),
-                const SizedBox(height: 24),
-              ],
+          if (state is WirdHistoryLoaded) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSummaryCards(context, theme, state),
+                  const SizedBox(height: 24),
+                  _buildCalendar(context, theme, state),
+                  const SizedBox(height: 24),
+                  _buildDayDetails(context, theme, state),
+                  const SizedBox(height: 24),
+                  _buildChartSection(context, theme, state),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          }
+
+          return Center(
+            child: Text(
+              'wird_error_loading_history'.tr(),
+              style: TextStyle(color: theme.error),
             ),
           );
-        }
-
-        return Center(
-          child: Text(
-            'wird_error_loading_history'.tr(),
-            style: TextStyle(color: theme.error),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -197,6 +209,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
             _selectedDay = selectedDay;
             _focusedDay = focusedDay;
           });
+          context.read<WirdBloc>().add(ChangeSelectedDate(selectedDay));
         },
         calendarStyle: CalendarStyle(
           todayDecoration: BoxDecoration(

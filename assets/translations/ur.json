@@ -8,6 +8,8 @@
     "custom": "مخصوص",
     "custom_interval": "مخصوص وقفہ",
     "save": "محفوظ کریں",
+    "today": "آج",
+    "change": "تبدیل کریں",
     "minutes": "منٹ",
     "tab_prayers": "نمازیں",
     "tab_tasbih": "تسبیح",
@@ -86,8 +88,8 @@
     "interval": "وقفہ",
     "repeat": "دہرائیں",
     "select_dhikr_prompt": "ذکر منتخب کریں:",
-    "daily": "روزانہ",
-    "special": "خصوصی",
+    "daily": "یومی",
+    "special": "خاص",
     "settings_title": "ترتیبات",
     "method": "حساب کا طریقہ",
     "madhab": "مذہب",
@@ -316,5 +318,6 @@
     "wird_select_date": "تاریخ منتخب کریں",
     "wird_details_for": "{} کی تفصیلات",
     "wird_no_data_day": "اس دن کا کوئی ڈیٹا موجود نہیں ہے۔",
-    "wird_avg_per_day": "روزانہ اوسط صفحات"
+    "wird_avg_per_day": "روزانہ اوسط صفحات",
+    "wird_selected_day": "منتخب دن"
 }

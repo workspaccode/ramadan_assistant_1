@@ -21,6 +21,8 @@ class WirdTrackerView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildDateSelector(context, theme),
+          const SizedBox(height: 24),
           _buildProgressCard(context, theme),
           const SizedBox(height: 24),
           _buildCurrentReadingCard(context, theme),
@@ -40,7 +42,7 @@ class WirdTrackerView extends StatelessWidget {
             child: Column(
               children: [
                 ElevatedButton.icon(
-                  onPressed: () => _pickDateAndLog(context),
+                  onPressed: () => _pickDate(context),
                   icon: const Icon(Icons.history_edu),
                   label: Text('wird_log_past_day'.tr()),
                   style: ElevatedButton.styleFrom(
@@ -73,6 +75,60 @@ class WirdTrackerView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateSelector(BuildContext context, RamadanThemeExtension theme) {
+    final isToday = isSameDay(state.activeDate, DateTime.now());
+    final formattedDate = DateFormat.yMMMd().format(state.activeDate);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: theme.cardSurface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.borderColor, width: 0.5),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.calendar_today, color: theme.primary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isToday ? 'today'.tr() : 'wird_selected_day'.tr(),
+                  style: TextStyle(
+                    color: theme.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: theme.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () => _pickDate(context),
+            child: Text('change'.tr()),
+          ),
         ],
       ),
     );
@@ -270,7 +326,7 @@ class WirdTrackerView extends StatelessWidget {
       itemBuilder: (context, index) {
         final prayer = prayers[index];
         final id = prayer['id'] as String;
-        final pagesRead = state.todayPrayerPages[id] ?? 0;
+        final pagesRead = state.selectedDayPrayerPages[id] ?? 0;
         final target = state.plan.pagesPerPrayerTarget;
 
         return _buildPrayerLogCard(context, theme, prayer, pagesRead, target);
@@ -408,12 +464,12 @@ class WirdTrackerView extends StatelessWidget {
   void _showLogDialog(BuildContext context, String prayerId, {DateTime? date}) {
     final theme = context.ramadanTheme;
     final bloc = context.read<WirdBloc>();
-    // Get current value from the state only if today, otherwise it's 0 for simplicity in this dialog
-    int currentValue = 0;
-    final isToday = date == null || isSameDay(date, DateTime.now());
 
-    if (isToday && state.todayPrayerPages.containsKey(prayerId)) {
-      currentValue = state.todayPrayerPages[prayerId]!;
+    final targetDate = date ?? state.activeDate;
+
+    int currentValue = 0;
+    if (isSameDay(targetDate, state.activeDate)) {
+      currentValue = state.selectedDayPrayerPages[prayerId] ?? 0;
     }
 
     // Default target
@@ -431,8 +487,8 @@ class WirdTrackerView extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            date != null
-                ? '${prayerId.tr()} (${DateFormat.yMMMd().format(date)})'
+            !isSameDay(targetDate, DateTime.now())
+                ? '${prayerId.tr()} (${DateFormat.yMMMd().format(targetDate)})'
                 : prayerId.tr(),
             textAlign: TextAlign.center,
           ),
@@ -503,7 +559,11 @@ class WirdTrackerView extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 bloc.add(
-                  UpdatePrayerProgress(prayerId, selectedValue, date: date),
+                  UpdatePrayerProgress(
+                    prayerId,
+                    selectedValue,
+                    date: targetDate,
+                  ),
                 );
                 Navigator.pop(dialogContext);
               },
@@ -527,71 +587,16 @@ class WirdTrackerView extends StatelessWidget {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  Future<void> _pickDateAndLog(BuildContext context) async {
-    final theme = context.ramadanTheme;
+  Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 1)),
+      initialDate: state.activeDate,
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return child!;
-      },
     );
 
-    if (picked != null) {
-      if (context.mounted) {
-        _showPrayerSelectionDialog(context, picked);
-      }
-    }
-  }
-
-  void _showPrayerSelectionDialog(BuildContext context, DateTime date) {
-    final theme = context.ramadanTheme;
-    final prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha', 'other'];
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: theme.cardSurface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('wird_select_date'.tr()),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: prayers.length,
-            itemBuilder: (context, index) {
-              final id = prayers[index];
-              return ListTile(
-                leading: Icon(_getPrayerIcon(id), color: theme.primary),
-                title: Text(id.tr()),
-                onTap: () {
-                  Navigator.pop(dialogContext);
-                  _showLogDialog(context, id, date: date);
-                },
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  IconData _getPrayerIcon(String id) {
-    switch (id) {
-      case 'fajr':
-        return Icons.wb_twilight;
-      case 'dhuhr':
-        return Icons.wb_sunny;
-      case 'asr':
-        return Icons.wb_sunny_outlined;
-      case 'maghrib':
-        return Icons.nightlight_round;
-      case 'isha':
-        return Icons.bedtime;
-      default:
-        return Icons.more_horiz;
+    if (picked != null && context.mounted) {
+      context.read<WirdBloc>().add(ChangeSelectedDate(picked));
     }
   }
 

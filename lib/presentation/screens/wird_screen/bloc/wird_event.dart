@@ -12,6 +12,14 @@ class LoadWirdProgress extends WirdEvent {}
 
 class LoadWirdHistory extends WirdEvent {}
 
+class ChangeSelectedDate extends WirdEvent {
+  final DateTime date;
+  const ChangeSelectedDate(this.date);
+
+  @override
+  List<Object?> get props => [date];
+}
+
 class SetWirdPlan extends WirdEvent {
   final WirdPlan plan;
   const SetWirdPlan(this.plan);

@@ -20,6 +20,8 @@ class WirdPlanActive extends WirdState {
   final int lastReadPage;
   final DateTime lastUpdated;
   final Map<String, int> todayPrayerPages;
+  final DateTime? selectedDate;
+  final Map<String, int> selectedDayPrayerPages;
 
   const WirdPlanActive({
     required this.plan,
@@ -27,7 +29,11 @@ class WirdPlanActive extends WirdState {
     required this.lastReadPage,
     required this.lastUpdated,
     this.todayPrayerPages = const {},
+    this.selectedDate,
+    this.selectedDayPrayerPages = const {},
   });
+
+  DateTime get activeDate => selectedDate ?? DateTime.now();
 
   double get progress => completedPages / plan.totalTargetPages;
 
@@ -38,6 +44,8 @@ class WirdPlanActive extends WirdState {
     lastReadPage,
     lastUpdated,
     todayPrayerPages,
+    selectedDate,
+    selectedDayPrayerPages,
   ];
 }
 
@@ -54,6 +62,8 @@ class WirdHistoryLoaded extends WirdPlanActive {
     required super.lastReadPage,
     required super.lastUpdated,
     super.todayPrayerPages,
+    super.selectedDate,
+    super.selectedDayPrayerPages,
     required this.historyLogs,
     required this.currentStreak,
     required this.totalPagesRead,

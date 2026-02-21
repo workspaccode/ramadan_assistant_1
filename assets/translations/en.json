@@ -8,6 +8,8 @@
     "custom": "Custom",
     "custom_interval": "Custom interval",
     "save": "Save",
+    "today": "Today",
+    "change": "Change",
     "minutes": "minutes",
     "tab_prayers": "Prayers",
     "tab_tasbih": "Tasbih",
@@ -316,5 +318,6 @@
     "wird_select_date": "Select Date",
     "wird_details_for": "Details for {}",
     "wird_no_data_day": "No reading data for this day.",
-    "wird_avg_per_day": "Avg. Pages per Day"
+    "wird_avg_per_day": "Avg. Pages per Day",
+    "wird_selected_day": "Selected Day"
 }

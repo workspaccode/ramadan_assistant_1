@@ -8,6 +8,8 @@
     "custom": "مخصص",
     "custom_interval": "مدة مخصصة",
     "save": "حفظ",
+    "today": "اليوم",
+    "change": "تغيير",
     "minutes": "دقائق",
     "tab_prayers": "الصلوات",
     "tab_tasbih": "التسبيح",
@@ -321,5 +323,6 @@
     "wird_select_date": "اختر التاريخ",
     "wird_details_for": "تفاصيل يوم {}",
     "wird_no_data_day": "لا توجد بيانات لهذا اليوم.",
-    "wird_avg_per_day": "متوسط الصفحات يومياً"
+    "wird_avg_per_day": "متوسط الصفحات يومياً",
+    "wird_selected_day": "اليوم المحدد"
 }

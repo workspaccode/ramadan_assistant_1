@@ -17,6 +17,7 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     on<SetLastReadPage>(_onSetLastReadPage);
     on<ResetWirdProgress>(_onResetProgress);
     on<LoadWirdHistory>(_onLoadHistory);
+    on<ChangeSelectedDate>(_onChangeSelectedDate);
   }
 
   Future<void> _onLoadProgress(
@@ -61,6 +62,8 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
           lastReadPage: progress.lastReadPage,
           lastUpdated: progress.lastUpdated,
           todayPrayerPages: prayerPages,
+          selectedDate: now,
+          selectedDayPrayerPages: prayerPages,
         ),
       );
     } catch (e) {
@@ -346,6 +349,8 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
             lastReadPage: currentPlanState.lastReadPage,
             lastUpdated: currentPlanState.lastUpdated,
             todayPrayerPages: currentPlanState.todayPrayerPages,
+            selectedDate: currentPlanState.selectedDate,
+            selectedDayPrayerPages: currentPlanState.selectedDayPrayerPages,
             historyLogs: logs,
             currentStreak: streak,
             totalPagesRead: totalPages,
@@ -359,6 +364,70 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
       }
     } catch (e) {
       emit(WirdError(e.toString()));
+    }
+  }
+
+  Future<void> _onChangeSelectedDate(
+    ChangeSelectedDate event,
+    Emitter<WirdState> emit,
+  ) async {
+    if (state is WirdPlanActive) {
+      final curr = state as WirdPlanActive;
+      try {
+        final normalizedDate = DateTime(
+          event.date.year,
+          event.date.month,
+          event.date.day,
+        );
+
+        final dailyLog = await (_database.select(
+          _database.wirdDailyLogs,
+        )..where((t) => t.date.equals(normalizedDate))).getSingleOrNull();
+
+        final prayerPages = <String, int>{};
+        if (dailyLog != null) {
+          prayerPages['fajr'] = dailyLog.fajrPages;
+          prayerPages['dhuhr'] = dailyLog.dhuhrPages;
+          prayerPages['asr'] = dailyLog.asrPages;
+          prayerPages['maghrib'] = dailyLog.maghribPages;
+          prayerPages['isha'] = dailyLog.ishaPages;
+          prayerPages['other'] = dailyLog.otherPages;
+        }
+
+        if (state is WirdHistoryLoaded) {
+          final history = state as WirdHistoryLoaded;
+          emit(
+            WirdHistoryLoaded(
+              plan: curr.plan,
+              completedPages: curr.completedPages,
+              lastReadPage: curr.lastReadPage,
+              lastUpdated: curr.lastUpdated,
+              todayPrayerPages: curr.todayPrayerPages,
+              selectedDate: normalizedDate,
+              selectedDayPrayerPages: prayerPages,
+              historyLogs: history.historyLogs,
+              currentStreak: history.currentStreak,
+              totalPagesRead: history.totalPagesRead,
+              averagePagesPerDay: history.averagePagesPerDay,
+              readingDays: history.readingDays,
+            ),
+          );
+        } else {
+          emit(
+            WirdPlanActive(
+              plan: curr.plan,
+              completedPages: curr.completedPages,
+              lastReadPage: curr.lastReadPage,
+              lastUpdated: curr.lastUpdated,
+              todayPrayerPages: curr.todayPrayerPages,
+              selectedDate: normalizedDate,
+              selectedDayPrayerPages: prayerPages,
+            ),
+          );
+        }
+      } catch (e) {
+        emit(WirdError(e.toString()));
+      }
     }
   }
 
