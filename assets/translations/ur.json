@@ -154,6 +154,11 @@
     "time_for_iqama": "اقامت کا وقت",
     "iqama_time": "اقامت کا وقت ہو گیا ہے",
     "prayer_about_to_begin": "نماز شروع ہونے والی ہے",
+    "post_prayer_adhkar": "نماز کے بعد کے اذکار",
+    "tap_to_tasbih": "تسبیح کے لیے کہیں بھی ٹیپ کریں",
+    "start_dhikr": "نماز کے بعد کے اذکار شروع کریں",
+    "may_allah_accept": "اللہ ہماری اور آپ کی طرف سے قبول فرمائے",
+    "good_deeds": "نیک اعمال",
     "got_it": "ٹھیک ہے",
     "hijri_1": "محرم",
     "hijri_2": "صفر",
@@ -306,5 +311,10 @@
     "wird_streak": "مسلسل دن",
     "wird_total_pages": "کل صفحات",
     "wird_weekly_activity": "ہفتہ وار سرگرمی",
-    "wird_error_loading_history": "تاریخ لوڈ نہیں کی جا سکی۔"
+    "wird_error_loading_history": "تاریخ لوڈ نہیں کی جا سکی۔",
+    "wird_log_past_day": "پچھلے دن کا ریکارڈ درج کریں",
+    "wird_select_date": "تاریخ منتخب کریں",
+    "wird_details_for": "{} کی تفصیلات",
+    "wird_no_data_day": "اس دن کا کوئی ڈیٹا موجود نہیں ہے۔",
+    "wird_avg_per_day": "روزانہ اوسط صفحات"
 }

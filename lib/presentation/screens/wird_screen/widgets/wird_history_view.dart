@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
+import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
@@ -18,7 +19,11 @@ class WirdHistoryView extends StatefulWidget {
 
 class _WirdHistoryViewState extends State<WirdHistoryView> {
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _selectedDay = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   @override
   void initState() {
@@ -45,6 +50,8 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
                 _buildSummaryCards(context, theme, state),
                 const SizedBox(height: 24),
                 _buildCalendar(context, theme, state),
+                const SizedBox(height: 24),
+                _buildDayDetails(context, theme, state),
                 const SizedBox(height: 24),
                 _buildChartSection(context, theme, state),
                 const SizedBox(height: 24),
@@ -89,6 +96,17 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
             label: 'wird_total_pages'.tr(),
             value: '${state.totalPagesRead}',
             color: theme.primary,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            theme,
+            icon: Icons.analytics,
+            label: 'wird_avg_per_day'.tr(),
+            value: state.averagePagesPerDay.toStringAsFixed(1),
+            color: theme.success,
           ),
         ),
       ],
@@ -234,6 +252,167 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
         ),
       ),
     );
+  }
+
+  Widget _buildDayDetails(
+    BuildContext context,
+    RamadanThemeExtension theme,
+    WirdHistoryLoaded state,
+  ) {
+    if (_selectedDay == null) return const SizedBox.shrink();
+
+    final normalizedDay = DateTime(
+      _selectedDay!.year,
+      _selectedDay!.month,
+      _selectedDay!.day,
+    );
+
+    // Find the log for this day
+    final log = state.historyLogs.firstWhere(
+      (l) =>
+          l.date.year == normalizedDay.year &&
+          l.date.month == normalizedDay.month &&
+          l.date.day == normalizedDay.day,
+      orElse: () => WirdDailyLog(
+        id: -1,
+        date: normalizedDay,
+        fajrPages: 0,
+        dhuhrPages: 0,
+        asrPages: 0,
+        maghribPages: 0,
+        ishaPages: 0,
+        otherPages: 0,
+      ),
+    );
+
+    final totalDay =
+        log.fajrPages +
+        log.dhuhrPages +
+        log.asrPages +
+        log.maghribPages +
+        log.ishaPages +
+        log.otherPages;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: theme.cardSurface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.borderColor, width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'wird_details_for'.tr(
+                  args: [DateFormat.yMMMd().format(log.date)],
+                ),
+                style: TextStyle(
+                  color: theme.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (totalDay > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$totalDay ${'pages'.tr()}',
+                    style: TextStyle(
+                      color: theme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (totalDay == 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'wird_no_data_day'.tr(),
+                style: TextStyle(color: theme.textDim, fontSize: 13),
+              ),
+            )
+          else
+            Column(
+              children: [
+                _buildPrayerDetailRow(theme, 'fajr', log.fajrPages),
+                _buildPrayerDetailRow(theme, 'dhuhr', log.dhuhrPages),
+                _buildPrayerDetailRow(theme, 'asr', log.asrPages),
+                _buildPrayerDetailRow(theme, 'maghrib', log.maghribPages),
+                _buildPrayerDetailRow(theme, 'isha', log.ishaPages),
+                _buildPrayerDetailRow(theme, 'other', log.otherPages),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrayerDetailRow(
+    RamadanThemeExtension theme,
+    String label,
+    int pages,
+  ) {
+    if (pages == 0) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(_getPrayerIcon(label), size: 16, color: theme.textSecondary),
+              const SizedBox(width: 8),
+              Text(
+                label.tr(),
+                style: TextStyle(color: theme.textSecondary, fontSize: 14),
+              ),
+            ],
+          ),
+          Text(
+            '$pages',
+            style: TextStyle(
+              color: theme.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getPrayerIcon(String id) {
+    switch (id) {
+      case 'fajr':
+        return Icons.wb_twilight;
+      case 'dhuhr':
+        return Icons.wb_sunny;
+      case 'asr':
+        return Icons.wb_sunny_outlined;
+      case 'maghrib':
+        return Icons.nightlight_round;
+      case 'isha':
+        return Icons.bedtime;
+      default:
+        return Icons.more_horiz;
+    }
   }
 
   Widget _buildChartSection(

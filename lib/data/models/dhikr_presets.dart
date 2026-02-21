@@ -12,6 +12,24 @@ class DhikrPresets {
       'audioFile': 'zakr/saly-ala-mohamed.mp3',
     },
     {
+      'id': 'salawat_2',
+      'arabic': 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ',
+      'transliteration': 'Allahumma salli ala Muhammadin wa ala aali Muhammad',
+      'translation': 'Salawat (Alternate Melody)',
+      'urdu': 'صلی اللہ علی محمد (خوبصورت آواز)',
+      'category': 'Salawat',
+      'audioFile': 'zakr/alah-msaly-ala-nabyna-mohamed.mp3',
+    },
+    {
+      'id': 'salawat_short',
+      'arabic': 'صَلِّ عَلَى مُحَمَّدٍ',
+      'transliteration': 'Salli ala Muhammad',
+      'translation': 'Salli ala Muhammad',
+      'urdu': 'صلی اللہ علی محمد',
+      'category': 'Salawat',
+      'audioFile': 'zakr/saly-ala-mohamed.mp3',
+    },
+    {
       'id': 'subhanallah',
       'arabic': 'سُبْحَانَ اللهِ',
       'transliteration': 'SubhanAllah',
@@ -19,6 +37,15 @@ class DhikrPresets {
       'urdu': 'اللہ پاک ہے',
       'category': 'Tasbih',
       'audioFile': 'zakr/subhanAllah.wav',
+    },
+    {
+      'id': 'subhanallah_2',
+      'arabic': 'سُبْحَانَ اللهِ (صوت جميل)',
+      'transliteration': 'SubhanAllah (Beautiful)',
+      'translation': 'SubhanAllah (Beautiful voice)',
+      'urdu': 'سبحان اللہ (خوبصورت آواز)',
+      'category': 'Tasbih',
+      'audioFile': 'zakr/subhanAllah-beautiful-voice.mp3',
     },
     {
       'id': 'alhamdulillah',
@@ -124,10 +151,10 @@ class DhikrPresets {
 
   /// Audio file names for different sounds
   static const Map<String, String> audioFiles = {
-    'adhan': 'adhan.mp3',
-    'adhan_fajr': 'adhan_fajr.mp3',
-    'iqama': 'iqama_reminder.mp3',
-    'tasbih_click': 'tasbih_click.mp3',
+    'adhan': 'azan8.mp3',
+    'adhan_fajr': 'azanfajr.mp3',
+    'iqama': 'MakkahIQamah.mp3',
+    'tasbih_click': 'tasbih_click.wav',
     'tasbih_complete': 'tasbih_complete.mp3',
   };
 

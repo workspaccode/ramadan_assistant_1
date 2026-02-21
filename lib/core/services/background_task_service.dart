@@ -238,6 +238,7 @@ Future<void> _sendIntelligentTasbihReport() async {
       id: 600,
       title: title,
       message: message,
+      audioPath: 'zakr/la-ilaha-illallah.wav',
     );
   } finally {
     await db.close();
@@ -314,21 +315,14 @@ class NotificationActionHandler {
         final prayer = payload['prayer'] ?? 'Prayer';
         final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
 
-        // Always show adhan screen for adhan notifications
+        // Show adhan screen — sound is handled by notification channel natively
         await _showAdhanScreen(prayer, delay);
-
-        // Play adhan audio in background
-        final isFajr = prayer.toLowerCase() == 'fajr';
-        await AudioService.playAdhanInBackground(isFajr: isFajr);
-      } else if (type == 'iqama') {
-        // Play iqama reminder sound in background
-        final prayer = payload['prayer'] ?? '';
-        final isFajr = prayer.toLowerCase() == 'fajr';
-        await AudioService.playIqamaReminderInBackground(isFajr: isFajr);
-      } else if (type == 'dhikr') {
+      }
+      // Note: adhan/iqama sounds now play via notification channel soundSource
+      // (works even when app is killed). Only dhikr still uses Dart audio.
+      if (type == 'dhikr' || type == 'tasbih_report') {
         final audioPath = payload['audioPath'];
         if (audioPath != null && audioPath.isNotEmpty) {
-          // Play dhikr sound in background using static method
           await AudioService.playDhikrInBackground(audioPath);
         }
       }
@@ -377,10 +371,7 @@ class NotificationActionHandler {
     try {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (_) => AdhanScreen(
-            prayerName: prayerName,
-            iqamaDelayMinutes: iqamaDelay,
-          ),
+          builder: (_) => AdhanScreen(prayerName: prayerName),
           fullscreenDialog: true,
         ),
       );

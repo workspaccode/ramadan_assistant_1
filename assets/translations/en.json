@@ -154,6 +154,11 @@
     "time_for_iqama": "Time for Iqama",
     "iqama_time": "Iqama Time",
     "prayer_about_to_begin": "Prayer is about to begin",
+    "post_prayer_adhkar": "Post-Prayer Adhkars",
+    "tap_to_tasbih": "Tap anywhere to Tasbih",
+    "start_dhikr": "Start Post-Prayer Dhikr",
+    "may_allah_accept": "May Allah accept from us and you",
+    "good_deeds": "Good deeds",
     "got_it": "Got it",
     "hijri_1": "Muharram",
     "hijri_2": "Safar",
@@ -306,5 +311,10 @@
     "wird_streak": "Current Streak",
     "wird_total_pages": "Total Pages",
     "wird_weekly_activity": "Weekly Activity",
-    "wird_error_loading_history": "Could not load history."
+    "wird_error_loading_history": "Could not load history.",
+    "wird_log_past_day": "Record for a Past Day",
+    "wird_select_date": "Select Date",
+    "wird_details_for": "Details for {}",
+    "wird_no_data_day": "No reading data for this day.",
+    "wird_avg_per_day": "Avg. Pages per Day"
 }

@@ -151,6 +151,11 @@
     "time_for_iqama": "وقت الإقامة",
     "iqama_time": "حان وقت الإقامة",
     "prayer_about_to_begin": "قَدْ قَامَتِ الصَّلَاةُ",
+    "post_prayer_adhkar": "أذكار بعد الصلاة",
+    "tap_to_tasbih": "اضغط في أي مكان للتسبيح",
+    "start_dhikr": "بدء أذكار الصلاة",
+    "may_allah_accept": "تقبل الله منا ومنكم",
+    "good_deeds": "صالح الأعمال",
     "got_it": "تم",
     "hijri_1": "محرم",
     "hijri_2": "صفر",
@@ -311,5 +316,10 @@
     "wird_streak": "أيام متتالية",
     "wird_total_pages": "إجمالي الصفحات",
     "wird_weekly_activity": "النشاط الأسبوعي",
-    "wird_error_loading_history": "تعذر تحميل السجل."
+    "wird_error_loading_history": "تعذر تحميل السجل.",
+    "wird_log_past_day": "تسجيل ليوم سابق",
+    "wird_select_date": "اختر التاريخ",
+    "wird_details_for": "تفاصيل يوم {}",
+    "wird_no_data_day": "لا توجد بيانات لهذا اليوم.",
+    "wird_avg_per_day": "متوسط الصفحات يومياً"
 }

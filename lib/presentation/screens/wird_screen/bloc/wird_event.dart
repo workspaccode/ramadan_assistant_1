@@ -31,10 +31,11 @@ class UpdateWirdProgress extends WirdEvent {
 class UpdatePrayerProgress extends WirdEvent {
   final String prayerName;
   final int pagesRead;
-  const UpdatePrayerProgress(this.prayerName, this.pagesRead);
+  final DateTime? date;
+  const UpdatePrayerProgress(this.prayerName, this.pagesRead, {this.date});
 
   @override
-  List<Object?> get props => [prayerName, pagesRead];
+  List<Object?> get props => [prayerName, pagesRead, date];
 }
 
 class SetLastReadPage extends WirdEvent {

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/iqama_screen/iqama_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/qibla_screen/qibla_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
@@ -94,19 +93,7 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
       ),
     ).then((_) {
       _isAdhanScreenShowing = false;
-      // Show Iqama screen after Adhan screen closes
-      _showIqamaScreen(prayerKey);
     });
-  }
-
-  void _showIqamaScreen(String prayerKey) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => IqamaScreen(prayerName: prayerKey),
-        fullscreenDialog: true,
-      ),
-    );
   }
 
   // Calculate Duha prayer time (10:30 AM to 30 minutes before Dhuhr)

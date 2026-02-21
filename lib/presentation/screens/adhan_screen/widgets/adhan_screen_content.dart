@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/bloc/adhan_screen_bloc.dart';
 
 class AdhanScreenContent extends StatefulWidget {
@@ -13,80 +14,100 @@ class AdhanScreenContent extends StatefulWidget {
 }
 
 class _AdhanScreenContentState extends State<AdhanScreenContent>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+    with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late AnimationController _fadeController;
+  late AnimationController _glowController;
+  late Animation<double> _pulseAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
-      ),
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _animationController.forward();
+    _glowController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _glowAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(
+      CurvedAnimation(parent: _glowController, curve: Curves.easeInOut),
+    );
+
+    _fadeController.forward();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _pulseController.dispose();
+    _fadeController.dispose();
+    _glowController.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
-  String _formatCountdown(int seconds) {
-    int minutes = seconds ~/ 60;
-    int secs = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  IconData _getPrayerIcon(String prayerName) {
+    switch (prayerName.toLowerCase()) {
+      case 'fajr':
+        return Icons.wb_twilight;
+      case 'dhuhr':
+        return Icons.wb_sunny;
+      case 'asr':
+        return Icons.wb_sunny_outlined;
+      case 'maghrib':
+        return Icons.nightlight_round;
+      case 'isha':
+        return Icons.bedtime;
+      default:
+        return Icons.mosque;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AdhanScreenBloc, AdhanScreenState>(
+    return BlocConsumer<AdhanScreenBloc, AdhanScreenState>(
+      listener: (context, state) {
+        if (state is AdhanScreenDhikrCompleted) {
+          // Auto-close after dhikr completion with a short delay
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted) Navigator.pop(context);
+          });
+        }
+      },
       builder: (context, state) {
-        return Scaffold(
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF0D4F30),
-                  Color(0xFF06402B),
-                  Color(0xFF032819),
-                ],
-              ),
-            ),
-            child: SafeArea(
-              child: AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: Transform.scale(
-                      scale: _scaleAnimation.value,
-                      child: _buildContent(context, state),
-                    ),
-                  );
-                },
-              ),
+        return PopScope(
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) {
+              context.read<AdhanScreenBloc>().add(DismissScreen());
+            }
+          },
+          child: Scaffold(
+            body: AnimatedBuilder(
+              animation: _fadeAnimation,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _fadeAnimation.value,
+                  child: _buildBody(context, state),
+                );
+              },
             ),
           ),
         );
@@ -94,356 +115,636 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
     );
   }
 
-  Widget _buildContent(BuildContext context, AdhanScreenState state) {
+  Widget _buildBody(BuildContext context, AdhanScreenState state) {
     if (state is AdhanScreenDhikr) {
       return _buildDhikrView(context, state);
     }
+    if (state is AdhanScreenDhikrCompleted) {
+      return _buildCompletedView(context, state);
+    }
+    if (state is AdhanScreenActive) {
+      return _buildAdhanView(context, state);
+    }
+    return const Center(child: CircularProgressIndicator());
+  }
 
-    final prayerName = state is AdhanScreenPlaying
-        ? state.prayerName
-        : (state is AdhanScreenCompleted ? state.prayerName : '');
+  // ── Main Adhan View ─────────────────────────────────────────────────────
 
-    return Column(
-      children: [
-        // Close button
-        Align(
-          alignment:
-              context.locale.languageCode == 'ar' ||
-                  context.locale.languageCode == 'ur'
-              ? Alignment.topLeft
-              : Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white, size: 30),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
+  Widget _buildAdhanView(BuildContext context, AdhanScreenActive state) {
+    final prayerName = state.prayerName;
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0A1628), Color(0xFF0D2F1E), Color(0xFF0A1628)],
+          stops: [0.0, 0.5, 1.0],
         ),
+      ),
+      child: Stack(
+        children: [
+          // Animated glow circles
+          _buildGlowEffects(size),
 
-        const Spacer(),
+          // Stars/particles
+          ..._buildStars(size),
 
-        // Islamic decorative pattern
-        Container(
-          width: 150,
-          height: 150,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: context.secondaryColor, width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: context.secondaryColor.withValues(alpha: 0.3),
-                blurRadius: 30,
-                spreadRadius: 10,
-              ),
-            ],
-          ),
-          child: Icon(Icons.mosque, color: context.secondaryColor, size: 80),
-        ),
-
-        const SizedBox(height: 40),
-
-        // "حان وقت الصلاة" (Prayer Time)
-        Text(
-          'adhan_call_to_prayer'.tr(),
-          style: TextStyle(
-            color: context.secondaryColor,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Amiri',
-          ),
-        ),
-
-        const SizedBox(height: 20),
-
-        // Prayer Name
-        Text(
-          prayerName.toLowerCase().tr(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        const SizedBox(height: 40),
-
-        // Iqama Countdown or Reminder
-        if (state is AdhanScreenPlaying)
-          state.showIqamaReminder
-              ? _buildIqamaReminder(context)
-              : _buildIqamaCountdown(context, state.iqamaCountdown),
-
-        if (state is AdhanScreenCompleted)
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text(
-              'تقبل الله منا ومنكم صالح الأعمال'.tr(),
-              style: TextStyle(
-                color: context.secondaryColor,
-                fontSize: 20,
-                fontFamily: 'Amiri',
-              ),
-            ),
-          ),
-
-        const Spacer(),
-
-        // Action Buttons
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            children: [
-              if (state is AdhanScreenPlaying)
-                ElevatedButton.icon(
-                  onPressed: () {
-                    context.read<AdhanScreenBloc>().add(StopAdhan());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.secondaryColor,
-                    foregroundColor: context.primaryColor,
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
+          // Content
+          SafeArea(
+            child: Column(
+              children: [
+                // Top bar: Close button
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
                   ),
-                  icon: const Icon(Icons.volume_off),
-                  label: Text(
-                    'stop_adhan'.tr(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: _buildGlassButton(
+                      icon: Icons.close,
+                      onTap: () {
+                        context.read<AdhanScreenBloc>().add(DismissScreen());
+                        Navigator.pop(context);
+                      },
                     ),
                   ),
                 ),
-              if (state is AdhanScreenPlaying && state.showIqamaReminder) ...[
+
+                const Spacer(flex: 2),
+
+                // Prayer icon with animated glow
+                AnimatedBuilder(
+                  animation: _pulseAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _pulseAnimation.value,
+                      child: _buildPrayerOrb(prayerName),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 40),
+
+                // Call to prayer text
+                Text(
+                  'adhan_call_to_prayer'.tr(),
+                  style: TextStyle(
+                    color: const Color(0xFFD4AF37).withOpacity(0.9),
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+
                 const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    context.read<AdhanScreenBloc>().add(StartDhikr());
-                    HapticFeedback.mediumImpact();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 56),
-                    side: BorderSide(color: context.secondaryColor, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  icon: const Icon(Icons.auto_awesome),
-                  label: Text(
-                    'start_dhikr'.tr(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+
+                // Prayer name
+                Text(
+                  prayerName.toLowerCase().tr(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 52,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 2,
                   ),
                 ),
+
+                const SizedBox(height: 12),
+
+                // Current time
+                Text(
+                  DateFormat('HH:mm').format(DateTime.now()),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.5),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 3,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+
+                const Spacer(flex: 3),
+
+                // Action Buttons
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      // Start Dhikr button
+                      _buildPrimaryButton(
+                        label: 'start_dhikr'.tr(),
+                        icon: Icons.auto_awesome,
+                        onTap: () {
+                          context.read<AdhanScreenBloc>().add(StartDhikr());
+                          HapticFeedback.mediumImpact();
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Dismiss button
+                      _buildSecondaryButton(
+                        label: 'dismiss_btn'.tr(),
+                        onTap: () {
+                          context.read<AdhanScreenBloc>().add(DismissScreen());
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 40),
               ],
-              if (state is AdhanScreenCompleted)
-                ElevatedButton.icon(
-                  onPressed: () {
-                    context.read<AdhanScreenBloc>().add(StartDhikr());
-                    HapticFeedback.mediumImpact();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.secondaryColor,
-                    foregroundColor: context.primaryColor,
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  icon: const Icon(Icons.auto_awesome),
-                  label: Text(
-                    'بدء أذكار الصلاة'.tr(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
+  // ── Dhikr View ──────────────────────────────────────────────────────────
+
   Widget _buildDhikrView(BuildContext context, AdhanScreenDhikr state) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  context.read<AdhanScreenBloc>().add(StopAdhan());
-                  Navigator.pop(context);
-                },
-              ),
-              Text(
-                'أذكار الصلاة'.tr(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(width: 48), // Spacer
-            ],
+    final progress = state.target > 0 ? state.count / state.target : 0.0;
+
+    return GestureDetector(
+      onTap: () {
+        context.read<AdhanScreenBloc>().add(IncrementDhikr());
+        HapticFeedback.lightImpact();
+      },
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0A1628), Color(0xFF112240), Color(0xFF0A1628)],
           ),
         ),
-        const Spacer(),
-        GestureDetector(
-          onTap: () {
-            context.read<AdhanScreenBloc>().add(IncrementDhikr());
-            HapticFeedback.lightImpact();
-          },
+        child: SafeArea(
           child: Column(
             children: [
-              Text(
-                state.dhikrText,
-                style: TextStyle(
-                  color: context.secondaryColor,
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Amiri',
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildGlassButton(
+                      icon: Icons.close,
+                      onTap: () {
+                        context.read<AdhanScreenBloc>().add(DismissScreen());
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text(
+                      'post_prayer_adhkar'.tr(),
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 48),
+                  ],
                 ),
               ),
+
+              const Spacer(flex: 1),
+
+              // Dhikr progress indicators (dots)
+              _buildDhikrProgressDots(state.dhikrIndex),
+
               const SizedBox(height: 40),
+
+              // Dhikr text
+              Text(
+                state.dhikrText,
+                style: const TextStyle(
+                  color: Color(0xFFD4AF37),
+                  fontSize: 42,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 2,
+                ),
+              ),
+
+              const SizedBox(height: 48),
+
+              // Circular counter
               Stack(
                 alignment: Alignment.center,
                 children: [
+                  // Background ring
                   SizedBox(
                     width: 200,
                     height: 200,
                     child: CircularProgressIndicator(
-                      value: state.count / state.target,
-                      strokeWidth: 12,
-                      backgroundColor: Colors.white.withOpacity(0.1),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.secondaryColor,
+                      value: 1.0,
+                      strokeWidth: 4,
+                      color: Colors.white.withOpacity(0.08),
+                    ),
+                  ),
+                  // Progress ring
+                  SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: CircularProgressIndicator(
+                      value: progress,
+                      strokeWidth: 6,
+                      strokeCap: StrokeCap.round,
+                      backgroundColor: Colors.transparent,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFFD4AF37),
                       ),
                     ),
                   ),
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: context.secondaryColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${state.count}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 64,
-                        fontWeight: FontWeight.bold,
+                  // Counter text
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${state.count}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 64,
+                          fontWeight: FontWeight.w200,
+                        ),
                       ),
-                    ),
+                      Text(
+                        '/ ${state.target}',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Text(
-                '${'target'.tr()}: ${state.target}',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
-                  fontSize: 18,
+
+              const Spacer(flex: 2),
+
+              // Hint
+              Padding(
+                padding: const EdgeInsets.all(32),
+                child: Text(
+                  'tap_to_tasbih'.tr(),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.3),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        const Spacer(),
-        Padding(
-          padding: const EdgeInsets.all(40),
+      ),
+    );
+  }
+
+  // ── Completed View ──────────────────────────────────────────────────────
+
+  Widget _buildCompletedView(
+    BuildContext context,
+    AdhanScreenDhikrCompleted state,
+  ) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0A1628), Color(0xFF0D2F1E), Color(0xFF0A1628)],
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.check_circle_outline,
+              color: Color(0xFFD4AF37),
+              size: 80,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'may_allah_accept'.tr(),
+              style: TextStyle(
+                color: const Color(0xFFD4AF37).withOpacity(0.9),
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'good_deeds'.tr(),
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+            const SizedBox(height: 48),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: _buildSecondaryButton(
+                label: 'dismiss_btn'.tr(),
+                onTap: () {
+                  context.read<AdhanScreenBloc>().add(DismissScreen());
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Reusable Widgets ────────────────────────────────────────────────────
+
+  Widget _buildPrayerOrb(String prayerName) {
+    final icon = _getPrayerIcon(prayerName);
+
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Container(
+          width: 140,
+          height: 140,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                const Color(0xFFD4AF37).withOpacity(0.15),
+                const Color(0xFFD4AF37).withOpacity(0.05),
+                Colors.transparent,
+              ],
+              stops: const [0.0, 0.6, 1.0],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(
+                  0xFFD4AF37,
+                ).withOpacity(_glowAnimation.value * 0.3),
+                blurRadius: 40,
+                spreadRadius: 10,
+              ),
+            ],
+          ),
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFFD4AF37).withOpacity(0.6),
+                width: 2,
+              ),
+            ),
+            child: Icon(icon, color: const Color(0xFFD4AF37), size: 48),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGlowEffects(Size size) {
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            Positioned(
+              top: size.height * 0.15,
+              left: size.width * 0.5 - 100,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(
+                        0xFFD4AF37,
+                      ).withOpacity(_glowAnimation.value * 0.08),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: size.height * 0.2,
+              right: -50,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(
+                        0xFF1E8E5C,
+                      ).withOpacity(_glowAnimation.value * 0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildStars(Size size) {
+    final random = Random(42); // Fixed seed for consistent positions
+    return List.generate(15, (i) {
+      final x = random.nextDouble() * size.width;
+      final y = random.nextDouble() * size.height;
+      final starSize = 1.0 + random.nextDouble() * 2;
+
+      return Positioned(
+        left: x,
+        top: y,
+        child: AnimatedBuilder(
+          animation: _glowAnimation,
+          builder: (context, child) {
+            final opacity =
+                (0.2 + random.nextDouble() * 0.3) *
+                (0.5 + _glowAnimation.value * 0.5);
+            return Container(
+              width: starSize,
+              height: starSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(opacity),
+              ),
+            );
+          },
+        ),
+      );
+    });
+  }
+
+  Widget _buildDhikrProgressDots(int currentIndex) {
+    final labels = ['سبحان الله', 'الحمد لله', 'الله أكبر'];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(3, (i) {
+        final isActive = i == currentIndex;
+        final isDone = i < currentIndex;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            children: [
+              Container(
+                width: isActive ? 12 : 8,
+                height: isActive ? 12 : 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDone
+                      ? const Color(0xFFD4AF37)
+                      : isActive
+                      ? const Color(0xFFD4AF37).withOpacity(0.8)
+                      : Colors.white.withOpacity(0.2),
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFFD4AF37).withOpacity(0.4),
+                            blurRadius: 8,
+                          ),
+                        ]
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                labels[i],
+                style: TextStyle(
+                  color: isActive
+                      ? Colors.white.withOpacity(0.7)
+                      : Colors.white.withOpacity(0.3),
+                  fontSize: 11,
+                  fontWeight: isActive ? FontWeight.w500 : FontWeight.w300,
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildGlassButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withOpacity(0.1)),
+          ),
+          child: Icon(icon, color: Colors.white.withOpacity(0.8), size: 22),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrimaryButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFD4AF37), Color(0xFFB8962E)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFD4AF37).withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: const Color(0xFF0A1628), size: 22),
+              const SizedBox(width: 10),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Color(0xFF0A1628),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSecondaryButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withOpacity(0.12)),
+          ),
           child: Text(
-            'اضغط في أي مكان للتسبيح'.tr(),
+            label,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withOpacity(0.7),
               fontSize: 16,
-              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildIqamaCountdown(BuildContext context, int countdown) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'iqama_in'.tr(),
-            style: const TextStyle(color: Colors.white70, fontSize: 16),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            _formatCountdown(countdown),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'monospace',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIqamaReminder(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.symmetric(horizontal: 30),
-      decoration: BoxDecoration(
-        color: context.secondaryColor,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: context.secondaryColor.withValues(alpha: 0.5),
-            blurRadius: 20,
-            spreadRadius: 5,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.access_alarm, color: context.primaryColor, size: 40),
-          const SizedBox(height: 10),
-          Text(
-            'time_for_iqama'.tr(),
-            style: TextStyle(
-              color: context.primaryColor,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Amiri',
-            ),
-          ),
-          if (context.locale.languageCode != 'ar')
-            Text(
-              'حان وقت الإقامة',
-              style: TextStyle(
-                color: context.primaryColor,
-                fontSize: 18,
-                fontFamily: 'Amiri',
-              ),
-            ),
-        ],
       ),
     );
   }

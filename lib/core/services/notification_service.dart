@@ -13,10 +13,26 @@ class NotificationService {
           channelDescription: 'Notifications for prayer times and Adhan',
           defaultColor: AppTheme.primaryColor,
           ledColor: AppTheme.secondaryColor,
-          importance: NotificationImportance.High,
+          importance: NotificationImportance.Max,
           channelShowBadge: true,
           locked: true,
           defaultRingtoneType: DefaultRingtoneType.Alarm,
+          soundSource: 'resource://raw/adhan_regular',
+          playSound: true,
+          criticalAlerts: true,
+        ),
+        NotificationChannel(
+          channelKey: 'prayer_times_fajr',
+          channelName: 'Fajr Adhan',
+          channelDescription: 'Fajr prayer adhan notification',
+          defaultColor: AppTheme.primaryColor,
+          ledColor: AppTheme.secondaryColor,
+          importance: NotificationImportance.Max,
+          channelShowBadge: true,
+          locked: true,
+          defaultRingtoneType: DefaultRingtoneType.Alarm,
+          soundSource: 'resource://raw/adhan_fajr',
+          playSound: true,
           criticalAlerts: true,
         ),
         NotificationChannel(
@@ -25,8 +41,12 @@ class NotificationService {
           channelDescription: 'Notifications for Iqama time',
           defaultColor: AppTheme.secondaryColor,
           ledColor: AppTheme.primaryColor,
-          importance: NotificationImportance.High,
-          defaultRingtoneType: DefaultRingtoneType.Ringtone,
+          importance: NotificationImportance.Max,
+          defaultRingtoneType: DefaultRingtoneType.Alarm,
+          soundSource: 'resource://raw/iqama_sound',
+          playSound: true,
+          criticalAlerts: true,
+          locked: true,
         ),
         NotificationChannel(
           channelKey: 'reminders',
@@ -83,10 +103,12 @@ class NotificationService {
   /// Show immediate Adhan notification (full-screen intent)
   static Future<void> showAdhanNotification(String prayerName) async {
     final localizedPrayer = prayerName.toLowerCase().tr();
+    final isFajr = prayerName.toLowerCase() == 'fajr';
+    final channelKey = isFajr ? 'prayer_times_fajr' : 'prayer_times';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: DateTime.now().millisecond,
-        channelKey: 'prayer_times',
+        channelKey: channelKey,
         title: 'notification_adhan_title'.tr(args: [localizedPrayer]),
         body: 'notification_adhan_body'.tr(args: [localizedPrayer]),
         category: NotificationCategory.Alarm,
@@ -121,23 +143,31 @@ class NotificationService {
     Map<String, String>? payload,
   }) async {
     final localizedPrayer = prayerName.toLowerCase().tr();
+    final isFajr = prayerName.toLowerCase() == 'fajr';
+    final channelKey = isFajr ? 'prayer_times_fajr' : 'prayer_times';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
-        channelKey: 'prayer_times',
+        channelKey: channelKey,
         title: 'notification_adhan_title'.tr(args: [localizedPrayer]),
         body: 'notification_adhan_body'.tr(args: [localizedPrayer]),
         category: NotificationCategory.Alarm,
         criticalAlert: true,
         wakeUpScreen: true,
-        // Removed fullScreenIntent to make it less intrusive by default
+        fullScreenIntent: true,
+        autoDismissible: false,
         payload: payload ?? {'prayer': prayerName, 'type': 'adhan'},
       ),
       actionButtons: [
         NotificationActionButton(
-          key: 'OPEN_PRAYER_MODE',
-          label: 'وضع الصلاة (Interactive)'.tr(),
+          key: 'OPEN_ADHAN',
+          label: 'open_adhan_btn'.tr(),
           actionType: ActionType.Default,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'dismiss_btn'.tr(),
+          actionType: ActionType.DismissAction,
         ),
       ],
       schedule: NotificationCalendar(
@@ -166,10 +196,20 @@ class NotificationService {
         channelKey: 'iqama',
         title: 'notification_iqama_title'.tr(),
         body: 'notification_iqama_body'.tr(args: [localizedPrayer]),
-        category: NotificationCategory.Reminder,
+        category: NotificationCategory.Alarm,
+        criticalAlert: true,
         wakeUpScreen: true,
+        fullScreenIntent: true,
+        autoDismissible: false,
         payload: {'prayer': prayerName, 'type': 'iqama'},
       ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'dismiss_btn'.tr(),
+          actionType: ActionType.DismissAction,
+        ),
+      ],
       schedule: NotificationCalendar(
         year: iqamaTime.year,
         month: iqamaTime.month,
@@ -302,11 +342,11 @@ class NotificationService {
     );
   }
 
-  /// Schedule a daily tasbih report (Advice/Admonishment/Guidance)
   static Future<void> showImmediateTasbihReport({
     required int id,
     required String title,
     required String message,
+    String? audioPath,
   }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -315,7 +355,7 @@ class NotificationService {
         title: title,
         body: message,
         category: NotificationCategory.Status,
-        payload: {'type': 'tasbih_report'},
+        payload: {'type': 'tasbih_report', 'audioPath': audioPath},
       ),
     );
   }
@@ -325,6 +365,7 @@ class NotificationService {
     required String title,
     required String message,
     required DateTime scheduleTime,
+    String? audioPath,
   }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -333,7 +374,7 @@ class NotificationService {
         title: title,
         body: message,
         category: NotificationCategory.Status,
-        payload: {'type': 'tasbih_report'},
+        payload: {'type': 'tasbih_report', 'audioPath': audioPath},
       ),
       schedule: NotificationCalendar(
         year: scheduleTime.year,

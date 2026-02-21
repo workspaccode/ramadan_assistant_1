@@ -6,13 +6,8 @@ import 'package:ramadan_assistant/presentation/screens/adhan_screen/widgets/adha
 
 class AdhanScreen extends StatelessWidget {
   final String prayerName;
-  final int iqamaDelayMinutes;
 
-  const AdhanScreen({
-    super.key,
-    required this.prayerName,
-    this.iqamaDelayMinutes = 10,
-  });
+  const AdhanScreen({super.key, required this.prayerName});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +15,6 @@ class AdhanScreen extends StatelessWidget {
       create: (context) => AdhanScreenBloc(
         database: context.read<AppDatabase>(),
         prayerName: prayerName,
-        iqamaDelayMinutes: iqamaDelayMinutes,
       ),
       child: const AdhanScreenContent(),
     );

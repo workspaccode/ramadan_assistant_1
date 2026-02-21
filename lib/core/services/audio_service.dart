@@ -40,7 +40,7 @@ class AudioService {
 
   /// Play Tasbih click sound
   Future<void> playTasbihClick() async {
-    await _playAsset('tasbih_click.mp3');
+    await _playAsset('tasbih_click.wav');
   }
 
   /// Play Tasbih complete sound (when goal reached)

@@ -6,6 +6,8 @@ import 'package:equatable/equatable.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 
+// ── States ──────────────────────────────────────────────────────────────────
+
 abstract class AdhanScreenState extends Equatable {
   const AdhanScreenState();
 
@@ -15,49 +17,21 @@ abstract class AdhanScreenState extends Equatable {
 
 class AdhanScreenInitial extends AdhanScreenState {}
 
-class AdhanScreenPlaying extends AdhanScreenState {
+class AdhanScreenActive extends AdhanScreenState {
   final String prayerName;
-  final Duration duration;
-  final int iqamaCountdown;
-  final bool showIqamaReminder;
+  final int elapsedSeconds;
 
-  const AdhanScreenPlaying({
-    required this.prayerName,
-    required this.duration,
-    required this.iqamaCountdown,
-    this.showIqamaReminder = false,
-  });
+  const AdhanScreenActive({required this.prayerName, this.elapsedSeconds = 0});
 
   @override
-  List<Object?> get props => [
-    prayerName,
-    duration,
-    iqamaCountdown,
-    showIqamaReminder,
-  ];
+  List<Object?> get props => [prayerName, elapsedSeconds];
 
-  AdhanScreenPlaying copyWith({
-    String? prayerName,
-    Duration? duration,
-    int? iqamaCountdown,
-    bool? showIqamaReminder,
-  }) {
-    return AdhanScreenPlaying(
-      prayerName: prayerName ?? this.prayerName,
-      duration: duration ?? this.duration,
-      iqamaCountdown: iqamaCountdown ?? this.iqamaCountdown,
-      showIqamaReminder: showIqamaReminder ?? this.showIqamaReminder,
+  AdhanScreenActive copyWith({int? elapsedSeconds}) {
+    return AdhanScreenActive(
+      prayerName: prayerName,
+      elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
     );
   }
-}
-
-class AdhanScreenCompleted extends AdhanScreenState {
-  final String prayerName;
-
-  const AdhanScreenCompleted(this.prayerName);
-
-  @override
-  List<Object?> get props => [prayerName];
 }
 
 class AdhanScreenDhikr extends AdhanScreenState {
@@ -65,26 +39,45 @@ class AdhanScreenDhikr extends AdhanScreenState {
   final String dhikrText;
   final int count;
   final int target;
+  final int dhikrIndex; // 0=سبحان الله, 1=الحمد لله, 2=الله أكبر
 
   const AdhanScreenDhikr({
     required this.prayerName,
     required this.dhikrText,
     required this.count,
     required this.target,
+    this.dhikrIndex = 0,
   });
 
   @override
-  List<Object?> get props => [prayerName, dhikrText, count, target];
+  List<Object?> get props => [prayerName, dhikrText, count, target, dhikrIndex];
 
-  AdhanScreenDhikr copyWith({String? dhikrText, int? count, int? target}) {
+  AdhanScreenDhikr copyWith({
+    String? dhikrText,
+    int? count,
+    int? target,
+    int? dhikrIndex,
+  }) {
     return AdhanScreenDhikr(
       prayerName: prayerName,
       dhikrText: dhikrText ?? this.dhikrText,
       count: count ?? this.count,
       target: target ?? this.target,
+      dhikrIndex: dhikrIndex ?? this.dhikrIndex,
     );
   }
 }
+
+class AdhanScreenDhikrCompleted extends AdhanScreenState {
+  final String prayerName;
+
+  const AdhanScreenDhikrCompleted(this.prayerName);
+
+  @override
+  List<Object?> get props => [prayerName];
+}
+
+// ── Events ──────────────────────────────────────────────────────────────────
 
 abstract class AdhanScreenEvent extends Equatable {
   const AdhanScreenEvent();
@@ -93,43 +86,134 @@ abstract class AdhanScreenEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class StartAdhanScreen extends AdhanScreenEvent {
+  final String prayerName;
+  const StartAdhanScreen(this.prayerName);
+
+  @override
+  List<Object?> get props => [prayerName];
+}
+
+class TickElapsed extends AdhanScreenEvent {}
+
 class StartDhikr extends AdhanScreenEvent {}
 
 class IncrementDhikr extends AdhanScreenEvent {}
 
-class PlayAdhan extends AdhanScreenEvent {
-  final String prayerName;
-  final int iqamaDelayMinutes;
+class DismissScreen extends AdhanScreenEvent {}
 
-  const PlayAdhan(this.prayerName, {this.iqamaDelayMinutes = 10});
-
-  @override
-  List<Object?> get props => [prayerName, iqamaDelayMinutes];
-}
-
-class StopAdhan extends AdhanScreenEvent {}
-
-class TickIqama extends AdhanScreenEvent {}
+// ── BLoC ────────────────────────────────────────────────────────────────────
 
 class AdhanScreenBloc extends Bloc<AdhanScreenEvent, AdhanScreenState> {
   final AppDatabase _database;
   final AudioService _audioService = AudioService();
   Timer? _timer;
 
-  AdhanScreenBloc({
-    required AppDatabase database,
-    required String prayerName,
-    int iqamaDelayMinutes = 10,
-  }) : _database = database,
-       super(AdhanScreenInitial()) {
-    on<PlayAdhan>(_onPlayAdhan);
-    on<StopAdhan>(_onStopAdhan);
-    on<TickIqama>(_onTickIqama);
-
+  AdhanScreenBloc({required AppDatabase database, required String prayerName})
+    : _database = database,
+      super(AdhanScreenInitial()) {
+    on<StartAdhanScreen>(_onStart);
+    on<TickElapsed>(_onTick);
     on<StartDhikr>(_onStartDhikr);
     on<IncrementDhikr>(_onIncrementDhikr);
+    on<DismissScreen>(_onDismiss);
 
-    add(PlayAdhan(prayerName, iqamaDelayMinutes: iqamaDelayMinutes));
+    // Auto-start
+    add(StartAdhanScreen(prayerName));
+  }
+
+  void _onStart(StartAdhanScreen event, Emitter<AdhanScreenState> emit) {
+    emit(AdhanScreenActive(prayerName: event.prayerName));
+
+    // Simple elapsed timer for visual effect (optional pulsing etc)
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      add(TickElapsed());
+    });
+  }
+
+  void _onTick(TickElapsed event, Emitter<AdhanScreenState> emit) {
+    if (state is AdhanScreenActive) {
+      final s = state as AdhanScreenActive;
+      emit(s.copyWith(elapsedSeconds: s.elapsedSeconds + 1));
+    }
+  }
+
+  void _onDismiss(DismissScreen event, Emitter<AdhanScreenState> emit) {
+    _timer?.cancel();
+  }
+
+  Future<void> _onStartDhikr(
+    StartDhikr event,
+    Emitter<AdhanScreenState> emit,
+  ) async {
+    _timer?.cancel();
+
+    String prayerName = '';
+    if (state is AdhanScreenActive) {
+      prayerName = (state as AdhanScreenActive).prayerName;
+    } else if (state is AdhanScreenDhikr) {
+      // Already in dhikr — save current then advance
+      final curr = state as AdhanScreenDhikr;
+      prayerName = curr.prayerName;
+      await _saveSession(curr.dhikrText, curr.count, curr.target, false);
+    } else if (state is AdhanScreenDhikrCompleted) {
+      return; // Already done
+    }
+
+    emit(
+      AdhanScreenDhikr(
+        prayerName: prayerName,
+        dhikrText: 'سبحان الله',
+        count: 0,
+        target: 33,
+        dhikrIndex: 0,
+      ),
+    );
+  }
+
+  Future<void> _onIncrementDhikr(
+    IncrementDhikr event,
+    Emitter<AdhanScreenState> emit,
+  ) async {
+    if (state is AdhanScreenDhikr) {
+      final curr = state as AdhanScreenDhikr;
+      int nextCount = curr.count + 1;
+      if (nextCount < curr.target) {
+        emit(curr.copyWith(count: nextCount));
+        // Play click sound on each tap
+        unawaited(_audioService.playTasbihClick());
+      } else {
+        // Complete current dhikr
+        unawaited(_audioService.playTasbihComplete());
+        await _saveSession(curr.dhikrText, curr.target, curr.target, true);
+
+        if (curr.dhikrIndex == 0) {
+          // سبحان الله done → الحمد لله
+          emit(
+            curr.copyWith(
+              dhikrText: 'الحمد لله',
+              count: 0,
+              target: 33,
+              dhikrIndex: 1,
+            ),
+          );
+        } else if (curr.dhikrIndex == 1) {
+          // الحمد لله done → الله أكبر
+          emit(
+            curr.copyWith(
+              dhikrText: 'الله أكبر',
+              count: 0,
+              target: 34,
+              dhikrIndex: 2,
+            ),
+          );
+        } else {
+          // All completed
+          emit(AdhanScreenDhikrCompleted(curr.prayerName));
+        }
+      }
+    }
   }
 
   Future<void> _saveSession(
@@ -153,109 +237,9 @@ class AdhanScreenBloc extends Bloc<AdhanScreenEvent, AdhanScreenState> {
     }
   }
 
-  Future<void> _onPlayAdhan(
-    PlayAdhan event,
-    Emitter<AdhanScreenState> emit,
-  ) async {
-    final isFajr = event.prayerName.toLowerCase() == 'fajr';
-    await _audioService.playAdhan(isFajr: isFajr);
-
-    emit(
-      AdhanScreenPlaying(
-        prayerName: event.prayerName,
-        duration: const Duration(seconds: 30),
-        iqamaCountdown: event.iqamaDelayMinutes * 60,
-      ),
-    );
-
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      add(TickIqama());
-    });
-  }
-
-  void _onTickIqama(TickIqama event, Emitter<AdhanScreenState> emit) {
-    if (state is AdhanScreenPlaying) {
-      final currentState = state as AdhanScreenPlaying;
-      if (currentState.iqamaCountdown > 0) {
-        emit(
-          currentState.copyWith(
-            iqamaCountdown: currentState.iqamaCountdown - 1,
-          ),
-        );
-      } else if (!currentState.showIqamaReminder) {
-        _timer?.cancel();
-        emit(currentState.copyWith(showIqamaReminder: true));
-        _audioService.playIqamaReminder();
-      }
-    }
-  }
-
-  void _onStopAdhan(StopAdhan event, Emitter<AdhanScreenState> emit) {
-    _audioService.stop();
-    // Do not cancel timer if we want to keep iqama countdown running after stopping adhan sound
-    if (state is AdhanScreenPlaying) {
-      // Just keep playing state but sound stopped (handled by _audioService.stop())
-    }
-  }
-
-  Future<void> _onStartDhikr(
-    StartDhikr event,
-    Emitter<AdhanScreenState> emit,
-  ) async {
-    String prayerName = '';
-    if (state is AdhanScreenPlaying) {
-      prayerName = (state as AdhanScreenPlaying).prayerName;
-    } else if (state is AdhanScreenCompleted) {
-      prayerName = (state as AdhanScreenCompleted).prayerName;
-    }
-
-    if (state is AdhanScreenDhikr) {
-      final curr = state as AdhanScreenDhikr;
-      await _saveSession(curr.dhikrText, curr.count, curr.target, false);
-    }
-
-    emit(
-      AdhanScreenDhikr(
-        prayerName: prayerName,
-        dhikrText: 'سبحان الله',
-        count: 0,
-        target: 33,
-      ),
-    );
-  }
-
-  Future<void> _onIncrementDhikr(
-    IncrementDhikr event,
-    Emitter<AdhanScreenState> emit,
-  ) async {
-    if (state is AdhanScreenDhikr) {
-      final curr = state as AdhanScreenDhikr;
-      int nextCount = curr.count + 1;
-
-      if (nextCount < curr.target) {
-        emit(curr.copyWith(count: nextCount));
-      } else {
-        // Switch to next Dhikr
-        if (curr.dhikrText == 'سبحان الله') {
-          await _saveSession(curr.dhikrText, 33, 33, true);
-          emit(curr.copyWith(dhikrText: 'الحمد لله', count: 0, target: 33));
-        } else if (curr.dhikrText == 'الحمد لله') {
-          await _saveSession(curr.dhikrText, 33, 33, true);
-          emit(curr.copyWith(dhikrText: 'الله أكبر', count: 0, target: 33));
-        } else {
-          // Completed all basic dhikr
-          await _saveSession(curr.dhikrText, 33, 33, true);
-          emit(AdhanScreenCompleted(curr.prayerName));
-        }
-      }
-    }
-  }
-
   @override
   Future<void> close() {
     _timer?.cancel();
-    _audioService.stop();
     return super.close();
   }
 }

@@ -125,12 +125,17 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     if (state is WirdPlanActive) {
       try {
         final now = DateTime.now();
-        final today = DateTime(now.year, now.month, now.day);
+        final targetDate = event.date ?? now;
+        final normalizedDate = DateTime(
+          targetDate.year,
+          targetDate.month,
+          targetDate.day,
+        );
 
         // Update or Insert Daily Log
         final dailyLog = await (_database.select(
           _database.wirdDailyLogs,
-        )..where((t) => t.date.equals(today))).getSingleOrNull();
+        )..where((t) => t.date.equals(normalizedDate))).getSingleOrNull();
 
         int delta = 0;
 
@@ -141,7 +146,7 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
               .into(_database.wirdDailyLogs)
               .insert(
                 WirdDailyLogsCompanion.insert(
-                  date: today,
+                  date: normalizedDate,
                   fajrPages: Value(
                     event.prayerName == 'fajr' ? event.pagesRead : 0,
                   ),

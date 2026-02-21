@@ -37,13 +37,39 @@ class WirdTrackerView extends StatelessWidget {
           _buildDailyLogGrid(context, theme),
           const SizedBox(height: 32),
           Center(
-            child: TextButton.icon(
-              onPressed: () => _showResetDialog(context),
-              icon: Icon(Icons.settings_backup_restore, color: theme.textDim),
-              label: Text(
-                'wird_change_plan'.tr(),
-                style: TextStyle(color: theme.textDim),
-              ),
+            child: Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () => _pickDateAndLog(context),
+                  icon: const Icon(Icons.history_edu),
+                  label: Text('wird_log_past_day'.tr()),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primary.withOpacity(0.1),
+                    foregroundColor: theme.primary,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: theme.primary, width: 0.5),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton.icon(
+                  onPressed: () => _showResetDialog(context),
+                  icon: Icon(
+                    Icons.settings_backup_restore,
+                    color: theme.textDim,
+                  ),
+                  label: Text(
+                    'wird_change_plan'.tr(),
+                    style: TextStyle(color: theme.textDim),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -328,13 +354,14 @@ class WirdTrackerView extends StatelessWidget {
   }
 
   void _showPagePicker(BuildContext context, RamadanThemeExtension theme) {
+    final bloc = context.read<WirdBloc>();
     final controller = TextEditingController(
       text: state.lastReadPage.toString(),
     );
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: theme.cardSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('wird_last_read_page'.tr()),
@@ -356,7 +383,7 @@ class WirdTrackerView extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               'cancel'.tr(),
               style: TextStyle(color: theme.textSecondary),
@@ -366,9 +393,9 @@ class WirdTrackerView extends StatelessWidget {
             onPressed: () {
               final page = int.tryParse(controller.text);
               if (page != null && page > 0 && page <= 604) {
-                context.read<WirdBloc>().add(SetLastReadPage(page));
+                bloc.add(SetLastReadPage(page));
               }
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
             },
             style: ElevatedButton.styleFrom(backgroundColor: theme.primary),
             child: Text('save'.tr()),
@@ -378,11 +405,14 @@ class WirdTrackerView extends StatelessWidget {
     );
   }
 
-  void _showLogDialog(BuildContext context, String prayerId) {
+  void _showLogDialog(BuildContext context, String prayerId, {DateTime? date}) {
     final theme = context.ramadanTheme;
-    // Get current value from the state
+    final bloc = context.read<WirdBloc>();
+    // Get current value from the state only if today, otherwise it's 0 for simplicity in this dialog
     int currentValue = 0;
-    if (state.todayPrayerPages.containsKey(prayerId)) {
+    final isToday = date == null || isSameDay(date, DateTime.now());
+
+    if (isToday && state.todayPrayerPages.containsKey(prayerId)) {
       currentValue = state.todayPrayerPages[prayerId]!;
     }
 
@@ -394,13 +424,18 @@ class WirdTrackerView extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setState) => AlertDialog(
           backgroundColor: theme.cardSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: Text(prayerId.tr(), textAlign: TextAlign.center),
+          title: Text(
+            date != null
+                ? '${prayerId.tr()} (${DateFormat.yMMMd().format(date)})'
+                : prayerId.tr(),
+            textAlign: TextAlign.center,
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -459,7 +494,7 @@ class WirdTrackerView extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: Text(
                 'cancel'.tr(),
                 style: TextStyle(color: theme.textSecondary),
@@ -467,10 +502,10 @@ class WirdTrackerView extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<WirdBloc>().add(
-                  UpdatePrayerProgress(prayerId, selectedValue),
+                bloc.add(
+                  UpdatePrayerProgress(prayerId, selectedValue, date: date),
                 );
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.primary,
@@ -485,6 +520,79 @@ class WirdTrackerView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  bool isSameDay(DateTime? a, DateTime? b) {
+    if (a == null || b == null) return false;
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  Future<void> _pickDateAndLog(BuildContext context) async {
+    final theme = context.ramadanTheme;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 1)),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return child!;
+      },
+    );
+
+    if (picked != null) {
+      if (context.mounted) {
+        _showPrayerSelectionDialog(context, picked);
+      }
+    }
+  }
+
+  void _showPrayerSelectionDialog(BuildContext context, DateTime date) {
+    final theme = context.ramadanTheme;
+    final prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha', 'other'];
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: theme.cardSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('wird_select_date'.tr()),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: prayers.length,
+            itemBuilder: (context, index) {
+              final id = prayers[index];
+              return ListTile(
+                leading: Icon(_getPrayerIcon(id), color: theme.primary),
+                title: Text(id.tr()),
+                onTap: () {
+                  Navigator.pop(dialogContext);
+                  _showLogDialog(context, id, date: date);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  IconData _getPrayerIcon(String id) {
+    switch (id) {
+      case 'fajr':
+        return Icons.wb_twilight;
+      case 'dhuhr':
+        return Icons.wb_sunny;
+      case 'asr':
+        return Icons.wb_sunny_outlined;
+      case 'maghrib':
+        return Icons.nightlight_round;
+      case 'isha':
+        return Icons.bedtime;
+      default:
+        return Icons.more_horiz;
+    }
   }
 
   Widget _buildCounterButton(
@@ -507,9 +615,10 @@ class WirdTrackerView extends StatelessWidget {
 
   void _showResetDialog(BuildContext context) {
     final theme = context.ramadanTheme;
+    final bloc = context.read<WirdBloc>();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: theme.cardSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('wird_reset_title'.tr()),
@@ -519,7 +628,7 @@ class WirdTrackerView extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(
               'wird_keep_plan'.tr(),
               style: TextStyle(color: theme.textSecondary),
@@ -527,8 +636,8 @@ class WirdTrackerView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context.read<WirdBloc>().add(ResetWirdProgress());
-              Navigator.pop(context);
+              bloc.add(ResetWirdProgress());
+              Navigator.pop(dialogContext);
             },
             child: Text(
               'wird_reset_confirm'.tr(),
