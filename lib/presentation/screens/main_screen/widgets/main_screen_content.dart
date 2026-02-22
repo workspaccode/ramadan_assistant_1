@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/bloc/main_screen_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/prayer_times_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/quran_screen/quran_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/tasbih_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_guide_screen.dart';
@@ -38,6 +39,7 @@ class MainScreenContent extends StatelessWidget {
                           PrayerTimesScreen(),
                           TasbihScreen(),
                           WirdScreen(),
+                          QuranScreen(),
                           RemindersScreen(),
                           UmrahGuideScreen(),
                         ],
@@ -301,13 +303,11 @@ class MainScreenContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                selectedIndex == 3
-                    ? Icons.notifications
-                    : Icons.notifications_outlined,
+                selectedIndex == 3 ? Icons.book : Icons.book_outlined,
                 size: 24,
               ),
             ),
-            label: 'reminders'.tr(),
+            label: 'quran'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Container(
@@ -319,7 +319,25 @@ class MainScreenContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                selectedIndex == 4 ? Icons.map : Icons.map_outlined,
+                selectedIndex == 4
+                    ? Icons.notifications
+                    : Icons.notifications_outlined,
+                size: 24,
+              ),
+            ),
+            label: 'reminders'.tr(),
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: selectedIndex == 5
+                    ? const Color(0xFF2E7D32).withOpacity(0.1)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                selectedIndex == 5 ? Icons.map : Icons.map_outlined,
                 size: 24,
               ),
             ),

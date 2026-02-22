@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:quran_library/quran_library.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
@@ -27,6 +28,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await setupServiceLocator();
+
+  // Initialize Quran Library
+  await QuranLibrary.init();
 
   // Initialize Services
   await NotificationService.initialize();

@@ -5,8 +5,10 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
   awesome_notifications
+  connectivity_plus
   flutter_tts
   geolocator_windows
+  media_kit_libs_windows_audio
   permission_handler_windows
   sqlite3_flutter_libs
   url_launcher_windows
