@@ -18,6 +18,8 @@ import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.dart';
+import 'package:ramadan_assistant/presentation/widgets/falling_fanous_overlay.dart';
+import 'package:vibration/vibration.dart';
 
 class MainScreenContent extends StatelessWidget {
   const MainScreenContent({super.key});
@@ -146,13 +148,32 @@ class MainScreenContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'app_name'.tr(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                    GestureDetector(
+                      onTap: () {
+                        FallingFanousOverlay.show(context);
+                        Vibration.vibrate(duration: 50);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ramadan_kareem'.tr(),
+                            style: const TextStyle(
+                             // color: Colors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          Text(
+                            'tap_for_blessing'.tr(),
+                            style: TextStyle(
+                            //  color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 8),

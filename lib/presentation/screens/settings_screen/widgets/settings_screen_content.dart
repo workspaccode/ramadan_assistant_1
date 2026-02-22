@@ -12,6 +12,7 @@ import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
+import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreenContent extends StatelessWidget {
@@ -29,7 +30,7 @@ class SettingsScreenContent extends StatelessWidget {
             : const Color(0xFFF2F2F7);
 
         return CupertinoPageScaffold(
-          backgroundColor: backgroundColor,
+          //backgroundColor: backgroundColor,
           child: Container(
             decoration: BoxDecoration(
               gradient: isRamadan
@@ -47,11 +48,11 @@ class SettingsScreenContent extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 _buildRamadanAppBar(context, isRamadan),
-                SliverSafeArea(
-                  top: false,
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      if (state is SettingsScreenLoaded) ...[
+                if (state is SettingsScreenLoaded)
+                  SliverSafeArea(
+                    top: false,
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
                         _buildRamadanCard(context, isRamadan),
                         _buildLocationSection(context, state),
                         _buildAppearanceSection(context, state),
@@ -61,13 +62,13 @@ class SettingsScreenContent extends StatelessWidget {
                         _buildAdminSection(context, state),
                         _buildFooter(context),
                         const SizedBox(height: 40),
-                      ] else
-                        SliverFillRemaining(
-                          child: Center(child: _buildLoadingState()),
-                        ),
-                    ]),
+                      ]),
+                    ),
+                  )
+                else
+                  SliverFillRemaining(
+                    child: Center(child: _buildLoadingState()),
                   ),
-                ),
               ],
             ),
           ),
@@ -80,50 +81,44 @@ class SettingsScreenContent extends StatelessWidget {
     final titleText = 'settings_title'.tr();
 
     return CupertinoSliverNavigationBar(
-      largeTitle: Text(
-        titleText,
-        style: TextStyle(
-          color: context.isDark ? CupertinoColors.white : CupertinoColors.black,
-          fontFamily: 'Cairo',
-          fontWeight: FontWeight.bold,
-        ),
-      ),
       backgroundColor:
           (isRamadan ? const Color(0xFF2E7D32) : context.primaryColor)
               .withValues(alpha: 0.8),
       border: null,
-      middle: isRamadan
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  'assets/image/ramadan_star.svg',
-                  width: 18,
-                  height: 18,
-                  colorFilter: const ColorFilter.mode(
-                    Colors.white,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  titleText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Cairo',
-                  ),
-                ),
-              ],
-            )
-          : null,
-      trailing: CupertinoButton(
-        padding: EdgeInsets.zero,
-        child: const Icon(CupertinoIcons.refresh, color: Colors.white),
-        onPressed: () {
-          context.read<SettingsScreenBloc>().add(LoadSettings());
-        },
+      middle: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isRamadan) ...[
+            SvgPicture.asset(
+              'assets/image/ramadan_star.svg',
+              width: 18,
+              height: 18,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            titleText,
+            style: TextStyle(
+              color: context.isDark
+                  ? CupertinoColors.white
+                  : CupertinoColors.black,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Cairo',
+            ),
+          ),
+        ],
       ),
+      // trailing: CupertinoButton(
+      //   padding: EdgeInsets.zero,
+      //   child: const Icon(CupertinoIcons.refresh),
+      //   onPressed: () {
+      //     context.read<SettingsScreenBloc>().add(LoadSettings());
+      //   },
+      // ),
     );
   }
 
@@ -258,14 +253,21 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return _buildDropdownTile(
-      context,
-      'color_palette'.tr(),
-      state.colorPaletteId ?? 'default',
-      ['default', 'midnight', 'desert'],
-      (val) {
-        context.read<SettingsScreenBloc>().add(UpdateSettingsColorPalette(val));
-        context.read<ThemeBloc>().add(UpdateColorPalette(val));
+    return CupertinoListTile(
+      title: Text('color_palette'.tr()),
+      additionalInfo: Text((state.colorPaletteId ?? 'default').tr()),
+      trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+      onTap: () {
+        SettingsDialogs.showColorPaletteDialog(
+          context,
+          currentPalette: state.colorPaletteId ?? 'default',
+          onSelected: (val) {
+            context.read<SettingsScreenBloc>().add(
+              UpdateSettingsColorPalette(val),
+            );
+            context.read<ThemeBloc>().add(UpdateColorPalette(val));
+          },
+        );
       },
     );
   }
@@ -278,15 +280,19 @@ class SettingsScreenContent extends StatelessWidget {
 
         final langNames = {'ar': 'العربية', 'en': 'English', 'ur': 'اردو'};
 
-        return _buildDropdownTile(
-          context,
-          'language'.tr(),
-          langNames[langCode] ?? langCode,
-          ['ar', 'en', 'ur'],
-          (val) {
-            context.read<LanguageBloc>().add(UpdateLanguage(val));
+        return CupertinoListTile(
+          title: Text('language'.tr()),
+          additionalInfo: Text(langNames[langCode] ?? langCode),
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+          onTap: () {
+            SettingsDialogs.showLanguageDialog(
+              context,
+              currentLang: langCode,
+              onSelected: (val) {
+                context.read<LanguageBloc>().add(UpdateLanguage(val));
+              },
+            );
           },
-          displayValues: langNames,
         );
       },
     );
@@ -296,32 +302,58 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListTile(
-      title: Text('font_size'.tr()),
-      additionalInfo: Text('${(state.fontSizeMultiplier * 100).toInt()}%'),
-      subtitle: SizedBox(
-        width: double.infinity,
-        child: CupertinoSlider(
-          value: state.fontSizeMultiplier,
-          min: 0.8,
-          max: 1.4,
-          divisions: 6,
-          onChanged: (val) {
-            context.read<SettingsScreenBloc>().add(UpdateFontSize(val));
-            context.read<ThemeBloc>().add(UpdateFontSizeMultiplier(val));
-          },
+    final theme = context.ramadanTheme;
+    return Column(
+      children: [
+        CupertinoListTile(
+          title: Text('font_size'.tr()),
+          additionalInfo: Text('${(state.fontSizeMultiplier * 100).toInt()}%'),
+          subtitle: SizedBox(
+            width: double.infinity,
+            child: CupertinoSlider(
+              value: state.fontSizeMultiplier,
+              min: 0.8,
+              max: 1.4,
+              divisions: 6,
+              activeColor: theme.primary,
+              onChanged: (val) {
+                context.read<SettingsScreenBloc>().add(UpdateFontSize(val));
+                context.read<ThemeBloc>().add(UpdateFontSizeMultiplier(val));
+              },
+            ),
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.primary.withValues(alpha: 0.2)),
+            ),
+            child: Text(
+              'font_size_preview'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16 * state.fontSizeMultiplier,
+                color: theme.textSecondary,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildPrayerSection(BuildContext context, SettingsScreenLoaded state) {
     return CupertinoListSection.insetGrouped(
-      header: Text('prayer_settings'.tr().toUpperCase()),
+      header: Text('prayer_times_title'.tr().toUpperCase()),
       children: [
         _buildDropdownTile(
           context,
-          'calculation_method'.tr(),
+          'method'.tr(),
           state.calculationMethod,
           ['muslimWorldLeague', 'ummAlQura', 'egyptian', 'karachi'],
           (val) => context.read<SettingsScreenBloc>().add(
@@ -334,6 +366,10 @@ class SettingsScreenContent extends StatelessWidget {
           state.madhab,
           ['shafi', 'hanafi'],
           (val) => context.read<SettingsScreenBloc>().add(UpdateMadhab(val)),
+          displayValues: {
+            'shafi': 'madhab_shafi'.tr(),
+            'hanafi': 'madhab_hanafi'.tr(),
+          },
         ),
       ],
     );
@@ -345,20 +381,28 @@ class SettingsScreenContent extends StatelessWidget {
       children: [
         _buildDropdownTile(
           context,
-          'system'.tr(),
+          'iqama_system'.tr(),
           state.iqamaSystem,
           ['manual', 'preset'],
           (val) =>
               context.read<SettingsScreenBloc>().add(UpdateIqamaSystem(val)),
+          displayValues: {
+            'manual': 'system_manual'.tr(),
+            'preset': 'system_preset'.tr(),
+          },
         ),
         if (state.iqamaSystem == 'preset')
           _buildDropdownTile(
             context,
-            'preset'.tr(),
+            'iqama_preset'.tr(),
             state.iqamaPreset,
             ['saudi', 'egypt'],
             (val) =>
                 context.read<SettingsScreenBloc>().add(UpdateIqamaPreset(val)),
+            displayValues: {
+              'saudi': 'preset_saudi'.tr(),
+              'egypt': 'preset_egypt'.tr(),
+            },
           ),
         if (state.iqamaSystem == 'manual')
           ...state.iqamaDelays.entries.map(
@@ -527,10 +571,15 @@ class SettingsScreenContent extends StatelessWidget {
     List<String> options,
     void Function(String) onChanged, {
     Map<String, String>? displayValues,
+    bool translateOptions = true,
   }) {
+    final infoText =
+        displayValues?[currentValue] ??
+        (translateOptions ? currentValue.tr() : currentValue);
+
     return CupertinoListTile(
       title: Text(title),
-      additionalInfo: Text(displayValues?[currentValue] ?? currentValue.tr()),
+      additionalInfo: Text(infoText),
       trailing: const Icon(CupertinoIcons.chevron_up_chevron_down, size: 14),
       onTap: () {
         final initialIndex = options.indexOf(currentValue);
@@ -571,7 +620,10 @@ class SettingsScreenContent extends StatelessWidget {
                       children: options
                           .map(
                             (o) => Center(
-                              child: Text(displayValues?[o] ?? o.tr()),
+                              child: Text(
+                                displayValues?[o] ??
+                                    (translateOptions ? o.tr() : o),
+                              ),
                             ),
                           )
                           .toList(),
@@ -649,6 +701,13 @@ class SettingsScreenContent extends StatelessWidget {
     Function(String) onSelect,
   ) {
     final options = ['zanfajr.mp3', 'azan8.mp3', 'MakkahIQamah.mp3'];
-    return _buildDropdownTile(context, title, currentSound, options, onSelect);
+    return _buildDropdownTile(
+      context,
+      title,
+      currentSound,
+      options,
+      onSelect,
+      translateOptions: false,
+    );
   }
 }
