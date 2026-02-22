@@ -18,55 +18,88 @@ class TasbihView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.background,
-      body: Stack(
-        children: [
-          // Ramadan Background Ornaments
-          if (isRamadan) ...[
-            Positioned(
-              top: -50,
-              right: -50,
-              child: Opacity(
-                opacity: 0.1,
-                child: SvgPicture.asset(
-                  'assets/ra3.svg',
-                  width: 200,
-                  height: 200,
-                  colorFilter: ColorFilter.mode(theme.primary, BlendMode.srcIn),
+      appBar: AppBar(
+        title: Text('tasbih_title'.tr()),
+        leading: GestureDetector(
+          onTap: () {
+            context.pop();
+          },
+          child: Icon(Icons.arrow_back, color: theme.textPrimary),
+        ),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: const AssetImage(
+                      'assets/image/islamic_pattern_premium_gold_1771758633652.png',
+                    ),
+                    fit: BoxFit.cover,
+                    opacity: 0.05,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    // Ramadan Background Ornaments
+                    if (isRamadan) ...[
+                      Positioned(
+                        top: -50,
+                        right: -50,
+                        child: Opacity(
+                          opacity: 0.1,
+                          child: SvgPicture.asset(
+                            'assets/ra3.svg',
+                            width: 200,
+                            height: 200,
+                            colorFilter: ColorFilter.mode(
+                              theme.primary,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    // Main Content
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: BlocBuilder<TasbihBloc, TasbihState>(
+                          builder: (context, state) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 20),
+                                    _buildDhikrCard(context, state),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                _buildTasbihCounter(context, state),
+                                Column(
+                                  children: [
+                                    _buildProgressIndicator(context, state),
+                                    const SizedBox(height: 40),
+                                    _buildActionButtons(context),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-          // Main Content
-          SafeArea(
-            child: Column(
-              children: [
-                //  _buildRamadanHeader(context, isRamadan),
-                Expanded(
-                  child: BlocBuilder<TasbihBloc, TasbihState>(
-                    builder: (context, state) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildDhikrCard(context, state),
-                            const Spacer(),
-                            _buildTasbihCounter(context, state),
-                            const Spacer(),
-                            _buildProgressIndicator(context, state),
-                            const SizedBox(height: 32),
-                            _buildActionButtons(context),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -194,7 +227,7 @@ class TasbihView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 20),
                 transitionBuilder: (child, animation) =>
                     ScaleTransition(scale: animation, child: child),
                 child: Text(

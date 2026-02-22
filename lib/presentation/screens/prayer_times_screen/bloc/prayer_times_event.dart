@@ -7,7 +7,14 @@ abstract class PrayerTimesEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadPrayerTimes extends PrayerTimesEvent {}
+class LoadPrayerTimes extends PrayerTimesEvent {
+  final String? locale;
+
+  const LoadPrayerTimes({this.locale});
+
+  @override
+  List<Object> get props => [locale ?? ''];
+}
 
 class RefreshPrayerTimes extends PrayerTimesEvent {}
 

@@ -35,6 +35,9 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
       String locationName = "Unknown Location";
       String? country;
       try {
+        if (event.locale != null) {
+          await setLocaleIdentifier(event.locale!);
+        }
         final placemarks = await placemarkFromCoordinates(
           position.latitude,
           position.longitude,

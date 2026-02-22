@@ -20,6 +20,7 @@ import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/main_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
+import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
@@ -96,6 +97,10 @@ class MyApp extends StatelessWidget {
             create: (context) => WirdBloc(sl())..add(LoadWirdProgress()),
           ),
           BlocProvider(create: (context) => TasbihBloc(sl<AppDatabase>())),
+          BlocProvider(
+            create: (context) =>
+                RemindersBloc(sl<AppDatabase>())..add(LoadReminders()),
+          ),
         ],
         child: MultiBlocListener(
           listeners: [
@@ -105,6 +110,10 @@ class MyApp extends StatelessWidget {
                   final newLocale = Locale(state.languageCode);
                   if (context.locale != newLocale) {
                     context.setLocale(newLocale);
+                    // Refresh prayer times with new locale for geocoding
+                    context.read<PrayerTimesBloc>().add(
+                      LoadPrayerTimes(locale: state.languageCode),
+                    );
                   }
                 }
               },

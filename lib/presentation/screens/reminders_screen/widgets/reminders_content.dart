@@ -786,7 +786,9 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
           children: [
             IconButton(
               icon: const Icon(CupertinoIcons.play_circle_fill),
-              onPressed: () => _audioService.playDhikr(dhikr['audio']!),
+              onPressed: dhikr['audioFile'] != null
+                  ? () => _audioService.playDhikr(dhikr['audioFile']!)
+                  : null,
             ),
             if (isSelected)
               const Icon(
@@ -848,9 +850,12 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
         offsets: _selectedDhikrs.map((e) => "0").toList(),
         audioPaths: _selectedDhikrs
             .map(
-              (id) => DhikrPresets.dhikrList.firstWhere(
-                (d) => d['id'] == id,
-              )['audio']!,
+              (id) =>
+                  DhikrPresets.dhikrList.firstWhere(
+                    (d) => d['id'] == id,
+                    orElse: () => {'audioFile': ''},
+                  )['audioFile'] ??
+                  '',
             )
             .toList(),
         intervalMinutes: _selectedInterval.inMinutes,

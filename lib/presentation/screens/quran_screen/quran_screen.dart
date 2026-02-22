@@ -16,6 +16,18 @@ class _QuranScreenState extends State<QuranScreen> {
     final theme = context.ramadanTheme;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'quran'.tr(),
+          // style: theme.textPrimary.,
+        ),
+        leading: GestureDetector(
+          onTap: () {
+            context.pop();
+          },
+          child: Icon(Icons.arrow_back, color: theme.textPrimary),
+        ),
+      ),
       body: QuranLibraryScreen(
         parentContext: context,
         isDark: Theme.of(context).brightness == Brightness.dark,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,8 +9,6 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
-import 'package:ramadan_assistant/presentation/screens/qibla_screen/qibla_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
 
 class PrayerTimesContent extends StatefulWidget {
   final PrayerTimesLoaded state;
@@ -197,265 +196,286 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
     PrayerTimes times,
   ) {
     final prayerInfo = _getPrayerInfo(prayerName, times);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = context.ramadanTheme;
 
-    showCupertinoModalPopup<void>(
+    showModalBottomSheet(
       context: context,
-      builder: (_) => Card(
-        key: ValueKey('prayer_modal_${prayerName}_${context.locale}'),
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: context.primaryColor,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      key: ValueKey(
-                        'modal_prayer_name_${prayerName}_${context.locale}',
-                      ),
-                      prayerName.tr(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        _formatTimeRemaining(prayerInfo['time']),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            const SizedBox(height: 12),
+            Container(
+              width: 50,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                borderRadius: BorderRadius.circular(2.5),
               ),
+            ),
 
-              // Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        // Time remaining
-                        _buildInfoCard(
-                          context,
-                          'time_remaining'.tr(),
-                          _formatTimeRemaining(prayerInfo['time']),
-                          CupertinoIcons.clock,
-                          isDark,
-                        ),
+            // Header
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                children: [
+                  Text(
+                    prayerName.tr(),
+                    style: TextStyle(
+                      color: theme.textPrimary,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _formatTimeRemaining(prayerInfo['time']),
+                      style: TextStyle(
+                        color: theme.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-                        const SizedBox(height: 16),
-
-                        // Rakats
-                        _buildRakatsCard(context, prayerInfo['rakats'], isDark),
-
-                        const SizedBox(height: 16),
-
-                        // Sunnah status
-                        _buildInfoCard(
+            // Content
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                children: [
+                  // Info Cards Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildModalStatCard(
                           context,
                           'sunnah_status'.tr(),
                           prayerInfo['isSunnah']
                               ? 'sunnah_prayer'.tr()
                               : 'fard_prayer'.tr(),
                           prayerInfo['isSunnah']
-                              ? CupertinoIcons.heart_fill
-                              : CupertinoIcons.star_fill,
-                          isDark,
+                              ? Icons.favorite_rounded
+                              : Icons.star_rounded,
+                          theme.secondary,
                         ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildModalStatCard(
+                          context,
+                          'prayer_time'.tr(),
+                          DateFormat.jm().format(prayerInfo['time']),
+                          Icons.access_time_filled_rounded,
+                          theme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                        const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
-                        // Preferred duas
-                        if (prayerInfo['preferredDuas'].isNotEmpty) ...[
-                          Text(
-                            'preferred_duas'.tr(),
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          ...prayerInfo['preferredDuas'].map<Widget>(
-                            (dua) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.1)
-                                      : Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  dua,
-                                  style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+                  // Rakats Section
+                  _buildRakatsSection(context, prayerInfo['rakats']),
+
+                  const SizedBox(height: 24),
+
+                  // Preferred Duas Section
+                  if (prayerInfo['preferredDuas'].isNotEmpty) ...[
+                    Text(
+                      'preferred_duas'.tr(),
+                      style: TextStyle(
+                        color: theme.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ),
+                    const SizedBox(height: 16),
+                    ...prayerInfo['preferredDuas'].map<Widget>(
+                      (dua) => Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: theme.cardSurface,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: theme.borderColor.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: Text(
+                          dua,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: theme.textPrimary,
+                            fontSize: 18,
+                            height: 1.6,
+                            fontFamily: 'traditional_arabic',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 40),
+                ],
               ),
-
-              // Close button
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: CupertinoButton(
-                  onPressed: () => Navigator.pop(context),
-                  color: context.primaryColor,
-                  child: Text(
-                    'close'.tr(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoCard(
+  Widget _buildModalStatCard(
     BuildContext context,
     String title,
     String value,
     IconData icon,
-    bool isDark,
+    Color color,
   ) {
+    final theme = context.ramadanTheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRakatsCard(
-    BuildContext context,
-    Map<String, dynamic> rakats,
-    bool isDark,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: color.withValues(alpha: 0.1)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 12),
           Text(
-            'rakats'.tr(),
+            title,
+            style: TextStyle(color: theme.textSecondary, fontSize: 12),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 14,
+              color: theme.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
-          if (rakats.containsKey('fard'))
-            _buildRakatRow('fard'.tr(), rakats['fard'], isDark),
-          if (rakats.containsKey('sunnah'))
-            _buildSunnahRow(rakats['sunnah'], isDark),
-          if (rakats.containsKey('witr'))
-            _buildRakatRow('witr'.tr(), rakats['witr'], isDark),
         ],
       ),
     );
   }
 
-  Widget _buildRakatRow(String label, int count, bool isDark) {
+  Widget _buildRakatsSection(
+    BuildContext context,
+    Map<String, dynamic> rakats,
+  ) {
+    final theme = context.ramadanTheme;
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: theme.cardSurface,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.format_list_numbered_rounded, color: theme.primary),
+              const SizedBox(width: 12),
+              Text(
+                'rakats'.tr(),
+                style: TextStyle(
+                  color: theme.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (rakats.containsKey('fard'))
+            _buildRakatRow(
+              context,
+              'fard'.tr(),
+              rakats['fard'] as int,
+              theme.primary,
+            ),
+          if (rakats.containsKey('sunnah')) ...[
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Divider(height: 1),
+            ),
+            _buildSunnahRows(
+              context: context,
+              sunnah: rakats['sunnah'] as Map<String, dynamic>,
+              color: theme.secondary,
+            ),
+          ],
+          if (rakats.containsKey('witr')) ...[
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Divider(height: 1),
+            ),
+            _buildRakatRow(
+              context,
+              'witr'.tr(),
+              rakats['witr'] as int,
+              theme.accent,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRakatRow(
+    BuildContext context,
+    String label,
+    int count,
+    Color color,
+  ) {
+    final theme = context.ramadanTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: theme.textPrimary,
               fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
-            '$count ${'rakats'.tr()}',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$count ${'rakats'.tr()}',
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -463,24 +483,31 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
     );
   }
 
-  Widget _buildSunnahRow(Map<String, dynamic> sunnah, bool isDark) {
+  Widget _buildSunnahRows({
+    required BuildContext context,
+    required Map<String, dynamic> sunnah,
+    required Color color,
+  }) {
     return Column(
       children: [
-        Text(
-          'sunnah'.tr(),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14,
-          ),
-        ),
         if (sunnah.containsKey('before'))
-          _buildRakatRow('before_prayer'.tr(), sunnah['before'], isDark),
+          _buildRakatRow(
+            context,
+            'before_prayer'.tr(),
+            sunnah['before'] as int,
+            color,
+          ),
         if (sunnah.containsKey('after'))
-          _buildRakatRow('after_prayer'.tr(), sunnah['after'], isDark),
+          _buildRakatRow(
+            context,
+            'after_prayer'.tr(),
+            sunnah['after'] as int,
+            color,
+          ),
         if (sunnah.containsKey('min'))
-          _buildRakatRow('minimum'.tr(), sunnah['min'], isDark),
+          _buildRakatRow(context, 'minimum'.tr(), sunnah['min'] as int, color),
         if (sunnah.containsKey('max'))
-          _buildRakatRow('maximum'.tr(), sunnah['max'], isDark),
+          _buildRakatRow(context, 'maximum'.tr(), sunnah['max'] as int, color),
       ],
     );
   }
@@ -511,382 +538,447 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
     final nextPrayerInfo = _getNextPrayerInfo(times);
     final nextPrayerTime = nextPrayerInfo['time'] as DateTime;
     final timeUntilNext = nextPrayerTime.difference(_localCurrentTime);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = context.ramadanTheme;
 
-    return Column(
-      children: [
-        // Header with iOS design
-        Container(
-          height: 360,
-          decoration: BoxDecoration(
-            color: context.primaryColor,
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(40),
-              bottomRight: Radius.circular(40),
+    return Scaffold(
+      backgroundColor: context.backgroundColor,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          // Parallax Header with Luxury Pattern
+          SliverAppBar(
+            expandedHeight: 320,
+            pinned: true,
+            stretch: true,
+            backgroundColor: context.primaryColor,
+            elevation: 0,
+            leading: GestureDetector(
+              onTap: () {
+                context.pop();
+              },
+              child: Icon(Icons.arrow_back, color: theme.textPrimary),
             ),
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Icon(
-                            CupertinoIcons.location,
-                            color: context.secondaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            state.locationName,
-                            style: TextStyle(
-                              color: context.secondaryColor,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const QiblaScreen(),
-                              ),
-                            ),
-                            child: Icon(
-                              CupertinoIcons.compass,
-                              color: context.secondaryColor,
-                            ),
-                          ),
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SettingsScreen(),
-                              ),
-                            ),
-                            child: Icon(
-                              CupertinoIcons.settings,
-                              color: context.secondaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Current time
-                Flexible(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      DateFormat('HH:mm:ss').format(_localCurrentTime),
-                      style: TextStyle(
-                        color: context.secondaryColor,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: 2,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Next prayer countdown
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'next_prayer'.tr(),
-                        style: TextStyle(
-                          color: context.secondaryColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        key: ValueKey(
-                          'next_prayer_${nextPrayerInfo['name']}_${context.locale}',
-                        ),
-                        nextPrayerInfo['name'].toString().tr(),
-                        style: TextStyle(
-                          color: context.secondaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        formatter.format(nextPrayerTime),
-                        style: TextStyle(
-                          color: context.secondaryColor,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Countdown
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  child: Text(
-                    _formatDuration(timeUntilNext),
-                    style: TextStyle(
-                      color: context.secondaryColor,
-                      fontSize: 32,
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [
+                StretchMode.zoomBackground,
+                StretchMode.blurBackground,
               ],
-            ),
-          ),
-        ),
-
-        // Prayer times list with iOS design
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-            ),
-            child: Column(
-              children: [
-                // Date info
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            DateFormat('EEEE, MMM d').format(_localCurrentTime),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            HijriCalendar.now().toFormat('dd MMMM yyyy'),
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
-                          ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Gradient Base
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          context.primaryColor,
+                          context.primaryColor.withValues(alpha: 0.8),
                         ],
                       ),
-                      // Add Duha prayer button
-                      CupertinoButton(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                    ),
+                  ),
+                  // Luxury Pattern Overlay
+                  Opacity(
+                    opacity: 0.15,
+                    child: Image.asset(
+                      'assets/image/islamic_pattern_premium_gold_1771758633652.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Animated Content
+                  SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        // Location Info
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                CupertinoIcons.location_solid,
+                                color: context.secondaryColor.withValues(
+                                  alpha: 0.9,
+                                ),
+                                size: 16,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                state.locationName,
+                                style: TextStyle(
+                                  color: context.secondaryColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        color: context.primaryColor.withValues(alpha: 0.1),
-                        onPressed: () =>
-                            _showPrayerDetailModal(context, 'duha', times),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                        const SizedBox(height: 20),
+                        // Big Time
+                        Text(
+                          DateFormat('hh:mm').format(_localCurrentTime),
+                          style: TextStyle(
+                            color: context.secondaryColor,
+                            fontSize: 72,
+                            fontWeight: FontWeight.w100,
+                            letterSpacing: -2,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              CupertinoIcons.sun_max,
-                              color: context.primaryColor,
-                              size: 18,
+                            Text(
+                              DateFormat('ss').format(_localCurrentTime),
+                              style: TextStyle(
+                                color: context.secondaryColor.withValues(
+                                  alpha: 0.6,
+                                ),
+                                fontSize: 24,
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'duha'.tr(),
+                              DateFormat('a').format(_localCurrentTime),
                               style: TextStyle(
-                                color: context.primaryColor,
-                                fontSize: 14,
+                                color: context.secondaryColor,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
                         ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 60)),
+
+          // Floating Next Prayer Card
+          SliverToBoxAdapter(
+            child: Transform.translate(
+              offset: const Offset(0, -40),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: theme.background.withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'next_prayer'.tr().toUpperCase(),
+                                  style: TextStyle(
+                                    color: theme.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  nextPrayerInfo['name'].toString().tr(),
+                                  style: TextStyle(
+                                    color: theme.textPrimary,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                _formatDuration(timeUntilNext),
+                                style: TextStyle(
+                                  color: theme.textPrimary,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                'time_remaining'.tr(),
+                                style: TextStyle(
+                                  color: theme.textSecondary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Date & Duha Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat(
+                          'EEEE, d MMMM',
+                          context.locale.languageCode,
+                        ).format(_localCurrentTime),
+                        style: TextStyle(
+                          color: theme.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _getLocalizedHijriDate(context),
+                        style: TextStyle(
+                          color: theme.textSecondary,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
-                ),
-
-                // Prayer times list
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      final prayers = [
-                        {
-                          'name': 'fajr',
-                          'time': times.fajr.toLocal(),
-                          'icon': CupertinoIcons.sunrise,
-                        },
-                        {
-                          'name': 'dhuhr',
-                          'time': times.dhuhr.toLocal(),
-                          'icon': CupertinoIcons.sun_max,
-                        },
-                        {
-                          'name': 'asr',
-                          'time': times.asr.toLocal(),
-                          'icon': CupertinoIcons.cloud_sun,
-                        },
-                        {
-                          'name': 'maghrib',
-                          'time': times.maghrib.toLocal(),
-                          'icon': CupertinoIcons.sunset,
-                        },
-                        {
-                          'name': 'isha',
-                          'time': times.isha.toLocal(),
-                          'icon': CupertinoIcons.moon,
-                        },
-                        {
-                          'name': 'duha',
-                          'time': _getDuhaTime(times),
-                          'icon': CupertinoIcons.sun_max_fill,
-                        },
-                      ];
-
-                      final prayer = prayers[index];
-                      final isNext = prayer['name'] == nextPrayerInfo['name'];
-
-                      return Container(
-                        key: ValueKey('${prayer['name']}_${context.locale}'),
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: isNext
-                              ? context.primaryColor.withValues(alpha: 0.1)
-                              : (isDark
-                                    ? Colors.white.withValues(alpha: 0.05)
-                                    : Colors.grey[50]),
-                          borderRadius: BorderRadius.circular(16),
-                          border: isNext
-                              ? Border.all(
-                                  color: context.primaryColor,
-                                  width: 1,
-                                )
-                              : null,
+                  // Premium Duha Button
+                  GestureDetector(
+                    onTap: () => _showPrayerDetailModal(context, 'duha', times),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.secondary,
+                            theme.secondary.withValues(alpha: 0.7),
+                          ],
                         ),
-                        child: CupertinoButton(
-                          padding: const EdgeInsets.all(16),
-                          onPressed: () => _showPrayerDetailModal(
-                            context,
-                            prayer['name'] as String,
-                            times,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.secondary.withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: isNext
-                                      ? context.primaryColor
-                                      : (isDark
-                                            ? Colors.white.withValues(
-                                                alpha: 0.1,
-                                              )
-                                            : Colors.grey[200]),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Icon(
-                                  prayer['icon'] as IconData,
-                                  color: isNext
-                                      ? Colors.white
-                                      : (isDark ? Colors.white : Colors.black),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      key: ValueKey(
-                                        'prayer_name_${prayer['name']}_${context.locale}',
-                                      ),
-                                      prayer['name'].toString().tr(),
-                                    ),
-                                    if (prayer['time'] != null)
-                                      Text(
-                                        formatter.format(
-                                          prayer['time'] as DateTime,
-                                        ),
-                                        style: TextStyle(
-                                          color: isNext
-                                              ? context.primaryColor
-                                              : (isDark
-                                                    ? Colors.white70
-                                                    : Colors.grey[600]),
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              if (isNext)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: context.primaryColor,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'next'.tr(),
-                                    style: TextStyle(
-                                      color: context.secondaryColor,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            CupertinoIcons.sun_max_fill,
+                            color: Colors.white,
+                            size: 18,
                           ),
-                        ),
-                      );
-                    },
+                          const SizedBox(width: 8),
+                          Text(
+                            'duha'.tr(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+
+          // Prayer Times List
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final prayers = [
+                  {
+                    'name': 'fajr',
+                    'time': times.fajr.toLocal(),
+                    'icon': Icons.wb_twilight_rounded,
+                    'color': const Color(0xFF64B5F6),
+                  },
+                  {
+                    'name': 'dhuhr',
+                    'time': times.dhuhr.toLocal(),
+                    'icon': Icons.wb_sunny_rounded,
+                    'color': const Color(0xFFFFB74D),
+                  },
+                  {
+                    'name': 'asr',
+                    'time': times.asr.toLocal(),
+                    'icon': Icons.wb_sunny_outlined,
+                    'color': const Color(0xFF9575CD),
+                  },
+                  {
+                    'name': 'maghrib',
+                    'time': times.maghrib.toLocal(),
+                    'icon': Icons.nightlight_round,
+                    'color': const Color(0xFFE57373),
+                  },
+                  {
+                    'name': 'isha',
+                    'time': times.isha.toLocal(),
+                    'icon': Icons.bedtime_rounded,
+                    'color': const Color(0xFF7986CB),
+                  },
+                ];
+
+                final prayer = prayers[index];
+                final isNext = prayer['name'] == nextPrayerInfo['name'];
+                final prayerColor = prayer['color'] as Color;
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: isNext
+                        ? prayerColor.withValues(alpha: 0.08)
+                        : theme.cardSurface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isNext
+                          ? prayerColor
+                          : theme.borderColor.withValues(alpha: 0.05),
+                      width: isNext ? 2 : 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () => _showPrayerDetailModal(
+                      context,
+                      prayer['name'] as String,
+                      times,
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: prayerColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              prayer['icon'] as IconData,
+                              color: prayerColor,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  prayer['name'].toString().tr(),
+                                  style: TextStyle(
+                                    color: theme.textPrimary,
+                                    fontSize: 18,
+                                    fontWeight: isNext
+                                        ? FontWeight.bold
+                                        : FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  formatter.format(prayer['time'] as DateTime),
+                                  style: TextStyle(
+                                    color: theme.textSecondary,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (isNext)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: prayerColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'next'.tr().toUpperCase(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            )
+                          else
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: theme.textDim,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }, childCount: 5),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
+      ),
     );
   }
 
@@ -959,5 +1051,12 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
     }
 
     return 'fajr';
+  }
+
+  String _getLocalizedHijriDate(BuildContext context) {
+    final now = HijriCalendar.now();
+    // The hijri package uses setLocal to change language globally for the calendar
+    HijriCalendar.setLocal(context.locale.languageCode);
+    return now.toFormat('dd MMMM yyyy');
   }
 }
