@@ -31,7 +31,12 @@ void main() async {
   await setupServiceLocator();
 
   // Initialize Quran Library
-  await QuranLibrary.init();
+  try {
+    await QuranLibrary.init();
+  } catch (e) {
+    print('Error initializing Quran Library: $e');
+    // Continue with app initialization even if audio fails
+  }
 
   // Initialize Services
   await NotificationService.initialize();

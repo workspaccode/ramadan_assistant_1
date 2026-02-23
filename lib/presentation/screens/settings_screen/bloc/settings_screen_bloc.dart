@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
+import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/update_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,6 +33,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
   final String? colorPaletteId;
   final String? country;
   final String? city;
+  final String appIcon;
+  final bool notificationsEnabled;
+  final int hijriAdjustment;
 
   const SettingsScreenLoaded({
     required this.calculationMethod,
@@ -46,6 +51,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     this.colorPaletteId,
     this.country,
     this.city,
+    required this.appIcon,
+    required this.notificationsEnabled,
+    required this.hijriAdjustment,
   });
 
   SettingsScreenLoaded copyWith({
@@ -62,6 +70,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     String? colorPaletteId,
     String? country,
     String? city,
+    String? appIcon,
+    bool? notificationsEnabled,
+    int? hijriAdjustment,
   }) {
     return SettingsScreenLoaded(
       calculationMethod: calculationMethod ?? this.calculationMethod,
@@ -77,6 +88,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
       colorPaletteId: colorPaletteId ?? this.colorPaletteId,
       country: country ?? this.country,
       city: city ?? this.city,
+      appIcon: appIcon ?? this.appIcon,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      hijriAdjustment: hijriAdjustment ?? this.hijriAdjustment,
     );
   }
 
@@ -95,6 +109,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     colorPaletteId,
     country,
     city,
+    appIcon,
+    notificationsEnabled,
+    hijriAdjustment,
   ];
 }
 
@@ -183,6 +200,27 @@ class UpdateSettingsColorPalette extends SettingsScreenEvent {
 
 class RefreshLocation extends SettingsScreenEvent {}
 
+class UpdateAppIcon extends SettingsScreenEvent {
+  final String iconName;
+  const UpdateAppIcon(this.iconName);
+  @override
+  List<Object?> get props => [iconName];
+}
+
+class ToggleNotifications extends SettingsScreenEvent {
+  final bool enabled;
+  const ToggleNotifications(this.enabled);
+  @override
+  List<Object?> get props => [enabled];
+}
+
+class UpdateHijriAdjustment extends SettingsScreenEvent {
+  final int adjustment;
+  const UpdateHijriAdjustment(this.adjustment);
+  @override
+  List<Object?> get props => [adjustment];
+}
+
 class CheckForUpdates extends SettingsScreenEvent {}
 
 class ResetAllData extends SettingsScreenEvent {}
@@ -200,6 +238,9 @@ class SettingsScreenBloc
   static const String _keyOtherIqama = 'other_iqama_sound';
   static const String _keyFontSize = 'font_size_multiplier';
   static const String _keyColorPalette = 'color_palette_id';
+  static const String _keyAppIcon = 'app_icon_name';
+  static const String _keyNotificationsEnabled = 'notifications_enabled';
+  static const String _keyHijriAdjustment = 'hijri_adjustment';
 
   final LocationService _locationService;
   final UpdateService _updateService = UpdateService();
@@ -216,6 +257,9 @@ class SettingsScreenBloc
     on<UpdateFontSize>(_onUpdateFontSize);
     on<UpdateSettingsColorPalette>(_onUpdateSettingsColorPalette);
     on<RefreshLocation>(_onRefreshLocation);
+    on<UpdateAppIcon>(_onUpdateAppIcon);
+    on<ToggleNotifications>(_onToggleNotifications);
+    on<UpdateHijriAdjustment>(_onUpdateHijriAdjustment);
     on<CheckForUpdates>(_onCheckForUpdates);
     on<ResetAllData>(_onResetAllData);
 
@@ -252,6 +296,9 @@ class SettingsScreenBloc
           colorPaletteId: prefs.getString(_keyColorPalette),
           country: prefs.getString('current_country'),
           city: prefs.getString('current_city'),
+          appIcon: prefs.getString(_keyAppIcon) ?? 'default',
+          notificationsEnabled: prefs.getBool(_keyNotificationsEnabled) ?? true,
+          hijriAdjustment: prefs.getInt(_keyHijriAdjustment) ?? 0,
         ),
       );
 
@@ -431,6 +478,70 @@ class SettingsScreenBloc
       } catch (e) {
         print("Location refresh error: $e");
       }
+    }
+  }
+
+  Future<void> _onUpdateAppIcon(
+    UpdateAppIcon event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      try {
+        final currentIcon = (state as SettingsScreenLoaded).appIcon;
+        if (currentIcon == event.iconName) return;
+
+        // Perform icon switch
+        if (await FlutterDynamicIconPlus.supportsAlternateIcons) {
+          await FlutterDynamicIconPlus.setAlternateIconName(
+            iconName: event.iconName == 'default' ? null : event.iconName,
+          );
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_keyAppIcon, event.iconName);
+          emit(
+            (state as SettingsScreenLoaded).copyWith(appIcon: event.iconName),
+          );
+        }
+      } catch (e) {
+        print("Dynamic icon error: $e");
+      }
+    }
+  }
+
+  Future<void> _onToggleNotifications(
+    ToggleNotifications event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_keyNotificationsEnabled, event.enabled);
+
+      if (event.enabled) {
+        // Maybe re-initialize notifications or schedule them
+      } else {
+        await NotificationService.cancelAllNotifications();
+      }
+
+      emit(
+        (state as SettingsScreenLoaded).copyWith(
+          notificationsEnabled: event.enabled,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onUpdateHijriAdjustment(
+    UpdateHijriAdjustment event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(_keyHijriAdjustment, event.adjustment);
+      emit(
+        (state as SettingsScreenLoaded).copyWith(
+          hijriAdjustment: event.adjustment,
+        ),
+      );
     }
   }
 

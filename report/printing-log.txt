@@ -1,0 +1,1521 @@
+Launching lib\main.dart on NIC LX2 in debug mode...
+W/FlutterAnimationAdvance(15595): FlutterAnimationAdvance getInstance()
+W/FlutterAnimationAdvance(15632): FlutterAnimationAdvance getInstance()
+W/FlutterAnimationAdvance(15746): FlutterAnimationAdvance getInstance()
+e: Failed connecting to the daemon in 4 retries
+e: Daemon compilation failed: Could not connect to Kotlin compile daemon
+java.lang.RuntimeException: Could not connect to Kotlin compile daemon
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemon(GradleKotlinCompilerWork.kt:214)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemonOrFallbackImpl(GradleKotlinCompilerWork.kt:159)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:111)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:74)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+exception: c:\Users\xbrym\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_dynamic_icon_plus-1.4.0\android\src\main\kotlin\com\solusibejo\flutter_dynamic_icon_plus\ComponentUtil.kt:45:73: warning: 'static field GET_DISABLED_COMPONENTS: Int' is deprecated. Deprecated in Java.
+exception:         val component = PackageManager.GET_ACTIVITIES or PackageManager.GET_DISABLED_COMPONENTS
+exception:                                                                         ^^^^^^^^^^^^^^^^^^^^^^^
+exception: c:\Users\xbrym\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_dynamic_icon_plus-1.4.0\android\src\main\kotlin\com\solusibejo\flutter_dynamic_icon_plus\ComponentUtil.kt:134:69: warning: 'static field GET_DISABLED_COMPONENTS: Int' is deprecated. Deprecated in Java.
+exception:                     PackageManager.GET_ACTIVITIES or PackageManager.GET_DISABLED_COMPONENTS
+exception:                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+e: Failed connecting to the daemon in 4 retries
+e: Daemon compilation failed: Could not connect to Kotlin compile daemon
+java.lang.RuntimeException: Could not connect to Kotlin compile daemon
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemon(GradleKotlinCompilerWork.kt:214)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.compileWithDaemonOrFallbackImpl(GradleKotlinCompilerWork.kt:159)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:111)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:74)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:174)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:31)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:132)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:133)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+W/FlutterAnimationAdvance(15961): FlutterAnimationAdvance getInstance()
+W/FlutterAnimationAdvance(15945): FlutterAnimationAdvance getInstance()
+W/FlutterAnimationAdvance(15994): FlutterAnimationAdvance getInstance()
+W/FlutterAnimationAdvance(16057): FlutterAnimationAdvance getInstance()
+D/FlutterJNI(16057): Beginning load of flutter...
+D/FlutterJNI(16057): flutter (null) was loaded normally!
+I/flutter (16057): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+I/flutter (16057): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+W/FlutterAnimationAdvance(16571): FlutterAnimationAdvance getInstance()
+D/FlutterGeolocator(16057): Attaching Geolocator to activity
+D/FlutterRenderer(16057): Width is zero. 0,0
+D/FlutterRenderer(16057): Width is zero. 0,0
+D/FlutterJNI(16057): Sending viewport metrics to the engine.
+D/FlutterGeolocator(16057): Creating service.
+D/FlutterGeolocator(16057): Binding to location service.
+D/FlutterGeolocator(16057): Geolocator foreground service connected
+D/FlutterGeolocator(16057): Initializing Geolocator services
+D/FlutterGeolocator(16057): Flutter engine connected. Connected engine count 1
+D/FlutterGeolocator(16057): Geolocator foreground service connected
+D/FlutterGeolocator(16057): Initializing Geolocator services
+D/FlutterGeolocator(16057): Flutter engine connected. Connected engine count 2
+D/FlutterJNI(16057): Sending viewport metrics to the engine.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/madan_assistant(16057): Compiler allocated 7486KB to compile void android.view.ViewRootImpl.performTraversals()
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/madan_assistant(16057): userfaultfd: MOVE ioctl seems unsupported: Try again
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/madan_assistant(16057): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~a_71p-qqA_kY908ke8ymRg==/com.google.android.tts-fX9DMExN-U9_Hy4BNfZ2Ag==/base.apk' with 1 weak references
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/madan_assistant(16057): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~a_71p-qqA_kY908ke8ymRg==/com.google.android.tts-fX9DMExN-U9_Hy4BNfZ2Ag==/split_config.ar.apk' with 1 weak references
+W/madan_assistant(16057): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~a_71p-qqA_kY908ke8ymRg==/com.google.android.tts-fX9DMExN-U9_Hy4BNfZ2Ag==/split_config.arm64_v8a.apk' with 1 weak references
+W/madan_assistant(16057): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~a_71p-qqA_kY908ke8ymRg==/com.google.android.tts-fX9DMExN-U9_Hy4BNfZ2Ag==/split_config.en.apk' with 1 weak references
+W/madan_assistant(16057): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~a_71p-qqA_kY908ke8ymRg==/com.google.android.tts-fX9DMExN-U9_Hy4BNfZ2Ag==/split_config.xhdpi.apk' with 1 weak references
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/TextToSpeech(16057): Connected to TTS engine
+I/TextToSpeech(16057): Connected to TTS engine
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/TextToSpeech(16057): Setting up the connection to TTS engine...
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/TextToSpeech(16057): Setting up the connection to TTS engine...
+Connecting to VM Service at ws://127.0.0.1:57381/EzPIOhqCJYc=/ws
+Connected to the VM Service.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Localization initialized
+I/Choreographer(16057): Skipped 38 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Localization initialized
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+[GETX] Instance "InternetConnectionService" has been created
+[GETX] Instance "InternetConnectionController" has been created
+[GETX] Instance "InternetConnectionController" has been initialized
+[GETX] Instance "QuranCtrl" has been created
+[QuranCtrl] Jumping to last page: 1
+[QuranCtrl] Creating new PageController for page: 0
+[GETX] Instance "QuranCtrl" has been initialized
+[GETX] Instance "TafsirCtrl" has been created
+[GETX] Instance "TafsirCtrl" has been initialized
+[QuranCtrl] Creating new PageController for page: 0
+[GETX] Instance "InternetConnectionService" has been created
+[GETX] Instance "InternetConnectionController" has been created
+[GETX] Instance "InternetConnectionController" has been initialized
+[GETX] Instance "QuranCtrl" has been created
+[QuranCtrl] Jumping to last page: 1
+[QuranCtrl] Creating new PageController for page: 0
+[GETX] Instance "QuranCtrl" has been initialized
+[GETX] Instance "TafsirCtrl" has been created
+[GETX] Instance "TafsirCtrl" has been initialized
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+[QuranCtrl] Creating new PageController for page: 0
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): Connectivity status updated: ConnectivityStatus.connected
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+[log] Status changed in Controller: ConnectivityStatus.connected
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): Connectivity status updated: ConnectivityStatus.connected
+[log] Status changed in Controller: ConnectivityStatus.connected
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/Choreographer(16057): Skipped 55 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+[TafsirCtrl] TafsirCtrl initialized.
+[TafsirCtrl] TafsirCtrl initialized.
+[QuranCtrl] Creating new PageController for page: 0
+[GETX] Instance "AudioCtrl" has been created
+[GETX] Instance "AudioCtrl" has been initialized
+[GETX] Instance "BookmarksCtrl" has been created
+[GETX] Instance "BookmarksCtrl" has been initialized
+[TafsirCtrl] TafsirCtrl initialized.
+[TafsirCtrl] TafsirCtrl initialized.
+[QuranCtrl] Creating new PageController for page: 0
+[GETX] Instance "AudioCtrl" has been created
+[GETX] Instance "AudioCtrl" has been initialized
+[GETX] Instance "BookmarksCtrl" has been created
+[GETX] Instance "BookmarksCtrl" has been initialized
+I/Choreographer(16057): Skipped 57 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/iMonitor(16057): create: 942010008
+I/iMonitor(16057): send: 942010008
+W/Android: [Awesome Notifications](16057): Channel model 'prayer_times' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Prayer Times created (ChannelManager:214)
+W/Android: [Awesome Notifications](16057): Channel model 'prayer_times_fajr' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Fajr Adhan created (ChannelManager:214)
+W/Android: [Awesome Notifications](16057): Channel model 'iqama' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Iqama Reminder created (ChannelManager:214)
+W/Android: [Awesome Notifications](16057): Channel model 'reminders' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Daily Reminders created (ChannelManager:214)
+W/Android: [Awesome Notifications](16057): Channel model 'islamic_tips' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Islamic Facts & Tips created (ChannelManager:214)
+W/Android: [Awesome Notifications](16057): Channel model 'daily_reports' was not found (ChannelManager:88)
+D/Android: [Awesome Notifications](16057): Notification channel Daily Progress Reports created (ChannelManager:214)
+D/iMonitor(16057): create: 942010008
+I/iMonitor(16057): send: 942010008
+D/Android: [Awesome Notifications](16057): Awesome Notifications initialized (AwesomeNotifications:400)
+D/Android: [Awesome Notifications](16057): Awesome Notifications Flutter plugin initialized (AwesomeNotificationsPlugin:1372)
+I/Choreographer(16057): Skipped 35 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/Choreographer(16057): Skipped 171 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/Android: [Awesome Notifications](16057): Android native channel 'prayer_times' is disabled (ChannelManager:104)
+W/Android: [Awesome Notifications](16057): Android native channel 'prayer_times_fajr' is disabled (ChannelManager:104)
+W/Android: [Awesome Notifications](16057): Android native channel 'iqama' is disabled (ChannelManager:104)
+W/Android: [Awesome Notifications](16057): Android native channel 'reminders' is disabled (ChannelManager:104)
+W/Android: [Awesome Notifications](16057): Android native channel 'islamic_tips' is disabled (ChannelManager:104)
+W/Android: [Awesome Notifications](16057): Android native channel 'daily_reports' is disabled (ChannelManager:104)
+D/Android: [Awesome Notifications](16057): Awesome Notifications initialized (AwesomeNotifications:400)
+D/Android: [Awesome Notifications](16057): Awesome Notifications Flutter plugin initialized (AwesomeNotificationsPlugin:1372)
+I/Choreographer(16057): Skipped 184 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/permissions_handler(16057): Unable to detect current Activity.
+E/flutter (16057): [ERROR:flutter/runtime/dart_vm_initializer.cc(40)] Unhandled Exception: PlatformException(PermissionHandler.PermissionManager, Unable to detect current Android Activity., null, null)
+E/flutter (16057): #0      StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653:7)
+E/flutter (16057): #1      MethodChannel._invokeMethod (package:flutter/src/services/platform_channel.dart:366:18)
+E/flutter (16057): <asynchronous suspension>
+E/flutter (16057): #2      MethodChannelPermissionHandler.requestPermissions (package:permission_handler_platform_interface/src/method_channel/method_channel_permission_handler.dart:80:9)
+E/flutter (16057): <asynchronous suspension>
+E/flutter (16057): #3      PermissionActions.request (package:permission_handler/permission_handler.dart:109:10)
+E/flutter (16057): <asynchronous suspension>
+E/flutter (16057): #4      requestAllPermissions (package:ramadan_assistant/main.dart:69:5)
+E/flutter (16057): <asynchronous suspension>
+E/flutter (16057): #5      main (package:ramadan_assistant/main.dart:38:3)
+E/flutter (16057): <asynchronous suspension>
+E/flutter (16057):
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+I/RmeSchedManager(16057): init Rme, version is: v1.0
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+E/RtgSchedIpcFile(16057): setCommandByIoctl not opened
+D/RtgSched(16057): resetRtgSchedHandle failed enable:0
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/SurfaceControl(16057): nativeRelease 0xb40000797e93fe10 count: 1 name: Surface(name=a40b4d4 NavigationBar0)/@0x8fcdd0f - animation-leash of insets_animation#58267
+I/SurfaceControl(16057): nativeRelease 0xb40000797e9431d0 count: 1 name: Surface(name=a5b687f StatusBar)/@0x20bc7a5 - animation-leash of insets_animation#58268
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/madan_assistant(16057): Background young concurrent mark compact GC freed 11MB AllocSpace bytes, 0(0B) LOS objects, 75% free, 3944KB/15MB, paused 255us,6.519ms total 61.996ms
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/VRI[MainActivity](16057): handleResized: mForceNextWindowRelayout = false
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+I/RmeSchedManager(16057): init Rme, version is: v1.0
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+E/RtgSchedIpcFile(16057): setCommandByIoctl not opened
+D/RtgSched(16057): resetRtgSchedHandle failed enable:1
+D/ActivityThread(16057): Won't deliver top position change in state=4
+I/DecorView[](16057): set decor visibility 0
+I/SurfaceControl(16057): nativeRelease 0xb40000797e943410 count: 5 name: com.example.ramadan_assistant/com.example.ramadan_assistant.MainActivity#58266
+D/VRI[MainActivity](16057): relayoutWindow: mRelayoutRequested = true
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/SurfaceControl(16057): nativeRelease 0xb40000797e907e90 count: 1 name: Surface(name=a40b4d4 NavigationBar0)/@0x8fcdd0f - animation-leash of insets_animation#58285
+I/SurfaceControl(16057): nativeRelease 0xb40000797e968cd0 count: 1 name: Surface(name=a5b687f StatusBar)/@0x20bc7a5 - animation-leash of insets_animation#58286
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): AwesomeNotifications subscribed to receive action events (AwesomeEventsReceiver:101)
+D/Android: [Awesome Notifications](16057): AwesomeNotifications subscribed to receive notification events (AwesomeEventsReceiver:63)
+D/Android: [Awesome Notifications](16057): Awesome notifications (244746382) attached to activity (AwesomeNotifications:132)
+D/WM-SystemJobScheduler(16057): Scheduling work ID 925e590a-2391-4c46-a7a2-bbf649c5d848Job ID 0
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/WM-PackageManagerHelper(16057): androidx.work.impl.background.systemalarm.RescheduleReceiver enabled
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+I/RmeSchedManager(16057): init Rme, version is: v1.0
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+E/RtgSchedIpcFile(16057): setCommandByIoctl not opened
+D/RtgSched(16057): resetRtgSchedHandle failed enable:0
+I/SurfaceControl(16057): nativeRelease 0xb40000797e968070 count: 1 name: Surface(name=a40b4d4 NavigationBar0)/@0x8fcdd0f - animation-leash of insets_animation#58285
+I/SurfaceControl(16057): nativeRelease 0xb40000797e96c870 count: 1 name: Surface(name=a5b687f StatusBar)/@0x20bc7a5 - animation-leash of insets_animation#58286
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/VRI[MainActivity](16057): handleResized: mForceNextWindowRelayout = false
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/ActivityThread(16057): Won't deliver top position change in state=4
+D/Android: [Awesome Notifications](16057): New permissions request found waiting for user response (PermissionManager:749)
+I/DecorView[](16057): set decor visibility 0
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+I/RmeSchedManager(16057): init Rme, version is: v1.0
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/16057/rtg
+E/RtgSchedIpcFile(16057): RtgSchedIpcFile xxx failed to open /proc/rtg_gki/ioctl.
+E/RtgSchedIpcFile(16057): setCommandByIoctl not opened
+D/RtgSched(16057): resetRtgSchedHandle failed enable:1
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhuhr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [اقتراب وقت الصلاة] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [بقي 10 دقائق على صلاة {}] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): Date is not more valid. (2026-02-23 07:49:00 UTC) (NotificationScheduler:201)
+D/Android: [Awesome Notifications](16057): Scheduled removed (NotificationScheduler:249)
+D/Android: [Awesome Notifications](16057): Notification schedule removed in 41ms (NotificationScheduler:258)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhuhr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [open_adhan_btn] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): Date is not more valid. (2026-02-23 07:49:00 UTC) (NotificationScheduler:201)
+D/Android: [Awesome Notifications](16057): Scheduled removed (NotificationScheduler:249)
+D/Android: [Awesome Notifications](16057): Notification schedule removed in 27ms (NotificationScheduler:258)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhuhr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): Date is not more valid. (2026-02-23 07:49:00 UTC) (NotificationScheduler:201)
+D/Android: [Awesome Notifications](16057): Scheduled removed (NotificationScheduler:249)
+D/Android: [Awesome Notifications](16057): Notification schedule removed in 36ms (NotificationScheduler:258)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [asr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [اقتراب وقت الصلاة] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [بقي 10 دقائق على صلاة {}] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 62ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [asr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [open_adhan_btn] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 49ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [asr] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 30ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maghrib] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [اقتراب وقت الصلاة] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [بقي 10 دقائق على صلاة {}] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 32ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maghrib] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [open_adhan_btn] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 32ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maghrib] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 27ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [isha] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [اقتراب وقت الصلاة] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [بقي 10 دقائق على صلاة {}] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 27ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [isha] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_adhan_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [open_adhan_btn] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 25ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [isha] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_title] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [notification_iqama_body] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dismiss_btn] not found
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+D/Android: [Awesome Notifications](16057): New notification creation event (AwesomeEventsReceiver:209)
+D/Android: [Awesome Notifications](16057): Scheduled created (NotificationScheduler:228)
+D/Android: [Awesome Notifications](16057): Notification scheduled in 27ms (NotificationScheduler:238)
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Start
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Init state
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Build
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Init Localization Delegate
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Init provider
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Load Localization Delegate
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Load asset from assets/translations
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Load asset from assets/translations
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Load Localization Delegate
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Load asset from assets/translations
+D/WM-SystemJobScheduler(16057): Scheduling work ID 461f5881-6b29-4037-8d70-881b695e42efJob ID 1
+I/flutter (16057): [🌎 Easy Localization] [INFO] Locale ar changed
+I/Choreographer(16057): Skipped 91 frames!  The application may be doing too much work on its main thread.
+W/ViewTreeObserver(16057): onPreDraw return false io.flutter.embedding.android.FlutterActivityAndFragmentDelegate$2@d158f0a
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Build
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Init Localization Delegate
+I/flutter (16057): [🌎 Easy Localization] [DEBUG] Init provider
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tasbih] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_times] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [reminders] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [umrah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [qibla] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [reminders] not found
+I/GrallocExtra(16057): gralloc_extra_query:is_SW3D 0
+W/libc    (16057): Access denied finding property "ro.debuggable"
+W/1.raster(16057): type=1400 audit(0.0:665368): avc:  denied  { read } for  name="u:object_r:userdebug_or_eng_prop:s0" dev="tmpfs" ino=719 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:userdebug_or_eng_prop:s0 tclass=file permissive=0
+I/flutter (16057): [🌎 Easy Localization] [INFO] Locale ar saved
+I/Choreographer(16057): Skipped 125 frames!  The application may be doing too much work on its main thread.
+I/SurfaceControl(16057): nativeRelease 0xb40000797e96f570 count: 3 name: com.example.ramadan_assistant/com.example.ramadan_assistant.MainActivity#58266
+D/VRI[MainActivity](16057): relayoutWindow: mRelayoutRequested = true
+I/SurfaceControl(16057): nativeRelease 0xb40000797e96c3f0 count: 1 name: Surface(name=a40b4d4 NavigationBar0)/@0x8fcdd0f - animation-leash of insets_animation#58301
+I/SurfaceControl(16057): nativeRelease 0xb40000797e9660f0 count: 1 name: Surface(name=a5b687f StatusBar)/@0x20bc7a5 - animation-leash of insets_animation#58302
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/FlutterJNI(16057): Sending viewport metrics to the engine.
+I/HwForceDarkManager(16057): setAllowedHwForceDark:false package:com.example.ramadan_assistant mCurrProcessState:0 mIsPackageNameChange:false hwForceDarkState:0 isViewAllowedForceDark:true isLastHonorForceDark:false
+I/HWUI    (16057): Davey! duration=2554ms; Flags=1, FrameTimelineVsyncId=101301456, IntendedVsync=369916486813958, Vsync=369918566337708, InputEventId=0, HandleInputStart=369918574096124, AnimationStart=369918574099432, PerformTraversalsStart=369918574100663, DrawStart=369918602475509, FrameDeadline=369916506813958, FrameInterval=369918573342894, FrameStartTime=16636190, SyncQueued=369918606404048, SyncStart=369918606843817, IssueDrawCommandsStart=369918608263740, SwapBuffers=369919039176125, FrameCompleted=369919041363817, DequeueBufferDuration=1846769, QueueBufferDuration=746153, GpuCompleted=369919041363817, SwapBuffersCompleted=369919041319509, DisplayPresentTime=0, CommandSubmissionCompleted=369919039176125,
+I/VRI[MainActivity](16057): send MSG_WINDOW_FOCUS_CHANGED msg
+I/InputEventReceiver(16057): consumeEvents focus, 1
+V/ImeFocusController(16057): onWindowFocus: com.android.internal.policy.DecorView{691a252 V.E...... R....... 0,0-720,1604}[MainActivity] softInputMode=STATE_UNSPECIFIED|ADJUST_RESIZE
+V/InputMethodManager(16057): Restarting due to mRestartOnNextWindowFocus as true
+W/InputMethodManager(16057): startInputReason = 1
+V/InputMethodManager(16057): Starting input: editorInfo=android.view.inputmethod.EditorInfo@8e34923 ic=null
+V/InputMethodManager(16057): START INPUT: view=com.android.internal.policy.DecorView{691a252 V.E...... R....... 0,0-720,1604 aid=0}[MainActivity],focus=false,windowFocus=true,window=android.view.ViewRootImpl$W@d20fe20,displayId=0,temporaryDetach=false,hasImeFocus=true ic=null editorInfo=android.view.inputmethod.EditorInfo@8e34923 startInputFlags=VIEW_HAS_FOCUS|INITIAL_CONNECTION
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/FullScreenUtils(16057): isNeedToHideStatusBar: splitscreenstate=-1
+D/FlutterJNI(16057): Sending viewport metrics to the engine.
+I/HwViewRootImpl(16057): removeInvalidNode jank list is null
+I/InputMethodManager(16057): handleMessage: MSG_SET_ACTIVE true, was false
+V/InputMethodManager(16057): Starting input: Bind result=InputBindResult{result=SUCCESS_WAITING_IME_SESSION method=null id=com.touchtype.swiftkey/com.touchtype.KeyboardService sequence=5467 result=1 isInputMethodSuppressingSpellChecker=false}
+I/InputMethodManager(16057): handleMessage: MSG_BIND 5467,com.touchtype.swiftkey/com.touchtype.KeyboardService
+W/InputMethodManager(16057): startInputReason = 6
+V/InputMethodManager(16057): Starting input: editorInfo=android.view.inputmethod.EditorInfo@13a23d9 ic=null
+V/InputMethodManager(16057): Starting input: finished by someone else. view=com.android.internal.policy.DecorView{691a252 V.E...... R....... 0,0-720,1604 aid=0}[MainActivity],focus=false,windowFocus=true,window=android.view.ViewRootImpl$W@d20fe20,displayId=0,temporaryDetach=false,hasImeFocus=true servedView=com.android.internal.policy.DecorView{691a252 V.E...... R....... 0,0-720,1604 aid=0}[MainActivity],focus=false,windowFocus=true,window=android.view.ViewRootImpl$W@d20fe20,displayId=0,temporaryDetach=false,hasImeFocus=true mServedConnecting=false
+I/SurfaceControl(16057): nativeRelease 0xb40000797e97d0d0 count: 1 name: Surface(name=a40b4d4 NavigationBar0)/@0x8fcdd0f - animation-leash of insets_animation#58301
+I/SurfaceControl(16057): nativeRelease 0xb40000797e97df70 count: 1 name: Surface(name=a5b687f StatusBar)/@0x20bc7a5 - animation-leash of insets_animation#58302
+W/libc    (16057): Access denied finding property "ro.debuggable"
+I/Hwaps   (16057): APS: EventAnalyzed: initAPS: version is 11.0.0.4
+D/Hwaps   (16057): Fpsrequest create,type:EXACTLY_IDENTIFY
+D/Hwaps   (16057): Fpsrequest create,type:EXACTLY_IDENTIFY
+D/Hwaps   (16057): Fpsrequest create,type:OPENGL_SETTING
+D/Hwaps   (16057): FpsController create
+W/madan_assistant(16057): type=1400 audit(0.0:665370): avc:  denied  { read } for  name="u:object_r:userdebug_or_eng_prop:s0" dev="tmpfs" ino=719 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:userdebug_or_eng_prop:s0 tclass=file permissive=0
+D/Hwaps   (16057): APS: EventAnalyzed: reInitFpsPara :mBaseFps = 120; mMaxFps = 120
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+D/HwViewRootImpl(16057): GPLOG: params  TraceInputParams 0 pkg empty self com.example.ramadan_assistant
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+D/Hwaps   (16057): APS: EventAnalyzed: registerCallbackInApsManagerService, mPkgName:com.example.ramadan_assistant; result = false
+I/ScrollIdentify(16057): on fling
+W/HwApsManager(16057): HwApsManagerService, registerCallback, start !
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+W/System.err(16057): java.lang.IllegalStateException: The Activity class declared in your AndroidManifest.xml is wrong or has not provided the correct FlutterEngine. Please see the README for instructions.
+W/System.err(16057): 	at com.ryanheise.audioservice.AudioServicePlugin$ClientInterface.onMethodCall(AudioServicePlugin.java:460)
+W/System.err(16057): 	at io.flutter.plugin.common.MethodChannel$IncomingMethodCallHandler.onMessage(MethodChannel.java:267)
+W/System.err(16057): 	at io.flutter.embedding.engine.dart.DartMessenger.invokeHandler(DartMessenger.java:286)
+W/System.err(16057): 	at io.flutter.embedding.engine.dart.DartMessenger.lambda$dispatchMessageToQueue$0$io-flutter-embedding-engine-dart-DartMessenger(DartMessenger.java:313)
+W/System.err(16057): 	at io.flutter.embedding.engine.dart.DartMessenger$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+W/System.err(16057): 	at android.os.Handler.handleCallback(Handler.java:997)
+W/System.err(16057): 	at android.os.Handler.dispatchMessage(Handler.java:111)
+W/System.err(16057): 	at android.os.Looper.loopOnce(Looper.java:237)
+W/System.err(16057): 	at android.os.Looper.loop(Looper.java:325)
+W/System.err(16057): 	at android.app.ActivityThread.main(ActivityThread.java:10404)
+W/System.err(16057): 	at java.lang.reflect.Method.invoke(Native Method)
+W/System.err(16057): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:635)
+W/System.err(16057): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:970)
+[log] Loaded last Surah index: 1, last Surah 1 position: 0
+[AudioCtrl] تعذّرت تهيئة AudioService. تأكد أن MainActivity يرث AudioServiceActivity.
+            Kotlin: class MainActivity: AudioServiceActivity()
+            Java: public class MainActivity extends AudioServiceActivity {}
+            الرسالة الأصلية: null
+[AudioCtrl] PlatformException (PlatformException(The Activity class declared in your AndroidManifest.xml is wrong or has not provided the correct FlutterEngine. Please see the README for instructions., null, null, null))
+[AudioCtrl] #0      StandardMethodCodec.decodeEnvelope (package:flutter/src/services/message_codecs.dart:653:7)
+            #1      MethodChannel._invokeMethod (package:flutter/src/services/platform_channel.dart:366:18)
+            <asynchronous suspension>
+            #2      MethodChannelAudioService.configure (package:audio_service_platform_interface/method_channel_audio_service.dart:14:5)
+            <asynchronous suspension>
+            #3      AudioService.init (package:audio_service/audio_service.dart:1015:5)
+            <asynchronous suspension>
+            #4      AudioCtrl.initAudioService (package:quran_library/src/audio/controller/audio_ctrl.dart:136:7)
+            <asynchronous suspension>
+            #5      AudioCtrl.onInit (package:quran_library/src/audio/controller/audio_ctrl.dart:58:11)
+            <asynchronous suspension>
+I/ExoPlayerImpl(16057): Init 3953f8b [AndroidXMedia3/1.4.1] [HNNIC-M1, NIC-LX2, HONOR, 35]
+I/madan_assistant(16057): hiddenapi: Accessing hidden method Landroid/media/AudioTrack;->getLatency()I (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/media3/exoplayer/audio/AudioTrackPositionTracker; (domain=app, TargetSdkVersion=36) using reflection: allowed
+W/binder:16057_1(16057): type=1400 audit(0.0:665375): avc:  denied  { read } for  name="u:object_r:userdebug_or_eng_prop:s0" dev="tmpfs" ino=719 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:userdebug_or_eng_prop:s0 tclass=file permissive=0
+W/libc    (16057): Access denied finding property "ro.debuggable"
+D/iMonitor(16057): create: 942010008
+I/iMonitor(16057): send: 942010008
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+[log] Loaded last Surah index: 1, last Surah 1 position: 0
+I/ScrollIdentify(16057): on fling
+W/madan_assistant(16057): type=1400 audit(0.0:665376): avc:  denied  { read } for  name="u:object_r:userdebug_or_eng_prop:s0" dev="tmpfs" ino=719 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:userdebug_or_eng_prop:s0 tclass=file permissive=0
+W/libc    (16057): Access denied finding property "ro.debuggable"
+I/ExoPlayerImpl(16057): Init fb7d037 [AndroidXMedia3/1.4.1] [HNNIC-M1, NIC-LX2, HONOR, 35]
+E/madan_assistant(16057): iAwareSDK: Failed to open core library
+E/madan_assistant(16057): open libged_kpi.so failed
+W/VideoCapabilities(16057): Unrecognized profile/level 32768/256 for video/mp4v-es
+W/VideoCapabilities(16057): Unrecognized profile/level 32768/256 for video/mp4v-es
+I/DMCodecAdapterFactory(16057): Creating an asynchronous MediaCodec adapter for track type audio
+I/MediaCodec-JNI(16057): MediaCodec_looper Thread ID is 16946.
+I/MediaCodec(16057): MediaCodec::MediaCodec(0xb400007962d18d50) enter
+I/IHnMediaCodecService(16057): HnMediaCodecServiceProxy, pid: 16057, uid: 10468, clientId: 0xb400007962d18d50, client: 0xb4000078d69a7560
+I/MediaCodec(16057): MediaCodec::MediaCodec(0xb400007962d18d50) exit
+D/CCodec  (16057): allocate(c2.android.mp3.decoder)
+I/Codec2Client(16057): Available Codec2 services: "default" "software"
+I/Codec2Client(16057): Creating a Codec2 client to service "default"
+I/CCodec  (16057): setting up 'default' as default (vendor) store
+I/Codec2Client(16057): Creating a Codec2 client to service "default"
+I/Codec2Client(16057): Creating a Codec2 client to service "software"
+I/CCodec  (16057): Created component [c2.android.mp3.decoder]
+W/MediaCodec_loop(16057): type=1400 audit(0.0:665377): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=741 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0
+W/libc    (16057): Access denied finding property "vendor.display.dolby_vision_dvs_aidl.enable"
+D/CCodecConfig(16057): read media type: audio/mpeg
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.max-count.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.subscribed-indices.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: input.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.buffers.pool-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.pool-ids.values
+I/CCodecConfig(16057): query failed after returning 8 values (BAD_INDEX)
+I/CCodecConfig(16057): c2 config diff is Dict {
+I/CCodecConfig(16057):   c2::u32 coded.bitrate.value = 64000
+I/CCodecConfig(16057):   c2::u32 input.buffers.max-size.value = 8192
+I/CCodecConfig(16057):   c2::u32 input.delay.value = 0
+I/CCodecConfig(16057):   string input.media-type.value = "audio/mpeg"
+I/CCodecConfig(16057):   c2::u32 output.large-frame.max-size = 0
+I/CCodecConfig(16057):   c2::u32 output.large-frame.threshold-size = 0
+I/CCodecConfig(16057):   string output.media-type.value = "audio/raw"
+I/CCodecConfig(16057):   c2::u32 raw.channel-count.value = 2
+I/CCodecConfig(16057):   c2::u32 raw.sample-rate.value = 44100
+I/CCodecConfig(16057): }
+I/MediaCodec(16057): MediaCodec will operate in async mode
+E/MediaCodec(16057): codec was not configured for a new surface
+I/MediaCodec(16057): configure 2885 com.example.ramadan_assistant unable
+D/CCodec  (16057): [c2.android.mp3.decoder] buffers are bound to CCodec for this session
+D/CCodecConfig(16057): no c2 equivalents for log-session-id
+D/CCodecConfig(16057): no c2 equivalents for importance
+D/CCodecConfig(16057): no c2 equivalents for flags
+D/CCodecConfig(16057): config failed => CORRUPTED
+D/CCodec  (16057): client requested max input size 4096, which is smaller than what component recommended (8192); overriding with component recommendation.
+W/CCodec  (16057): This behavior is subject to change. It is recommended that app developers double check whether the requested max input size is in reasonable range.
+D/CCodec  (16057): encoding statistics level = 0
+I/CCodec  (16057): setup formats input: AMessage(what = 0x00000000) = {
+I/CCodec  (16057):   int32_t bitrate = 64000
+I/CCodec  (16057):   int32_t channel-count = 2
+I/CCodec  (16057):   int32_t max-input-size = 8192
+I/CCodec  (16057):   string mime = "audio/mpeg"
+I/CCodec  (16057):   int32_t sample-rate = 44100
+I/CCodec  (16057):   string comp.name = "c2.android.mp3.decoder"
+I/CCodec  (16057): }
+I/CCodec  (16057): setup formats output: AMessage(what = 0x00000000) = {
+I/CCodec  (16057):   int32_t buffer-batch-max-output-size = 0
+I/CCodec  (16057):   int32_t buffer-batch-threshold-output-size = 0
+I/CCodec  (16057):   int32_t channel-count = 2
+I/CCodec  (16057):   string mime = "audio/raw"
+I/CCodec  (16057):   int32_t sample-rate = 44100
+I/CCodec  (16057):   int32_t android._config-pcm-encoding = 2
+I/CCodec  (16057): }
+I/CCodecConfig(16057): query failed after returning 8 values (BAD_INDEX)
+W/libc    (16057): Access denied finding property "vendor.display.sdr_plus_video.enable"
+I/MediaCodec(16057): MediaCodec::start(0xb400007962d18d50) c2.android.mp3.decoder enter
+W/MediaCodec_loop(16057): type=1400 audit(0.0:665378): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=741 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0
+D/MediaCodec(16057): keep callback message for reclaim
+D/C2Store (16057): Using DMABUF Heaps
+D/CCodecBufferChannel(16057): [c2.android.mp3.decoder#808] Created input block pool with allocatorID 16 => poolID 17 - OK (0)
+I/CCodecBufferChannel(16057): [c2.android.mp3.decoder#808] Created output block pool with allocatorID 16 => poolID 3885 - OK
+D/CCodecBufferChannel(16057): [c2.android.mp3.decoder#808] Configured output block pool ids 3885 => OK
+I/DMABUFHEAPS(16057): Using DMA-BUF heap named: mtk_mm
+I/MediaCodec(16057): MediaCodec::start(0xb400007962d18d50) c2.android.mp3.decoder exit
+W/madan_assistant(16057): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. This might not be intended. AIBinder_DeathRecipient_setOnUnlinked should be called first.
+I/IHnMediaCodecService(16057): getSdrPlusStateFromSystem = 0
+I/IHnMediaCodecService(16057): isSdrPlusWhiteList = 0
+I/DMCodecAdapterFactory(16057): Creating an asynchronous MediaCodec adapter for track type audio
+I/MediaCodec-JNI(16057): MediaCodec_looper Thread ID is 16954.
+I/MediaCodec(16057): MediaCodec::MediaCodec(0xb400007962d4eb80) enter
+I/IHnMediaCodecService(16057): HnMediaCodecServiceProxy, pid: 16057, uid: 10468, clientId: 0xb400007962d4eb80, client: 0xb4000078d69add70
+I/MediaCodec(16057): MediaCodec::MediaCodec(0xb400007962d4eb80) exit
+D/CCodec  (16057): allocate(c2.android.mp3.decoder)
+I/Codec2Client(16057): Creating a Codec2 client to service "default"
+I/CCodec  (16057): setting up 'default' as default (vendor) store
+W/madan_assistant(16057): AIBinder_linkToDeath is being called with a non-null cookie and no onUnlink callback set. This might not be intended. AIBinder_DeathRecipient_setOnUnlinked should be called first.
+I/CCodec  (16057): Created component [c2.android.mp3.decoder]
+W/libc    (16057): Access denied finding property "vendor.display.dolby_vision_dvs_aidl.enable"
+W/MediaCodec_loop(16057): type=1400 audit(0.0:665379): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=741 scontext=u:r:untrusted_app:s0:c212,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0
+D/CCodecConfig(16057): read media type: audio/mpeg
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.max-count.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.subscribed-indices.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: input.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.allocator-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: output.buffers.pool-ids.values
+D/ReflectedParamUpdater(16057): extent() != 1 for single value type: algo.buffers.pool-ids.values
+I/CCodecConfig(16057): query failed after returning 8 values (BAD_INDEX)
+I/CCodecConfig(16057): c2 config diff is Dict {
+I/CCodecConfig(16057):   c2::u32 coded.bitrate.value = 64000
+I/CCodecConfig(16057):   c2::u32 input.buffers.max-size.value = 8192
+I/CCodecConfig(16057):   c2::u32 input.delay.value = 0
+I/CCodecConfig(16057):   string input.media-type.value = "audio/mpeg"
+I/CCodecConfig(16057):   c2::u32 output.large-frame.max-size = 0
+I/CCodecConfig(16057):   c2::u32 output.large-frame.threshold-size = 0
+I/CCodecConfig(16057):   string output.media-type.value = "audio/raw"
+I/CCodecConfig(16057):   c2::u32 raw.channel-count.value = 2
+I/CCodecConfig(16057):   c2::u32 raw.sample-rate.value = 44100
+I/CCodecConfig(16057): }
+I/MediaCodec(16057): MediaCodec will operate in async mode
+E/MediaCodec(16057): codec was not configured for a new surface
+I/MediaCodec(16057): configure 2885 com.example.ramadan_assistant unable
+D/CCodec  (16057): [c2.android.mp3.decoder] buffers are bound to CCodec for this session
+D/CCodecConfig(16057): no c2 equivalents for log-session-id
+D/CCodecConfig(16057): no c2 equivalents for importance
+D/CCodecConfig(16057): no c2 equivalents for flags
+D/CCodecConfig(16057): config failed => CORRUPTED
+D/CCodec  (16057): client requested max input size 4096, which is smaller than what component recommended (8192); overriding with component recommendation.
+W/CCodec  (16057): This behavior is subject to change. It is recommended that app developers double check whether the requested max input size is in reasonable range.
+D/CCodec  (16057): encoding statistics level = 0
+I/CCodec  (16057): setup formats input: AMessage(what = 0x00000000) = {
+I/CCodec  (16057):   int32_t bitrate = 64000
+I/CCodec  (16057):   int32_t channel-count = 2
+I/CCodec  (16057):   int32_t max-input-size = 8192
+I/CCodec  (16057):   string mime = "audio/mpeg"
+I/CCodec  (16057):   int32_t sample-rate = 44100
+I/CCodec  (16057):   string comp.name = "c2.android.mp3.decoder"
+I/CCodec  (16057): }
+I/CCodec  (16057): setup formats output: AMessage(what = 0x00000000) = {
+I/CCodec  (16057):   int32_t buffer-batch-max-output-size = 0
+I/CCodec  (16057):   int32_t buffer-batch-threshold-output-size = 0
+I/CCodec  (16057):   int32_t channel-count = 2
+I/CCodec  (16057):   string mime = "audio/raw"
+I/CCodec  (16057):   int32_t sample-rate = 44100
+I/CCodec  (16057):   int32_t android._config-pcm-encoding = 2
+I/CCodec  (16057): }
+I/CCodecConfig(16057): query failed after returning 8 values (BAD_INDEX)
+W/libc    (16057): Access denied finding property "vendor.display.sdr_plus_video.enable"
+I/MediaCodec(16057): MediaCodec::start(0xb400007962d4eb80) c2.android.mp3.decoder enter
+D/MediaCodec(16057): keep callback message for reclaim
+I/IHnMediaCodecService(16057): getSdrPlusStateFromSystem = 0
+I/IHnMediaCodecService(16057): isSdrPlusWhiteList = 0
+I/AudioTrack-JNI(16057): AudioTrack_setup for usage=1 content=0 flags=0x0xa00 tags=
+I/AudioTrack(16057): createTrack_l mFlags8,input.attr.flagsa00
+D/nativeloader(16057): Load libmediamonitor_jni.so using system ns (caller=/system/framework/framework-magic.jar): ok
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/madan_assistant(16057): Background concurrent mark compact GC freed 7221KB AllocSpace bytes, 15(588KB) LOS objects, 58% free, 8720KB/20MB, paused 666us,5.674ms total 101.301ms
+I/AudioTrack-JNI(16057): AudioTrack_setup for usage=1 content=0 flags=0x0xa00 tags=
+I/AudioTrack(16057): createTrack_l mFlags8,input.attr.flagsa00
+W/TraceLog(16057): onReleaseOutputBuffer(c2.android.mp3.decoder:0xb400007962d18d50) Queued: 3.8/s Done: 3.8/s Rendered: 0.0/s Discarded: 0.9/s
+W/TraceLog(16057): onQueueInputBuffer(c2.android.mp3.decoder:0xb400007962d18d50) Queue jank? last 369929324 now 369930381
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+W/TraceLog(16057): onQueueInputBuffer(c2.android.mp3.decoder:0xb400007962d18d50) Queue jank? last 369930395 now 369931339
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+W/TraceLog(16057): onReleaseOutputBuffer(c2.android.mp3.decoder:0xb400007962d18d50) Queued: 7.1/s Done: 5.6/s Rendered: 0.0/s Discarded: 5.6/s
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+D/AidlBufferPool(16057): bufferpool2 0xb4000077cca983a8 : 5(40960 size) total buffers - 0(0 size) used buffers - 14/19 (recycle/alloc) - 5/36 (fetch/transfer)
+D/AidlBufferPoolAcc(16057): evictor expired: 1, evicted: 1
+D/AidlBufferPool(16057): bufferpool2 0xb4000077cca50408 : 4(32768 size) total buffers - 0(0 size) used buffers - 13/19 (recycle/alloc) - 8/36 (fetch/transfer)
+D/AidlBufferPoolAcc(16057): evictor expired: 1, evicted: 1
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [SubhanAllah] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [tap_to_count] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [dhikr_list] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/WindowOnBackDispatcher(16057): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@227b7a
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/AudioTrack(16057): recheck for pg, sessionid : 31041
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/AudioTrack(16057): recheck for pg, sessionid : 31033
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_1] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_2] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_1] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_2] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_1] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [duha_dua_2] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [minimum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [maximum] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [asr_dua_1] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [asr_dua_2] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [hours] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [fard] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [hours] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [fard] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [hours] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [prayer_time] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [fard] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/ScrollIdentify(16057): on fling
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/WindowOnBackDispatcher(16057): sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@227b7a
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [next] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_log_past_day] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [other] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/AudioTrack(16057): recheck for pg, sessionid : 31041
+I/AudioTrack(16057): recheck for pg, sessionid : 31033
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/madan_assistant(16057): Background young concurrent mark compact GC freed 11MB AllocSpace bytes, 4(208KB) LOS objects, 60% free, 8373KB/20MB, paused 1.031ms,5.255ms total 117.741ms
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_error_loading_history] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_avg_per_day] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_details_for] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_no_data_day] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [wird_log_past_day] not found
+I/flutter (16057): [🌎 Easy Localization] [WARNING] Localization key [other] not found
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/HiTouch_PressGestureDetector(16057): checkDoublePointerLimit: false
+W/HiTouch_PressGestureDetector(16057): [HiTouch Stop]checkDoublePointerMove
+I/ScrollIdentify(16057): on fling
+I/AudioTrack(16057): recheck for pg, sessionid : 31041
+I/AudioTrack(16057): recheck for pg, sessionid : 31033
+W/FlutterAnimationAdvance(17116): FlutterAnimationAdvance getInstance()

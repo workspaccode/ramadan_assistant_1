@@ -821,6 +821,7 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
       ),
       child: CupertinoTimerPicker(
         mode: CupertinoTimerPickerMode.hm,
+        minuteInterval: 2,
         initialTimerDuration: _selectedInterval,
         onTimerDurationChanged: (val) =>
             setState(() => _selectedInterval = val),

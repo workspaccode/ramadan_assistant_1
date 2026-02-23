@@ -296,8 +296,8 @@ class NotificationService {
       content: NotificationContent(
         id: id + 500, // Offset for nearing
         channelKey: 'prayer_times',
-        title: 'اقتراب وقت الصلاة'.tr(),
-        body: 'بقي 10 دقائق على صلاة {}'.tr(args: [localizedPrayer]),
+        title: 'prayer_nearing_title'.tr(),
+        body: 'prayer_nearing_body'.tr(args: [localizedPrayer]),
         category: NotificationCategory.Reminder,
         payload: {'type': 'nearing', 'prayer': prayerName},
       ),

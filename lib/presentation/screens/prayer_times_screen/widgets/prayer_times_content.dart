@@ -556,7 +556,7 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
               onTap: () {
                 context.pop();
               },
-              child: Icon(Icons.arrow_back, color: theme.textPrimary),
+              child: Icon(Icons.arrow_back, color: Colors.white, weight: 600),
             ),
             flexibleSpace: FlexibleSpaceBar(
               stretchModes: const [

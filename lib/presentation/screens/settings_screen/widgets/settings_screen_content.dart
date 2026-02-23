@@ -56,6 +56,9 @@ class SettingsScreenContent extends StatelessWidget {
                         _buildRamadanCard(context, isRamadan),
                         _buildLocationSection(context, state),
                         _buildAppearanceSection(context, state),
+                        _buildAppIconSection(context, state),
+                        _buildNotificationsSection(context, state),
+                        _buildHijriSection(context, state),
                         _buildPrayerSection(context, state),
                         _buildIqamaSection(context, state),
                         _buildAudioSection(context, state),
@@ -298,6 +301,72 @@ class SettingsScreenContent extends StatelessWidget {
     );
   }
 
+  Widget _buildAppIconSection(
+    BuildContext context,
+    SettingsScreenLoaded state,
+  ) {
+    return CupertinoListSection.insetGrouped(
+      header: Text('app_icon'.tr().toUpperCase()),
+      children: [
+        _buildDropdownTile(
+          context,
+          'select_icon'.tr(),
+          state.appIcon,
+          ['default', 'RamadanIcon'],
+          (val) => context.read<SettingsScreenBloc>().add(UpdateAppIcon(val)),
+          displayValues: {
+            'default': 'Standard'.tr(),
+            'RamadanIcon': 'Ramadan Classic'.tr(),
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationsSection(
+    BuildContext context,
+    SettingsScreenLoaded state,
+  ) {
+    return CupertinoListSection.insetGrouped(
+      header: Text('notifications'.tr().toUpperCase()),
+      children: [
+        _buildSwitchTile(
+          context,
+          'global_notifications'.tr(),
+          'enable_all_notifications'.tr(),
+          state.notificationsEnabled,
+          (val) =>
+              context.read<SettingsScreenBloc>().add(ToggleNotifications(val)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHijriSection(BuildContext context, SettingsScreenLoaded state) {
+    return CupertinoListSection.insetGrouped(
+      header: Text('hijri_calendar'.tr().toUpperCase()),
+      children: [
+        _buildDropdownTile(
+          context,
+          'hijri_adjustment'.tr(),
+          state.hijriAdjustment.toString(),
+          ['-2', '-1', '0', '1', '2'],
+          (val) => context.read<SettingsScreenBloc>().add(
+            UpdateHijriAdjustment(int.parse(val)),
+          ),
+          displayValues: {
+            '-2': 'day_adjustment'.tr(args: ['-2']),
+            '-1': 'day_adjustment'.tr(args: ['-1']),
+            '0': 'day_adjustment'.tr(args: ['0']),
+            '1': 'day_adjustment'.tr(args: ['1']),
+            '2': 'day_adjustment'.tr(args: ['2']),
+          },
+          translateOptions: false,
+        ),
+      ],
+    );
+  }
+
   Widget _buildFontSizeSlider(
     BuildContext context,
     SettingsScreenLoaded state,
@@ -491,21 +560,44 @@ class SettingsScreenContent extends StatelessWidget {
 
   Widget _buildFooter(BuildContext context) {
     return CupertinoListSection.insetGrouped(
+      footer: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              'app_version'.tr(namedArgs: {'version': '2.4.1'}),
+              style: TextStyle(
+                color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'app_desc'.tr(),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
       children: [
         CupertinoListTile(
           title: Text('about_app'.tr()),
           trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://example.com/about'),
+          onTap: () => _launchURL('https://tawabti.app/about'),
         ),
         CupertinoListTile(
           title: Text('privacy_policy'.tr()),
           trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://example.com/privacy'),
+          onTap: () => _launchURL('https://tawabti.app/privacy'),
         ),
         CupertinoListTile(
           title: Text('terms_of_service'.tr()),
           trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://example.com/terms'),
+          onTap: () => _launchURL('https://tawabti.app/terms'),
         ),
       ],
     );
