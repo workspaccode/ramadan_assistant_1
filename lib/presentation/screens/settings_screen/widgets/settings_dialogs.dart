@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 
@@ -12,76 +13,79 @@ class SettingsDialogs {
     final langNames = {'ar': 'العربية', 'en': 'English', 'ur': 'اردو'};
     final langFlags = {'ar': '🇸🇦', 'en': '🇺🇸', 'ur': '🇵🇰'};
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.cardSurface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          'language'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: theme.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: langNames.entries.map((entry) {
-            final isSelected = currentLang == entry.key;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: InkWell(
-                onTap: () {
-                  onSelected(entry.key);
-                  Navigator.pop(context);
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? theme.primary.withValues(alpha: 0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected ? theme.primary : theme.borderColor,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        langFlags[entry.key]!,
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        entry.value,
-                        style: TextStyle(
-                          color: isSelected ? theme.primary : theme.textPrimary,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: theme.primary,
-                          size: 24,
-                        ),
-                    ],
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 36,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGrey3.resolveFrom(context),
+                  borderRadius: BorderRadius.circular(2.5),
+                ),
+              ),
+              // Title
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Text(
+                  'language'.tr(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: CupertinoColors.label.resolveFrom(context),
                   ),
                 ),
               ),
-            );
-          }).toList(),
+              const Divider(height: 1),
+              // Language options
+              ...langNames.entries.map((entry) {
+                final isSelected = currentLang == entry.key;
+                return CupertinoListTile(
+                  leading: Text(
+                    langFlags[entry.key]!,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  title: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: isSelected
+                          ? theme.primary
+                          : CupertinoColors.label.resolveFrom(context),
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(
+                          CupertinoIcons.checkmark_alt_circle_fill,
+                          color: theme.primary,
+                          size: 24,
+                        )
+                      : null,
+                  onTap: () {
+                    onSelected(entry.key);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );
@@ -92,7 +96,6 @@ class SettingsDialogs {
     required String currentPalette,
     required Function(String) onSelected,
   }) {
-    final theme = context.ramadanTheme;
     final palettes = [
       {
         'id': 'emerald',
@@ -108,81 +111,91 @@ class SettingsDialogs {
       {'id': 'ocean', 'name': 'Ocean Calm', 'color': const Color(0xFF0D4F6B)},
     ];
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.cardSurface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          'color_palette'.tr(),
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: theme.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: palettes.map((palette) {
-            final isSelected = currentPalette == palette['id'];
-            final color = palette['color'] as Color;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: InkWell(
-                onTap: () {
-                  onSelected(palette['id'] as String);
-                  Navigator.pop(context);
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? color.withValues(alpha: 0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected ? color : theme.borderColor,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        (palette['id'] as String).tr(),
-                        style: TextStyle(
-                          color: isSelected ? color : theme.textPrimary,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (isSelected)
-                        Icon(Icons.check_circle, color: color, size: 24),
-                    ],
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Drag handle
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                width: 36,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGrey3.resolveFrom(context),
+                  borderRadius: BorderRadius.circular(2.5),
+                ),
+              ),
+              // Title
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Text(
+                  'color_palette'.tr(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: CupertinoColors.label.resolveFrom(context),
                   ),
                 ),
               ),
-            );
-          }).toList(),
+              const Divider(height: 1),
+              // Palette options
+              ...palettes.map((palette) {
+                final isSelected = currentPalette == palette['id'];
+                final color = palette['color'] as Color;
+                return CupertinoListTile(
+                  leading: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.3),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                  title: Text(
+                    (palette['id'] as String).tr(),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: isSelected
+                          ? color
+                          : CupertinoColors.label.resolveFrom(context),
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(
+                          CupertinoIcons.checkmark_alt_circle_fill,
+                          color: color,
+                          size: 24,
+                        )
+                      : null,
+                  onTap: () {
+                    onSelected(palette['id'] as String);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );

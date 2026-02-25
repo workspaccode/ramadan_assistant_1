@@ -63,7 +63,9 @@ dependencies:
   permission_handler: ^12.0.1
   geocoding: ^4.0.0
   prayers_times: ^0.0.6
-  quran_library: ^3.0.1
+  quran_library: ^3.1.0
+  dio: ^5.4.3
+  share_plus: ^7.2.1
 
   # UI & User Experience
   flutter_svg: ^2.2.3
@@ -93,7 +95,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   drift_dev: ^2.31.0
   build_runner: ^2.11.1
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.4
 
 flutter_launcher_icons:
   android: "launcher_icon"

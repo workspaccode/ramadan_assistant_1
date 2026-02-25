@@ -17,6 +17,7 @@ import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
+import 'package:ramadan_assistant/presentation/cubits/hadith/hadith_cubit.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/main_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
@@ -106,6 +107,7 @@ class MyApp extends StatelessWidget {
             create: (context) =>
                 RemindersBloc(sl<AppDatabase>())..add(LoadReminders()),
           ),
+          BlocProvider(create: (context) => HadithCubit(sl())..loadHadiths()),
         ],
         child: MultiBlocListener(
           listeners: [
@@ -144,9 +146,6 @@ class MyApp extends StatelessWidget {
                       : false;
 
                   return MaterialApp(
-                    key: ValueKey(
-                      '${localeContext.locale}_${colorPaletteId}_$fontSizeMultiplier',
-                    ),
                     title: 'Ramadan Assistant',
                     debugShowCheckedModeBanner: false,
                     theme: AppTheme.getLightTheme(

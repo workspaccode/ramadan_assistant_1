@@ -53,7 +53,7 @@ class SettingsScreenContent extends StatelessWidget {
                     top: false,
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        _buildRamadanCard(context, isRamadan),
+                        // _buildRamadanCard(context, isRamadan),
                         _buildLocationSection(context, state),
                         _buildAppearanceSection(context, state),
                         _buildAppIconSection(context, state),
@@ -88,7 +88,7 @@ class SettingsScreenContent extends StatelessWidget {
           (isRamadan ? const Color(0xFF2E7D32) : context.primaryColor)
               .withValues(alpha: 0.8),
       border: null,
-      middle: Row(
+      largeTitle: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isRamadan) ...[
@@ -387,6 +387,8 @@ class SettingsScreenContent extends StatelessWidget {
               activeColor: theme.primary,
               onChanged: (val) {
                 context.read<SettingsScreenBloc>().add(UpdateFontSize(val));
+              },
+              onChangeEnd: (val) {
                 context.read<ThemeBloc>().add(UpdateFontSizeMultiplier(val));
               },
             ),
@@ -672,55 +674,80 @@ class SettingsScreenContent extends StatelessWidget {
     return CupertinoListTile(
       title: Text(title),
       additionalInfo: Text(infoText),
-      trailing: const Icon(CupertinoIcons.chevron_up_chevron_down, size: 14),
+      trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
       onTap: () {
-        final initialIndex = options.indexOf(currentValue);
-        showCupertinoModalPopup(
+        showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
           builder: (ctx) => Container(
-            height: 250,
-            padding: const EdgeInsets.only(top: 6.0),
-            margin: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemBackground.resolveFrom(context),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
-            color: CupertinoColors.systemBackground.resolveFrom(context),
             child: SafeArea(
               top: false,
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: 44,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CupertinoButton(
-                          child: Text('done'.tr()),
-                          onPressed: () => Navigator.pop(ctx),
-                        ),
-                      ],
+                  // Drag handle
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    width: 36,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey3.resolveFrom(context),
+                      borderRadius: BorderRadius.circular(2.5),
                     ),
                   ),
-                  Expanded(
-                    child: CupertinoPicker(
-                      scrollController: FixedExtentScrollController(
-                        initialItem: initialIndex != -1 ? initialIndex : 0,
+                  // Title
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: CupertinoColors.label.resolveFrom(context),
                       ),
-                      itemExtent: 32,
-                      onSelectedItemChanged: (index) {
-                        onChanged(options[index]);
-                      },
-                      children: options
-                          .map(
-                            (o) => Center(
-                              child: Text(
-                                displayValues?[o] ??
-                                    (translateOptions ? o.tr() : o),
-                              ),
-                            ),
-                          )
-                          .toList(),
                     ),
                   ),
+                  const Divider(height: 1),
+                  // Options
+                  ...options.map((option) {
+                    final isSelected = currentValue == option;
+                    final label =
+                        displayValues?[option] ??
+                        (translateOptions ? option.tr() : option);
+                    return CupertinoListTile(
+                      title: Text(
+                        label,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? context.primaryColor
+                              : CupertinoColors.label.resolveFrom(context),
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? Icon(
+                              CupertinoIcons.checkmark_alt_circle_fill,
+                              color: context.primaryColor,
+                              size: 24,
+                            )
+                          : null,
+                      onTap: () {
+                        onChanged(option);
+                        Navigator.pop(ctx);
+                      },
+                    );
+                  }),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
@@ -741,20 +768,45 @@ class SettingsScreenContent extends StatelessWidget {
       title: Text(title),
       additionalInfo: Text('$currentValue $subtitle'),
       onTap: () {
-        showCupertinoModalPopup(
+        showModalBottomSheet(
           context: context,
+          backgroundColor: Colors.transparent,
           builder: (ctx) => Container(
-            height: 250,
-            color: CupertinoColors.systemBackground.resolveFrom(context),
+            height: 300,
+            decoration: BoxDecoration(
+              color: CupertinoColors.systemBackground.resolveFrom(context),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
             child: SafeArea(
               top: false,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 44,
+                  // Drag handle
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    width: 36,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey3.resolveFrom(context),
+                      borderRadius: BorderRadius.circular(2.5),
+                    ),
+                  ),
+                  // Title + Done button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 8, 0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: CupertinoColors.label.resolveFrom(context),
+                          ),
+                        ),
                         CupertinoButton(
                           child: Text('done'.tr()),
                           onPressed: () => Navigator.pop(ctx),
@@ -762,6 +814,7 @@ class SettingsScreenContent extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const Divider(height: 1),
                   Expanded(
                     child: CupertinoPicker(
                       scrollController: FixedExtentScrollController(

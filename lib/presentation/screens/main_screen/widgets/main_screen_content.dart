@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
@@ -159,7 +160,7 @@ class MainScreenContent extends StatelessWidget {
                           Text(
                             'ramadan_kareem'.tr(),
                             style: const TextStyle(
-                             // color: Colors.white,
+                              // color: Colors.white,
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
@@ -168,7 +169,7 @@ class MainScreenContent extends StatelessWidget {
                           Text(
                             'tap_for_blessing'.tr(),
                             style: TextStyle(
-                            //  color: Colors.white.withValues(alpha: 0.7),
+                              //  color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 14,
                               fontStyle: FontStyle.italic,
                             ),
@@ -405,6 +406,16 @@ class MainScreenContent extends StatelessWidget {
           () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const SettingsScreen()),
+          ),
+        ),
+        _buildFeatureCard(
+          context,
+          'hadith_title'.tr(),
+          Icons.library_books_rounded,
+          const Color(0xFF8E24AA),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HadithScreen()),
           ),
         ),
       ],

@@ -11,6 +11,11 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
     on<LoadUmrahProgress>(_onLoadUmrahProgress);
     on<CompleteUmrahStep>(_onCompleteUmrahStep);
     on<ResetUmrahProgress>(_onResetUmrahProgress);
+    on<UpdateTawafCircuits>(_onUpdateTawafCircuits);
+    on<UpdateSaiLaps>(_onUpdateSaiLaps);
+    on<UpdateMaqamToggle>(_onUpdateMaqamToggle);
+    on<UpdateZamzamToggle>(_onUpdateZamzamToggle);
+    on<UpdateAutoTracking>(_onUpdateAutoTracking);
   }
 
   Future<void> _onLoadUmrahProgress(
@@ -24,13 +29,38 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
 
       var progress = await query.get();
 
+      // Migration: Update existing Arabic step names to English IDs
+      final migrationMap = {
+        'الإحرام': 'step_ihram',
+        'دخول المسجد الحرام': 'step_entrance',
+        'الطواف': 'step_tawaf',
+        'السعي': 'step_sai',
+        'التقصير أو الحلق والتحلل': 'step_tahlul',
+      };
+
+      bool needsReload = false;
+      for (final item in progress) {
+        if (migrationMap.containsKey(item.step)) {
+          await (_database.update(
+            _database.umrahProgress,
+          )..where((t) => t.id.equals(item.id))).write(
+            UmrahProgressCompanion(step: Value(migrationMap[item.step]!)),
+          );
+          needsReload = true;
+        }
+      }
+
+      if (needsReload) {
+        progress = await query.get();
+      }
+
       if (progress.isEmpty) {
         final steps = [
-          'الإحرام',
-          'دخول المسجد الحرام',
-          'الطواف',
-          'السعي',
-          'التقصير أو الحلق والتحلل',
+          'step_ihram',
+          'step_entrance',
+          'step_tawaf',
+          'step_sai',
+          'step_tahlul',
         ];
 
         await _database.transaction(() async {
@@ -53,7 +83,7 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
         progress = await query.get();
       }
 
-      emit(UmrahGuideLoaded(progress));
+      emit(UmrahGuideLoaded(progress: progress));
     } catch (e) {
       emit(UmrahGuideError(e.toString()));
     }
@@ -87,6 +117,56 @@ class UmrahGuideBloc extends Bloc<UmrahGuideEvent, UmrahGuideState> {
       add(LoadUmrahProgress());
     } catch (e) {
       emit(UmrahGuideError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateTawafCircuits(
+    UpdateTawafCircuits event,
+    Emitter<UmrahGuideState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is UmrahGuideLoaded) {
+      emit(currentState.copyWith(tawafCircuits: event.circuits));
+    }
+  }
+
+  Future<void> _onUpdateSaiLaps(
+    UpdateSaiLaps event,
+    Emitter<UmrahGuideState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is UmrahGuideLoaded) {
+      emit(currentState.copyWith(saiLaps: event.laps));
+    }
+  }
+
+  Future<void> _onUpdateMaqamToggle(
+    UpdateMaqamToggle event,
+    Emitter<UmrahGuideState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is UmrahGuideLoaded) {
+      emit(currentState.copyWith(isPrayedAtMaqam: event.isPrayed));
+    }
+  }
+
+  Future<void> _onUpdateZamzamToggle(
+    UpdateZamzamToggle event,
+    Emitter<UmrahGuideState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is UmrahGuideLoaded) {
+      emit(currentState.copyWith(isDrunkZamzam: event.isDrunk));
+    }
+  }
+
+  Future<void> _onUpdateAutoTracking(
+    UpdateAutoTracking event,
+    Emitter<UmrahGuideState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is UmrahGuideLoaded) {
+      emit(currentState.copyWith(isAutoTracking: event.enabled));
     }
   }
 }

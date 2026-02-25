@@ -30,14 +30,8 @@ enum _SaiZone { safa, marwa, none }
 class _UmrahGuideViewState extends State<UmrahGuideView> {
   late PageController _pageController;
   late MapController _mapController;
-  int _tawafCircuits = 0;
-  int _saiLaps = 0;
-  bool _isPrayedAtMaqam = false;
-  bool _isDrunkZamzam = false;
-  bool _hasJumpedToCurrentStep = false;
 
-  // Auto-tracking state
-  bool _isAutoTracking = false;
+  // Auto-tracking state (Location subscription remains in View)
   StreamSubscription<Position>? _locationSubscription;
   _SaiZone _currentZone = _SaiZone.none;
   LatLng? _currentLatLng;
@@ -63,16 +57,14 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     super.dispose();
   }
 
-  void _updateLocationSubscription() {
+  void _updateLocationSubscription(bool isAutoTracking) {
     _locationSubscription?.cancel();
-    if (_isAutoTracking) {
-      // Use standard context.read if LocationService is provided via RepositoryProvider or Bloc
-      // Assuming it's in the widget tree or we can instantiate it
+    if (isAutoTracking) {
       final locationService = LocationService();
       _locationSubscription = locationService.getLocationStream().listen(
         _processLocationUpdate,
         onError: (e) {
-          setState(() => _isAutoTracking = false);
+          context.read<UmrahGuideBloc>().add(const UpdateAutoTracking(false));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('error_prefix'.tr(args: [e.toString()]))),
           );
@@ -86,8 +78,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       _currentLatLng = LatLng(position.latitude, position.longitude);
     });
 
+    final state = context.read<UmrahGuideBloc>().state;
+    if (state is! UmrahGuideLoaded) return;
+
     // Auto-center map
-    if (_isAutoTracking) {
+    if (state.isAutoTracking) {
       _mapController.move(_currentLatLng!, 17.5);
     }
 
@@ -106,34 +101,37 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
 
     if (distToSafa < _proximityThreshold) {
       if (_currentZone != _SaiZone.safa) {
-        _onZoneReached(_SaiZone.safa);
+        _onZoneReached(_SaiZone.safa, state);
       }
     } else if (distToMarwa < _proximityThreshold) {
       if (_currentZone != _SaiZone.marwa) {
-        _onZoneReached(_SaiZone.marwa);
+        _onZoneReached(_SaiZone.marwa, state);
       }
     } else {
       _currentZone = _SaiZone.none;
     }
   }
 
-  void _onZoneReached(_SaiZone zone) {
+  void _onZoneReached(_SaiZone zone, UmrahGuideLoaded state) {
     setState(() {
       _currentZone = zone;
-      bool lapIncremented = false;
-      // Sai Laps: 0->1 (Safa to Marwa), 1->2 (Marwa to Safa), etc.
-      if (zone == _SaiZone.marwa && _saiLaps % 2 == 0 && _saiLaps < 7) {
-        _saiLaps++;
-        lapIncremented = true;
-      } else if (zone == _SaiZone.safa && _saiLaps % 2 != 0 && _saiLaps < 7) {
-        _saiLaps++;
-        lapIncremented = true;
-      }
-
-      if (lapIncremented) {
-        _onLapCompleted();
-      }
     });
+
+    bool lapIncremented = false;
+    int laps = state.saiLaps;
+
+    if (zone == _SaiZone.marwa && laps % 2 == 0 && laps < 7) {
+      laps++;
+      lapIncremented = true;
+    } else if (zone == _SaiZone.safa && laps % 2 != 0 && laps < 7) {
+      laps++;
+      lapIncremented = true;
+    }
+
+    if (lapIncremented) {
+      context.read<UmrahGuideBloc>().add(UpdateSaiLaps(laps));
+      _onLapCompleted();
+    }
   }
 
   void _onLapCompleted() async {
@@ -142,7 +140,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     }
   }
 
-  Widget _buildSaiMap() {
+  Widget _buildSaiMap(UmrahGuideLoaded state) {
     final theme = context.ramadanTheme;
     final safa = LatLng(_safaLat, _safaLon);
     final marwa = LatLng(_marwaLat, _marwaLon);
@@ -150,7 +148,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     // Determine target based on current lap (0-indexed _saiLaps)
     // Lap 0, 2, 4, 6 -> Going to Marwa
     // Lap 1, 3, 5 -> Going to Safa
-    final isGoingToMarwa = _saiLaps % 2 == 0;
+    final isGoingToMarwa = state.saiLaps % 2 == 0;
     final targetLatLng = isGoingToMarwa ? marwa : safa;
     final startLatLng = isGoingToMarwa ? safa : marwa;
 
@@ -307,15 +305,17 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       children: [
                         Text(
                           isGoingToMarwa
-                              ? 'متوجه إلى المروة'
-                              : 'متوجه إلى الصفا',
+                              ? 'going_to_marwa'.tr()
+                              : 'going_to_safa'.tr(),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
                         ),
                         Text(
-                          'الشوط ${_saiLaps + 1} من 7',
+                          'sai_lap_count'.tr(
+                            args: [(state.saiLaps + 1).toString(), '7'],
+                          ),
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -431,42 +431,71 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.ramadanTheme;
-    return Scaffold(
-      backgroundColor: theme.background,
-      body: BlocBuilder<UmrahGuideBloc, UmrahGuideState>(
-        builder: (context, state) {
-          if (state is UmrahGuideInitial || state is UmrahGuideLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is UmrahGuideLoaded) {
-            return _buildBody(context, state.progress);
-          } else if (state is UmrahGuideError) {
-            return Center(
-              child: Text('error_prefix'.tr(args: [state.message])),
-            );
-          }
-          return Center(child: Text('something_went_wrong'.tr()));
-        },
-      ),
+    return BlocBuilder<UmrahGuideBloc, UmrahGuideState>(
+      builder: (context, state) {
+        if (state is UmrahGuideInitial || state is UmrahGuideLoading) {
+          return Scaffold(
+            backgroundColor: context.ramadanTheme.background,
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (state is UmrahGuideError) {
+          return Scaffold(
+            backgroundColor: context.ramadanTheme.background,
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('error_prefix'.tr(args: [state.message])),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        context.read<UmrahGuideBloc>().add(LoadUmrahProgress()),
+                    child: Text('retry'.tr()),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (state is UmrahGuideLoaded) {
+          return Scaffold(
+            backgroundColor: context.ramadanTheme.background,
+            body: _buildBody(context, state),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: context.ramadanTheme.background,
+          body: Center(child: Text('something_went_wrong'.tr())),
+        );
+      },
     );
   }
 
-  Widget _buildBody(BuildContext context, List<UmrahProgressData> steps) {
-    if (!_hasJumpedToCurrentStep) {
-      final firstIncomplete = steps.indexWhere((s) => !s.completed);
-      if (firstIncomplete != -1) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_pageController.hasClients) {
-            _pageController.jumpToPage(firstIncomplete);
-          }
-        });
+  Widget _buildBody(BuildContext context, UmrahGuideLoaded state) {
+    final steps = state.progress;
+    final firstIncomplete = steps.indexWhere((s) => !s.completed);
+    final targetPage = firstIncomplete != -1
+        ? firstIncomplete
+        : steps.length - 1;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pageController.hasClients &&
+          _pageController.page?.round() != targetPage) {
+        _pageController.animateToPage(
+          targetPage,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
       }
-      _hasJumpedToCurrentStep = true;
-    }
+    });
 
     final theme = context.ramadanTheme;
     final completedCount = steps.where((s) => s.completed).length;
-    final progress = completedCount / steps.length;
+    final progress = steps.isEmpty ? 0.0 : completedCount / steps.length;
 
     return Column(
       children: [
@@ -512,13 +541,19 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       color: Colors.white,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _tawafCircuits = 0;
-                        _saiLaps = 0;
-                        _isPrayedAtMaqam = false;
-                        _isDrunkZamzam = false;
-                      });
                       context.read<UmrahGuideBloc>().add(ResetUmrahProgress());
+                      context.read<UmrahGuideBloc>().add(
+                        const UpdateTawafCircuits(0),
+                      );
+                      context.read<UmrahGuideBloc>().add(
+                        const UpdateSaiLaps(0),
+                      );
+                      context.read<UmrahGuideBloc>().add(
+                        const UpdateMaqamToggle(false),
+                      );
+                      context.read<UmrahGuideBloc>().add(
+                        const UpdateZamzamToggle(false),
+                      );
                       _pageController.animateToPage(
                         0,
                         duration: const Duration(milliseconds: 500),
@@ -537,8 +572,8 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       children: [
                         Text(
                           completedCount == steps.length
-                              ? 'تقبل الله عمرتك 🤲'
-                              : 'تقدّم العمرة',
+                              ? 'may_allah_accept_umrah'.tr()
+                              : 'umrah_progress_label'.tr(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -589,19 +624,20 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         Expanded(
           child: PageView.builder(
             controller: _pageController,
-            physics:
-                const NeverScrollableScrollPhysics(), // Force sequential navigation
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: steps.length,
             itemBuilder: (context, index) {
               final isNext =
                   !steps[index].completed &&
                   (index == 0 || (index > 0 && steps[index - 1].completed));
+
               return _buildStepPage(
                 context,
                 steps[index],
                 index,
                 steps.length,
                 isNext,
+                state,
               );
             },
           ),
@@ -616,6 +652,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     int index,
     int totalSteps,
     bool isNext,
+    UmrahGuideLoaded state,
   ) {
     final theme = context.ramadanTheme;
 
@@ -683,72 +720,75 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             ),
           ),
           const SizedBox(height: 16),
-          ..._buildGuidelineWidgets(context, step.step, step.completed),
+          ..._buildGuidelineWidgets(context, step.step, step.completed, state),
 
           const SizedBox(height: 24),
 
-          // Action Buttons
-          if (step.step == 'الإحرام') ...[
-            _buildActionButton(
+          // Inline Dua Sections
+          if (step.step == 'step_ihram') ...[
+            // Ishtirat Dua inline
+            _buildInlineDuaSection(
               context,
               icon: Icons.info_outline_rounded,
-              label: 'ishtirat_dua'.tr(),
+              title: 'ishtirat_dua'.tr(),
               color: theme.primary,
-              onPressed: () => _showIshtiratBottomSheet(context),
+              children: [
+                Text(
+                  UmrahDuas.ishtiratInfo,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.6,
+                    color: theme.textSecondary,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+                const SizedBox(height: 16),
+                DuaWidget(
+                  arabicText: UmrahDuas.ishtiratFull,
+                  translation: UmrahDuas.ishtirat.translation ?? '',
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'ihram_dua_instruction'.tr(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[500],
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
             const SizedBox(height: 12),
-            _buildActionButton(
+            // Tawaf/Sai fixed duas inline
+            _buildInlineDuaCategorySection(
               context,
               icon: Icons.menu_book_rounded,
-              label: 'أدعية الطواف والسعي الثابتة',
+              title: 'fixed_tawaf_sai_duas'.tr(),
               color: theme.secondary,
-              onPressed: () => _showDuasBottomSheet(context, step.step),
+              duas: UmrahDuas.tawafSaiDuas,
             ),
           ],
 
-          if (step.step == 'الطواف' || step.step == 'السعي') ...[
+          if (step.step == 'step_tawaf') ...[
             const SizedBox(height: 12),
-            _buildActionButton(
+            _buildInlineDuaCategorySection(
               context,
               icon: Icons.menu_book_rounded,
-              label: step.step == 'السعي'
-                  ? 'أدعية السعي الشاملة'
-                  : 'أدعية الطواف الشاملة',
+              title: 'comprehensive_tawaf_duas'.tr(),
               color: theme.secondary,
-              onPressed: () => _showDuasBottomSheet(context, step.step),
+              duas: UmrahDuas.tawafSaiDuas,
             ),
           ],
 
-          const SizedBox(height: 24),
-
-          // Duas Sections
-          if (step.step == 'السعي') ...[
-            _buildSectionTitle(context, 'dhikr_standing'.tr()),
+          if (step.step == 'step_sai') ...[
             const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'اللهُ أَكْبَر، اللهُ أَكْبَر، اللهُ أَكْبَر. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ، أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ الْأَعْزَابَ وَحْدَهُ.',
-              translation: 'dhikr_safa_marwa_standing_trans'.tr(),
-            ),
-            const SizedBox(height: 20),
-            _buildSectionTitle(context, 'dhikr_walking'.tr()),
-            const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.',
-              translation: 'dua_rabbana_atina_trans'.tr(),
-            ),
-            const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'رَبِّ اغْفِرْ وَارْحَمْ، وَتَجَاوَزْ عَمَّا تَعْلَمُ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ.',
-              translation: 'dua_rabbi_ighfir_trans'.tr(),
-            ),
-            const SizedBox(height: 12),
-            DuaWidget(
-              arabicText:
-                  'اللهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى.',
-              translation: 'dua_allahumma_inni_asaluka_trans'.tr(),
+            _buildInlineDuaCategorySection(
+              context,
+              icon: Icons.menu_book_rounded,
+              title: 'comprehensive_sai_duas'.tr(),
+              color: theme.secondary,
+              duas: UmrahDuas.saiDuas,
             ),
           ] else if (_getDuaArabic(step.step).isNotEmpty) ...[
             _buildSectionTitle(context, 'adhkar_title'.tr()),
@@ -768,25 +808,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             child: ElevatedButton(
               onPressed: () {
                 if (!step.completed) {
-                  if (_canCompleteStep(step.step)) {
+                  if (_canCompleteStep(step.step, state)) {
                     context.read<UmrahGuideBloc>().add(
                       CompleteUmrahStep(step.id),
                     );
-                    if (index < totalSteps - 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
+                    if (index == totalSteps - 1) {
                       _showCompletionBottomSheet(context);
                     }
-                  }
-                } else {
-                  if (index < totalSteps - 1) {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
                   }
                 }
               },
@@ -804,10 +832,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               ),
               child: Text(
                 step.completed
-                    ? (index < totalSteps - 1
-                          ? 'next_step'.tr()
-                          : 'completed'.tr())
-                    : (step.step == 'الطواف' && !_canCompleteStep(step.step)
+                    ? 'completed'.tr()
+                    : (step.step == 'step_tawaf' &&
+                              !_canCompleteStep(step.step, state)
                           ? 'complete_tawaf_first'.tr()
                           : 'complete_button'.tr()),
                 style: const TextStyle(
@@ -882,26 +909,98 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     );
   }
 
-  Widget _buildActionButton(
+  Widget _buildInlineDuaSection(
     BuildContext context, {
     required IconData icon,
-    required String label,
+    required String title,
     required Color color,
-    required VoidCallback onPressed,
+    required List<Widget> children,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      child: TextButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 18),
-        label: Text(label, style: context.textTheme.labelLarge),
-        style: TextButton.styleFrom(
-          foregroundColor: color,
-          backgroundColor: color.withOpacity(0.08),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.15)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          leading: Icon(icon, size: 20, color: color),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
+          iconColor: color,
+          collapsedIconColor: color,
+          children: children,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInlineDuaCategorySection(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required Color color,
+    required List<UmrahDua> duas,
+  }) {
+    final theme = context.ramadanTheme;
+    final categories = duas.map((e) => e.category).toSet().toList();
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.15)),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          leading: Icon(icon, size: 20, color: color),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+          iconColor: color,
+          collapsedIconColor: color,
+          children: [
+            for (final cat in categories) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                child: Text(
+                  cat ?? '',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: theme.primary,
+                  ),
+                ),
+              ),
+              ...duas
+                  .where((d) => d.category == cat)
+                  .map(
+                    (dua) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: DuaWidget(
+                        arabicText: dua.arabic,
+                        translation: dua.translation ?? '',
+                        source: dua.source,
+                      ),
+                    ),
+                  ),
+            ],
+          ],
         ),
       ),
     );
@@ -911,6 +1010,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     BuildContext context,
     String? step,
     bool completed,
+    UmrahGuideLoaded state,
   ) {
     if (step == null) return [];
     final theme = context.ramadanTheme;
@@ -919,40 +1019,44 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     return List.generate(points.length, (index) {
       final point = points[index];
 
-      if (step == 'الطواف' && index == 0 && !completed) {
+      if (step == 'step_tawaf' && index == 0 && !completed) {
         return _buildCircularCounter(
           context,
           label: point,
-          current: _tawafCircuits,
+          current: state.tawafCircuits,
           max: 7,
-          onChanged: (val) => setState(() => _tawafCircuits = val),
+          onChanged: (val) =>
+              context.read<UmrahGuideBloc>().add(UpdateTawafCircuits(val)),
           successText: 'tawaf_done'.tr(),
         );
       }
 
-      if (step == 'الطواف' && index == 3 && !completed) {
-        return _buildIOSToggle(point, _isPrayedAtMaqam, (val) {
-          setState(() => _isPrayedAtMaqam = val);
+      if (step == 'step_tawaf' && index == 3 && !completed) {
+        return _buildIOSToggle(point, state.isPrayedAtMaqam, (val) {
+          context.read<UmrahGuideBloc>().add(UpdateMaqamToggle(val));
         });
       }
-      if (step == 'الطواف' && index == 4 && !completed) {
-        return _buildIOSToggle(point, _isDrunkZamzam, (val) {
-          setState(() => _isDrunkZamzam = val);
+      if (step == 'step_tawaf' && index == 4 && !completed) {
+        return _buildIOSToggle(point, state.isDrunkZamzam, (val) {
+          context.read<UmrahGuideBloc>().add(UpdateZamzamToggle(val));
         });
       }
 
-      if (step == 'السعي' && index == 0 && !completed) {
+      if (step == 'step_sai' && index == 0 && !completed) {
         return Column(
           children: [
-            _buildAutoTrackingSwitch(),
+            _buildAutoTrackingSwitch(state.isAutoTracking),
             const SizedBox(height: 16),
-            if (_isAutoTracking) _buildSaiMap(),
+            if (state.isAutoTracking) _buildSaiMap(state),
             _buildCircularCounter(
               context,
               label: point,
-              current: _saiLaps,
+              current: state.saiLaps,
               max: 7,
-              onChanged: (val) => setState(() => _saiLaps = val),
+              onChanged: state.isAutoTracking
+                  ? null
+                  : (val) =>
+                        context.read<UmrahGuideBloc>().add(UpdateSaiLaps(val)),
               successText: 'sai_done'.tr(),
             ),
           ],
@@ -981,17 +1085,17 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     });
   }
 
-  Widget _buildAutoTrackingSwitch() {
+  Widget _buildAutoTrackingSwitch(bool isAutoTracking) {
     final theme = context.ramadanTheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: _isAutoTracking
+        color: isAutoTracking
             ? theme.primary.withOpacity(0.08)
             : theme.cardSurface.withOpacity(0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _isAutoTracking
+          color: isAutoTracking
               ? theme.primary.withOpacity(0.2)
               : theme.textDim.withOpacity(0.1),
         ),
@@ -999,10 +1103,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       child: Row(
         children: [
           Icon(
-            _isAutoTracking
+            isAutoTracking
                 ? Icons.location_on_rounded
                 : Icons.location_off_rounded,
-            color: _isAutoTracking ? theme.primary : theme.textDim,
+            color: isAutoTracking ? theme.primary : theme.textDim,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1010,29 +1114,27 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'التتبع الآلي للسعي',
+                  'auto_tracking_title'.tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: _isAutoTracking ? theme.primary : theme.textPrimary,
+                    color: isAutoTracking ? theme.primary : theme.textPrimary,
                   ),
                 ),
                 Text(
-                  _isAutoTracking
-                      ? 'جاري تتبع موقعك بين الصفا والمروة'
-                      : 'فعل التتبع لحساب الأشواط تلقائياً',
+                  isAutoTracking
+                      ? 'auto_tracking_active'.tr()
+                      : 'auto_tracking_inactive'.tr(),
                   style: TextStyle(fontSize: 11, color: theme.textSecondary),
                 ),
               ],
             ),
           ),
           Switch.adaptive(
-            value: _isAutoTracking,
+            value: isAutoTracking,
             activeColor: theme.primary,
             onChanged: (val) {
-              setState(() {
-                _isAutoTracking = val;
-                _updateLocationSubscription();
-              });
+              context.read<UmrahGuideBloc>().add(UpdateAutoTracking(val));
+              _updateLocationSubscription(val);
             },
           ),
         ],
@@ -1045,7 +1147,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     required String label,
     required int current,
     required int max,
-    required Function(int) onChanged,
+    required Function(int)? onChanged,
     required String successText,
   }) {
     final theme = context.ramadanTheme;
@@ -1117,13 +1219,17 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             children: [
               _buildCircularButton(
                 icon: Icons.remove_rounded,
-                onPressed: current > 0 ? () => onChanged(current - 1) : null,
+                onPressed: (onChanged != null && current > 0)
+                    ? () => onChanged(current - 1)
+                    : null,
                 color: theme.primary,
               ),
               const SizedBox(width: 32),
               _buildCircularButton(
                 icon: Icons.add_rounded,
-                onPressed: current < max ? () => onChanged(current + 1) : null,
+                onPressed: (onChanged != null && current < max)
+                    ? () => onChanged(current + 1)
+                    : null,
                 color: theme.primary,
               ),
             ],
@@ -1207,12 +1313,14 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     );
   }
 
-  bool _canCompleteStep(String? step) {
-    if (step == 'الطواف') {
-      return _tawafCircuits == 7 && _isPrayedAtMaqam && _isDrunkZamzam;
+  bool _canCompleteStep(String? step, UmrahGuideLoaded state) {
+    if (step == 'step_tawaf') {
+      return state.tawafCircuits == 7 &&
+          state.isPrayedAtMaqam &&
+          state.isDrunkZamzam;
     }
-    if (step == 'السعي') {
-      return _saiLaps == 7;
+    if (step == 'step_sai') {
+      return state.saiLaps == 7;
     }
     return true;
   }
@@ -1221,23 +1329,23 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     String keyPrefix = '';
     int count = 0;
     switch (step) {
-      case 'الإحرام':
+      case 'step_ihram':
         keyPrefix = 'guide_ihram';
         count = 6;
         break;
-      case 'دخول المسجد الحرام':
+      case 'step_entrance':
         keyPrefix = 'guide_entrance';
         count = 3;
         break;
-      case 'الطواف':
+      case 'step_tawaf':
         keyPrefix = 'guide_tawaf';
         count = 5;
         break;
-      case 'السعي':
+      case 'step_sai':
         keyPrefix = 'guide_sai';
         count = 5;
         break;
-      case 'التقصير أو الحلق والتحلل':
+      case 'step_tahlul':
         keyPrefix = 'guide_tahlul';
         count = 3;
         break;
@@ -1249,11 +1357,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
 
   String _getDuaArabic(String? step) {
     switch (step) {
-      case 'الإحرام':
+      case 'step_ihram':
         return 'لَبَّيْكَ اللَّهُمَّ عُمْرَةً. لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لاَ شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعِّمَةَ لَكَ وَالْمُلْكَ، لاَ شَرِيكَ لَكَ.';
-      case 'الطواف':
+      case 'step_tawaf':
         return 'رَبَّنَا آتِنَا فِي الدِّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.';
-      case 'السعي':
+      case 'step_sai':
         return 'إِنَّ الصَّفَا وَالْمَرْوَةَ مِنْ شَعَائِرِ اللَّهِ فَمَنْ حَجَّ الْبَيْتَ أَوِ اعْتَمَرَ فَلَا جُنَاحَ عَلَيْهِ أَنْ يَطَّوَّفَ بِهِمَا وَمَنْ تَطَوَّعَ خَيْرًا فَإِنَّ اللَّهَ شَاكِرٌ عَلِيمٌ.';
       default:
         return '';
@@ -1264,195 +1372,18 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     if (step == null) return '';
     String key = '';
     switch (step) {
-      case 'الإحرام':
+      case 'step_ihram':
         key = 'dua_ihram_trans';
         break;
-      case 'الطواف':
+      case 'step_tawaf':
         key = 'dua_tawaf_trans';
         break;
-      case 'السعي':
+      case 'step_sai':
         key = 'dua_sai_trans';
         break;
     }
     if (key.isEmpty) return '';
     return key.tr();
-  }
-
-  void _showIshtiratBottomSheet(BuildContext context) {
-    final theme = context.ramadanTheme;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.65,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: theme.cardSurface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: theme.textDim.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Text(
-                  'دعاء الاشتراط',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: theme.textPrimary,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    Text(
-                      UmrahDuas.ishtiratInfo,
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                        color: theme.textSecondary,
-                      ),
-                      textAlign: TextAlign.justify,
-                    ),
-                    const SizedBox(height: 20),
-                    DuaWidget(
-                      arabicText: UmrahDuas.ishtiratFull,
-                      translation: UmrahDuas.ishtirat.translation ?? '',
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'تقوله عند نية الدخول في الإحرام',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[500],
-                        fontStyle: FontStyle.italic,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showDuasBottomSheet(BuildContext context, String? step) {
-    if (step == null) return;
-    final theme = context.ramadanTheme;
-    final duas = step == 'الإحرام' ? UmrahDuas.tawafSaiDuas : UmrahDuas.saiDuas;
-    final categories = duas.map((e) => e.category).toSet().toList();
-
-    String title;
-    switch (step) {
-      case 'الإحرام':
-        title = 'أدعية الطواف والسعي الثابتة';
-        break;
-      case 'السعي':
-        title = 'أدعية السعي الشاملة';
-        break;
-      default:
-        title = 'أدعية الطواف الشاملة';
-    }
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.85,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        builder: (context, scrollController) => DefaultTabController(
-          length: categories.length,
-          child: Container(
-            decoration: BoxDecoration(
-              color: theme.cardSurface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: theme.textDim.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: theme.textPrimary,
-                    ),
-                  ),
-                ),
-                TabBar(
-                  isScrollable: true,
-                  labelColor: theme.primary,
-                  unselectedLabelColor: theme.textDim,
-                  indicatorColor: theme.primary,
-                  indicatorWeight: 3,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
-                  ),
-                  tabs: categories.map((cat) => Tab(text: cat)).toList(),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: categories.map((cat) {
-                      final catDuas = duas
-                          .where((d) => d.category == cat)
-                          .toList();
-                      return ListView.separated(
-                        padding: const EdgeInsets.all(20),
-                        itemCount: catDuas.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 16),
-                        itemBuilder: (context, index) {
-                          final dua = catDuas[index];
-                          return DuaWidget(
-                            arabicText: dua.arabic,
-                            translation: dua.translation ?? '',
-                            source: dua.source,
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   void _showCompletionBottomSheet(BuildContext context) {
