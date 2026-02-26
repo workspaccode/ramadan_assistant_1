@@ -312,5 +312,8 @@
     "continuous": "مستمر",
     "audio": "صوت",
     "repeat": "تكرار",
-    "select_dhikr_prompt": "اختر الذكر الذي تريد تكراره"
+    "select_dhikr_prompt": "اختر الذكر الذي تريد تكراره",
+    "notifications_title": "الإشعارات",
+    "no_notifications": "لا توجد إشعارات بعد",
+    "no_notifications_desc": "ستظهر هنا سجلات التحديث والتنبيهات"
 }

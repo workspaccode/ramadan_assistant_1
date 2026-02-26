@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart';
+import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
-import 'package:ramadan_assistant/core/services/update_service.dart';
+import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class SettingsScreenState extends Equatable {
@@ -243,7 +244,7 @@ class SettingsScreenBloc
   static const String _keyHijriAdjustment = 'hijri_adjustment';
 
   final LocationService _locationService;
-  final UpdateService _updateService = UpdateService();
+  final SmartUpdateManager _updateManager = sl<SmartUpdateManager>();
 
   SettingsScreenBloc(this._locationService) : super(SettingsScreenInitial()) {
     on<LoadSettings>(_onLoadSettings);
@@ -476,7 +477,7 @@ class SettingsScreenBloc
           );
         }
       } catch (e) {
-        print("Location refresh error: $e");
+        print('Location refresh error: $e');
       }
     }
   }
@@ -503,7 +504,7 @@ class SettingsScreenBloc
           );
         }
       } catch (e) {
-        print("Dynamic icon error: $e");
+        print('Dynamic icon error: $e');
       }
     }
   }
@@ -550,11 +551,7 @@ class SettingsScreenBloc
     Emitter<SettingsScreenState> emit,
   ) async {
     if (state is SettingsScreenLoaded) {
-      final available = await _updateService.isUpdateAvailable();
-      if (available) {
-        await _updateService.downloadUpdate();
-        // In a real app, you might show another Snackbar saying update is ready
-      }
+      await _updateManager.checkAutoUpdates();
     }
   }
 

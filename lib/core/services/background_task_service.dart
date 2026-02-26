@@ -12,6 +12,8 @@ import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -23,15 +25,15 @@ void callbackDispatcher() {
     final prayerService = PrayerService();
 
     try {
-      if (task == "prayerUpdateTask" || task == Workmanager.iOSBackgroundTask) {
+      if (task == 'prayerUpdateTask' || task == Workmanager.iOSBackgroundTask) {
         final position = await locationService.getCurrentLocation();
         await _scheduleDayPrayerNotifications(position, prayerService);
-      } else if (task == "tasbihReportTask") {
+      } else if (task == 'tasbihReportTask') {
         await _sendIntelligentTasbihReport();
       }
       return true;
     } catch (e) {
-      print("Background Task Error: $e");
+      print('Background Task Error: $e');
       return false;
     }
   });
@@ -186,8 +188,8 @@ Future<void> _scheduleDayPrayerNotifications(
 
     // Register a one-off task for the intelligent report
     Workmanager().registerOneOffTask(
-      "daily-tasbih-report",
-      "tasbihReportTask",
+      'daily-tasbih-report',
+      'tasbihReportTask',
       initialDelay: delay,
       constraints: Constraints(networkType: NetworkType.connected),
     );
@@ -253,8 +255,8 @@ class BackgroundTaskService {
   static void scheduleDailyUpdate() {
     // Run at midnight to schedule next day's prayers
     Workmanager().registerPeriodicTask(
-      "daily-prayer-update",
-      "prayerUpdateTask",
+      'daily-prayer-update',
+      'prayerUpdateTask',
       frequency: const Duration(hours: 24),
       initialDelay: const Duration(seconds: 10),
       constraints: Constraints(
@@ -275,7 +277,7 @@ class BackgroundTaskService {
       final position = await locationService.getCurrentLocation();
       await _scheduleDayPrayerNotifications(position, prayerService);
     } catch (e) {
-      print("Error scheduling notifications: $e");
+      print('Error scheduling notifications: $e');
     }
   }
 }
@@ -296,14 +298,14 @@ class NotificationActionHandler {
     );
   }
 
-  @pragma("vm:entry-point")
+  @pragma('vm:entry-point')
   static Future<void> onNotificationCreatedMethod(
     ReceivedNotification receivedNotification,
   ) async {
     // Called when notification is created
   }
 
-  @pragma("vm:entry-point")
+  @pragma('vm:entry-point')
   static Future<void> onNotificationDisplayedMethod(
     ReceivedNotification receivedNotification,
   ) async {
@@ -329,7 +331,7 @@ class NotificationActionHandler {
     }
   }
 
-  @pragma("vm:entry-point")
+  @pragma('vm:entry-point')
   static Future<void> onActionReceivedMethod(
     ReceivedAction receivedAction,
   ) async {
@@ -342,6 +344,10 @@ class NotificationActionHandler {
 
       if (receivedAction.buttonKeyPressed == 'OPEN_ADHAN') {
         await _showAdhanScreen(prayer ?? 'Prayer', delay);
+      } else if (receivedAction.buttonKeyPressed == 'OPEN_UPDATE') {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const UpdateScreen()),
+        );
       } else if (receivedAction.buttonKeyPressed == 'DISMISS') {
         _isAdhanScreenActive = false;
         await AwesomeNotifications().cancelAll();
@@ -350,11 +356,23 @@ class NotificationActionHandler {
         await _showAdhanScreen(prayer ?? 'Prayer', delay);
       } else if (type == 'iqama') {
         navigatorKey.currentState?.pushNamed('/iqama', arguments: prayer);
+      } else if (type == 'update') {
+        // Tapped update notification
+        final updateType = payload['track'];
+        if (updateType == 'manual-update') {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (_) => const UpdateScreen()),
+          );
+        } else {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+          );
+        }
       }
     }
   }
 
-  @pragma("vm:entry-point")
+  @pragma('vm:entry-point')
   static Future<void> onDismissActionReceivedMethod(
     ReceivedAction receivedAction,
   ) async {

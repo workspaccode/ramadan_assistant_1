@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "353698640090",
+    "project_id": "apps-41d38",
+    "storage_bucket": "apps-41d38.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353698640090:android:58f6a2386ad9eade4ef5e3",
+        "android_client_info": {
+          "package_name": "com.example.habit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALqZ8BRn7oYtKqnSp1rKRXpsD-BCaYp3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "353698640090-dl5bpbq0s2qtdcifc91702hmje1pgtqb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.habit"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353698640090:android:8f5f77d1939b9f574ef5e3",
+        "android_client_info": {
+          "package_name": "com.example.newtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALqZ8BRn7oYtKqnSp1rKRXpsD-BCaYp3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "353698640090-dl5bpbq0s2qtdcifc91702hmje1pgtqb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.habit"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353698640090:android:6fdd52a7e120403c4ef5e3",
+        "android_client_info": {
+          "package_name": "com.example.ramadan_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALqZ8BRn7oYtKqnSp1rKRXpsD-BCaYp3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353698640090-2mln7saqea7g6hmir2jhvdaqnhkmgsvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "353698640090-dl5bpbq0s2qtdcifc91702hmje1pgtqb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.habit"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

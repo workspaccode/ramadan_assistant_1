@@ -848,7 +848,7 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
     widget.parentContext.read<RemindersBloc>().add(
       AddReminder(
         reminderTypes: _selectedDhikrs.toList(),
-        offsets: _selectedDhikrs.map((e) => "0").toList(),
+        offsets: _selectedDhikrs.map((e) => '0').toList(),
         audioPaths: _selectedDhikrs
             .map(
               (id) =>

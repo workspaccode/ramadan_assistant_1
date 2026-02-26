@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
+import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/data/repositories/hadith_repository.dart';
 import 'package:ramadan_assistant/data/services/hadith_service.dart';
@@ -15,6 +16,7 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton<LocationService>(() => LocationService());
   sl.registerLazySingleton<PrayerService>(() => PrayerService());
   sl.registerLazySingleton<HadithService>(() => HadithService());
+  sl.registerLazySingleton<SmartUpdateManager>(() => SmartUpdateManager());
 
   // Repositories
   sl.registerLazySingleton<HadithRepository>(

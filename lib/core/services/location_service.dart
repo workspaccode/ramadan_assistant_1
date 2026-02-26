@@ -47,7 +47,7 @@ class LocationService {
         return placemarks.first;
       }
     } catch (e) {
-      print("Error getting address: $e");
+      print('Error getting address: $e');
     }
     return null;
   }

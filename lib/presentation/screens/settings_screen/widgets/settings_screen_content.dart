@@ -13,6 +13,7 @@ import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_dialogs.dart';
+import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreenContent extends StatelessWidget {
@@ -542,7 +543,10 @@ class SettingsScreenContent extends StatelessWidget {
           ),
           title: Text('check_for_updates'.tr()),
           onTap: () {
-            context.read<SettingsScreenBloc>().add(CheckForUpdates());
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UpdateScreen()),
+            );
           },
         ),
         CupertinoListTile(

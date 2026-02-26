@@ -75,6 +75,14 @@ class NotificationService {
           importance: NotificationImportance.High,
           defaultColor: AppTheme.secondaryColor,
         ),
+        NotificationChannel(
+          channelKey: 'app_updates',
+          channelName: 'App Updates',
+          channelDescription: 'Notifications for app updates and patches',
+          defaultColor: AppTheme.primaryColor,
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
       ],
       debug: true,
     );
@@ -396,5 +404,36 @@ class NotificationService {
   /// Cancel all scheduled notifications
   static Future<void> cancelAllNotifications() async {
     await AwesomeNotifications().cancelAll();
+  }
+
+  /// Show a local notification for app updates (triggered by FCM)
+  static Future<void> showUpdateNotification({
+    required String title,
+    required String body,
+    Map<String, String>? payload,
+  }) async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: DateTime.now().millisecondsSinceEpoch % 100000,
+        channelKey: 'app_updates',
+        title: title,
+        body: body,
+        category: NotificationCategory.Status,
+        wakeUpScreen: true,
+        payload: {'type': 'update', ...?payload},
+      ),
+      actionButtons: [
+        NotificationActionButton(
+          key: 'OPEN_UPDATE',
+          label: 'تحديث الآن',
+          actionType: ActionType.Default,
+        ),
+        NotificationActionButton(
+          key: 'DISMISS',
+          label: 'لاحقاً',
+          actionType: ActionType.DismissAction,
+        ),
+      ],
+    );
   }
 }

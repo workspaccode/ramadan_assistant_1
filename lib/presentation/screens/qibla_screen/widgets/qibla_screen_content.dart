@@ -82,7 +82,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                   const Icon(Icons.gps_fixed, size: 16, color: Colors.orange),
                   const SizedBox(width: 8),
                   Text(
-                    "GPS Mode: Walk to update heading",
+                    'GPS Mode: Walk to update heading',
                     style: TextStyle(
                       color: Colors.orange[800],
                       fontSize: 12,

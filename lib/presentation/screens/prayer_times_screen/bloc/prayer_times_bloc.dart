@@ -32,7 +32,7 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
       String? methodId = prefs.getString('calculation_method');
       String? madhabId = prefs.getString('madhab');
 
-      String locationName = "Unknown Location";
+      String locationName = 'Unknown Location';
       String? country;
       try {
         if (event.locale != null) {
@@ -44,7 +44,7 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
         );
         if (placemarks.isNotEmpty) {
           final p = placemarks.first;
-          locationName = "${p.locality}, ${p.country}";
+          locationName = '${p.locality}, ${p.country}';
           country = p.country;
         }
       } catch (_) {}

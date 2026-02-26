@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/services/preferences_service.dart';
 import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
+import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/prayer_times_screen.dart';
@@ -86,6 +88,25 @@ class MainScreenContent extends StatelessWidget {
       backgroundColor: theme.primary,
       iconTheme: const IconThemeData(color: Colors.white),
       actions: [
+        FutureBuilder<int>(
+          future: PreferencesService.getInstance().then(
+            (p) => p.getPendingUpdateCount(),
+          ),
+          builder: (context, snapshot) {
+            final count = snapshot.data ?? 0;
+            return IconButton(
+              icon: Badge(
+                isLabelVisible: count > 0,
+                label: Text('$count'),
+                child: const Icon(Icons.notifications_outlined),
+              ),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              ),
+            );
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.settings_outlined),
           onPressed: () => Navigator.push(

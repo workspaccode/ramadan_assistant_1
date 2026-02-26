@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,11 +7,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:quran_library/quran_library.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
+import 'package:ramadan_assistant/core/services/fcm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
+import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
+import 'package:ramadan_assistant/firebase_options.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
@@ -27,15 +31,27 @@ import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_blo
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); 
   await EasyLocalization.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await setupServiceLocator();
+
+  // Initialize Smart Update Manager
+  final updateManager = sl<SmartUpdateManager>();
+  await updateManager.initialize();
+
+  // Initialize Firebase Cloud Messaging
+  await FcmService.initialize();
+  await FcmService.subscribeToTopic('updates');
 
   // Initialize Quran Library
   try {
     await QuranLibrary.init();
   } catch (e) {
-    print('Error initializing Quran Library: $e');
+    debugPrint('Error initializing Quran Library: $e');
     // Continue with app initialization even if audio fails
   }
 
@@ -51,6 +67,10 @@ void main() async {
 
   // Schedule today's prayer notifications
   await BackgroundTaskService.scheduleNotificationsNow();
+
+  // Check for auto updates in background
+  updateManager.checkAutoUpdates();
+
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
