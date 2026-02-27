@@ -315,5 +315,6 @@
     "select_dhikr_prompt": "وہ ذکر منتخب کریں جسے آپ دہرانا چاہتے ہیں",
     "notifications_title": "اطلاعات",
     "no_notifications": "ابھی تک کوئی اطلاع نہیں ہے",
-    "no_notifications_desc": "آپ کو اپنی اپ ڈیٹ کی تاریخ اور الرٹس یہاں ملیں گے"
+    "no_notifications_desc": "آپ کو اپنی اپ ڈیٹ کی تاریخ اور الرٹس یہاں ملیں گے",
+    "stop_adhan": "اذان بند کریں"
 }

@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
@@ -59,11 +60,11 @@ Future<void> _scheduleDayPrayerNotifications(
   final now = DateTime.now();
 
   final prayers = [
-    {'name': 'Fajr', 'time': prayerTimes.fajr, 'id': 1},
-    {'name': 'Dhuhr', 'time': prayerTimes.dhuhr, 'id': 2},
-    {'name': 'Asr', 'time': prayerTimes.asr, 'id': 3},
-    {'name': 'Maghrib', 'time': prayerTimes.maghrib, 'id': 4},
-    {'name': 'Isha', 'time': prayerTimes.isha, 'id': 5},
+    {'name': 'Fajr', 'time': prayerTimes.fajr.toLocal(), 'id': 1},
+    {'name': 'Dhuhr', 'time': prayerTimes.dhuhr.toLocal(), 'id': 2},
+    {'name': 'Asr', 'time': prayerTimes.asr.toLocal(), 'id': 3},
+    {'name': 'Maghrib', 'time': prayerTimes.maghrib.toLocal(), 'id': 4},
+    {'name': 'Isha', 'time': prayerTimes.isha.toLocal(), 'id': 5},
   ];
 
   final delaysJson = prefs.getString('iqama_delays_map');
@@ -127,16 +128,12 @@ Future<void> _scheduleDayPrayerNotifications(
         prayerTime: prayerTime,
       );
 
-      // 2. Adhan Notification
-      await NotificationService.schedulePrayerNotification(
+      // 2. Adhan Alarm (full-length audio via alarm package)
+      await AdhanAlarmService.scheduleAdhan(
         id: prayerId,
         prayerName: prayerName,
-        prayerTime: prayerTime,
-        payload: {
-          'prayer': prayerName,
-          'type': 'adhan',
-          'iqamaDelay': delay.toString(),
-        },
+        dateTime: prayerTime,
+        iqamaDelay: delay,
       );
 
       // 3. Iqama Reminder
