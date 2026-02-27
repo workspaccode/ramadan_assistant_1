@@ -315,5 +315,6 @@
     "select_dhikr_prompt": "Select the dhikr you want to repeat",
     "notifications_title": "Notifications",
     "no_notifications": "No notifications yet",
-    "no_notifications_desc": "You will see your update history and alerts here"
+    "no_notifications_desc": "You will see your update history and alerts here",
+    "stop_adhan": "Stop Adhan"
 }

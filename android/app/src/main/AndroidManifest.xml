@@ -38,6 +38,8 @@
 
         <meta-data android:name="flutterEmbedding" android:value="2" />
 
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/launcher_icon" />
+
         <service android:name="io.github.tastelessjolt.flutter_dynamic_icon_plus.FlutterDynamicIconPlusService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true">
         </service>
 

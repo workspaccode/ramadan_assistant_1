@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.0.1
+version: 2.0.2
 
 environment:
   sdk: ^3.10.7
@@ -63,7 +63,6 @@ dependencies:
   permission_handler: ^12.0.1
   geocoding: ^4.0.0
   prayers_times: ^0.0.6
-  quran_library: ^3.1.0
   dio: ^5.4.3
   share_plus: ^12.0.1
 
@@ -93,6 +92,9 @@ dependencies:
   firebase_messaging: ^16.1.1
   package_info_plus: ^9.0.0
   logger: ^2.6.2
+  quran: ^1.4.1
+  tafsir_library: ^1.0.1
+  alarm: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -134,6 +136,7 @@ flutter:
     - assets/image/ramadan_star.svg
     - assets/image/ramadan_lantern.svg
     - assets/animations/
+    - assets/audio/
     - shorebird.yaml
 
   # An image asset can refer to one or more resolution-specific "variants", see

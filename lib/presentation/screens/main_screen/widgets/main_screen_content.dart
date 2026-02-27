@@ -2,7 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/preferences_service.dart';
 import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
@@ -24,8 +26,32 @@ import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.d
 import 'package:ramadan_assistant/presentation/widgets/falling_fanous_overlay.dart';
 import 'package:vibration/vibration.dart';
 
-class MainScreenContent extends StatelessWidget {
+class MainScreenContent extends StatefulWidget {
   const MainScreenContent({super.key});
+
+  @override
+  State<MainScreenContent> createState() => _MainScreenContentState();
+}
+
+class _MainScreenContentState extends State<MainScreenContent> {
+  @override
+  void initState() {
+    super.initState();
+    _requestAllPermissions();
+  }
+
+  Future<void> _requestAllPermissions() async {
+    try {
+      var locationStatus = await Permission.location.status;
+      if (!locationStatus.isGranted) {
+        await Permission.location.request();
+      }
+      await NotificationService.requestPermissions();
+    } catch (e) {
+      print(e.toString());
+     await openAppSettings();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

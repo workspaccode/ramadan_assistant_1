@@ -1,7 +1,5 @@
-import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';

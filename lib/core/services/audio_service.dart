@@ -138,6 +138,22 @@ class AudioService {
     }
   }
 
+  /// Play audio from a URL
+  Future<void> playUrl(String url) async {
+    try {
+      await stop();
+      await _audioPlayer.play(UrlSource(url));
+      _isPlaying = true;
+
+      _audioPlayer.onPlayerComplete.listen((_) {
+        _isPlaying = false;
+      });
+    } catch (e) {
+      debugPrint('Error playing url $url: $e');
+      _isPlaying = false;
+    }
+  }
+
   /// Stop current playback
   Future<void> stop() async {
     await _audioPlayer.stop();

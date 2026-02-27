@@ -3,9 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:quran_library/quran_library.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
+import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:ramadan_assistant/core/services/fcm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
@@ -29,9 +28,10 @@ import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/rem
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
+import 'package:tafsir_library/tafsir_library.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
   // Initialize Firebase
@@ -47,17 +47,20 @@ void main() async {
   await FcmService.initialize();
   await FcmService.subscribeToTopic('updates');
 
-  // Initialize Quran Library
+  // Initialize Tafsir Library
   try {
-    await QuranLibrary.init();
+    await TafsirLibrary.initialize();
   } catch (e) {
-    debugPrint('Error initializing Quran Library: $e');
-    // Continue with app initialization even if audio fails
+    debugPrint('Error initializing Tafsir Library: $e');
   }
 
   // Initialize Services
   await NotificationService.initialize();
-  await requestAllPermissions();
+
+  // Initialize Adhan Alarm Service (full-length Adhan audio)
+  await AdhanAlarmService.init(
+    navigatorKey: NotificationActionHandler.navigatorKey,
+  );
 
   BackgroundTaskService.initialize();
   BackgroundTaskService.scheduleDailyUpdate();
@@ -73,7 +76,7 @@ void main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
+    const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: Colors.transparent,
     ),
@@ -87,14 +90,6 @@ void main() async {
       child: const MyApp(),
     ),
   );
-}
-
-Future<void> requestAllPermissions() async {
-  var locationStatus = await Permission.location.status;
-  if (!locationStatus.isGranted) {
-    await Permission.location.request();
-  }
-  await NotificationService.requestPermissions();
 }
 
 class MyApp extends StatelessWidget {
