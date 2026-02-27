@@ -269,4 +269,50 @@ class UmrahDuas {
       source: 'دعاء وداع البيت - مأثور',
     ),
   ];
+
+  /// Arabic ordinal names for the 7 Tawaf rounds
+  static const List<String> tawafRoundNames = [
+    'الشوط الأول',
+    'الشوط الثاني',
+    'الشوط الثالث',
+    'الشوط الرابع',
+    'الشوط الخامس',
+    'الشوط السادس',
+    'الشوط السابع',
+  ];
+
+  /// Fixed duas that appear in EVERY round
+  static final List<UmrahDua> _fixedRoundDuas = [
+    UmrahDua(
+      category: 'بداية الشوط',
+      arabic:
+          'بسم الله، اللهُ أكبر، اللهم إيماناً بك وتصديقاً بكتابك، ووفاءً بعهدك، واتباعاً لسنة نبيك محمد ﷺ',
+      source: 'عند الحجر الأسود - بداية كل شوط',
+    ),
+    UmrahDua(
+      category: 'بين الركنين',
+      arabic: 'ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار',
+      source: 'بين الركن اليماني والحجر الأسود - ثابت صحيح',
+    ),
+  ];
+
+  /// Distributes the general tawafSaiDuas across 7 rounds.
+  /// Each round gets the 2 fixed duas + 2 unique duas.
+  static List<List<UmrahDua>> get tawafRoundDuas {
+    // Filter out the fixed duas from the main list to avoid duplicates
+    final generalDuas = tawafSaiDuas
+        .where((d) => d.category != 'أذكار ثابتة في الطواف')
+        .toList();
+
+    return List.generate(7, (roundIndex) {
+      final roundDuas = <UmrahDua>[..._fixedRoundDuas];
+
+      // Assign 2 unique duas per round from the general pool (cycling)
+      final startIdx = (roundIndex * 2) % generalDuas.length;
+      roundDuas.add(generalDuas[startIdx]);
+      roundDuas.add(generalDuas[(startIdx + 1) % generalDuas.length]);
+
+      return roundDuas;
+    });
+  }
 }

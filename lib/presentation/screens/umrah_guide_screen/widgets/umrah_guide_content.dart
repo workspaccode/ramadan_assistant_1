@@ -770,17 +770,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             ),
           ],
 
-          if (step.step == 'step_tawaf') ...[
-            const SizedBox(height: 12),
-            _buildInlineDuaCategorySection(
-              context,
-              icon: Icons.menu_book_rounded,
-              title: 'comprehensive_tawaf_duas'.tr(),
-              color: theme.secondary,
-              duas: UmrahDuas.tawafSaiDuas,
-            ),
-          ],
-
+          // Tawaf duas are now shown per-round via BottomSheet
           if (step.step == 'step_sai') ...[
             const SizedBox(height: 12),
             _buildInlineDuaCategorySection(
@@ -1020,19 +1010,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       final point = points[index];
 
       if (step == 'step_tawaf' && index == 0 && !completed) {
-        return _buildCircularCounter(
-          context,
-          label: point,
-          current: state.tawafCircuits,
-          max: 7,
-          onChanged: (val) =>
-              context.read<UmrahGuideBloc>().add(UpdateTawafCircuits(val)),
-          successText: 'tawaf_done'.tr(),
-        );
+        return _buildTawafRoundsSection(context, state);
       }
 
       if (step == 'step_tawaf' && index == 3 && !completed) {
-        return _buildIOSToggle(point, state.isPrayedAtMaqam, (val) {
+        return _buildMaqamToggle(point, state.isPrayedAtMaqam, (val) {
           context.read<UmrahGuideBloc>().add(UpdateMaqamToggle(val));
         });
       }
@@ -1252,6 +1234,557 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTawafRoundsSection(
+    BuildContext context,
+    UmrahGuideLoaded state,
+  ) {
+    final theme = context.ramadanTheme;
+    final completedRounds = state.tawafCircuits;
+    final roundDuas = UmrahDuas.tawafRoundDuas;
+    final roundNames = UmrahDuas.tawafRoundNames;
+
+    return Column(
+      children: [
+        // Hero Header Image
+        Container(
+          height: 160,
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 20),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: theme.primary.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                'assets/image/tawaf_header.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => Container(
+                  color: theme.primary.withOpacity(0.1),
+                  child: Icon(
+                    Icons.mosque_rounded,
+                    size: 64,
+                    color: theme.primary.withOpacity(0.3),
+                  ),
+                ),
+              ),
+              // Gradient overlay
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  ),
+                ),
+              ),
+              // Progress overlay
+              Positioned(
+                bottom: 16,
+                left: 16,
+                right: 16,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'الطواف حول الكعبة',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        '$completedRounds / 7',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Mini progress bar
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          height: 6,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: theme.textDim.withOpacity(0.1),
+          ),
+          child: FractionallySizedBox(
+            alignment: Alignment.centerLeft,
+            widthFactor: completedRounds / 7,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                gradient: LinearGradient(
+                  colors: [theme.secondary, theme.primary],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // 7 Round Cards
+        ...List.generate(7, (roundIndex) {
+          final isCompleted = roundIndex < completedRounds;
+          final isActive = roundIndex == completedRounds;
+          final isPending = roundIndex > completedRounds;
+          final roundName = roundNames[roundIndex];
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: GestureDetector(
+              onTap: isActive
+                  ? () => _showTawafRoundSheet(
+                      context,
+                      roundIndex,
+                      roundDuas[roundIndex],
+                      roundName,
+                      state,
+                    )
+                  : null,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isCompleted
+                      ? theme.success.withOpacity(0.08)
+                      : isActive
+                      ? theme.primary.withOpacity(0.06)
+                      : theme.cardSurface.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isCompleted
+                        ? theme.success.withOpacity(0.3)
+                        : isActive
+                        ? theme.primary.withOpacity(0.4)
+                        : theme.textDim.withOpacity(0.08),
+                    width: isActive ? 2 : 1,
+                  ),
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: theme.primary.withOpacity(0.1),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  children: [
+                    // Round number circle
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isCompleted
+                            ? theme.success
+                            : isActive
+                            ? theme.primary
+                            : theme.textDim.withOpacity(0.15),
+                        boxShadow: isActive
+                            ? [
+                                BoxShadow(
+                                  color: theme.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Center(
+                        child: isCompleted
+                            ? const Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              )
+                            : Text(
+                                '${roundIndex + 1}',
+                                style: TextStyle(
+                                  color: isActive
+                                      ? Colors.white
+                                      : theme.textDim,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Round info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            roundName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              color: isPending
+                                  ? theme.textDim
+                                  : theme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            isCompleted
+                                ? 'تم ✓'
+                                : isActive
+                                ? 'اضغط لفتح الأدعية والأذكار'
+                                : 'في الانتظار',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isCompleted
+                                  ? theme.success
+                                  : isActive
+                                  ? theme.primary
+                                  : theme.textDim,
+                              fontWeight: isActive
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Action icon
+                    if (isActive)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.menu_book_rounded,
+                          color: theme.primary,
+                          size: 20,
+                        ),
+                      )
+                    else if (isPending)
+                      Icon(
+                        Icons.lock_outline_rounded,
+                        color: theme.textDim.withOpacity(0.3),
+                        size: 18,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+
+        // Success message
+        if (completedRounds == 7)
+          Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: theme.success.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: theme.success.withOpacity(0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle, color: theme.success, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'tawaf_done'.tr(),
+                    style: TextStyle(
+                      color: theme.success,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _showTawafRoundSheet(
+    BuildContext context,
+    int roundIndex,
+    List<UmrahDua> duas,
+    String roundName,
+    UmrahGuideLoaded state,
+  ) {
+    final theme = context.ramadanTheme;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        maxChildSize: 0.95,
+        minChildSize: 0.5,
+        builder: (_, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: theme.cardSurface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.textDim.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [theme.primary, theme.secondary],
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${roundIndex + 1}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            roundName,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: theme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'أدعية وأذكار هذا الشوط',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: theme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close_rounded, color: theme.textDim),
+                      onPressed: () => Navigator.pop(sheetContext),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Divider(height: 1),
+
+              // Duas list
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(20),
+                  itemCount: duas.length + 1, // +1 for Hajr Aswad image
+                  itemBuilder: (_, index) {
+                    if (index == 0) {
+                      // Hajr Aswad illustration
+                      return Container(
+                        height: 120,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset(
+                          'assets/image/hajr_aswad.png',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        ),
+                      );
+                    }
+
+                    final dua = duas[index - 1];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (dua.category != null)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: theme.primary.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                dua.category!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.primary,
+                                ),
+                              ),
+                            ),
+                          DuaWidget(
+                            arabicText: dua.arabic,
+                            translation: dua.translation ?? '',
+                            source: dua.source,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Mark Complete Button
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.read<UmrahGuideBloc>().add(
+                          UpdateTawafCircuits(roundIndex + 1),
+                        );
+                        Navigator.pop(sheetContext);
+                      },
+                      icon: const Icon(Icons.check_circle_rounded),
+                      label: Text(
+                        'إتمام $roundName',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 4,
+                        shadowColor: theme.primary.withOpacity(0.4),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMaqamToggle(String text, bool value, Function(bool) onChanged) {
+    final theme = context.ramadanTheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: value ? theme.success.withOpacity(0.08) : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: value
+              ? theme.success.withOpacity(0.3)
+              : theme.textDim.withOpacity(0.1),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Maqam Ibrahim illustration
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              'assets/image/maqam_ibrahim.png',
+              height: 80,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => const SizedBox.shrink(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(fontSize: 14, color: theme.textPrimary),
+                ),
+              ),
+              Switch.adaptive(value: value, onChanged: (v) => onChanged(v)),
+            ],
+          ),
         ],
       ),
     );

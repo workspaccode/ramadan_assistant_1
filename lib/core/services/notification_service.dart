@@ -6,7 +6,7 @@ class NotificationService {
   static Future<void> initialize() async {
     await AwesomeNotifications().initialize('resource://mipmap/launcher_icon', [
       NotificationChannel(
-        channelKey: 'prayer_times',
+        channelKey: 'prayer_times_v2',
         channelName: 'Prayer Times',
         channelDescription: 'Notifications for prayer times',
         defaultColor: AppTheme.primaryColor,
@@ -18,7 +18,7 @@ class NotificationService {
         criticalAlerts: true,
       ),
       NotificationChannel(
-        channelKey: 'prayer_times_fajr',
+        channelKey: 'prayer_times_fajr_v2',
         channelName: 'Fajr Adhan',
         channelDescription: 'Fajr prayer notification',
         defaultColor: AppTheme.primaryColor,
@@ -30,14 +30,13 @@ class NotificationService {
         criticalAlerts: true,
       ),
       NotificationChannel(
-        channelKey: 'iqama',
+        channelKey: 'iqama_channel',
         channelName: 'Iqama Reminder',
         channelDescription: 'Notifications for Iqama time',
         defaultColor: AppTheme.secondaryColor,
         ledColor: AppTheme.primaryColor,
         importance: NotificationImportance.Max,
         defaultRingtoneType: DefaultRingtoneType.Alarm,
-        soundSource: 'resource://raw/iqama_sound',
         playSound: true,
         criticalAlerts: true,
         locked: true,
@@ -104,7 +103,7 @@ class NotificationService {
   static Future<void> showAdhanNotification(String prayerName) async {
     final localizedPrayer = prayerName.toLowerCase().tr();
     final isFajr = prayerName.toLowerCase() == 'fajr';
-    final channelKey = isFajr ? 'prayer_times_fajr' : 'prayer_times';
+    final channelKey = isFajr ? 'prayer_times_fajr_v2' : 'prayer_times_v2';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: DateTime.now().millisecond,
@@ -144,7 +143,7 @@ class NotificationService {
   }) async {
     final localizedPrayer = prayerName.toLowerCase().tr();
     final isFajr = prayerName.toLowerCase() == 'fajr';
-    final channelKey = isFajr ? 'prayer_times_fajr' : 'prayer_times';
+    final channelKey = isFajr ? 'prayer_times_fajr_v2' : 'prayer_times_v2';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
@@ -193,7 +192,7 @@ class NotificationService {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
-        channelKey: 'iqama',
+        channelKey: 'iqama_channel',
         title: 'notification_iqama_title'.tr(),
         body: 'notification_iqama_body'.tr(args: [localizedPrayer]),
         category: NotificationCategory.Alarm,
@@ -295,7 +294,7 @@ class NotificationService {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id + 500, // Offset for nearing
-        channelKey: 'prayer_times',
+        channelKey: 'prayer_times_v2',
         title: 'prayer_nearing_title'.tr(),
         body: 'prayer_nearing_body'.tr(args: [localizedPrayer]),
         category: NotificationCategory.Reminder,
