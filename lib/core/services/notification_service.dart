@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/services.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   static Future<void> initialize() async {
@@ -99,17 +103,59 @@ class NotificationService {
     });
   }
 
+  /// Safe translation fallback for background isolates where EasyLocalization lacks context
+  static Future<String> _getTranslation(
+    String key, {
+    List<String>? args,
+  }) async {
+    try {
+      final translated = key.tr(args: args);
+      if (translated != key) return translated;
+    } catch (_) {}
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lang = prefs.getString('language_code') ?? 'ar';
+
+      final jsonString = await rootBundle.loadString(
+        'assets/translations/$lang.json',
+      );
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+
+      String text = jsonMap[key] ?? key;
+      if (args != null) {
+        for (final arg in args) {
+          text = text.replaceFirst('{}', arg);
+        }
+      }
+      return text;
+    } catch (_) {
+      return key;
+    }
+  }
+
   /// Show immediate Adhan notification (full-screen intent)
   static Future<void> showAdhanNotification(String prayerName) async {
-    final localizedPrayer = prayerName.toLowerCase().tr();
+    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
+    final title = await _getTranslation(
+      'notification_adhan_title',
+      args: [localizedPrayer],
+    );
+    final body = await _getTranslation(
+      'notification_adhan_body',
+      args: [localizedPrayer],
+    );
+    final openBtn = await _getTranslation('open_adhan_btn');
+    final dismissBtn = await _getTranslation('dismiss_btn');
+
     final isFajr = prayerName.toLowerCase() == 'fajr';
     final channelKey = isFajr ? 'prayer_times_fajr_v2' : 'prayer_times_v2';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: DateTime.now().millisecond,
         channelKey: channelKey,
-        title: 'notification_adhan_title'.tr(args: [localizedPrayer]),
-        body: 'notification_adhan_body'.tr(args: [localizedPrayer]),
+        title: title,
+        body: body,
         category: NotificationCategory.Alarm,
         criticalAlert: true,
         wakeUpScreen: true,
@@ -122,12 +168,12 @@ class NotificationService {
       actionButtons: [
         NotificationActionButton(
           key: 'OPEN_ADHAN',
-          label: 'open_adhan_btn'.tr(),
+          label: openBtn,
           actionType: ActionType.Default,
         ),
         NotificationActionButton(
           key: 'DISMISS',
-          label: 'dismiss_btn'.tr(),
+          label: dismissBtn,
           actionType: ActionType.DismissAction,
         ),
       ],
@@ -141,15 +187,26 @@ class NotificationService {
     required DateTime prayerTime,
     Map<String, String>? payload,
   }) async {
-    final localizedPrayer = prayerName.toLowerCase().tr();
+    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
+    final title = await _getTranslation(
+      'notification_adhan_title',
+      args: [localizedPrayer],
+    );
+    final body = await _getTranslation(
+      'notification_adhan_body',
+      args: [localizedPrayer],
+    );
+    final openBtn = await _getTranslation('open_adhan_btn');
+    final dismissBtn = await _getTranslation('dismiss_btn');
+
     final isFajr = prayerName.toLowerCase() == 'fajr';
     final channelKey = isFajr ? 'prayer_times_fajr_v2' : 'prayer_times_v2';
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: channelKey,
-        title: 'notification_adhan_title'.tr(args: [localizedPrayer]),
-        body: 'notification_adhan_body'.tr(args: [localizedPrayer]),
+        title: title,
+        body: body,
         category: NotificationCategory.Alarm,
         criticalAlert: true,
         wakeUpScreen: true,
@@ -160,12 +217,12 @@ class NotificationService {
       actionButtons: [
         NotificationActionButton(
           key: 'OPEN_ADHAN',
-          label: 'open_adhan_btn'.tr(),
+          label: openBtn,
           actionType: ActionType.Default,
         ),
         NotificationActionButton(
           key: 'DISMISS',
-          label: 'dismiss_btn'.tr(),
+          label: dismissBtn,
           actionType: ActionType.DismissAction,
         ),
       ],
@@ -188,13 +245,20 @@ class NotificationService {
     required String prayerName,
     required DateTime iqamaTime,
   }) async {
-    final localizedPrayer = prayerName.toLowerCase().tr();
+    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
+    final title = await _getTranslation('notification_iqama_title');
+    final body = await _getTranslation(
+      'notification_iqama_body',
+      args: [localizedPrayer],
+    );
+    final dismissBtn = await _getTranslation('dismiss_btn');
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'iqama_channel',
-        title: 'notification_iqama_title'.tr(),
-        body: 'notification_iqama_body'.tr(args: [localizedPrayer]),
+        title: title,
+        body: body,
         category: NotificationCategory.Alarm,
         criticalAlert: true,
         wakeUpScreen: true,
@@ -205,7 +269,7 @@ class NotificationService {
       actionButtons: [
         NotificationActionButton(
           key: 'DISMISS',
-          label: 'dismiss_btn'.tr(),
+          label: dismissBtn,
           actionType: ActionType.DismissAction,
         ),
       ],
@@ -229,12 +293,15 @@ class NotificationService {
     required int intervalMinutes,
     String? audioPath,
   }) async {
+    final title = await _getTranslation('notification_dhikr_title');
+    final body = await _getTranslation(dhikrText);
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'reminders',
-        title: 'notification_dhikr_title'.tr(),
-        body: dhikrText.tr(),
+        title: title,
+        body: body,
         category: NotificationCategory.Reminder,
         wakeUpScreen: true,
         payload: {'type': 'dhikr', 'id': id.toString(), 'audioPath': audioPath},
@@ -255,15 +322,19 @@ class NotificationService {
     required DateTime reminderTime,
     required int pages,
   }) async {
-    final localizedPrayer = prayerName.toLowerCase().tr();
+    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
+    final title = await _getTranslation('notification_wird_title');
+    final body = await _getTranslation(
+      'notification_wird_body',
+      args: ['$pages', localizedPrayer],
+    );
+
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id,
         channelKey: 'reminders',
-        title: 'Daily Wird Reminder'.tr(),
-        body: 'Do not forget to read your {} pages for {}'.tr(
-          args: ['$pages', localizedPrayer],
-        ),
+        title: title,
+        body: body,
         category: NotificationCategory.Reminder,
         wakeUpScreen: true,
         payload: {'type': 'wird', 'prayer': prayerName},
@@ -286,7 +357,13 @@ class NotificationService {
     required String prayerName,
     required DateTime prayerTime,
   }) async {
-    final localizedPrayer = prayerName.toLowerCase().tr();
+    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
+    final title = await _getTranslation('prayer_nearing_title');
+    final body = await _getTranslation(
+      'prayer_nearing_body',
+      args: [localizedPrayer],
+    );
+
     final nearingTime = prayerTime.subtract(const Duration(minutes: 10));
 
     if (nearingTime.isBefore(DateTime.now())) return;
@@ -295,8 +372,8 @@ class NotificationService {
       content: NotificationContent(
         id: id + 500, // Offset for nearing
         channelKey: 'prayer_times_v2',
-        title: 'prayer_nearing_title'.tr(),
-        body: 'prayer_nearing_body'.tr(args: [localizedPrayer]),
+        title: title,
+        body: body,
         category: NotificationCategory.Reminder,
         payload: {'type': 'nearing', 'prayer': prayerName},
       ),

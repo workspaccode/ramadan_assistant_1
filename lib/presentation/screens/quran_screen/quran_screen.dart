@@ -15,6 +15,7 @@ class QuranReciter {
   final String identifier; // Folder name on EveryAyah
   final bool hasAyahFormat; // True if {surah}{ayah}.mp3 is available
   final bool hasPageFormat; // True if PageMp3s/Page{page}.mp3 is available
+  final String? pageUrlTemplate; // Optional custom URL format for Page audio
 
   const QuranReciter(
     this.name,
@@ -22,6 +23,7 @@ class QuranReciter {
     this.identifier, {
     this.hasAyahFormat = true,
     this.hasPageFormat = false,
+    this.pageUrlTemplate,
   });
 }
 
@@ -38,7 +40,9 @@ final List<QuranReciter> availableReciters = [
     'Murattal Recitation',
     'Yasser_Ad-Dussary_128kbps',
     hasAyahFormat: true,
-    hasPageFormat: false,
+    hasPageFormat: true,
+    pageUrlTemplate:
+        'https://archive.org/download/64kb--yaser--aldosry---quran--mp3---604--part---full/{page}.mp3',
   ),
   const QuranReciter(
     'Mishary Rashid Al-Afasy',
@@ -185,19 +189,20 @@ class _QuranScreenState extends State<QuranScreen> {
       } else if (_selectedReciter.hasPageFormat) {
         // Play by page
         final pageNumStr = _currentPage.toString().padLeft(3, '0');
-        final audioUrl =
-            'https://everyayah.com/data/${_selectedReciter.identifier}/PageMp3s/Page$pageNumStr.mp3';
+
+        final audioUrl = _selectedReciter.pageUrlTemplate != null
+            ? _selectedReciter.pageUrlTemplate!.replaceFirst(
+                '{page}',
+                pageNumStr,
+              )
+            : 'https://everyayah.com/data/${_selectedReciter.identifier}/PageMp3s/Page$pageNumStr.mp3';
 
         setState(() => _isPlaying = true);
         await _audioService.playUrl(audioUrl);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'عذراً، التلاوة غير متوفرة حالياً لهذا القارئ (قريباً)',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('audio_not_available'.tr())));
       }
     }
   }
@@ -205,11 +210,7 @@ class _QuranScreenState extends State<QuranScreen> {
   Future<void> _playVerse(VerseEntity verse) async {
     if (!_selectedReciter.hasAyahFormat) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'التظليل آية بآية غير متوفر حالياً لهذا القارئ (قريباً)',
-          ),
-        ),
+        SnackBar(content: Text('ayah_highlighting_not_available'.tr())),
       );
       return;
     }
@@ -266,7 +267,7 @@ class _QuranScreenState extends State<QuranScreen> {
                     Icon(Icons.record_voice_over_rounded, color: theme.primary),
                     const SizedBox(width: 12),
                     Text(
-                      'Select Reciter',
+                      'select_reciter'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -375,9 +376,9 @@ class _QuranScreenState extends State<QuranScreen> {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
-                  tabs: const [
-                    Tab(text: 'السور'),
-                    Tab(text: 'الأجزاء'),
+                  tabs: [
+                    Tab(text: 'surahs'.tr()),
+                    Tab(text: 'juzs'.tr()),
                   ],
                 ),
                 Expanded(
@@ -419,7 +420,7 @@ class _QuranScreenState extends State<QuranScreen> {
                               ),
                             ),
                             subtitle: Text(
-                              '${surah.revelationPlaceAr} - آياتها ${surah.versesCount}',
+                              '${surah.revelationPlaceAr} - ${'verses_count'.tr(args: [surah.versesCount.toString()])}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: theme.textSecondary,
@@ -441,7 +442,7 @@ class _QuranScreenState extends State<QuranScreen> {
                           final juzNum = index + 1;
                           return ListTile(
                             title: Text(
-                              'الجزء ${_getArabicNumber(juzNum)}',
+                              'juz_number'.tr(args: [_getArabicNumber(juzNum)]),
                               style: TextStyle(
                                 fontFamily: 'Amiri',
                                 fontSize: 18,
@@ -554,7 +555,9 @@ class _QuranScreenState extends State<QuranScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'الجزء ${_getArabicNumber(firstVerse.juz)}',
+                                  'juz_number'.tr(
+                                    args: [_getArabicNumber(firstVerse.juz)],
+                                  ),
                                   style: TextStyle(
                                     fontFamily: 'Amiri',
                                     fontSize: 16,

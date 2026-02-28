@@ -21,7 +21,7 @@ import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminder
 import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/tasbih_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_guide_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_hub_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.dart';
@@ -445,7 +445,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
           const Color(0xFF009688),
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const UmrahGuideScreen()),
+            MaterialPageRoute(builder: (_) => const UmrahHubScreen()),
           ),
         ),
         _buildFeatureCard(

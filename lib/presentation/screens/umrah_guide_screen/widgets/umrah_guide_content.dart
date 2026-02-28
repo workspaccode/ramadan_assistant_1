@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:ramadan_assistant/core/constants/umrah_duas.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
+import 'package:ramadan_assistant/core/services/umrah_storage_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
@@ -796,6 +797,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     context.read<UmrahGuideBloc>().add(
                       CompleteUmrahStep(step.id),
                     );
+                    if (step.step == 'step_tahlul') {
+                      UmrahStorageService.getInstance().then((service) {
+                        service.completeActiveTrip();
+                      });
+                    }
                     if (index == totalSteps - 1) {
                       _showCompletionBottomSheet(context);
                     }
