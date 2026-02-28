@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
+import 'package:ramadan_assistant/core/utils/tajweed_formatter.dart';
 import 'package:ramadan_assistant/data/local/database/quran_database.dart';
+import 'package:ramadan_assistant/presentation/screens/quran_screen/widgets/audio_waveform_widget.dart';
 
 class QuranReciter {
   final String name;
@@ -67,6 +69,7 @@ class _QuranScreenState extends State<QuranScreen> {
   final AudioService _audioService = AudioService();
   List<SurahEntity> _surahs = [];
   StreamSubscription<void>? _playerCompleteSubscription;
+  bool _isTajweedEnabled = false; // Optional Tajweed toggle
 
   // Ayah-by-Ayah tracking
   VerseEntity? _currentPlayingVerse;
@@ -476,7 +479,37 @@ class _QuranScreenState extends State<QuranScreen> {
     return Scaffold(
       backgroundColor: theme.background,
       appBar: AppBar(
-        title: Text('quran'.tr()),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('quran'.tr(), style: const TextStyle(fontSize: 18)),
+            GestureDetector(
+              onTap: showReciterBottomSheet,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      _selectedReciter.name,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: theme.textSecondary,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 14,
+                    color: theme.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         leading: GestureDetector(
           onTap: () {
             context.pop();
@@ -484,6 +517,56 @@ class _QuranScreenState extends State<QuranScreen> {
           child: Icon(Icons.arrow_back, color: theme.textPrimary),
         ),
         actions: [
+          // Audio Player Controls
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isPlaying)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: AudioWaveformWidget(
+                    isPlaying: _isPlaying,
+                    color: theme.primary,
+                  ),
+                ),
+              IconButton(
+                icon: Icon(
+                  _isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                  color: theme.primary,
+                  size: 28,
+                ),
+                onPressed: _toggleAudio,
+                tooltip: _isPlaying
+                    ? 'stop_recitation'.tr()
+                    : 'play_recitation'.tr(),
+              ),
+            ],
+          ),
+          const SizedBox(width: 8),
+          // Tajweed Toggle Option
+          IconButton(
+            icon: Icon(
+              Icons.format_color_text_rounded,
+              color: _isTajweedEnabled ? theme.primary : theme.textSecondary,
+            ),
+            onPressed: () {
+              setState(() {
+                _isTajweedEnabled = !_isTajweedEnabled;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    _isTajweedEnabled
+                        ? 'tajweed_enabled'.tr()
+                        : 'tajweed_disabled'.tr(),
+                  ),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            },
+            tooltip: 'tajweed_rules'.tr(),
+          ),
+          // Index (Fihris) Button
           IconButton(
             icon: Icon(Icons.list_alt_rounded, color: theme.primary),
             onPressed: () => showIndexBottomSheet(context),
@@ -614,7 +697,21 @@ class _QuranScreenState extends State<QuranScreen> {
                                         _playVerse(verse);
                                       },
                                     children: [
-                                      TextSpan(text: verse.textAr),
+                                      TextSpan(
+                                        children: TajweedFormatter.getTajweedSpans(
+                                          text: verse.textAr,
+                                          baseStyle: GoogleFonts.amiriQuran(
+                                            fontSize: 26,
+                                            height: 2.2,
+                                            color: isActive
+                                                ? theme.primary
+                                                : theme.textPrimary,
+                                          ),
+                                          isTajweedEnabled:
+                                              _isTajweedEnabled &&
+                                              !isActive, // Don't color tajweed if verse is highlighted
+                                        ),
+                                      ),
                                       TextSpan(
                                         text:
                                             ' \uFD3F${_getArabicNumber(verse.number)}\uFD3E ',
@@ -633,9 +730,8 @@ class _QuranScreenState extends State<QuranScreen> {
                         ),
                         // Page Footer (Number)
                         Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: 90.0,
-                          ), // Above the player
+                          padding: const EdgeInsets.only(bottom: 30.0),
+
                           child: Text(
                             _getArabicNumber(pageNum),
                             style: TextStyle(
@@ -650,82 +746,6 @@ class _QuranScreenState extends State<QuranScreen> {
                   },
                 );
               },
-            ),
-
-            // Our Floating Audio Player Bar
-            Positioned(
-              left: 20,
-              right: 20,
-              bottom: 20,
-              child: GestureDetector(
-                onTap: showReciterBottomSheet,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.cardSurface,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        offset: const Offset(0, 4),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  _selectedReciter.type,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  size: 16,
-                                  color: theme.textSecondary,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              _selectedReciter.name,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: theme.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FloatingActionButton(
-                        onPressed: _toggleAudio,
-                        backgroundColor: theme.primary,
-                        elevation: 0,
-                        mini: true,
-                        child: Icon(
-                          _isPlaying
-                              ? Icons.stop_rounded
-                              : Icons.play_arrow_rounded,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
           ],
         ),

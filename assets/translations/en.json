@@ -22,6 +22,12 @@
     "umrah_progress_label": "Umrah Progress",
     "current_stage": "Current Stage",
     "completed": "Completed",
+    "ongoing": "Ongoing",
+    "tajweed_enabled": "Color Tajweed Enabled",
+    "tajweed_disabled": "Color Tajweed Disabled",
+    "tajweed_rules": "Tajweed Rules",
+    "play_recitation": "Play Recitation",
+    "stop_recitation": "Stop Recitation",
     "waiting": "Waiting",
     "complete_button": "Mark as Completed",
     "next_step": "Next Step",
@@ -346,6 +352,5 @@
     "trip_history": "Trip History",
     "umrah_trip": "Umrah Trip",
     "start_prefix": "Start: {}",
-    "end_prefix": "End: {}",
-    "ongoing": "Ongoing"
+    "end_prefix": "End: {}"
 }

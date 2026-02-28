@@ -334,13 +334,11 @@
     "juz_number": "الجزء {}",
     "verses_count": "آياتها {}",
     "umrah_date_picker_help": "تحديد تاريخ بدء العمرة",
-   
     "umrah_time_picker_help": "تحديد وقت بدء العمرة",
     "back": "تراجع",
     "start_trip": "بدء الرحلة",
     "umrah_and_hajj_rites": "مناسك العمرة والحج",
     "main_services": "الخدمات الرئيسية",
-   
     "umrah_in_progress": "عمرة قيد التنفيذ",
     "start_new_umrah": "بدء رحلة عمرة جديدة",
     "hajj": "الحج",
@@ -348,6 +346,9 @@
     "trip_history": "سجل الرحلات",
     "umrah_trip": "رحلة عمرة",
     "start_prefix": "البداية: {}",
-    "end_prefix": "النهاية: {}",
-    "ongoing": "مستمرة"
+    "tajweed_enabled": "تم تفعيل التجويد الملون",
+    "tajweed_disabled": "تم إيقاف التجويد الملون",
+    "tajweed_rules": "أحكام التجويد",
+    "play_recitation": "تشغيل التلاوة",
+    "stop_recitation": "إيقاف التلاوة"
 }
