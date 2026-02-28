@@ -42,30 +42,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final theme = context.ramadanTheme;
 
     return Scaffold(
-      backgroundColor: context.backgroundColor,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           CupertinoSliverNavigationBar(
             backgroundColor: theme.primary.withValues(alpha: 0.9),
             border: null,
-            largeTitle: Text(
-              'notifications_title'.tr(),
-              style: TextStyle(
-                color: context.isDark
-                    ? CupertinoColors.white
-                    : CupertinoColors.black,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Cairo',
-              ),
-            ),
+            largeTitle: Text('notifications_title'.tr()),
             trailing: _history.isNotEmpty
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () => _showClearConfirmation(context),
                     child: const Icon(
                       CupertinoIcons.trash,
-                      color: CupertinoColors.white,
+                      // color: CupertinoColors.white,
                       size: 20,
                     ),
                   )

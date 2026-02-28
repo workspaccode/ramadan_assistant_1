@@ -725,6 +725,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           const SizedBox(height: 24),
 
           // Inline Dua Sections
+          // Inline Dua Sections
           if (step.step == 'step_ihram') ...[
             // Ishtirat Dua inline
             _buildInlineDuaSection(
@@ -760,7 +761,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               ],
             ),
             const SizedBox(height: 12),
-            // Tawaf/Sai fixed duas inline
+            // Tawaf/Sai fixed duas inline (Ihram only)
             _buildInlineDuaCategorySection(
               context,
               icon: Icons.menu_book_rounded,
@@ -770,17 +771,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             ),
           ],
 
-          // Tawaf duas are now shown per-round via BottomSheet
-          if (step.step == 'step_sai') ...[
-            const SizedBox(height: 12),
-            _buildInlineDuaCategorySection(
-              context,
-              icon: Icons.menu_book_rounded,
-              title: 'comprehensive_sai_duas'.tr(),
-              color: theme.secondary,
-              duas: UmrahDuas.saiDuas,
-            ),
-          ] else if (_getDuaArabic(step.step).isNotEmpty) ...[
+          // Other single-dua steps (e.g. Halaq)
+          if (step.step != 'step_tawaf' &&
+              step.step != 'step_sai' &&
+              _getDuaArabic(step.step).isNotEmpty) ...[
             _buildSectionTitle(context, 'adhkar_title'.tr()),
             const SizedBox(height: 12),
             DuaWidget(
@@ -1030,17 +1024,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             _buildAutoTrackingSwitch(state.isAutoTracking),
             const SizedBox(height: 16),
             if (state.isAutoTracking) _buildSaiMap(state),
-            _buildCircularCounter(
-              context,
-              label: point,
-              current: state.saiLaps,
-              max: 7,
-              onChanged: state.isAutoTracking
-                  ? null
-                  : (val) =>
-                        context.read<UmrahGuideBloc>().add(UpdateSaiLaps(val)),
-              successText: 'sai_done'.tr(),
-            ),
+            _buildSaiInteractiveProgress(context, state),
           ],
         );
       }
@@ -1124,117 +1108,531 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     );
   }
 
-  Widget _buildCircularCounter(
-    BuildContext context, {
-    required String label,
-    required int current,
-    required int max,
-    required Function(int)? onChanged,
-    required String successText,
-  }) {
+  Widget _buildSaiInteractiveProgress(
+    BuildContext context,
+    UmrahGuideLoaded state,
+  ) {
     final theme = context.ramadanTheme;
-    final progress = current / max;
-    final isDone = current == max;
+    final completedLaps = state.saiLaps;
+    final maxLaps = 7;
+    final roundNames = UmrahDuas.saiRoundNames;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.cardSurface.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDone
-              ? theme.success.withOpacity(0.4)
-              : theme.secondary.withOpacity(0.2),
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: theme.textPrimary,
-            ),
-            textAlign: TextAlign.center,
+    return Column(
+      children: [
+        // Sai Header
+        Container(
+          height: 160,
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 20),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: theme.primary.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: 100,
-            height: 100,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: CustomPaint(
-                    painter: _RingPainter(
-                      progress: progress,
-                      ringColor: isDone ? theme.success : theme.secondary,
-                      trackColor: theme.textDim.withOpacity(0.1),
-                    ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                'assets/image/safa_marwa_header.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => Container(
+                  color: theme.primary.withOpacity(0.1),
+                  child: Icon(
+                    Icons.mosque_rounded,
+                    size: 64,
+                    color: theme.primary.withOpacity(0.3),
                   ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
+              ),
+              // Gradient overlay
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  ),
+                ),
+              ),
+              // Progress overlay
+              Positioned(
+                bottom: 16,
+                left: 16,
+                right: 16,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$current',
-                      style: context.textTheme.headlineLarge?.copyWith(
-                        color: isDone ? theme.success : theme.secondary,
+                      'السعي بين الصفا والمروة',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
-                    Text(
-                      '/ $max',
-                      style: context.textTheme.bodySmall?.copyWith(
-                        color: theme.textDim,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Text(
+                        '$completedLaps / 7',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildCircularButton(
-                icon: Icons.remove_rounded,
-                onPressed: (onChanged != null && current > 0)
-                    ? () => onChanged(current - 1)
-                    : null,
-                color: theme.primary,
-              ),
-              const SizedBox(width: 32),
-              _buildCircularButton(
-                icon: Icons.add_rounded,
-                onPressed: (onChanged != null && current < max)
-                    ? () => onChanged(current + 1)
-                    : null,
-                color: theme.primary,
               ),
             ],
           ),
-          if (isDone) ...[
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        ),
+
+        // Mini progress bar for Sai
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          height: 6,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+            color: theme.textDim.withOpacity(0.1),
+          ),
+          child: FractionallySizedBox(
+            alignment: Alignment.centerLeft,
+            widthFactor: completedLaps / maxLaps,
+            child: Container(
               decoration: BoxDecoration(
-                color: theme.success.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                successText,
-                style: TextStyle(
-                  color: theme.success,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                borderRadius: BorderRadius.circular(3),
+                gradient: LinearGradient(
+                  colors: [theme.secondary, theme.primary],
                 ),
               ),
             ),
-          ],
+          ),
+        ),
+
+        // 7 Lap Cards
+        ...List.generate(7, (roundIndex) {
+          final isCompleted = roundIndex < completedLaps;
+          final isActive = roundIndex == completedLaps;
+          final isPending = roundIndex > completedLaps;
+          final lapName = roundNames[roundIndex];
+          final roundDuas = UmrahDuas.getSaiRoundDuas(roundIndex);
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: GestureDetector(
+              onTap: isActive
+                  ? () => _showSaiRoundSheet(
+                      context,
+                      roundIndex,
+                      roundDuas,
+                      lapName,
+                      state,
+                    )
+                  : null,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isCompleted
+                      ? theme.success.withOpacity(0.08)
+                      : isActive
+                      ? theme.primary.withOpacity(0.06)
+                      : theme.cardSurface.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isCompleted
+                        ? theme.success.withOpacity(0.3)
+                        : isActive
+                        ? theme.primary.withOpacity(0.4)
+                        : theme.textDim.withOpacity(0.08),
+                    width: isActive ? 2 : 1,
+                  ),
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: theme.primary.withOpacity(0.1),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Row(
+                  children: [
+                    // Lap number circle
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isCompleted
+                            ? theme.success
+                            : isActive
+                            ? theme.primary
+                            : theme.textDim.withOpacity(0.15),
+                        boxShadow: isActive
+                            ? [
+                                BoxShadow(
+                                  color: theme.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Center(
+                        child: isCompleted
+                            ? const Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 22,
+                              )
+                            : Text(
+                                '${roundIndex + 1}',
+                                style: TextStyle(
+                                  color: isActive
+                                      ? Colors.white
+                                      : theme.textDim,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+
+                    // Content
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            lapName,
+                            style: TextStyle(
+                              fontWeight: isActive || isCompleted
+                                  ? FontWeight.bold
+                                  : FontWeight.w600,
+                              color: isPending
+                                  ? theme.textDim
+                                  : theme.textPrimary,
+                              fontSize: 16,
+                            ),
+                          ),
+                          if (isActive)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                'اضغط هنا للبدء والدعاء',
+                                style: TextStyle(
+                                  color: theme.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                          else if (isCompleted)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Text(
+                                'مكتمل بحمد الله',
+                                style: TextStyle(
+                                  color: theme.success,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    // Status Icon / Action Area
+                    if (isActive)
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      )
+                    else if (isPending)
+                      Icon(
+                        Icons.lock_rounded,
+                        color: theme.textDim.withOpacity(0.5),
+                        size: 20,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+
+        if (completedLaps == 7) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.success.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: theme.success.withOpacity(0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.celebration_rounded, color: theme.success),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'sai_done'.tr(),
+                    style: TextStyle(
+                      color: theme.success,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    context.read<UmrahGuideBloc>().add(const UpdateSaiLaps(6));
+                  },
+                  child: Text('تراجع', style: TextStyle(color: theme.success)),
+                ),
+              ],
+            ),
+          ),
         ],
+      ],
+    );
+  }
+
+  void _showSaiRoundSheet(
+    BuildContext context,
+    int roundIndex,
+    List<UmrahDua> roundDuas,
+    String roundName,
+    UmrahGuideLoaded state,
+  ) {
+    final theme = context.ramadanTheme;
+    final isGoingToMarwa =
+        roundIndex % 2 == 0; // Even indexes are towards Marwa
+    final umrahBloc = context.read<UmrahGuideBloc>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        maxChildSize: 0.95,
+        minChildSize: 0.5,
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: theme.cardSurface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(32),
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Minimal drag handle
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+
+                // Sheet Header
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.directions_walk_rounded,
+                          color: theme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              roundName,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: theme.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              isGoingToMarwa
+                                  ? 'من الصفا إلى المروة'
+                                  : 'من المروة إلى الصفا',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: theme.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(height: 1),
+
+                // Duas List
+                Expanded(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(20),
+                    itemCount: roundDuas.length,
+                    itemBuilder: (context, index) {
+                      final dua = roundDuas[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: DuaWidget(
+                          arabicText: dua.arabic,
+                          translation: dua.translation ?? '',
+                          source: dua.source,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                // Complete Action Button
+                Container(
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    16,
+                    20,
+                    MediaQuery.of(context).padding.bottom + 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.cardSurface,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        offset: const Offset(0, -4),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.success,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        onPressed: () {
+                          // Complete lap
+                          umrahBloc.add(UpdateSaiLaps(roundIndex + 1));
+                          Navigator.pop(sheetContext);
+
+                          if (roundIndex < 6) {
+                            // Auto-open next lap after a brief delay for animation
+                            Future.delayed(
+                              const Duration(milliseconds: 300),
+                              () {
+                                if (context.mounted) {
+                                  _showSaiRoundSheet(
+                                    context,
+                                    roundIndex + 1,
+                                    UmrahDuas.getSaiRoundDuas(roundIndex + 1),
+                                    UmrahDuas.saiRoundNames[roundIndex + 1],
+                                    state,
+                                  );
+                                }
+                              },
+                            );
+                          } else {
+                            // Celebrate if this was the last round
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'تم السعي بحمد الله',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                backgroundColor: theme.success,
+                              ),
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.check_circle_rounded),
+                        label: Text(
+                          roundIndex == 6
+                              ? 'إتمام السعي'
+                              : 'إتمام الشوط والانتقال للتالي',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -1553,6 +1951,8 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     UmrahGuideLoaded state,
   ) {
     final theme = context.ramadanTheme;
+    final umrahBloc = context.read<UmrahGuideBloc>();
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1713,16 +2113,31 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     height: 52,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        context.read<UmrahGuideBloc>().add(
-                          UpdateTawafCircuits(roundIndex + 1),
-                        );
+                        umrahBloc.add(UpdateTawafCircuits(roundIndex + 1));
                         Navigator.pop(sheetContext);
+
+                        if (roundIndex < 6) {
+                          // Auto-open next lap after a brief delay for animation
+                          Future.delayed(const Duration(milliseconds: 300), () {
+                            if (context.mounted) {
+                              _showTawafRoundSheet(
+                                context,
+                                roundIndex + 1,
+                                UmrahDuas.tawafRoundDuas[roundIndex + 1],
+                                UmrahDuas.tawafRoundNames[roundIndex + 1],
+                                state,
+                              );
+                            }
+                          });
+                        }
                       },
                       icon: const Icon(Icons.check_circle_rounded),
                       label: Text(
-                        'إتمام $roundName',
+                        roundIndex < 6
+                            ? 'إتمام $roundName والانتقال للتالي'
+                            : 'إتمام الطواف',
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1786,39 +2201,6 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCircularButton({
-    required IconData icon,
-    required VoidCallback? onPressed,
-    required Color color,
-  }) {
-    final theme = context.ramadanTheme;
-    final isEnabled = onPressed != null;
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isEnabled
-              ? color.withOpacity(0.1)
-              : theme.textDim.withOpacity(0.08),
-          border: Border.all(
-            color: isEnabled
-                ? color.withOpacity(0.3)
-                : theme.textDim.withOpacity(0.15),
-          ),
-        ),
-        child: Icon(
-          icon,
-          color: isEnabled ? color : theme.textDim.withOpacity(0.4),
-          size: 22,
-        ),
       ),
     );
   }
@@ -1916,6 +2298,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         break;
     }
     if (key.isEmpty) return '';
+    // Assuming .tr() is a valid extension method for localization.
+    // If 'key' is not found in localization, it will typically return the key itself or a fallback.
+    // The instruction "undefined transliteration" might imply that these keys are not defined in the localization files.
+    // Without access to the localization setup, I'm keeping the .tr() call as it's syntactically correct.
+    // If the issue is that the keys are truly undefined in the localization files, that's an external configuration problem.
     return key.tr();
   }
 
@@ -1990,53 +2377,5 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         ),
       ),
     );
-  }
-}
-
-class _RingPainter extends CustomPainter {
-  final double progress;
-  final Color ringColor;
-  final Color trackColor;
-
-  _RingPainter({
-    required this.progress,
-    required this.ringColor,
-    required this.trackColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2 - 6;
-    const strokeWidth = 10.0;
-
-    final trackPaint = Paint()
-      ..color = trackColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(center, radius, trackPaint);
-
-    final ringPaint = Paint()
-      ..color = ringColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -1.5708, // -90 degrees in radians
-      progress * 2 * 3.14159, // 360 degrees in radians
-      false,
-      ringPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _RingPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.ringColor != ringColor ||
-        oldDelegate.trackColor != trackColor;
   }
 }

@@ -13,6 +13,9 @@ class AudioService {
 
   bool get isPlaying => _isPlaying;
 
+  /// Stream to listen when a track finishes playing
+  Stream<void> get onPlayerComplete => _audioPlayer.onPlayerComplete;
+
   /// Play Adhan audio
   Future<void> playAdhan({bool isFajr = false, String? customSound}) async {
     final prefs = await SharedPreferences.getInstance();

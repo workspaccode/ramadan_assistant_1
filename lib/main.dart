@@ -123,6 +123,7 @@ class MyApp extends StatelessWidget {
                 RemindersBloc(sl<AppDatabase>())..add(LoadReminders()),
           ),
           BlocProvider(create: (context) => HadithCubit(sl())..loadHadiths()),
+          
         ],
         child: MultiBlocListener(
           listeners: [

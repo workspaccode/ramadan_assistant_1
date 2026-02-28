@@ -31,9 +31,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
   late final GeneratedColumn<String> nameEn = GeneratedColumn<String>(
     'name_en',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _nameTransliterationMeta =
       const VerificationMeta('nameTransliteration');
@@ -42,9 +42,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
       GeneratedColumn<String>(
         'name_transliteration',
         aliasedName,
-        false,
+        true,
         type: DriftSqlType.string,
-        requiredDuringInsert: true,
+        requiredDuringInsert: false,
       );
   static const VerificationMeta _revelationPlaceArMeta = const VerificationMeta(
     'revelationPlaceAr',
@@ -54,9 +54,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
       GeneratedColumn<String>(
         'revelation_place_ar',
         aliasedName,
-        false,
+        true,
         type: DriftSqlType.string,
-        requiredDuringInsert: true,
+        requiredDuringInsert: false,
       );
   static const VerificationMeta _revelationPlaceEnMeta = const VerificationMeta(
     'revelationPlaceEn',
@@ -66,9 +66,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
       GeneratedColumn<String>(
         'revelation_place_en',
         aliasedName,
-        false,
+        true,
         type: DriftSqlType.string,
-        requiredDuringInsert: true,
+        requiredDuringInsert: false,
       );
   static const VerificationMeta _versesCountMeta = const VerificationMeta(
     'versesCount',
@@ -88,9 +88,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
   late final GeneratedColumn<int> wordsCount = GeneratedColumn<int>(
     'words_count',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _lettersCountMeta = const VerificationMeta(
     'lettersCount',
@@ -99,9 +99,9 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
   late final GeneratedColumn<int> lettersCount = GeneratedColumn<int>(
     'letters_count',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -146,8 +146,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
         _nameEnMeta,
         nameEn.isAcceptableOrUnknown(data['name_en']!, _nameEnMeta),
       );
-    } else if (isInserting) {
-      context.missing(_nameEnMeta);
     }
     if (data.containsKey('name_transliteration')) {
       context.handle(
@@ -157,8 +155,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
           _nameTransliterationMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_nameTransliterationMeta);
     }
     if (data.containsKey('revelation_place_ar')) {
       context.handle(
@@ -168,8 +164,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
           _revelationPlaceArMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_revelationPlaceArMeta);
     }
     if (data.containsKey('revelation_place_en')) {
       context.handle(
@@ -179,8 +173,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
           _revelationPlaceEnMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_revelationPlaceEnMeta);
     }
     if (data.containsKey('verses_count')) {
       context.handle(
@@ -198,8 +190,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
         _wordsCountMeta,
         wordsCount.isAcceptableOrUnknown(data['words_count']!, _wordsCountMeta),
       );
-    } else if (isInserting) {
-      context.missing(_wordsCountMeta);
     }
     if (data.containsKey('letters_count')) {
       context.handle(
@@ -209,8 +199,6 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
           _lettersCountMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_lettersCountMeta);
     }
     return context;
   }
@@ -232,19 +220,19 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
       nameEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name_en'],
-      )!,
+      ),
       nameTransliteration: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name_transliteration'],
-      )!,
+      ),
       revelationPlaceAr: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}revelation_place_ar'],
-      )!,
+      ),
       revelationPlaceEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}revelation_place_en'],
-      )!,
+      ),
       versesCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}verses_count'],
@@ -252,11 +240,11 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
       wordsCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}words_count'],
-      )!,
+      ),
       lettersCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}letters_count'],
-      )!,
+      ),
     );
   }
 
@@ -269,36 +257,48 @@ class $SurahsTable extends Surahs with TableInfo<$SurahsTable, SurahEntity> {
 class SurahEntity extends DataClass implements Insertable<SurahEntity> {
   final int number;
   final String nameAr;
-  final String nameEn;
-  final String nameTransliteration;
-  final String revelationPlaceAr;
-  final String revelationPlaceEn;
+  final String? nameEn;
+  final String? nameTransliteration;
+  final String? revelationPlaceAr;
+  final String? revelationPlaceEn;
   final int versesCount;
-  final int wordsCount;
-  final int lettersCount;
+  final int? wordsCount;
+  final int? lettersCount;
   const SurahEntity({
     required this.number,
     required this.nameAr,
-    required this.nameEn,
-    required this.nameTransliteration,
-    required this.revelationPlaceAr,
-    required this.revelationPlaceEn,
+    this.nameEn,
+    this.nameTransliteration,
+    this.revelationPlaceAr,
+    this.revelationPlaceEn,
     required this.versesCount,
-    required this.wordsCount,
-    required this.lettersCount,
+    this.wordsCount,
+    this.lettersCount,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['number'] = Variable<int>(number);
     map['name_ar'] = Variable<String>(nameAr);
-    map['name_en'] = Variable<String>(nameEn);
-    map['name_transliteration'] = Variable<String>(nameTransliteration);
-    map['revelation_place_ar'] = Variable<String>(revelationPlaceAr);
-    map['revelation_place_en'] = Variable<String>(revelationPlaceEn);
+    if (!nullToAbsent || nameEn != null) {
+      map['name_en'] = Variable<String>(nameEn);
+    }
+    if (!nullToAbsent || nameTransliteration != null) {
+      map['name_transliteration'] = Variable<String>(nameTransliteration);
+    }
+    if (!nullToAbsent || revelationPlaceAr != null) {
+      map['revelation_place_ar'] = Variable<String>(revelationPlaceAr);
+    }
+    if (!nullToAbsent || revelationPlaceEn != null) {
+      map['revelation_place_en'] = Variable<String>(revelationPlaceEn);
+    }
     map['verses_count'] = Variable<int>(versesCount);
-    map['words_count'] = Variable<int>(wordsCount);
-    map['letters_count'] = Variable<int>(lettersCount);
+    if (!nullToAbsent || wordsCount != null) {
+      map['words_count'] = Variable<int>(wordsCount);
+    }
+    if (!nullToAbsent || lettersCount != null) {
+      map['letters_count'] = Variable<int>(lettersCount);
+    }
     return map;
   }
 
@@ -306,13 +306,25 @@ class SurahEntity extends DataClass implements Insertable<SurahEntity> {
     return SurahsCompanion(
       number: Value(number),
       nameAr: Value(nameAr),
-      nameEn: Value(nameEn),
-      nameTransliteration: Value(nameTransliteration),
-      revelationPlaceAr: Value(revelationPlaceAr),
-      revelationPlaceEn: Value(revelationPlaceEn),
+      nameEn: nameEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nameEn),
+      nameTransliteration: nameTransliteration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nameTransliteration),
+      revelationPlaceAr: revelationPlaceAr == null && nullToAbsent
+          ? const Value.absent()
+          : Value(revelationPlaceAr),
+      revelationPlaceEn: revelationPlaceEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(revelationPlaceEn),
       versesCount: Value(versesCount),
-      wordsCount: Value(wordsCount),
-      lettersCount: Value(lettersCount),
+      wordsCount: wordsCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(wordsCount),
+      lettersCount: lettersCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lettersCount),
     );
   }
 
@@ -324,15 +336,19 @@ class SurahEntity extends DataClass implements Insertable<SurahEntity> {
     return SurahEntity(
       number: serializer.fromJson<int>(json['number']),
       nameAr: serializer.fromJson<String>(json['nameAr']),
-      nameEn: serializer.fromJson<String>(json['nameEn']),
-      nameTransliteration: serializer.fromJson<String>(
+      nameEn: serializer.fromJson<String?>(json['nameEn']),
+      nameTransliteration: serializer.fromJson<String?>(
         json['nameTransliteration'],
       ),
-      revelationPlaceAr: serializer.fromJson<String>(json['revelationPlaceAr']),
-      revelationPlaceEn: serializer.fromJson<String>(json['revelationPlaceEn']),
+      revelationPlaceAr: serializer.fromJson<String?>(
+        json['revelationPlaceAr'],
+      ),
+      revelationPlaceEn: serializer.fromJson<String?>(
+        json['revelationPlaceEn'],
+      ),
       versesCount: serializer.fromJson<int>(json['versesCount']),
-      wordsCount: serializer.fromJson<int>(json['wordsCount']),
-      lettersCount: serializer.fromJson<int>(json['lettersCount']),
+      wordsCount: serializer.fromJson<int?>(json['wordsCount']),
+      lettersCount: serializer.fromJson<int?>(json['lettersCount']),
     );
   }
   @override
@@ -341,36 +357,42 @@ class SurahEntity extends DataClass implements Insertable<SurahEntity> {
     return <String, dynamic>{
       'number': serializer.toJson<int>(number),
       'nameAr': serializer.toJson<String>(nameAr),
-      'nameEn': serializer.toJson<String>(nameEn),
-      'nameTransliteration': serializer.toJson<String>(nameTransliteration),
-      'revelationPlaceAr': serializer.toJson<String>(revelationPlaceAr),
-      'revelationPlaceEn': serializer.toJson<String>(revelationPlaceEn),
+      'nameEn': serializer.toJson<String?>(nameEn),
+      'nameTransliteration': serializer.toJson<String?>(nameTransliteration),
+      'revelationPlaceAr': serializer.toJson<String?>(revelationPlaceAr),
+      'revelationPlaceEn': serializer.toJson<String?>(revelationPlaceEn),
       'versesCount': serializer.toJson<int>(versesCount),
-      'wordsCount': serializer.toJson<int>(wordsCount),
-      'lettersCount': serializer.toJson<int>(lettersCount),
+      'wordsCount': serializer.toJson<int?>(wordsCount),
+      'lettersCount': serializer.toJson<int?>(lettersCount),
     };
   }
 
   SurahEntity copyWith({
     int? number,
     String? nameAr,
-    String? nameEn,
-    String? nameTransliteration,
-    String? revelationPlaceAr,
-    String? revelationPlaceEn,
+    Value<String?> nameEn = const Value.absent(),
+    Value<String?> nameTransliteration = const Value.absent(),
+    Value<String?> revelationPlaceAr = const Value.absent(),
+    Value<String?> revelationPlaceEn = const Value.absent(),
     int? versesCount,
-    int? wordsCount,
-    int? lettersCount,
+    Value<int?> wordsCount = const Value.absent(),
+    Value<int?> lettersCount = const Value.absent(),
   }) => SurahEntity(
     number: number ?? this.number,
     nameAr: nameAr ?? this.nameAr,
-    nameEn: nameEn ?? this.nameEn,
-    nameTransliteration: nameTransliteration ?? this.nameTransliteration,
-    revelationPlaceAr: revelationPlaceAr ?? this.revelationPlaceAr,
-    revelationPlaceEn: revelationPlaceEn ?? this.revelationPlaceEn,
+    nameEn: nameEn.present ? nameEn.value : this.nameEn,
+    nameTransliteration: nameTransliteration.present
+        ? nameTransliteration.value
+        : this.nameTransliteration,
+    revelationPlaceAr: revelationPlaceAr.present
+        ? revelationPlaceAr.value
+        : this.revelationPlaceAr,
+    revelationPlaceEn: revelationPlaceEn.present
+        ? revelationPlaceEn.value
+        : this.revelationPlaceEn,
     versesCount: versesCount ?? this.versesCount,
-    wordsCount: wordsCount ?? this.wordsCount,
-    lettersCount: lettersCount ?? this.lettersCount,
+    wordsCount: wordsCount.present ? wordsCount.value : this.wordsCount,
+    lettersCount: lettersCount.present ? lettersCount.value : this.lettersCount,
   );
   SurahEntity copyWithCompanion(SurahsCompanion data) {
     return SurahEntity(
@@ -444,13 +466,13 @@ class SurahEntity extends DataClass implements Insertable<SurahEntity> {
 class SurahsCompanion extends UpdateCompanion<SurahEntity> {
   final Value<int> number;
   final Value<String> nameAr;
-  final Value<String> nameEn;
-  final Value<String> nameTransliteration;
-  final Value<String> revelationPlaceAr;
-  final Value<String> revelationPlaceEn;
+  final Value<String?> nameEn;
+  final Value<String?> nameTransliteration;
+  final Value<String?> revelationPlaceAr;
+  final Value<String?> revelationPlaceEn;
   final Value<int> versesCount;
-  final Value<int> wordsCount;
-  final Value<int> lettersCount;
+  final Value<int?> wordsCount;
+  final Value<int?> lettersCount;
   const SurahsCompanion({
     this.number = const Value.absent(),
     this.nameAr = const Value.absent(),
@@ -465,21 +487,15 @@ class SurahsCompanion extends UpdateCompanion<SurahEntity> {
   SurahsCompanion.insert({
     this.number = const Value.absent(),
     required String nameAr,
-    required String nameEn,
-    required String nameTransliteration,
-    required String revelationPlaceAr,
-    required String revelationPlaceEn,
+    this.nameEn = const Value.absent(),
+    this.nameTransliteration = const Value.absent(),
+    this.revelationPlaceAr = const Value.absent(),
+    this.revelationPlaceEn = const Value.absent(),
     required int versesCount,
-    required int wordsCount,
-    required int lettersCount,
+    this.wordsCount = const Value.absent(),
+    this.lettersCount = const Value.absent(),
   }) : nameAr = Value(nameAr),
-       nameEn = Value(nameEn),
-       nameTransliteration = Value(nameTransliteration),
-       revelationPlaceAr = Value(revelationPlaceAr),
-       revelationPlaceEn = Value(revelationPlaceEn),
-       versesCount = Value(versesCount),
-       wordsCount = Value(wordsCount),
-       lettersCount = Value(lettersCount);
+       versesCount = Value(versesCount);
   static Insertable<SurahEntity> custom({
     Expression<int>? number,
     Expression<String>? nameAr,
@@ -508,13 +524,13 @@ class SurahsCompanion extends UpdateCompanion<SurahEntity> {
   SurahsCompanion copyWith({
     Value<int>? number,
     Value<String>? nameAr,
-    Value<String>? nameEn,
-    Value<String>? nameTransliteration,
-    Value<String>? revelationPlaceAr,
-    Value<String>? revelationPlaceEn,
+    Value<String?>? nameEn,
+    Value<String?>? nameTransliteration,
+    Value<String?>? revelationPlaceAr,
+    Value<String?>? revelationPlaceEn,
     Value<int>? versesCount,
-    Value<int>? wordsCount,
-    Value<int>? lettersCount,
+    Value<int?>? wordsCount,
+    Value<int?>? lettersCount,
   }) {
     return SurahsCompanion(
       number: number ?? this.number,
@@ -618,9 +634,9 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
   late final GeneratedColumn<String> textEn = GeneratedColumn<String>(
     'text_en',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _juzMeta = const VerificationMeta('juz');
   @override
@@ -645,9 +661,9 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
   late final GeneratedColumn<bool> sajda = GeneratedColumn<bool>(
     'sajda',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.bool,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'CHECK ("sajda" IN (0, 1))',
     ),
@@ -706,8 +722,6 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
         _textEnMeta,
         textEn.isAcceptableOrUnknown(data['text_en']!, _textEnMeta),
       );
-    } else if (isInserting) {
-      context.missing(_textEnMeta);
     }
     if (data.containsKey('juz')) {
       context.handle(
@@ -730,8 +744,6 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
         _sajdaMeta,
         sajda.isAcceptableOrUnknown(data['sajda']!, _sajdaMeta),
       );
-    } else if (isInserting) {
-      context.missing(_sajdaMeta);
     }
     return context;
   }
@@ -757,7 +769,7 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
       textEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}text_en'],
-      )!,
+      ),
       juz: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}juz'],
@@ -769,7 +781,7 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
       sajda: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}sajda'],
-      )!,
+      ),
     );
   }
 
@@ -783,18 +795,18 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
   final int surahNumber;
   final int number;
   final String textAr;
-  final String textEn;
+  final String? textEn;
   final int juz;
   final int page;
-  final bool sajda;
+  final bool? sajda;
   const VerseEntity({
     required this.surahNumber,
     required this.number,
     required this.textAr,
-    required this.textEn,
+    this.textEn,
     required this.juz,
     required this.page,
-    required this.sajda,
+    this.sajda,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -802,10 +814,14 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     map['surah_number'] = Variable<int>(surahNumber);
     map['number'] = Variable<int>(number);
     map['text_ar'] = Variable<String>(textAr);
-    map['text_en'] = Variable<String>(textEn);
+    if (!nullToAbsent || textEn != null) {
+      map['text_en'] = Variable<String>(textEn);
+    }
     map['juz'] = Variable<int>(juz);
     map['page'] = Variable<int>(page);
-    map['sajda'] = Variable<bool>(sajda);
+    if (!nullToAbsent || sajda != null) {
+      map['sajda'] = Variable<bool>(sajda);
+    }
     return map;
   }
 
@@ -814,10 +830,14 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       surahNumber: Value(surahNumber),
       number: Value(number),
       textAr: Value(textAr),
-      textEn: Value(textEn),
+      textEn: textEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(textEn),
       juz: Value(juz),
       page: Value(page),
-      sajda: Value(sajda),
+      sajda: sajda == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sajda),
     );
   }
 
@@ -830,10 +850,10 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       surahNumber: serializer.fromJson<int>(json['surahNumber']),
       number: serializer.fromJson<int>(json['number']),
       textAr: serializer.fromJson<String>(json['textAr']),
-      textEn: serializer.fromJson<String>(json['textEn']),
+      textEn: serializer.fromJson<String?>(json['textEn']),
       juz: serializer.fromJson<int>(json['juz']),
       page: serializer.fromJson<int>(json['page']),
-      sajda: serializer.fromJson<bool>(json['sajda']),
+      sajda: serializer.fromJson<bool?>(json['sajda']),
     );
   }
   @override
@@ -843,10 +863,10 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       'surahNumber': serializer.toJson<int>(surahNumber),
       'number': serializer.toJson<int>(number),
       'textAr': serializer.toJson<String>(textAr),
-      'textEn': serializer.toJson<String>(textEn),
+      'textEn': serializer.toJson<String?>(textEn),
       'juz': serializer.toJson<int>(juz),
       'page': serializer.toJson<int>(page),
-      'sajda': serializer.toJson<bool>(sajda),
+      'sajda': serializer.toJson<bool?>(sajda),
     };
   }
 
@@ -854,18 +874,18 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     int? surahNumber,
     int? number,
     String? textAr,
-    String? textEn,
+    Value<String?> textEn = const Value.absent(),
     int? juz,
     int? page,
-    bool? sajda,
+    Value<bool?> sajda = const Value.absent(),
   }) => VerseEntity(
     surahNumber: surahNumber ?? this.surahNumber,
     number: number ?? this.number,
     textAr: textAr ?? this.textAr,
-    textEn: textEn ?? this.textEn,
+    textEn: textEn.present ? textEn.value : this.textEn,
     juz: juz ?? this.juz,
     page: page ?? this.page,
-    sajda: sajda ?? this.sajda,
+    sajda: sajda.present ? sajda.value : this.sajda,
   );
   VerseEntity copyWithCompanion(VersesCompanion data) {
     return VerseEntity(
@@ -915,10 +935,10 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
   final Value<int> surahNumber;
   final Value<int> number;
   final Value<String> textAr;
-  final Value<String> textEn;
+  final Value<String?> textEn;
   final Value<int> juz;
   final Value<int> page;
-  final Value<bool> sajda;
+  final Value<bool?> sajda;
   final Value<int> rowid;
   const VersesCompanion({
     this.surahNumber = const Value.absent(),
@@ -934,18 +954,16 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     required int surahNumber,
     required int number,
     required String textAr,
-    required String textEn,
+    this.textEn = const Value.absent(),
     required int juz,
     required int page,
-    required bool sajda,
+    this.sajda = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : surahNumber = Value(surahNumber),
        number = Value(number),
        textAr = Value(textAr),
-       textEn = Value(textEn),
        juz = Value(juz),
-       page = Value(page),
-       sajda = Value(sajda);
+       page = Value(page);
   static Insertable<VerseEntity> custom({
     Expression<int>? surahNumber,
     Expression<int>? number,
@@ -972,10 +990,10 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     Value<int>? surahNumber,
     Value<int>? number,
     Value<String>? textAr,
-    Value<String>? textEn,
+    Value<String?>? textEn,
     Value<int>? juz,
     Value<int>? page,
-    Value<bool>? sajda,
+    Value<bool?>? sajda,
     Value<int>? rowid,
   }) {
     return VersesCompanion(
@@ -1079,9 +1097,9 @@ class $AudiosTable extends Audios with TableInfo<$AudiosTable, AudioEntity> {
   late final GeneratedColumn<String> reciterEn = GeneratedColumn<String>(
     'reciter_en',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _rewayaArMeta = const VerificationMeta(
     'rewayaAr',
@@ -1090,9 +1108,9 @@ class $AudiosTable extends Audios with TableInfo<$AudiosTable, AudioEntity> {
   late final GeneratedColumn<String> rewayaAr = GeneratedColumn<String>(
     'rewaya_ar',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _rewayaEnMeta = const VerificationMeta(
     'rewayaEn',
@@ -1101,27 +1119,27 @@ class $AudiosTable extends Audios with TableInfo<$AudiosTable, AudioEntity> {
   late final GeneratedColumn<String> rewayaEn = GeneratedColumn<String>(
     'rewaya_en',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _serverMeta = const VerificationMeta('server');
   @override
   late final GeneratedColumn<String> server = GeneratedColumn<String>(
     'server',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _linkMeta = const VerificationMeta('link');
   @override
   late final GeneratedColumn<String> link = GeneratedColumn<String>(
     'link',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1173,40 +1191,30 @@ class $AudiosTable extends Audios with TableInfo<$AudiosTable, AudioEntity> {
         _reciterEnMeta,
         reciterEn.isAcceptableOrUnknown(data['reciter_en']!, _reciterEnMeta),
       );
-    } else if (isInserting) {
-      context.missing(_reciterEnMeta);
     }
     if (data.containsKey('rewaya_ar')) {
       context.handle(
         _rewayaArMeta,
         rewayaAr.isAcceptableOrUnknown(data['rewaya_ar']!, _rewayaArMeta),
       );
-    } else if (isInserting) {
-      context.missing(_rewayaArMeta);
     }
     if (data.containsKey('rewaya_en')) {
       context.handle(
         _rewayaEnMeta,
         rewayaEn.isAcceptableOrUnknown(data['rewaya_en']!, _rewayaEnMeta),
       );
-    } else if (isInserting) {
-      context.missing(_rewayaEnMeta);
     }
     if (data.containsKey('server')) {
       context.handle(
         _serverMeta,
         server.isAcceptableOrUnknown(data['server']!, _serverMeta),
       );
-    } else if (isInserting) {
-      context.missing(_serverMeta);
     }
     if (data.containsKey('link')) {
       context.handle(
         _linkMeta,
         link.isAcceptableOrUnknown(data['link']!, _linkMeta),
       );
-    } else if (isInserting) {
-      context.missing(_linkMeta);
     }
     return context;
   }
@@ -1232,23 +1240,23 @@ class $AudiosTable extends Audios with TableInfo<$AudiosTable, AudioEntity> {
       reciterEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}reciter_en'],
-      )!,
+      ),
       rewayaAr: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}rewaya_ar'],
-      )!,
+      ),
       rewayaEn: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}rewaya_en'],
-      )!,
+      ),
       server: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}server'],
-      )!,
+      ),
       link: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}link'],
-      )!,
+      ),
     );
   }
 
@@ -1262,20 +1270,20 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
   final int id;
   final int surahNumber;
   final String reciterAr;
-  final String reciterEn;
-  final String rewayaAr;
-  final String rewayaEn;
-  final String server;
-  final String link;
+  final String? reciterEn;
+  final String? rewayaAr;
+  final String? rewayaEn;
+  final String? server;
+  final String? link;
   const AudioEntity({
     required this.id,
     required this.surahNumber,
     required this.reciterAr,
-    required this.reciterEn,
-    required this.rewayaAr,
-    required this.rewayaEn,
-    required this.server,
-    required this.link,
+    this.reciterEn,
+    this.rewayaAr,
+    this.rewayaEn,
+    this.server,
+    this.link,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1283,11 +1291,21 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
     map['id'] = Variable<int>(id);
     map['surah_number'] = Variable<int>(surahNumber);
     map['reciter_ar'] = Variable<String>(reciterAr);
-    map['reciter_en'] = Variable<String>(reciterEn);
-    map['rewaya_ar'] = Variable<String>(rewayaAr);
-    map['rewaya_en'] = Variable<String>(rewayaEn);
-    map['server'] = Variable<String>(server);
-    map['link'] = Variable<String>(link);
+    if (!nullToAbsent || reciterEn != null) {
+      map['reciter_en'] = Variable<String>(reciterEn);
+    }
+    if (!nullToAbsent || rewayaAr != null) {
+      map['rewaya_ar'] = Variable<String>(rewayaAr);
+    }
+    if (!nullToAbsent || rewayaEn != null) {
+      map['rewaya_en'] = Variable<String>(rewayaEn);
+    }
+    if (!nullToAbsent || server != null) {
+      map['server'] = Variable<String>(server);
+    }
+    if (!nullToAbsent || link != null) {
+      map['link'] = Variable<String>(link);
+    }
     return map;
   }
 
@@ -1296,11 +1314,19 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
       id: Value(id),
       surahNumber: Value(surahNumber),
       reciterAr: Value(reciterAr),
-      reciterEn: Value(reciterEn),
-      rewayaAr: Value(rewayaAr),
-      rewayaEn: Value(rewayaEn),
-      server: Value(server),
-      link: Value(link),
+      reciterEn: reciterEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reciterEn),
+      rewayaAr: rewayaAr == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rewayaAr),
+      rewayaEn: rewayaEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rewayaEn),
+      server: server == null && nullToAbsent
+          ? const Value.absent()
+          : Value(server),
+      link: link == null && nullToAbsent ? const Value.absent() : Value(link),
     );
   }
 
@@ -1313,11 +1339,11 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
       id: serializer.fromJson<int>(json['id']),
       surahNumber: serializer.fromJson<int>(json['surahNumber']),
       reciterAr: serializer.fromJson<String>(json['reciterAr']),
-      reciterEn: serializer.fromJson<String>(json['reciterEn']),
-      rewayaAr: serializer.fromJson<String>(json['rewayaAr']),
-      rewayaEn: serializer.fromJson<String>(json['rewayaEn']),
-      server: serializer.fromJson<String>(json['server']),
-      link: serializer.fromJson<String>(json['link']),
+      reciterEn: serializer.fromJson<String?>(json['reciterEn']),
+      rewayaAr: serializer.fromJson<String?>(json['rewayaAr']),
+      rewayaEn: serializer.fromJson<String?>(json['rewayaEn']),
+      server: serializer.fromJson<String?>(json['server']),
+      link: serializer.fromJson<String?>(json['link']),
     );
   }
   @override
@@ -1327,11 +1353,11 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
       'id': serializer.toJson<int>(id),
       'surahNumber': serializer.toJson<int>(surahNumber),
       'reciterAr': serializer.toJson<String>(reciterAr),
-      'reciterEn': serializer.toJson<String>(reciterEn),
-      'rewayaAr': serializer.toJson<String>(rewayaAr),
-      'rewayaEn': serializer.toJson<String>(rewayaEn),
-      'server': serializer.toJson<String>(server),
-      'link': serializer.toJson<String>(link),
+      'reciterEn': serializer.toJson<String?>(reciterEn),
+      'rewayaAr': serializer.toJson<String?>(rewayaAr),
+      'rewayaEn': serializer.toJson<String?>(rewayaEn),
+      'server': serializer.toJson<String?>(server),
+      'link': serializer.toJson<String?>(link),
     };
   }
 
@@ -1339,20 +1365,20 @@ class AudioEntity extends DataClass implements Insertable<AudioEntity> {
     int? id,
     int? surahNumber,
     String? reciterAr,
-    String? reciterEn,
-    String? rewayaAr,
-    String? rewayaEn,
-    String? server,
-    String? link,
+    Value<String?> reciterEn = const Value.absent(),
+    Value<String?> rewayaAr = const Value.absent(),
+    Value<String?> rewayaEn = const Value.absent(),
+    Value<String?> server = const Value.absent(),
+    Value<String?> link = const Value.absent(),
   }) => AudioEntity(
     id: id ?? this.id,
     surahNumber: surahNumber ?? this.surahNumber,
     reciterAr: reciterAr ?? this.reciterAr,
-    reciterEn: reciterEn ?? this.reciterEn,
-    rewayaAr: rewayaAr ?? this.rewayaAr,
-    rewayaEn: rewayaEn ?? this.rewayaEn,
-    server: server ?? this.server,
-    link: link ?? this.link,
+    reciterEn: reciterEn.present ? reciterEn.value : this.reciterEn,
+    rewayaAr: rewayaAr.present ? rewayaAr.value : this.rewayaAr,
+    rewayaEn: rewayaEn.present ? rewayaEn.value : this.rewayaEn,
+    server: server.present ? server.value : this.server,
+    link: link.present ? link.value : this.link,
   );
   AudioEntity copyWithCompanion(AudiosCompanion data) {
     return AudioEntity(
@@ -1413,11 +1439,11 @@ class AudiosCompanion extends UpdateCompanion<AudioEntity> {
   final Value<int> id;
   final Value<int> surahNumber;
   final Value<String> reciterAr;
-  final Value<String> reciterEn;
-  final Value<String> rewayaAr;
-  final Value<String> rewayaEn;
-  final Value<String> server;
-  final Value<String> link;
+  final Value<String?> reciterEn;
+  final Value<String?> rewayaAr;
+  final Value<String?> rewayaEn;
+  final Value<String?> server;
+  final Value<String?> link;
   const AudiosCompanion({
     this.id = const Value.absent(),
     this.surahNumber = const Value.absent(),
@@ -1432,18 +1458,13 @@ class AudiosCompanion extends UpdateCompanion<AudioEntity> {
     this.id = const Value.absent(),
     required int surahNumber,
     required String reciterAr,
-    required String reciterEn,
-    required String rewayaAr,
-    required String rewayaEn,
-    required String server,
-    required String link,
+    this.reciterEn = const Value.absent(),
+    this.rewayaAr = const Value.absent(),
+    this.rewayaEn = const Value.absent(),
+    this.server = const Value.absent(),
+    this.link = const Value.absent(),
   }) : surahNumber = Value(surahNumber),
-       reciterAr = Value(reciterAr),
-       reciterEn = Value(reciterEn),
-       rewayaAr = Value(rewayaAr),
-       rewayaEn = Value(rewayaEn),
-       server = Value(server),
-       link = Value(link);
+       reciterAr = Value(reciterAr);
   static Insertable<AudioEntity> custom({
     Expression<int>? id,
     Expression<int>? surahNumber,
@@ -1470,11 +1491,11 @@ class AudiosCompanion extends UpdateCompanion<AudioEntity> {
     Value<int>? id,
     Value<int>? surahNumber,
     Value<String>? reciterAr,
-    Value<String>? reciterEn,
-    Value<String>? rewayaAr,
-    Value<String>? rewayaEn,
-    Value<String>? server,
-    Value<String>? link,
+    Value<String?>? reciterEn,
+    Value<String?>? rewayaAr,
+    Value<String?>? rewayaEn,
+    Value<String?>? server,
+    Value<String?>? link,
   }) {
     return AudiosCompanion(
       id: id ?? this.id,
@@ -1551,25 +1572,25 @@ typedef $$SurahsTableCreateCompanionBuilder =
     SurahsCompanion Function({
       Value<int> number,
       required String nameAr,
-      required String nameEn,
-      required String nameTransliteration,
-      required String revelationPlaceAr,
-      required String revelationPlaceEn,
+      Value<String?> nameEn,
+      Value<String?> nameTransliteration,
+      Value<String?> revelationPlaceAr,
+      Value<String?> revelationPlaceEn,
       required int versesCount,
-      required int wordsCount,
-      required int lettersCount,
+      Value<int?> wordsCount,
+      Value<int?> lettersCount,
     });
 typedef $$SurahsTableUpdateCompanionBuilder =
     SurahsCompanion Function({
       Value<int> number,
       Value<String> nameAr,
-      Value<String> nameEn,
-      Value<String> nameTransliteration,
-      Value<String> revelationPlaceAr,
-      Value<String> revelationPlaceEn,
+      Value<String?> nameEn,
+      Value<String?> nameTransliteration,
+      Value<String?> revelationPlaceAr,
+      Value<String?> revelationPlaceEn,
       Value<int> versesCount,
-      Value<int> wordsCount,
-      Value<int> lettersCount,
+      Value<int?> wordsCount,
+      Value<int?> lettersCount,
     });
 
 class $$SurahsTableFilterComposer
@@ -1764,13 +1785,13 @@ class $$SurahsTableTableManager
               ({
                 Value<int> number = const Value.absent(),
                 Value<String> nameAr = const Value.absent(),
-                Value<String> nameEn = const Value.absent(),
-                Value<String> nameTransliteration = const Value.absent(),
-                Value<String> revelationPlaceAr = const Value.absent(),
-                Value<String> revelationPlaceEn = const Value.absent(),
+                Value<String?> nameEn = const Value.absent(),
+                Value<String?> nameTransliteration = const Value.absent(),
+                Value<String?> revelationPlaceAr = const Value.absent(),
+                Value<String?> revelationPlaceEn = const Value.absent(),
                 Value<int> versesCount = const Value.absent(),
-                Value<int> wordsCount = const Value.absent(),
-                Value<int> lettersCount = const Value.absent(),
+                Value<int?> wordsCount = const Value.absent(),
+                Value<int?> lettersCount = const Value.absent(),
               }) => SurahsCompanion(
                 number: number,
                 nameAr: nameAr,
@@ -1786,13 +1807,13 @@ class $$SurahsTableTableManager
               ({
                 Value<int> number = const Value.absent(),
                 required String nameAr,
-                required String nameEn,
-                required String nameTransliteration,
-                required String revelationPlaceAr,
-                required String revelationPlaceEn,
+                Value<String?> nameEn = const Value.absent(),
+                Value<String?> nameTransliteration = const Value.absent(),
+                Value<String?> revelationPlaceAr = const Value.absent(),
+                Value<String?> revelationPlaceEn = const Value.absent(),
                 required int versesCount,
-                required int wordsCount,
-                required int lettersCount,
+                Value<int?> wordsCount = const Value.absent(),
+                Value<int?> lettersCount = const Value.absent(),
               }) => SurahsCompanion.insert(
                 number: number,
                 nameAr: nameAr,
@@ -1831,10 +1852,10 @@ typedef $$VersesTableCreateCompanionBuilder =
       required int surahNumber,
       required int number,
       required String textAr,
-      required String textEn,
+      Value<String?> textEn,
       required int juz,
       required int page,
-      required bool sajda,
+      Value<bool?> sajda,
       Value<int> rowid,
     });
 typedef $$VersesTableUpdateCompanionBuilder =
@@ -1842,10 +1863,10 @@ typedef $$VersesTableUpdateCompanionBuilder =
       Value<int> surahNumber,
       Value<int> number,
       Value<String> textAr,
-      Value<String> textEn,
+      Value<String?> textEn,
       Value<int> juz,
       Value<int> page,
-      Value<bool> sajda,
+      Value<bool?> sajda,
       Value<int> rowid,
     });
 
@@ -2006,10 +2027,10 @@ class $$VersesTableTableManager
                 Value<int> surahNumber = const Value.absent(),
                 Value<int> number = const Value.absent(),
                 Value<String> textAr = const Value.absent(),
-                Value<String> textEn = const Value.absent(),
+                Value<String?> textEn = const Value.absent(),
                 Value<int> juz = const Value.absent(),
                 Value<int> page = const Value.absent(),
-                Value<bool> sajda = const Value.absent(),
+                Value<bool?> sajda = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VersesCompanion(
                 surahNumber: surahNumber,
@@ -2026,10 +2047,10 @@ class $$VersesTableTableManager
                 required int surahNumber,
                 required int number,
                 required String textAr,
-                required String textEn,
+                Value<String?> textEn = const Value.absent(),
                 required int juz,
                 required int page,
-                required bool sajda,
+                Value<bool?> sajda = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => VersesCompanion.insert(
                 surahNumber: surahNumber,
@@ -2068,22 +2089,22 @@ typedef $$AudiosTableCreateCompanionBuilder =
       Value<int> id,
       required int surahNumber,
       required String reciterAr,
-      required String reciterEn,
-      required String rewayaAr,
-      required String rewayaEn,
-      required String server,
-      required String link,
+      Value<String?> reciterEn,
+      Value<String?> rewayaAr,
+      Value<String?> rewayaEn,
+      Value<String?> server,
+      Value<String?> link,
     });
 typedef $$AudiosTableUpdateCompanionBuilder =
     AudiosCompanion Function({
       Value<int> id,
       Value<int> surahNumber,
       Value<String> reciterAr,
-      Value<String> reciterEn,
-      Value<String> rewayaAr,
-      Value<String> rewayaEn,
-      Value<String> server,
-      Value<String> link,
+      Value<String?> reciterEn,
+      Value<String?> rewayaAr,
+      Value<String?> rewayaEn,
+      Value<String?> server,
+      Value<String?> link,
     });
 
 class $$AudiosTableFilterComposer
@@ -2256,11 +2277,11 @@ class $$AudiosTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int> surahNumber = const Value.absent(),
                 Value<String> reciterAr = const Value.absent(),
-                Value<String> reciterEn = const Value.absent(),
-                Value<String> rewayaAr = const Value.absent(),
-                Value<String> rewayaEn = const Value.absent(),
-                Value<String> server = const Value.absent(),
-                Value<String> link = const Value.absent(),
+                Value<String?> reciterEn = const Value.absent(),
+                Value<String?> rewayaAr = const Value.absent(),
+                Value<String?> rewayaEn = const Value.absent(),
+                Value<String?> server = const Value.absent(),
+                Value<String?> link = const Value.absent(),
               }) => AudiosCompanion(
                 id: id,
                 surahNumber: surahNumber,
@@ -2276,11 +2297,11 @@ class $$AudiosTableTableManager
                 Value<int> id = const Value.absent(),
                 required int surahNumber,
                 required String reciterAr,
-                required String reciterEn,
-                required String rewayaAr,
-                required String rewayaEn,
-                required String server,
-                required String link,
+                Value<String?> reciterEn = const Value.absent(),
+                Value<String?> rewayaAr = const Value.absent(),
+                Value<String?> rewayaEn = const Value.absent(),
+                Value<String?> server = const Value.absent(),
+                Value<String?> link = const Value.absent(),
               }) => AudiosCompanion.insert(
                 id: id,
                 surahNumber: surahNumber,

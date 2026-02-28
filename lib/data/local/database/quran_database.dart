@@ -10,13 +10,16 @@ part 'quran_database.g.dart';
 class Surahs extends Table {
   IntColumn get number => integer()();
   TextColumn get nameAr => text().named('name_ar')();
-  TextColumn get nameEn => text().named('name_en')();
-  TextColumn get nameTransliteration => text().named('name_transliteration')();
-  TextColumn get revelationPlaceAr => text().named('revelation_place_ar')();
-  TextColumn get revelationPlaceEn => text().named('revelation_place_en')();
+  TextColumn get nameEn => text().named('name_en').nullable()();
+  TextColumn get nameTransliteration =>
+      text().named('name_transliteration').nullable()();
+  TextColumn get revelationPlaceAr =>
+      text().named('revelation_place_ar').nullable()();
+  TextColumn get revelationPlaceEn =>
+      text().named('revelation_place_en').nullable()();
   IntColumn get versesCount => integer().named('verses_count')();
-  IntColumn get wordsCount => integer().named('words_count')();
-  IntColumn get lettersCount => integer().named('letters_count')();
+  IntColumn get wordsCount => integer().named('words_count').nullable()();
+  IntColumn get lettersCount => integer().named('letters_count').nullable()();
 
   @override
   Set<Column> get primaryKey => {number};
@@ -27,10 +30,10 @@ class Verses extends Table {
   IntColumn get surahNumber => integer().named('surah_number')();
   IntColumn get number => integer()();
   TextColumn get textAr => text().named('text_ar')();
-  TextColumn get textEn => text().named('text_en')();
+  TextColumn get textEn => text().named('text_en').nullable()();
   IntColumn get juz => integer()();
   IntColumn get page => integer()();
-  BoolColumn get sajda => boolean()();
+  BoolColumn get sajda => boolean().nullable()();
 
   @override
   Set<Column> get primaryKey => {surahNumber, number};
@@ -41,11 +44,11 @@ class Audios extends Table {
   IntColumn get id => integer()();
   IntColumn get surahNumber => integer().named('surah_number')();
   TextColumn get reciterAr => text().named('reciter_ar')();
-  TextColumn get reciterEn => text().named('reciter_en')();
-  TextColumn get rewayaAr => text().named('rewaya_ar')();
-  TextColumn get rewayaEn => text().named('rewaya_en')();
-  TextColumn get server => text()();
-  TextColumn get link => text()();
+  TextColumn get reciterEn => text().named('reciter_en').nullable()();
+  TextColumn get rewayaAr => text().named('rewaya_ar').nullable()();
+  TextColumn get rewayaEn => text().named('rewaya_en').nullable()();
+  TextColumn get server => text().nullable()();
+  TextColumn get link => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -75,6 +78,25 @@ class QuranDatabase extends _$QuranDatabase {
 
   Future<List<SurahEntity>> getAllSurahs() {
     return select(surahs).get();
+  }
+
+  // Used for Fihris (Index)
+  Future<int> getSurahStartPage(int surahNum) async {
+    final verse =
+        await (select(verses)
+              ..where((v) => v.surahNumber.equals(surahNum))
+              ..limit(1))
+            .getSingle();
+    return verse.page;
+  }
+
+  Future<int> getJuzStartPage(int juzNum) async {
+    final verse =
+        await (select(verses)
+              ..where((v) => v.juz.equals(juzNum))
+              ..limit(1))
+            .getSingle();
+    return verse.page;
   }
 }
 
