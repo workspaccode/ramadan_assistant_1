@@ -40,7 +40,6 @@ void callbackDispatcher() {
   });
 }
 
-/// Schedule all prayer notifications for the day
 Future<void> _scheduleDayPrayerNotifications(
   Position position,
   PrayerService prayerService,
@@ -49,14 +48,9 @@ Future<void> _scheduleDayPrayerNotifications(
   final iqamaSystem = prefs.getString('iqama_system') ?? 'manual';
   final iqamaPreset = prefs.getString('iqama_preset') ?? 'saudi';
   final manualDelay = prefs.getInt('iqama_delay') ?? 10;
-  final methodId = prefs.getString('calculation_method');
-  final madhabId = prefs.getString('madhab');
 
-  final prayerTimes = prayerService.getPrayerTimes(
-    position,
-    methodId: methodId,
-    madhabId: madhabId,
-  );
+  final prayerData = await prayerService.getCurrentPrayerData(position);
+  final prayerTimes = prayerData.prayerTimes;
   final now = DateTime.now();
 
   final prayers = [

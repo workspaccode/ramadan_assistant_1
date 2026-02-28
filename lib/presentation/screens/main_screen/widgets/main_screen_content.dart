@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/preferences_service.dart';
+import 'package:ramadan_assistant/core/services/quran_database_service.dart';
 import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
 import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
@@ -13,6 +14,7 @@ import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/prayer_times_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/qibla_screen/qibla_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/quran_screen/download_quran_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/quran_screen/quran_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
@@ -49,7 +51,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
       await NotificationService.requestPermissions();
     } catch (e) {
       print(e.toString());
-     await openAppSettings();
+      await openAppSettings();
     }
   }
 
@@ -380,10 +382,21 @@ class _MainScreenContentState extends State<MainScreenContent> {
           'quran'.tr(),
           Icons.menu_book_rounded,
           const Color(0xFF43A047),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const QuranScreen()),
-          ),
+          () async {
+            // Check if Quran DB exists, if not go to download screen
+            final dbExists = await QuranDatabaseService.instance
+                .isDatabaseExists();
+            if (context.mounted) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => dbExists
+                      ? const QuranScreen()
+                      : const DownloadQuranScreen(),
+                ),
+              );
+            }
+          },
         ),
         _buildFeatureCard(
           context,
