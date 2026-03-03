@@ -638,6 +638,17 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _textTajweedMeta = const VerificationMeta(
+    'textTajweed',
+  );
+  @override
+  late final GeneratedColumn<String> textTajweed = GeneratedColumn<String>(
+    'text_tajweed',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _juzMeta = const VerificationMeta('juz');
   @override
   late final GeneratedColumn<int> juz = GeneratedColumn<int>(
@@ -674,6 +685,7 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
     number,
     textAr,
     textEn,
+    textTajweed,
     juz,
     page,
     sajda,
@@ -723,6 +735,15 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
         textEn.isAcceptableOrUnknown(data['text_en']!, _textEnMeta),
       );
     }
+    if (data.containsKey('text_tajweed')) {
+      context.handle(
+        _textTajweedMeta,
+        textTajweed.isAcceptableOrUnknown(
+          data['text_tajweed']!,
+          _textTajweedMeta,
+        ),
+      );
+    }
     if (data.containsKey('juz')) {
       context.handle(
         _juzMeta,
@@ -770,6 +791,10 @@ class $VersesTable extends Verses with TableInfo<$VersesTable, VerseEntity> {
         DriftSqlType.string,
         data['${effectivePrefix}text_en'],
       ),
+      textTajweed: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_tajweed'],
+      ),
       juz: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}juz'],
@@ -796,6 +821,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
   final int number;
   final String textAr;
   final String? textEn;
+  final String? textTajweed;
   final int juz;
   final int page;
   final bool? sajda;
@@ -804,6 +830,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     required this.number,
     required this.textAr,
     this.textEn,
+    this.textTajweed,
     required this.juz,
     required this.page,
     this.sajda,
@@ -816,6 +843,9 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     map['text_ar'] = Variable<String>(textAr);
     if (!nullToAbsent || textEn != null) {
       map['text_en'] = Variable<String>(textEn);
+    }
+    if (!nullToAbsent || textTajweed != null) {
+      map['text_tajweed'] = Variable<String>(textTajweed);
     }
     map['juz'] = Variable<int>(juz);
     map['page'] = Variable<int>(page);
@@ -833,6 +863,9 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       textEn: textEn == null && nullToAbsent
           ? const Value.absent()
           : Value(textEn),
+      textTajweed: textTajweed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(textTajweed),
       juz: Value(juz),
       page: Value(page),
       sajda: sajda == null && nullToAbsent
@@ -851,6 +884,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       number: serializer.fromJson<int>(json['number']),
       textAr: serializer.fromJson<String>(json['textAr']),
       textEn: serializer.fromJson<String?>(json['textEn']),
+      textTajweed: serializer.fromJson<String?>(json['textTajweed']),
       juz: serializer.fromJson<int>(json['juz']),
       page: serializer.fromJson<int>(json['page']),
       sajda: serializer.fromJson<bool?>(json['sajda']),
@@ -864,6 +898,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       'number': serializer.toJson<int>(number),
       'textAr': serializer.toJson<String>(textAr),
       'textEn': serializer.toJson<String?>(textEn),
+      'textTajweed': serializer.toJson<String?>(textTajweed),
       'juz': serializer.toJson<int>(juz),
       'page': serializer.toJson<int>(page),
       'sajda': serializer.toJson<bool?>(sajda),
@@ -875,6 +910,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     int? number,
     String? textAr,
     Value<String?> textEn = const Value.absent(),
+    Value<String?> textTajweed = const Value.absent(),
     int? juz,
     int? page,
     Value<bool?> sajda = const Value.absent(),
@@ -883,6 +919,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
     number: number ?? this.number,
     textAr: textAr ?? this.textAr,
     textEn: textEn.present ? textEn.value : this.textEn,
+    textTajweed: textTajweed.present ? textTajweed.value : this.textTajweed,
     juz: juz ?? this.juz,
     page: page ?? this.page,
     sajda: sajda.present ? sajda.value : this.sajda,
@@ -895,6 +932,9 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
       number: data.number.present ? data.number.value : this.number,
       textAr: data.textAr.present ? data.textAr.value : this.textAr,
       textEn: data.textEn.present ? data.textEn.value : this.textEn,
+      textTajweed: data.textTajweed.present
+          ? data.textTajweed.value
+          : this.textTajweed,
       juz: data.juz.present ? data.juz.value : this.juz,
       page: data.page.present ? data.page.value : this.page,
       sajda: data.sajda.present ? data.sajda.value : this.sajda,
@@ -908,6 +948,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
           ..write('number: $number, ')
           ..write('textAr: $textAr, ')
           ..write('textEn: $textEn, ')
+          ..write('textTajweed: $textTajweed, ')
           ..write('juz: $juz, ')
           ..write('page: $page, ')
           ..write('sajda: $sajda')
@@ -916,8 +957,16 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(surahNumber, number, textAr, textEn, juz, page, sajda);
+  int get hashCode => Object.hash(
+    surahNumber,
+    number,
+    textAr,
+    textEn,
+    textTajweed,
+    juz,
+    page,
+    sajda,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -926,6 +975,7 @@ class VerseEntity extends DataClass implements Insertable<VerseEntity> {
           other.number == this.number &&
           other.textAr == this.textAr &&
           other.textEn == this.textEn &&
+          other.textTajweed == this.textTajweed &&
           other.juz == this.juz &&
           other.page == this.page &&
           other.sajda == this.sajda);
@@ -936,6 +986,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
   final Value<int> number;
   final Value<String> textAr;
   final Value<String?> textEn;
+  final Value<String?> textTajweed;
   final Value<int> juz;
   final Value<int> page;
   final Value<bool?> sajda;
@@ -945,6 +996,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     this.number = const Value.absent(),
     this.textAr = const Value.absent(),
     this.textEn = const Value.absent(),
+    this.textTajweed = const Value.absent(),
     this.juz = const Value.absent(),
     this.page = const Value.absent(),
     this.sajda = const Value.absent(),
@@ -955,6 +1007,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     required int number,
     required String textAr,
     this.textEn = const Value.absent(),
+    this.textTajweed = const Value.absent(),
     required int juz,
     required int page,
     this.sajda = const Value.absent(),
@@ -969,6 +1022,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     Expression<int>? number,
     Expression<String>? textAr,
     Expression<String>? textEn,
+    Expression<String>? textTajweed,
     Expression<int>? juz,
     Expression<int>? page,
     Expression<bool>? sajda,
@@ -979,6 +1033,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
       if (number != null) 'number': number,
       if (textAr != null) 'text_ar': textAr,
       if (textEn != null) 'text_en': textEn,
+      if (textTajweed != null) 'text_tajweed': textTajweed,
       if (juz != null) 'juz': juz,
       if (page != null) 'page': page,
       if (sajda != null) 'sajda': sajda,
@@ -991,6 +1046,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     Value<int>? number,
     Value<String>? textAr,
     Value<String?>? textEn,
+    Value<String?>? textTajweed,
     Value<int>? juz,
     Value<int>? page,
     Value<bool?>? sajda,
@@ -1001,6 +1057,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
       number: number ?? this.number,
       textAr: textAr ?? this.textAr,
       textEn: textEn ?? this.textEn,
+      textTajweed: textTajweed ?? this.textTajweed,
       juz: juz ?? this.juz,
       page: page ?? this.page,
       sajda: sajda ?? this.sajda,
@@ -1022,6 +1079,9 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
     }
     if (textEn.present) {
       map['text_en'] = Variable<String>(textEn.value);
+    }
+    if (textTajweed.present) {
+      map['text_tajweed'] = Variable<String>(textTajweed.value);
     }
     if (juz.present) {
       map['juz'] = Variable<int>(juz.value);
@@ -1045,6 +1105,7 @@ class VersesCompanion extends UpdateCompanion<VerseEntity> {
           ..write('number: $number, ')
           ..write('textAr: $textAr, ')
           ..write('textEn: $textEn, ')
+          ..write('textTajweed: $textTajweed, ')
           ..write('juz: $juz, ')
           ..write('page: $page, ')
           ..write('sajda: $sajda, ')
@@ -1853,6 +1914,7 @@ typedef $$VersesTableCreateCompanionBuilder =
       required int number,
       required String textAr,
       Value<String?> textEn,
+      Value<String?> textTajweed,
       required int juz,
       required int page,
       Value<bool?> sajda,
@@ -1864,6 +1926,7 @@ typedef $$VersesTableUpdateCompanionBuilder =
       Value<int> number,
       Value<String> textAr,
       Value<String?> textEn,
+      Value<String?> textTajweed,
       Value<int> juz,
       Value<int> page,
       Value<bool?> sajda,
@@ -1896,6 +1959,11 @@ class $$VersesTableFilterComposer
 
   ColumnFilters<String> get textEn => $composableBuilder(
     column: $table.textEn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get textTajweed => $composableBuilder(
+    column: $table.textTajweed,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1944,6 +2012,11 @@ class $$VersesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get textTajweed => $composableBuilder(
+    column: $table.textTajweed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get juz => $composableBuilder(
     column: $table.juz,
     builder: (column) => ColumnOrderings(column),
@@ -1982,6 +2055,11 @@ class $$VersesTableAnnotationComposer
 
   GeneratedColumn<String> get textEn =>
       $composableBuilder(column: $table.textEn, builder: (column) => column);
+
+  GeneratedColumn<String> get textTajweed => $composableBuilder(
+    column: $table.textTajweed,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get juz =>
       $composableBuilder(column: $table.juz, builder: (column) => column);
@@ -2028,6 +2106,7 @@ class $$VersesTableTableManager
                 Value<int> number = const Value.absent(),
                 Value<String> textAr = const Value.absent(),
                 Value<String?> textEn = const Value.absent(),
+                Value<String?> textTajweed = const Value.absent(),
                 Value<int> juz = const Value.absent(),
                 Value<int> page = const Value.absent(),
                 Value<bool?> sajda = const Value.absent(),
@@ -2037,6 +2116,7 @@ class $$VersesTableTableManager
                 number: number,
                 textAr: textAr,
                 textEn: textEn,
+                textTajweed: textTajweed,
                 juz: juz,
                 page: page,
                 sajda: sajda,
@@ -2048,6 +2128,7 @@ class $$VersesTableTableManager
                 required int number,
                 required String textAr,
                 Value<String?> textEn = const Value.absent(),
+                Value<String?> textTajweed = const Value.absent(),
                 required int juz,
                 required int page,
                 Value<bool?> sajda = const Value.absent(),
@@ -2057,6 +2138,7 @@ class $$VersesTableTableManager
                 number: number,
                 textAr: textAr,
                 textEn: textEn,
+                textTajweed: textTajweed,
                 juz: juz,
                 page: page,
                 sajda: sajda,

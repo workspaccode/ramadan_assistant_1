@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
-import 'package:ramadan_assistant/core/services/notification_service.dart';
+import 'package:ramadan_assistant/core/services/dhikr_alarm_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 
 // --- States ---
@@ -173,16 +173,7 @@ class RemindersBloc extends Bloc<RemindersEvent, RemindersState> {
       if (reminders.isNotEmpty) {
         final reminder = reminders.first;
         if (event.isActive) {
-          await NotificationService.scheduleDhikrReminder(
-            id: reminder.id,
-            dhikrText: reminder.reminderTypes
-                .split(',')
-                .firstWhere((s) => s.isNotEmpty, orElse: () => ''),
-            intervalMinutes: reminder.intervalMinutes,
-            audioPath: reminder.audioPaths
-                ?.split(',')
-                .firstWhere((s) => s.isNotEmpty, orElse: () => ''),
-          );
+          await DhikrAlarmService.scheduleReminder(reminder);
 
           final audioPaths = reminder.audioPaths?.split(',') ?? [];
           if (audioPaths.isNotEmpty &&
@@ -194,7 +185,7 @@ class RemindersBloc extends Bloc<RemindersEvent, RemindersState> {
             );
           }
         } else {
-          await NotificationService.cancelNotification(reminder.id);
+          await DhikrAlarmService.stopReminder(reminder.id);
           await _audioService.stop();
         }
       }
@@ -223,17 +214,8 @@ class RemindersBloc extends Bloc<RemindersEvent, RemindersState> {
       if (reminders.isNotEmpty) {
         final reminder = reminders.first;
         if (reminder.isActive) {
-          await NotificationService.cancelNotification(reminder.id);
-          await NotificationService.scheduleDhikrReminder(
-            id: reminder.id,
-            dhikrText: reminder.reminderTypes
-                .split(',')
-                .firstWhere((s) => s.isNotEmpty, orElse: () => ''),
-            intervalMinutes: event.intervalMinutes,
-            audioPath: reminder.audioPaths
-                ?.split(',')
-                .firstWhere((s) => s.isNotEmpty, orElse: () => ''),
-          );
+          await DhikrAlarmService.stopReminder(reminder.id);
+          await DhikrAlarmService.scheduleReminder(reminder);
         }
       }
 
@@ -275,18 +257,11 @@ class RemindersBloc extends Bloc<RemindersEvent, RemindersState> {
             ),
           );
 
-      await NotificationService.scheduleDhikrReminder(
-        id: id,
-        dhikrText: event.reminderTypes.firstWhere(
-          (s) => s.isNotEmpty,
-          orElse: () => '',
-        ),
-        intervalMinutes: event.intervalMinutes,
-        audioPath: event.audioPaths.firstWhere(
-          (s) => s.isNotEmpty,
-          orElse: () => '',
-        ),
-      );
+      final reminder = await (_database.select(
+        _database.reminders,
+      )..where((t) => t.id.equals(id))).getSingle();
+
+      await DhikrAlarmService.scheduleReminder(reminder);
 
       if (event.audioPaths.isNotEmpty &&
           event.audioPaths
@@ -308,7 +283,7 @@ class RemindersBloc extends Bloc<RemindersEvent, RemindersState> {
     Emitter<RemindersState> emit,
   ) async {
     try {
-      await NotificationService.cancelNotification(event.id);
+      await DhikrAlarmService.stopReminder(event.id);
 
       await (_database.delete(
         _database.reminders,

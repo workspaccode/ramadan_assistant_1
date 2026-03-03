@@ -350,5 +350,12 @@
     "tajweed_disabled": "تم إيقاف التجويد الملون",
     "tajweed_rules": "أحكام التجويد",
     "play_recitation": "تشغيل التلاوة",
-    "stop_recitation": "إيقاف التلاوة"
+    "stop_recitation": "إيقاف التلاوة",
+    "new_update": "تحديث جديد متاح",
+    "new_features": "المميزات الجديدة",
+    "bug_fixes": "إصلاحات للأخطاء",
+    "update_now_btn": "تحديث الآن",
+    "close_btn": "إغلاق",
+    "time_for_dhikr": "حان وقت الذكر",
+    "notification_dhikr_body": "اضغط لعرض الذكر وبدء التسبيح"
 }

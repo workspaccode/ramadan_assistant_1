@@ -1,0 +1,63 @@
+# Shorebird Update Management Plan
+
+This plan documents how to manage Over-The-Air (OTA) updates using Shorebird, specifically addressing automatic vs. manual update logic and the necessary CLI commands.
+
+## Overview
+The project currently uses [SmartUpdateManager](file:///d:/saas/ramadan_assistant/lib/core/utils/smart_update_manager.dart#13-348) which integrates with Shorebird and Firebase Remote Config to manage three types of update tracks:
+1.  **auto-update**: Patches that are downloaded and installed automatically in the background on app start.
+2.  **manual-update**: Patches that require user confirmation via a dialog.
+3.  **critical-update**: Patches that force the user to update and restart.
+
+## Shorebird CLI Commands
+
+### 1. Initial Release
+To create the base version that can receive patches, use:
+```bash
+shorebird release android --artifact apk '--' --no-tree-shake-icons
+```
+> [!NOTE]
+> Releasing an APK allows Shorebird to track the version. Future patches will be applied to this base version.
+
+### 2. Creating a Patch (The Update)
+To send an update to users, use the `patch` command instead of `release`.
+
+#### For Automatic Updates
+The current code in [main.dart](file:///d:/saas/ramadan_assistant/lib/main.dart) checks the `auto-update` track. To push a patch that installs automatically:
+```bash
+shorebird patch android --track auto-update
+```
+
+#### For Manual/Default Updates
+To push a patch to the default track (which triggers a dialog if configured):
+```bash
+shorebird patch android --track manual-update
+```
+
+## Update Logic Control
+
+### How to make a patch "Auto"
+The code in [main.dart](file:///d:/saas/ramadan_assistant/lib/main.dart) (Line 75) already calls `updateManager.checkAutoUpdates()`. 
+Any patch pushed to the `auto-update` track via the CLI will be downloaded automatically when the user starts the app.
+
+### How to Disable Auto Update
+If you want to stop automatic updates, you have two options:
+
+1.  **Code Change**: Remove or comment out the auto-check in [lib/main.dart](file:///d:/saas/ramadan_assistant/lib/main.dart):
+    ```dart
+    // In main.dart
+    // updateManager.checkAutoUpdates(); // Remove this to disable auto-check
+    ```
+2.  **Track Management**: Only push patches to the `manual-update` or default track. Patches on these tracks will not be downloaded by the [checkAutoUpdates()](file:///d:/saas/ramadan_assistant/lib/core/utils/smart_update_manager.dart#126-164) call unless the logic is changed.
+
+## Verification Plan
+
+### Manual Verification
+1.  **Auto Update**:
+    -   Push a patch using `shorebird patch android --track auto-update`.
+    -   Open the app.
+    -   Check logs (via `adb logcat` or VS Code console) to see `📥 Auto update available, downloading...`.
+    -   Restart the app to see the patch applied.
+2.  **Manual Update**:
+    -   Push a patch using `shorebird patch android --track manual-update`.
+    -   Navigate to the settings or wherever manual update check is triggered.
+    -   Verify the update dialog appears.

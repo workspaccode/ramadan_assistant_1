@@ -699,7 +699,8 @@ class _QuranScreenState extends State<QuranScreen> {
                                     children: [
                                       TextSpan(
                                         children: TajweedFormatter.getTajweedSpans(
-                                          text: verse.textAr,
+                                          text:
+                                              verse.textTajweed ?? verse.textAr,
                                           baseStyle: GoogleFonts.amiriQuran(
                                             fontSize: 26,
                                             height: 2.2,

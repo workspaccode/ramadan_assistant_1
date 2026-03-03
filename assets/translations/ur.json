@@ -352,5 +352,12 @@
     "tajweed_disabled": "رنگین تجوید غیر فعال کر دی گئی",
     "tajweed_rules": "تجوید کے قواعد",
     "play_recitation": "تلاوت شروع کریں",
-    "stop_recitation": "تلاوت روکیں"
+    "stop_recitation": "تلاوت روکیں",
+    "new_update": "نیا اپ ڈیٹ دستیاب ہے",
+    "new_features": "نئی خصوصیات",
+    "bug_fixes": "بگ کی اصلاحات",
+    "update_now_btn": "ابھی اپ ڈیٹ کریں",
+    "close_btn": "بند کریں",
+    "time_for_dhikr": "ذکر کا وقت",
+    "notification_dhikr_body": "ذکر دیکھنے اور تسبیح شروع کرنے کے لیے دبائیں"
 }

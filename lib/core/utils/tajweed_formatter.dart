@@ -22,57 +22,34 @@ class TajweedFormatter {
     0xFF36607B,
   ); // Dark Blue (تفخيم الراء)
 
-  /// Parses Uthmani Arabic text and returns a list of TextSpans with Tajweed colors.
+  /// Parses Uthmani Arabic text containing custom tags from AlQuran Cloud and returns a list of TextSpans with Tajweed colors.
   static List<TextSpan> getTajweedSpans({
     required String text,
     required TextStyle baseStyle,
     bool isTajweedEnabled = true,
   }) {
-    if (!isTajweedEnabled || text.isEmpty) {
+    if (text.isEmpty) {
       return [TextSpan(text: text, style: baseStyle)];
     }
 
-    // We will build a basic Tajweed tokenizer based on Uthmani script standards.
+    // AlQuran Cloud Tajweed format: [rule[text]
+    final regex = RegExp(r'\[([a-zA-Z0-9:]+)\[([^\]]+)\]');
 
-    // 1. Tafkheem (Heavy Ra letters) - Dark Blue (#36607B)
-    // Ra with Fatha (رَ), Ra with Damma (رُ), Ra with Shadda Fatha (رَّ), Ra with Shadda Damma (رُّ)
-    final tafkheemRegex = RegExp(
-      r'ر[\u064E\u064F\u064B\u064C]|ر\u0651[\u064E\u064F\u064B\u064C]',
-    );
-
-    // 2. Heavy Madd (6 Harakat لزوماً) - Dark Red (#B11226)
-    // Followed by Shadda or Sukoon
-    final madd6Regex = RegExp(
-      r'.\u0653[\u064B-\u0652\u0670]*(?=\s*.\u0651|\s*.\u0652)',
-    );
-
-    // 3. Normal Madd (4/5 Harakat واجب) - Red (#FC5355)
-    // General Madd marker \u0653 not followed by Shadda
-    final madd45Regex = RegExp(r'.\u0653');
-
-    // 4. Ghunnah/Ikhfa (Noon/Meem with Shadda or specific marks) - Green (#538C5F)
-    final ghunnahRegex = RegExp(r'[نم][\u064B-\u065F]*\u0651[\u064B-\u065F]*');
-
-    // 5. Qalqalah (Qaf, Taa, Baa, Jeem, Daal with Sukoon) - Light Blue (#3886BC)
-    final qalqalahRegex = RegExp(r'[قطبجد][\u064B-\u0652\u0670]*\u0652');
-
-    // 6. Idgham/Silent Letters - Gray (#9E9E9C)
-    // Letters without vowels or with specialized silent markers in Uthmani script
-    final idghamRegex = RegExp(
-      r'[اوي](?![^\s])|[\u06DF\u06E0\u06E1]',
-    ); // Small silent circle markers
-
-    // Combine them into a single tokenizer string in priority order
-    final combinedRegex = RegExp(
-      '(${tafkheemRegex.pattern})|(${madd6Regex.pattern})|(${madd45Regex.pattern})|(${ghunnahRegex.pattern})|(${qalqalahRegex.pattern})|(${idghamRegex.pattern})',
-    );
+    if (!isTajweedEnabled) {
+      // Strip out all tags if Tajweed is disabled, leaving only the Arabic text
+      final cleanText = text.replaceAllMapped(
+        regex,
+        (match) => match.group(2)!,
+      );
+      return [TextSpan(text: cleanText, style: baseStyle)];
+    }
 
     final spans = <TextSpan>[];
     int lastMatchEnd = 0;
 
-    for (final match in combinedRegex.allMatches(text)) {
+    for (final match in regex.allMatches(text)) {
       if (match.start > lastMatchEnd) {
-        // Unstyled text
+        // Text before the tag
         spans.add(
           TextSpan(
             text: text.substring(lastMatchEnd, match.start),
@@ -81,22 +58,9 @@ class TajweedFormatter {
         );
       }
 
-      final matchText = match.group(0)!;
-      Color? highlightColor;
-
-      if (tafkheemRegex.hasMatch(matchText)) {
-        highlightColor = tafkheemColor;
-      } else if (madd6Regex.hasMatch(matchText)) {
-        highlightColor = madd6Color;
-      } else if (madd45Regex.hasMatch(matchText)) {
-        highlightColor = madd45Color;
-      } else if (ghunnahRegex.hasMatch(matchText)) {
-        highlightColor = ghunnahColor;
-      } else if (qalqalahRegex.hasMatch(matchText)) {
-        highlightColor = qalqalahColor;
-      } else if (idghamRegex.hasMatch(matchText)) {
-        highlightColor = idghamColor;
-      }
+      final ruleCode = match.group(1)!;
+      final matchText = match.group(2)!;
+      final highlightColor = _getColorForClass(ruleCode);
 
       spans.add(
         TextSpan(
@@ -113,5 +77,41 @@ class TajweedFormatter {
     }
 
     return spans;
+  }
+
+  static Color? _getColorForClass(String ruleCode) {
+    // Drop the colon suffix if any (e.g., "h:1" -> "h")
+    final rootRule = ruleCode.split(':').first;
+
+    switch (rootRule) {
+      case 'm': // madda-necessary, 6 harakat
+        return madd6Color; // Dark Red
+      case 'o': // madda-obligatory, 4/5 harakat
+        return madd45Color; // Red
+      case 'p': // madda-permissible, 2/4/6 harakat
+        return madd246Color; // Orange
+      case 'n': // madda-normal, 2 harakat
+        return madd2Color; // Gold
+      case 'g': // ghunnah
+      case 'f': // ikhafa
+      case 'c': // ikhafa-shafawi
+      case 'i': // iqlab
+      case 'w': // idgham-shafawi
+      case 'a': // idgham-with-ghunnah
+        return ghunnahColor; // Green
+      case 'h': // hamza-wasl
+      case 's': // silent
+      case 'l': // laam-shamsiyah
+      case 'u': // idgham-without-ghunnah
+      case 'd': // idgham-mutajanisayn
+      case 'b': // idgham-mutaqaribayn
+        return idghamColor; // Gray
+      case 'q': // qalaqah
+        return qalqalahColor; // Light Blue
+      // Since 'quran-tajweed' does NOT natively include tafkheem for Ra,
+      // we leave it as null
+      default:
+        return null;
+    }
   }
 }

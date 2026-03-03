@@ -69,7 +69,7 @@ class SmartUpdateManager {
         _logger.w('⚠️ Critical update available! Forcing update...');
         await _showForceUpdateDialog(context);
         await _shorebird.update(
-          track: shorebird.UpdateTrack(UpdateTrack.criticalUpdate.name),
+          track: shorebird.UpdateTrack(UpdateTrack.criticalUpdate.trackId),
         );
 
         // Restart app
@@ -148,7 +148,7 @@ class SmartUpdateManager {
               status.metadata?.type == UpdateType.auto)) {
         _logger.i('📥 Auto update available, downloading...');
         await _shorebird.update(
-          track: shorebird.UpdateTrack(UpdateTrack.autoUpdate.name),
+          track: shorebird.UpdateTrack(UpdateTrack.autoUpdate.trackId),
         );
         _preferences?.saveLastUpdateCheck(DateTime.now());
         _logger.i('✅ Auto update downloaded successfully');
@@ -199,7 +199,7 @@ class SmartUpdateManager {
   Future<UpdateStatus> _checkShorebirdUpdate(UpdateTrack track) async {
     try {
       final shorebirdStatus = await _shorebird.checkForUpdate(
-        track: shorebird.UpdateTrack(track.name),
+        track: shorebird.UpdateTrack(track.trackId),
       );
 
       if (shorebirdStatus == shorebird.UpdateStatus.upToDate) {
@@ -276,7 +276,7 @@ class SmartUpdateManager {
 
     try {
       await _shorebird.update(
-        track: shorebird.UpdateTrack(UpdateTrack.manualUpdate.name),
+        track: shorebird.UpdateTrack(UpdateTrack.manualUpdate.trackId),
       );
 
       if (context.mounted) {

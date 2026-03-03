@@ -13,8 +13,8 @@ import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
+import 'package:ramadan_assistant/presentation/widgets/update_details_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -348,15 +348,23 @@ class NotificationActionHandler {
       } else if (type == 'iqama') {
         navigatorKey.currentState?.pushNamed('/iqama', arguments: prayer);
       } else if (type == 'update') {
-        // Tapped update notification
-        final updateType = payload['track'];
-        if (updateType == 'manual-update') {
-          navigatorKey.currentState?.push(
-            MaterialPageRoute(builder: (_) => const UpdateScreen()),
-          );
-        } else {
-          navigatorKey.currentState?.push(
-            MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+        // Tapped update notification - Show rich details dialog
+        final context = navigatorKey.currentContext;
+        if (context != null) {
+          showDialog(
+            context: context,
+            barrierColor: Colors.black.withValues(alpha: 0.8),
+            builder: (_) => UpdateDetailsDialog(
+              updateData: payload,
+              onUpdateTap: () {
+                final updateType = payload['track'];
+                if (updateType == 'manual-update') {
+                  navigatorKey.currentState?.push(
+                    MaterialPageRoute(builder: (_) => const UpdateScreen()),
+                  );
+                }
+              },
+            ),
           );
         }
       }

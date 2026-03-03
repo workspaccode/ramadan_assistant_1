@@ -352,5 +352,12 @@
     "trip_history": "Trip History",
     "umrah_trip": "Umrah Trip",
     "start_prefix": "Start: {}",
-    "end_prefix": "End: {}"
+    "end_prefix": "End: {}",
+    "new_update": "New Update Available",
+    "new_features": "What's New",
+    "bug_fixes": "Bug Fixes",
+    "update_now_btn": "Update Now",
+    "close_btn": "Close",
+    "time_for_dhikr": "Time for Dhikr",
+    "notification_dhikr_body": "Tap to view Dhikr and start Tasbih"
 }

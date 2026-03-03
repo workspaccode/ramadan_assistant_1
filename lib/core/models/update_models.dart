@@ -1,14 +1,11 @@
-/// Tracks for Shorebird OTA updates
 enum UpdateTrack {
   criticalUpdate('critical-update'),
   autoUpdate('auto-update'),
   manualUpdate('manual-update');
 
-  const UpdateTrack(this.name);
+  const UpdateTrack(this.trackId);
 
-  @override
-  // ignore: overridden_fields
-  final String name;
+  final String trackId;
 }
 
 /// Types of updates

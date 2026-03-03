@@ -31,6 +31,7 @@ class Verses extends Table {
   IntColumn get number => integer()();
   TextColumn get textAr => text().named('text_ar')();
   TextColumn get textEn => text().named('text_en').nullable()();
+  TextColumn get textTajweed => text().named('text_tajweed').nullable()();
   IntColumn get juz => integer()();
   IntColumn get page => integer()();
   BoolColumn get sajda => boolean().nullable()();
@@ -62,7 +63,21 @@ class QuranDatabase extends _$QuranDatabase {
   QuranDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from == 1) {
+          // Schema changed, but standard migration not needed right now
+        }
+      },
+    );
+  }
 
   // Singletons
   static final QuranDatabase instance = QuranDatabase();
@@ -108,3 +123,5 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
+
+// Invalidate builder cache

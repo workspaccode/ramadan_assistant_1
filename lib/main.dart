@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
+import 'package:ramadan_assistant/core/services/dhikr_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/fcm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
@@ -59,6 +60,11 @@ void main() async {
 
   // Initialize Adhan Alarm Service (full-length Adhan audio)
   await AdhanAlarmService.init(
+    navigatorKey: NotificationActionHandler.navigatorKey,
+  );
+
+  // Initialize Dhikr Alarm Service (full-length Reminder audio)
+  await DhikrAlarmService.init(
     navigatorKey: NotificationActionHandler.navigatorKey,
   );
 
@@ -123,7 +129,6 @@ class MyApp extends StatelessWidget {
                 RemindersBloc(sl<AppDatabase>())..add(LoadReminders()),
           ),
           BlocProvider(create: (context) => HadithCubit(sl())..loadHadiths()),
-          
         ],
         child: MultiBlocListener(
           listeners: [

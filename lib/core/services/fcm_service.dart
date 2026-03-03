@@ -1,4 +1,3 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
@@ -24,6 +23,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       'body': notification?.body ?? data['description_ar'] ?? '',
       'type': data['type'] ?? 'auto',
       'track': data['track'] ?? 'auto-update',
+      'version': data['version'] ?? '',
+      'patch': data['patch'] ?? '',
+      'features_en': data['features_en'] ?? '',
+      'features_ar': data['features_ar'] ?? '',
+      'features_ur': data['features_ur'] ?? '',
+      'fixes_en': data['fixes_en'] ?? '',
+      'fixes_ar': data['fixes_ar'] ?? '',
+      'fixes_ur': data['fixes_ur'] ?? '',
       'timestamp': DateTime.now().toIso8601String(),
       'status': data['type'] == 'manual' ? 'pending' : 'applied',
       'data': data,
@@ -99,6 +106,14 @@ class FcmService {
         'body': notification?.body ?? data['description_ar'] ?? '',
         'type': type,
         'track': track,
+        'version': data['version'] ?? '',
+        'patch': data['patch'] ?? '',
+        'features_en': data['features_en'] ?? '',
+        'features_ar': data['features_ar'] ?? '',
+        'features_ur': data['features_ur'] ?? '',
+        'fixes_en': data['fixes_en'] ?? '',
+        'fixes_ar': data['fixes_ar'] ?? '',
+        'fixes_ur': data['fixes_ur'] ?? '',
         'timestamp': DateTime.now().toIso8601String(),
         'status': type == 'manual' ? 'pending' : 'downloading',
         'data': data,

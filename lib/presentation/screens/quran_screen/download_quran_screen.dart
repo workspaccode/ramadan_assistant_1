@@ -28,6 +28,17 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
         });
       });
 
+      setState(() {
+        _progress = 0.0;
+        _status = 'جاري إعداد قواعد التجويد...'; // Setting up Tajweed rules...
+      });
+
+      await QuranDatabaseService.instance.fetchAndSeedTajweedData((progress) {
+        setState(() {
+          _progress = progress;
+        });
+      });
+
       if (mounted) {
         // Navigate to the actual Quran screen once download finishes and replace this screen
         Navigator.pushReplacement(
@@ -62,61 +73,62 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              const Icon(
-                Icons.menu_book_rounded,
-                size: 100,
-                color: Colors.teal,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                _status,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Amiri',
+                const Icon(
+                  Icons.menu_book_rounded,
+                  size: 100,
+                  color: Colors.teal,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              if (_isDownloading) ...[
-                LinearProgressIndicator(
-                  value: _progress,
-                  minHeight: 10,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 Text(
-                  '${(_progress * 100).toStringAsFixed(1)}%',
+                  _status,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'Amiri',
                   ),
+                  textAlign: TextAlign.center,
                 ),
-              ] else ...[
-                ElevatedButton.icon(
-                  onPressed: _startDownload,
-                  icon: const Icon(Icons.download),
-                  label: const Text(
-                    'تنزيل المصحف',
-                    style: TextStyle(fontSize: 18, fontFamily: 'Amiri'),
+                const SizedBox(height: 32),
+                if (_isDownloading) ...[
+                  LinearProgressIndicator(
+                    value: _progress,
+                    minHeight: 10,
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    backgroundColor: Colors.teal,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                  const SizedBox(height: 16),
+                  Text(
+                    '${(_progress * 100).toStringAsFixed(1)}%',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ]]),
-              
+                ] else ...[
+                  ElevatedButton.icon(
+                    onPressed: _startDownload,
+                    icon: const Icon(Icons.download),
+                    label: const Text(
+                      'تنزيل المصحف',
+                      style: TextStyle(fontSize: 18, fontFamily: 'Amiri'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      backgroundColor: Colors.teal,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),
+      ),
     );
   }
 }
