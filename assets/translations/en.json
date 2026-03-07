@@ -359,5 +359,12 @@
     "update_now_btn": "Update Now",
     "close_btn": "Close",
     "time_for_dhikr": "Time for Dhikr",
-    "notification_dhikr_body": "Tap to view Dhikr and start Tasbih"
+    "notification_dhikr_body": "Tap to view Dhikr and start Tasbih",
+    "category_all": "All",
+    "category_auto_update": "Auto Updates",
+    "category_manual_update": "Store Updates",
+    "category_maintenance": "Maintenance",
+    "category_greeting": "Greetings",
+    "category_exclusive": "Exclusive",
+    "category_general": "General"
 }

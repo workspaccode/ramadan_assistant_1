@@ -2,19 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 void main() {
-  const version = "1.0.5";
-  const patch = "1";
-  const track = "auto-update";
+  const version = '1.0.5';
+  const patch = '1';
+  const track = 'auto-update';
 
-  const titleAr = "تحديث جديد متاح";
-  const bodyAr = "نسخة $version جاهزة الآن بمميزات جديدة!";
+  const titleAr = 'تحديث جديد متاح';
+  const bodyAr = 'نسخة $version جاهزة الآن بمميزات جديدة!';
   const featuresAr =
-      "• واجهة زجاجية (Glassmorphism) جديدة كلياً\n• نظام أذكار متطور يشبه الأذان\n• تحسينات في سرعة التطبيق";
+      '• واجهة زجاجية (Glassmorphism) جديدة كلياً\n• نظام أذكار متطور يشبه الأذان\n• تحسينات في سرعة التطبيق';
   const featuresEn =
-      "• Brand new Glassmorphism UI\n• Advanced Alarm-like Azkar system\n• Performance optimizations";
-  const fixesAr = "• إصلاح مشكلة إشعارات الخلفية\n• إصلاح استهلاك البطارية";
+      '• Brand new Glassmorphism UI\n• Advanced Alarm-like Azkar system\n• Performance optimizations';
+  const fixesAr = '• إصلاح مشكلة إشعارات الخلفية\n• إصلاح استهلاك البطارية';
   const fixesEn =
-      "• Fixed background notification issues\n• Optimized battery consumption";
+      '• Fixed background notification issues\n• Optimized battery consumption';
 
   final scriptContent =
       '''# Ramadan Assistant - FCM Update Notifier

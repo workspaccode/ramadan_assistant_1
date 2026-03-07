@@ -15,6 +15,24 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   List<Map<String, dynamic>> _history = [];
   bool _isLoading = true;
+  String _selectedCategory = 'all';
+
+  final List<String> _categories = [
+    'all',
+    'auto_update',
+    'manual_update',
+    'maintenance',
+    'greeting',
+    'exclusive',
+    'general',
+  ];
+
+  List<Map<String, dynamic>> get _filteredHistory {
+    if (_selectedCategory == 'all') return _history;
+    return _history
+        .where((item) => (item['category'] ?? 'general') == _selectedCategory)
+        .toList();
+  }
 
   @override
   void initState() {
@@ -61,24 +79,84 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   )
                 : null,
           ),
+          SliverToBoxAdapter(child: _buildCategoryFilters()),
           if (_isLoading)
             const SliverFillRemaining(
               child: Center(child: CupertinoActivityIndicator()),
             )
-          else if (_history.isEmpty)
+          else if (_filteredHistory.isEmpty)
             SliverFillRemaining(child: _buildEmptyState(context))
           else
             SliverPadding(
               padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (context, index) =>
-                      _buildNotificationCard(context, _history[index], index),
-                  childCount: _history.length,
+                  (context, index) => _buildNotificationCard(
+                    context,
+                    _filteredHistory[index],
+                    index,
+                  ),
+                  childCount: _filteredHistory.length,
                 ),
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilters() {
+    final theme = context.ramadanTheme;
+    return SizedBox(
+      height: 55,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: _categories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final category = _categories[index];
+          final isSelected = _selectedCategory == category;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedCategory = category;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? theme.primary : theme.cardSurface,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected
+                      ? theme.primary
+                      : theme.borderColor.withValues(alpha: 0.2),
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: theme.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Center(
+                child: Text(
+                  'category_$category'.tr(),
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : theme.textSecondary,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -120,17 +198,49 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     int index,
   ) {
     final theme = context.ramadanTheme;
-    final type = item['type'] ?? 'auto';
+    final type = item['type'] ?? 'general';
+    final track = item['track'] ?? 'auto-update';
+    final category = item['category'] ?? 'general';
+
     final status = item['status'] ?? 'applied';
-    final title = item['title'] ?? 'تحديث';
+    final title = item['title'] ?? 'إشعار جديد';
     final body = item['body'] ?? '';
     final timestamp = item['timestamp'] != null
         ? DateTime.tryParse(item['timestamp'])
         : null;
 
-    final isManual = type == 'manual';
+    final isManual = type == 'update' && track == 'manual-update';
     final isPending = status == 'pending';
-    final typeColor = isManual ? Colors.orange : Colors.teal;
+
+    Color categoryColor;
+    IconData categoryIcon;
+
+    switch (category) {
+      case 'auto_update':
+        categoryColor = Colors.teal;
+        categoryIcon = Icons.autorenew_rounded;
+        break;
+      case 'manual_update':
+        categoryColor = Colors.orange;
+        categoryIcon = Icons.shop;
+        break;
+      case 'maintenance':
+        categoryColor = Colors.redAccent;
+        categoryIcon = Icons.build_circle;
+        break;
+      case 'greeting':
+        categoryColor = Colors.purple;
+        categoryIcon = Icons.celebration;
+        break;
+      case 'exclusive':
+        categoryColor = Colors.amber.shade700;
+        categoryIcon = Icons.workspace_premium;
+        break;
+      default:
+        categoryColor = Colors.blue;
+        categoryIcon = Icons.notifications;
+    }
+
     final statusColor = isPending ? Colors.orange : Colors.green;
 
     return Padding(
@@ -159,7 +269,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isPending
-                  ? typeColor.withValues(alpha: 0.3)
+                  ? theme.warning.withValues(alpha: 0.3)
                   : theme.borderColor.withValues(alpha: 0.1),
             ),
             boxShadow: [
@@ -173,35 +283,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header row: type badge + time
+              // Header row: category badge + time
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Type badge
+                  // Category badge
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: typeColor.withValues(alpha: 0.1),
+                      color: categoryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          isManual
-                              ? Icons.touch_app_rounded
-                              : Icons.autorenew_rounded,
-                          size: 14,
-                          color: typeColor,
-                        ),
+                        Icon(categoryIcon, size: 14, color: categoryColor),
                         const SizedBox(width: 4),
                         Text(
-                          isManual ? 'يدوي' : 'تلقائي',
+                          'category_$category'.tr(),
                           style: TextStyle(
-                            color: typeColor,
+                            color: categoryColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -209,25 +313,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ],
                     ),
                   ),
-                  // Status badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      isPending ? 'في الانتظار' : 'تم التطبيق',
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                  // Status badge (Only for updates)
+                  if (type == 'update')
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        isPending ? 'في الانتظار' : 'تم التطبيق',
+                        style: TextStyle(
+                          color: statusColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -270,7 +375,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         Text(
                           'اضغط للتحديث',
                           style: TextStyle(
-                            color: typeColor,
+                            color: categoryColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -279,7 +384,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 12,
-                          color: typeColor,
+                          color: categoryColor,
                         ),
                       ],
                     ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -18,7 +19,7 @@ class SmartUpdateManager {
 
   static const String _updatesConfigKey = 'shorebird_updates';
   static const String _lastUpdateCheckKey = 'last_update_check';
-  static const Duration _checkInterval = Duration(minutes: 5);
+  static const Duration _checkInterval = Duration(hours: 1);
 
   Future<void> initialize() async {
     try {
@@ -124,6 +125,9 @@ class SmartUpdateManager {
   }
 
   Future<void> checkAutoUpdates() async {
+    // Skip auto-updates in debug mode to prevent crashes
+    if (kDebugMode) return;
+
     if (_checkIsRunning) return;
     _checkIsRunning = true;
 
@@ -138,7 +142,10 @@ class SmartUpdateManager {
         return;
       }
 
-      final status = await _checkShorebirdUpdate(UpdateTrack.autoUpdate);
+      // Add timeout to prevent hanging
+      final status = await _checkShorebirdUpdate(
+        UpdateTrack.autoUpdate,
+      ).timeout(const Duration(seconds: 30));
 
       // Relaxed condition: Allow update if metadata is null OR if type is auto
       // This ensures that even if Remote Config is not set up for this specific patch,
@@ -147,9 +154,11 @@ class SmartUpdateManager {
           (status.metadata == null ||
               status.metadata?.type == UpdateType.auto)) {
         _logger.i('📥 Auto update available, downloading...');
-        await _shorebird.update(
-          track: shorebird.UpdateTrack(UpdateTrack.autoUpdate.trackId),
-        );
+        await _shorebird
+            .update(
+              track: shorebird.UpdateTrack(UpdateTrack.autoUpdate.trackId),
+            )
+            .timeout(const Duration(minutes: 2));
         _preferences?.saveLastUpdateCheck(DateTime.now());
         _logger.i('✅ Auto update downloaded successfully');
       }

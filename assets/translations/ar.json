@@ -357,5 +357,12 @@
     "update_now_btn": "تحديث الآن",
     "close_btn": "إغلاق",
     "time_for_dhikr": "حان وقت الذكر",
-    "notification_dhikr_body": "اضغط لعرض الذكر وبدء التسبيح"
+    "notification_dhikr_body": "اضغط لعرض الذكر وبدء التسبيح",
+    "category_all": "الكل",
+    "category_auto_update": "تحديثات فورية",
+    "category_manual_update": "تحديثات المتجر",
+    "category_maintenance": "تنبيهات صيانة",
+    "category_greeting": "تهنئات",
+    "category_exclusive": "إضافات حصرية",
+    "category_general": "عامة"
 }

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,16 +70,26 @@ void main() async {
   );
 
   BackgroundTaskService.initialize();
-  BackgroundTaskService.scheduleDailyUpdate();
+  if (!kDebugMode) {
+    BackgroundTaskService.scheduleDailyUpdate();
+  }
 
   // Initialize notification action handler
   await NotificationActionHandler.initialize();
 
-  // Schedule today's prayer notifications
-  await BackgroundTaskService.scheduleNotificationsNow();
+  // Schedule today's prayer notifications - with error handling
+  try {
+    await BackgroundTaskService.scheduleNotificationsNow();
+  } catch (e) {
+    debugPrint('Error scheduling notifications: $e');
+  }
 
-  // Check for auto updates in background
-  updateManager.checkAutoUpdates();
+  // Check for auto updates in background - with delay to prevent startup issues
+  if (!kDebugMode) {
+    Future.delayed(const Duration(minutes: 5), () {
+      updateManager.checkAutoUpdates();
+    });
+  }
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
@@ -87,6 +98,13 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
     ),
   );
+
+  // Add memory management for debug mode
+  if (kDebugMode) {
+    // Disable some heavy features in debug mode
+    debugPrint('Running in debug mode - some features optimized');
+  }
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar'), Locale('ur')],
@@ -167,7 +185,7 @@ class MyApp extends StatelessWidget {
                       : false;
 
                   return MaterialApp(
-                    title: 'Ramadan Assistant',
+                    title: 'تَوب َتِي',
                     debugShowCheckedModeBanner: false,
                     theme: AppTheme.getLightTheme(
                       localeContext.locale,

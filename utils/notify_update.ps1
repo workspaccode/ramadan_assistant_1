@@ -37,7 +37,7 @@ try {
 
 $HEADERS = @{
     "Authorization" = "Bearer $TOKEN"
-    "Content-Type"  = "application/json"
+    "Content-Type"  = "application/json; charset=utf-8"
 }
 
 $BODY = @{
@@ -62,10 +62,12 @@ $BODY = @{
     }
 } | ConvertTo-Json -Depth 10
 
+$BODY_BYTES = [System.Text.Encoding]::UTF8.GetBytes($BODY)
+
 Write-Host "📡 Sending request to Firebase..." -ForegroundColor Yellow
 
 try {
-    $RESPONSE = Invoke-RestMethod -Method Post -Uri "https://fcm.googleapis.com/v1/projects/$PROJECT_ID/messages:send" -Headers $HEADERS -Body $BODY
+    $RESPONSE = Invoke-RestMethod -Method Post -Uri "https://fcm.googleapis.com/v1/projects/$PROJECT_ID/messages:send" -Headers $HEADERS -ContentType "application/json; charset=utf-8" -Body $BODY_BYTES
     Write-Host "✅ Success! Message sent. ID: $($RESPONSE.name)" -ForegroundColor Green
 } catch {
     Write-Host "❌ Failed to send notification." -ForegroundColor Red

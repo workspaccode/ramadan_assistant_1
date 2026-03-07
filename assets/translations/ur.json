@@ -359,5 +359,12 @@
     "update_now_btn": "ابھی اپ ڈیٹ کریں",
     "close_btn": "بند کریں",
     "time_for_dhikr": "ذکر کا وقت",
-    "notification_dhikr_body": "ذکر دیکھنے اور تسبیح شروع کرنے کے لیے دبائیں"
+    "notification_dhikr_body": "ذکر دیکھنے اور تسبیح شروع کرنے کے لیے دبائیں",
+    "category_all": "سب",
+    "category_auto_update": "فوری اپڈیٹس",
+    "category_manual_update": "اسٹور اپڈیٹس",
+    "category_maintenance": "دیکھ بھال",
+    "category_greeting": "مبارکباد",
+    "category_exclusive": "خصوصی",
+    "category_general": "عام"
 }

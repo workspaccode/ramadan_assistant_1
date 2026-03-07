@@ -18,11 +18,25 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     final data = message.data;
     final notification = message.notification;
 
+    final type = data['type'] ?? 'general';
+    final track = data['track'] ?? 'auto-update';
+
+    String category = data['category'] ?? 'general';
+    if (type == 'update') {
+      category = track == 'manual-update' ? 'manual_update' : 'auto_update';
+    }
+
     final historyEntry = {
-      'title': notification?.title ?? data['title_ar'] ?? 'تحديث جديد',
-      'body': notification?.body ?? data['description_ar'] ?? '',
-      'type': data['type'] ?? 'auto',
-      'track': data['track'] ?? 'auto-update',
+      'title':
+          notification?.title ??
+          data['title_ar'] ??
+          data['title'] ??
+          'إشعار جديد',
+      'body':
+          notification?.body ?? data['description_ar'] ?? data['body'] ?? '',
+      'type': type,
+      'track': track,
+      'category': category,
       'version': data['version'] ?? '',
       'patch': data['patch'] ?? '',
       'features_en': data['features_en'] ?? '',
@@ -32,7 +46,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       'fixes_ar': data['fixes_ar'] ?? '',
       'fixes_ur': data['fixes_ur'] ?? '',
       'timestamp': DateTime.now().toIso8601String(),
-      'status': data['type'] == 'manual' ? 'pending' : 'applied',
+      'status': (type == 'update' && track == 'manual-update')
+          ? 'pending'
+          : 'applied',
       'data': data,
     };
 
@@ -95,17 +111,28 @@ class FcmService {
 
     final data = message.data;
     final notification = message.notification;
-    final type = data['type'] ?? 'auto';
+    final type = data['type'] ?? 'general';
     final track = data['track'] ?? 'auto-update';
+
+    String category = data['category'] ?? 'general';
+    if (type == 'update') {
+      category = track == 'manual-update' ? 'manual_update' : 'auto_update';
+    }
 
     // Save to history
     try {
       final prefs = await PreferencesService.getInstance();
       final historyEntry = {
-        'title': notification?.title ?? data['title_ar'] ?? 'تحديث جديد',
-        'body': notification?.body ?? data['description_ar'] ?? '',
+        'title':
+            notification?.title ??
+            data['title_ar'] ??
+            data['title'] ??
+            'إشعار جديد',
+        'body':
+            notification?.body ?? data['description_ar'] ?? data['body'] ?? '',
         'type': type,
         'track': track,
+        'category': category,
         'version': data['version'] ?? '',
         'patch': data['patch'] ?? '',
         'features_en': data['features_en'] ?? '',
@@ -115,7 +142,9 @@ class FcmService {
         'fixes_ar': data['fixes_ar'] ?? '',
         'fixes_ur': data['fixes_ur'] ?? '',
         'timestamp': DateTime.now().toIso8601String(),
-        'status': type == 'manual' ? 'pending' : 'downloading',
+        'status': (type == 'update' && track == 'manual-update')
+            ? 'pending'
+            : 'downloading',
         'data': data,
       };
       await prefs.addUpdateToHistory(historyEntry);
@@ -127,17 +156,22 @@ class FcmService {
     final updateManager = sl<SmartUpdateManager>();
     await updateManager.handleNotification(data);
 
-    // Show a local notification for manual updates
-    if (type == 'manual') {
+    // Show a local notification for manual updates or non-update categories
+    if ((type == 'update' && track == 'manual-update') || type != 'update') {
       await NotificationService.showUpdateNotification(
-        title: notification?.title ?? data['title_ar'] ?? 'تحديث جديد متاح',
-        body: notification?.body ?? data['description_ar'] ?? 'اضغط للتحديث',
+        title:
+            notification?.title ??
+            data['title_ar'] ??
+            data['title'] ??
+            'إشعار جديد',
+        body:
+            notification?.body ?? data['description_ar'] ?? data['body'] ?? '',
         payload: data.map((k, v) => MapEntry(k, v.toString())),
       );
     }
 
     // Mark auto updates as applied after download
-    if (type == 'auto') {
+    if (type == 'update' && track != 'manual-update') {
       try {
         final prefs = await PreferencesService.getInstance();
         await prefs.markLastUpdateApplied();
@@ -154,7 +188,7 @@ class FcmService {
 
     // Navigation will be handled by NotificationActionHandler
     // We store the pending navigation so the handler can pick it up
-    _pendingNavigation = type == 'manual'
+    _pendingNavigation = (type == 'update' && data['track'] == 'manual-update')
         ? 'update_screen'
         : 'notifications_screen';
   }

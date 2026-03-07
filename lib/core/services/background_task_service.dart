@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
@@ -22,15 +23,24 @@ import 'package:workmanager/workmanager.dart';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    final locationService = LocationService();
-    final prayerService = PrayerService();
-
     try {
       if (task == 'prayerUpdateTask' || task == Workmanager.iOSBackgroundTask) {
-        final position = await locationService.getCurrentLocation();
-        await _scheduleDayPrayerNotifications(position, prayerService);
+        final locationService = LocationService();
+        final prayerService = PrayerService();
+
+        // Add timeout to prevent hanging
+        await locationService.getCurrentLocation().timeout(
+          const Duration(seconds: 30),
+        );
+
+        await _scheduleDayPrayerNotifications(
+          await locationService.getCurrentLocation(),
+          prayerService,
+        ).timeout(const Duration(minutes: 2));
       } else if (task == 'tasbihReportTask') {
-        await _sendIntelligentTasbihReport();
+        await _sendIntelligentTasbihReport().timeout(
+          const Duration(minutes: 1),
+        );
       }
       return true;
     } catch (e) {
@@ -240,10 +250,16 @@ Future<void> _sendIntelligentTasbihReport() async {
 
 class BackgroundTaskService {
   static void initialize() {
-    Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    // Disable background tasks in debug mode to prevent crashes
+    if (!kDebugMode) {
+      Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+    }
   }
 
   static void scheduleDailyUpdate() {
+    // Skip scheduling in debug mode
+    if (kDebugMode) return;
+
     // Run at midnight to schedule next day's prayers
     Workmanager().registerPeriodicTask(
       'daily-prayer-update',
@@ -261,12 +277,23 @@ class BackgroundTaskService {
 
   /// Manually trigger prayer notification scheduling (for initial load)
   static Future<void> scheduleNotificationsNow() async {
+    // Skip in debug mode to prevent crashes
+    if (kDebugMode) {
+      debugPrint('Skipping notification scheduling in debug mode');
+      return;
+    }
+
     final locationService = LocationService();
     final prayerService = PrayerService();
 
     try {
-      final position = await locationService.getCurrentLocation();
-      await _scheduleDayPrayerNotifications(position, prayerService);
+      final position = await locationService.getCurrentLocation().timeout(
+        const Duration(seconds: 30),
+      );
+      await _scheduleDayPrayerNotifications(
+        position,
+        prayerService,
+      ).timeout(const Duration(minutes: 2));
     } catch (e) {
       print('Error scheduling notifications: $e');
     }
