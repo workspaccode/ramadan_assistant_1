@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
@@ -250,16 +251,10 @@ Future<void> _sendIntelligentTasbihReport() async {
 
 class BackgroundTaskService {
   static void initialize() {
-    // Disable background tasks in debug mode to prevent crashes
-    if (!kDebugMode) {
-      Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
-    }
+    Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
   }
 
   static void scheduleDailyUpdate() {
-    // Skip scheduling in debug mode
-    if (kDebugMode) return;
-
     // Run at midnight to schedule next day's prayers
     Workmanager().registerPeriodicTask(
       'daily-prayer-update',
@@ -267,7 +262,8 @@ class BackgroundTaskService {
       frequency: const Duration(hours: 24),
       initialDelay: const Duration(seconds: 10),
       constraints: Constraints(
-        networkType: NetworkType.connected,
+        // No network needed — prayer times are computed offline
+        networkType: NetworkType.notRequired,
         requiresBatteryNotLow: false,
         requiresCharging: false,
         requiresDeviceIdle: false,
@@ -277,12 +273,6 @@ class BackgroundTaskService {
 
   /// Manually trigger prayer notification scheduling (for initial load)
   static Future<void> scheduleNotificationsNow() async {
-    // Skip in debug mode to prevent crashes
-    if (kDebugMode) {
-      debugPrint('Skipping notification scheduling in debug mode');
-      return;
-    }
-
     final locationService = LocationService();
     final prayerService = PrayerService();
 
@@ -295,7 +285,22 @@ class BackgroundTaskService {
         prayerService,
       ).timeout(const Duration(minutes: 2));
     } catch (e) {
-      print('Error scheduling notifications: $e');
+      debugPrint('Error scheduling notifications: $e');
+    }
+  }
+
+  /// Request battery optimization exemption (Android only)
+  /// This is critical for reliable background notifications.
+  static Future<void> requestBatteryOptimizationExemption() async {
+    if (!Platform.isAndroid) return;
+    try {
+      // Use AwesomeNotifications' built-in method to check/request
+      final isAllowed = await AwesomeNotifications().isNotificationAllowed();
+      if (!isAllowed) {
+        await AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    } catch (e) {
+      debugPrint('Battery optimization request error: $e');
     }
   }
 }

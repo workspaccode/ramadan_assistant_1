@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/services/test_service.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
@@ -64,6 +65,7 @@ class SettingsScreenContent extends StatelessWidget {
                         _buildIqamaSection(context, state),
                         _buildAudioSection(context, state),
                         _buildAdminSection(context, state),
+                        _buildTestSection(context),
                         _buildFooter(context),
                         const SizedBox(height: 40),
                       ]),
@@ -559,6 +561,53 @@ class SettingsScreenContent extends StatelessWidget {
             style: const TextStyle(color: CupertinoColors.destructiveRed),
           ),
           onTap: () => _showResetConfirmation(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTestSection(BuildContext context) {
+    return CupertinoListSection.insetGrouped(
+      header: const Text('DEVELOPER TESTING'),
+      children: [
+        CupertinoListTile(
+          leading: const Icon(CupertinoIcons.bell, color: Color(0xFFD4AF37)),
+          title: const Text('Test Adhan (10s)'),
+          onTap: () async {
+            await TestService.triggerAdhanNow();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Adhan scheduled in 10s')),
+            );
+          },
+        ),
+        CupertinoListTile(
+          leading: const Icon(
+            CupertinoIcons.time,
+            color: CupertinoColors.activeBlue,
+          ),
+          title: const Text('Test Iqama (15s)'),
+          onTap: () async {
+            await TestService.triggerIqamaNow();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Iqama scheduled in 15s')),
+            );
+          },
+        ),
+        CupertinoListTile(
+          leading: const Icon(
+            CupertinoIcons.infinite,
+            color: CupertinoColors.activeGreen,
+          ),
+          title: const Text('Test Dhikr Alarm (12s)'),
+          onTap: () async {
+            await TestService.triggerDhikrNow();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Dhikr alarm scheduled in 12s')),
+            );
+          },
         ),
       ],
     );

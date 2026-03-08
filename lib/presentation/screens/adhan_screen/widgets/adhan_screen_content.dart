@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -22,9 +23,19 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
   late Animation<double> _fadeAnimation;
   late Animation<double> _glowAnimation;
 
+  Timer? _autoDismissTimer;
+
   @override
   void initState() {
     super.initState();
+
+    // Auto-dismiss the Adhan screen after 5 minutes to prevent infinite wake lock and battery drain
+    _autoDismissTimer = Timer(const Duration(minutes: 5), () {
+      if (mounted) {
+        context.read<AdhanScreenBloc>().add(DismissScreen());
+        Navigator.pop(context);
+      }
+    });
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 1200),
@@ -60,6 +71,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
     _pulseController.dispose();
     _fadeController.dispose();
     _glowController.dispose();
+    _autoDismissTimer?.cancel();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }

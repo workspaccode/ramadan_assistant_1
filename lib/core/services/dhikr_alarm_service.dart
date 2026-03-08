@@ -33,9 +33,13 @@ class DhikrAlarmService {
   }
 
   /// Schedule a Dhikr alarm
-  static Future<void> scheduleReminder(Reminder reminder) async {
+  static Future<void> scheduleReminder(
+    Reminder reminder, {
+    DateTime? testTime,
+  }) async {
     final now = DateTime.now();
-    final scheduledTime = now.add(Duration(minutes: reminder.intervalMinutes));
+    final scheduledTime =
+        testTime ?? now.add(Duration(minutes: reminder.intervalMinutes));
 
     final audioPaths = reminder.audioPaths?.split(',') ?? [];
     final audioPath = audioPaths.isNotEmpty && audioPaths.first.isNotEmpty
@@ -49,7 +53,8 @@ class DhikrAlarmService {
       id: 1000 + reminder.id, // Custom offset for Dhikr alarms
       dateTime: scheduledTime,
       assetAudioPath: cleanAudioPath,
-      loopAudio: reminder.repeatCount == 0,
+      loopAudio:
+          true, // Audio loops until the screen's auto-dismiss timer stops it
       vibrate: true,
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,

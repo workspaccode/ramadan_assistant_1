@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:alarm/alarm.dart';
@@ -26,6 +27,8 @@ class _ReminderAlarmScreenState extends State<ReminderAlarmScreen>
   late Animation<double> _pulseAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<double> _glowAnimation;
+
+  Timer? _autoDismissTimer;
 
   Reminder? _reminder;
   bool _isLoading = true;
@@ -75,6 +78,38 @@ class _ReminderAlarmScreenState extends State<ReminderAlarmScreen>
         _reminder = reminder;
         _isLoading = false;
       });
+
+      // Calculate dynamic dismiss duration based on repeat count
+      // Assume avg dhikr audio is 5 seconds. Repeat 0 = infinite (default 15s for safety).
+      int repeatCount = reminder?.repeatCount ?? 1;
+      int durationSeconds = repeatCount == 0 ? 15 : repeatCount * 5;
+
+      // Maximum 2 minutes for safety, Minimum 10 seconds for UX
+      if (durationSeconds < 10) durationSeconds = 10;
+      if (durationSeconds > 120) durationSeconds = 120;
+
+      debugPrint(
+        'ReminderAlarmScreen: Auto-dismissing in $durationSeconds seconds',
+      );
+
+      _autoDismissTimer?.cancel();
+      _autoDismissTimer = Timer(
+        Duration(seconds: durationSeconds),
+        _autoDismissAlarm,
+      );
+    }
+  }
+
+  Future<void> _autoDismissAlarm() async {
+    if (!mounted) return;
+
+    await Alarm.stop(1000 + widget.reminderId);
+    if (_reminder != null && _reminder!.isActive) {
+      await DhikrAlarmService.scheduleReminder(_reminder!);
+    }
+
+    if (mounted) {
+      Navigator.pop(context);
     }
   }
 
@@ -83,6 +118,7 @@ class _ReminderAlarmScreenState extends State<ReminderAlarmScreen>
     _pulseController.dispose();
     _fadeController.dispose();
     _glowController.dispose();
+    _autoDismissTimer?.cancel();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
@@ -209,29 +245,17 @@ class _ReminderAlarmScreenState extends State<ReminderAlarmScreen>
                       _buildPrimaryButton(
                         label: 'stop_btn'.tr(),
                         icon: Icons.stop_circle,
-                        onTap: () async {
-                          await Alarm.stop(1000 + widget.reminderId);
-                          if (_reminder != null && _reminder!.isActive) {
-                            await DhikrAlarmService.scheduleReminder(
-                              _reminder!,
-                            );
-                          }
-                          if (!mounted) return;
-                          Navigator.pop(context);
+                        onTap: () {
+                          _autoDismissTimer?.cancel();
+                          _autoDismissAlarm();
                         },
                       ),
                       const SizedBox(height: 16),
                       _buildSecondaryButton(
                         label: 'dismiss_btn'.tr(),
-                        onTap: () async {
-                          await Alarm.stop(1000 + widget.reminderId);
-                          if (_reminder != null && _reminder!.isActive) {
-                            await DhikrAlarmService.scheduleReminder(
-                              _reminder!,
-                            );
-                          }
-                          if (!mounted) return;
-                          Navigator.pop(context);
+                        onTap: () {
+                          _autoDismissTimer?.cancel();
+                          _autoDismissAlarm();
                         },
                       ),
                     ],
