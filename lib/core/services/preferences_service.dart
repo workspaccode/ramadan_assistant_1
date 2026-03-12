@@ -80,4 +80,21 @@ class PreferencesService {
   int getPendingUpdateCount() {
     return getUpdateHistory().where((e) => e['status'] == 'pending').length;
   }
+
+  // ── Occasion Greetings ──────────────────────────────────────────
+
+  /// Get the last time a specific occasion greeting was shown
+  DateTime? getLastGreetingShowTime(String occasionKey) {
+    final millis = _prefs.getInt('greeting_$occasionKey');
+    if (millis == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(millis);
+  }
+
+  /// Save the timestamp when an occasion greeting was shown
+  Future<void> saveGreetingShowTime(String occasionKey) async {
+    await _prefs.setInt(
+      'greeting_$occasionKey',
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
 }

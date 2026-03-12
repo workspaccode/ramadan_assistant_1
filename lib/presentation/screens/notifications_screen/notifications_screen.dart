@@ -19,11 +19,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   final List<String> _categories = [
     'all',
-    'auto_update',
+    'instant_update',
     'manual_update',
     'maintenance',
     'greeting',
     'exclusive',
+    'adhan',
     'general',
   ];
 
@@ -60,20 +61,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final theme = context.ramadanTheme;
 
     return Scaffold(
+      backgroundColor: theme.background,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           CupertinoSliverNavigationBar(
             backgroundColor: theme.primary.withValues(alpha: 0.9),
             border: null,
-            largeTitle: Text('notifications_title'.tr()),
+            largeTitle: Text(
+              'notifications_title'.tr(),
+              style: const TextStyle(color: Colors.white),
+            ),
             trailing: _history.isNotEmpty
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: () => _showClearConfirmation(context),
                     child: const Icon(
                       CupertinoIcons.trash,
-                      // color: CupertinoColors.white,
+                      color: Colors.white,
                       size: 20,
                     ),
                   )
@@ -88,7 +93,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             SliverFillRemaining(child: _buildEmptyState(context))
           else
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => _buildNotificationCard(
@@ -108,9 +113,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget _buildCategoryFilters() {
     final theme = context.ramadanTheme;
     return SizedBox(
-      height: 55,
+      height: 60,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: _categories.length,
@@ -120,15 +125,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           final isSelected = _selectedCategory == category;
           return GestureDetector(
             onTap: () {
-              setState(() {
-                _selectedCategory = category;
-              });
+              setState(() => _selectedCategory = category);
             },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: isSelected ? theme.primary : theme.cardSurface,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(25),
                 border: Border.all(
                   color: isSelected
                       ? theme.primary
@@ -139,7 +143,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         BoxShadow(
                           color: theme.primary.withValues(alpha: 0.3),
                           blurRadius: 8,
-                          offset: const Offset(0, 2),
+                          offset: const Offset(0, 4),
                         ),
                       ]
                     : null,
@@ -150,7 +154,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.textSecondary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    fontSize: 14,
+                    fontSize: 13,
                   ),
                 ),
               ),
@@ -167,25 +171,35 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.notifications_off_outlined,
-            size: 64,
-            color: theme.textDim,
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.primary.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.notifications_none_rounded,
+              size: 80,
+              color: theme.primary.withValues(alpha: 0.2),
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             'no_notifications'.tr(),
             style: TextStyle(
-              color: theme.textSecondary,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+              color: theme.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'no_notifications_desc'.tr(),
-            style: TextStyle(color: theme.textDim, fontSize: 14),
-            textAlign: TextAlign.center,
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 48),
+            child: Text(
+              'no_notifications_desc'.tr(),
+              style: TextStyle(color: theme.textDim, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -199,9 +213,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   ) {
     final theme = context.ramadanTheme;
     final type = item['type'] ?? 'general';
-    final track = item['track'] ?? 'auto-update';
+    final track = item['track'] ?? 'instant_update';
     final category = item['category'] ?? 'general';
-
     final status = item['status'] ?? 'applied';
     final title = item['title'] ?? 'إشعار جديد';
     final body = item['body'] ?? '';
@@ -209,186 +222,171 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ? DateTime.tryParse(item['timestamp'])
         : null;
 
-    final isManual = type == 'update' && track == 'manual-update';
+    final isManual = type == 'update' && track == 'manual_update';
     final isPending = status == 'pending';
 
     Color categoryColor;
     IconData categoryIcon;
 
     switch (category) {
-      case 'auto_update':
-        categoryColor = Colors.teal;
-        categoryIcon = Icons.autorenew_rounded;
+      case 'instant_update':
+        categoryColor = const Color(0xFF00BFA5);
+        categoryIcon = Icons.bolt_rounded;
         break;
       case 'manual_update':
-        categoryColor = Colors.orange;
-        categoryIcon = Icons.shop;
+        categoryColor = const Color(0xFFFF9100);
+        categoryIcon = Icons.storefront_rounded;
         break;
       case 'maintenance':
-        categoryColor = Colors.redAccent;
-        categoryIcon = Icons.build_circle;
+        categoryColor = const Color(0xFFFF5252);
+        categoryIcon = Icons.settings_suggest_rounded;
         break;
       case 'greeting':
-        categoryColor = Colors.purple;
-        categoryIcon = Icons.celebration;
+        categoryColor = const Color(0xFFE040FB);
+        categoryIcon = Icons.auto_awesome_rounded;
         break;
       case 'exclusive':
-        categoryColor = Colors.amber.shade700;
-        categoryIcon = Icons.workspace_premium;
+        categoryColor = const Color(0xFFFFD600);
+        categoryIcon = Icons.star_rounded;
+        break;
+      case 'adhan':
+        categoryColor = theme.primary;
+        categoryIcon = Icons.mosque_rounded;
         break;
       default:
-        categoryColor = Colors.blue;
-        categoryIcon = Icons.notifications;
+        categoryColor = const Color(0xFF448AFF);
+        categoryIcon = Icons.notifications_active_rounded;
     }
 
-    final statusColor = isPending ? Colors.orange : Colors.green;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: isManual && isPending
-            ? () {
-                final data = item['data'];
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => UpdateScreen(
-                      updateData: data is Map
-                          ? Map<String, dynamic>.from(data)
-                          : null,
-                    ),
-                  ),
-                );
-              }
-            : null,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: theme.cardSurface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isPending
-                  ? theme.warning.withValues(alpha: 0.3)
-                  : theme.borderColor.withValues(alpha: 0.1),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: theme.cardSurface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Header row: category badge + time
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Category badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: categoryColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(categoryIcon, size: 14, color: categoryColor),
-                        const SizedBox(width: 4),
-                        Text(
-                          'category_$category'.tr(),
-                          style: TextStyle(
-                            color: categoryColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+              // Left color accent
+              Container(width: 6, color: categoryColor),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                categoryIcon,
+                                size: 16,
+                                color: categoryColor,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'category_$category'.tr(),
+                                style: TextStyle(
+                                  color: categoryColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Status badge (Only for updates)
-                  if (type == 'update')
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
+                          if (timestamp != null)
+                            Text(
+                              _formatTime(timestamp),
+                              style: TextStyle(
+                                color: theme.textDim,
+                                fontSize: 11,
+                              ),
+                            ),
+                        ],
                       ),
-                      decoration: BoxDecoration(
-                        color: statusColor.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        isPending ? 'في الانتظار' : 'تم التطبيق',
+                      const SizedBox(height: 12),
+                      Text(
+                        title,
                         style: TextStyle(
-                          color: statusColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                          color: theme.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Title
-              Text(
-                title,
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              if (body.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Text(
-                  body,
-                  style: TextStyle(color: theme.textSecondary, fontSize: 14),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-
-              const SizedBox(height: 10),
-
-              // Footer: time + action
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (timestamp != null)
-                    Text(
-                      _formatTime(timestamp),
-                      style: TextStyle(color: theme.textDim, fontSize: 12),
-                    ),
-                  if (isManual && isPending)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'اضغط للتحديث',
-                          style: TextStyle(
-                            color: categoryColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                      const SizedBox(height: 6),
+                      Text(
+                        body,
+                        style: TextStyle(
+                          color: theme.textSecondary.withValues(alpha: 0.9),
+                          fontSize: 14,
+                          height: 1.4,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (isManual && isPending) ...[
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: () {
+                            final data = item['data'];
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UpdateScreen(
+                                  updateData: data is Map
+                                      ? Map<String, dynamic>.from(data)
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: categoryColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'تحديث الآن',
+                                  style: TextStyle(
+                                    color: categoryColor,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 14,
+                                  color: categoryColor,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 12,
-                          color: categoryColor,
-                        ),
                       ],
-                    ),
-                ],
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -400,11 +398,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final diff = now.difference(time);
-
-    if (diff.inMinutes < 1) return 'الآن';
-    if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} دقيقة';
-    if (diff.inHours < 24) return 'منذ ${diff.inHours} ساعة';
-    if (diff.inDays < 7) return 'منذ ${diff.inDays} يوم';
+    if (diff.inMinutes < 1) return 'now'.tr();
+    if (diff.inMinutes < 60) return '${diff.inMinutes} ${'minutes'.tr()}';
+    if (diff.inHours < 24) return '${diff.inHours} ${'hour'.tr()}';
     return '${time.day}/${time.month}/${time.year}';
   }
 
@@ -412,8 +408,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('مسح السجل'),
-        content: const Text('هل تريد مسح جميع الإشعارات؟'),
+        title: Text('reset'.tr()),
+        content: const Text('هل تريد مسح سجل الإشعارات بالكامل؟'),
         actions: [
           CupertinoDialogAction(
             onPressed: () => Navigator.pop(ctx),
@@ -425,7 +421,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               _clearHistory();
               Navigator.pop(ctx);
             },
-            child: const Text('مسح'),
+            child: const Text('مسح السجل'),
           ),
         ],
       ),

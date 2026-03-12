@@ -17,6 +17,8 @@ import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/umrah_guide_state.dart';
 import 'package:ramadan_assistant/presentation/widgets/dua_widget.dart';
+import 'package:ramadan_assistant/presentation/widgets/dua_bottom_sheet.dart';
+import 'package:ramadan_assistant/data/models/dua_model.dart' as dm;
 import 'package:vibration/vibration.dart';
 
 class UmrahGuideView extends StatefulWidget {
@@ -770,6 +772,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               color: theme.secondary,
               duas: UmrahDuas.tawafSaiDuas,
             ),
+            const SizedBox(height: 24),
+            _buildBrowseDuasButton(),
+          ],
+
+          if (step.step == 'step_tawaf' || step.step == 'step_sai') ...[
+            const SizedBox(height: 24),
+            _buildBrowseDuasButton(initialCategory: step.step == 'step_tawaf' ? 'أذكار ثابتة في الطواف' : null),
           ],
 
           // Other single-dua steps (e.g. Halaq)
@@ -938,7 +947,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     required IconData icon,
     required String title,
     required Color color,
-    required List<UmrahDua> duas,
+    required List<dm.Dua> duas,
   }) {
     final theme = context.ramadanTheme;
     final categories = duas.map((e) => e.category).toSet().toList();
@@ -969,7 +978,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               Padding(
                 padding: const EdgeInsets.only(top: 12, bottom: 8),
                 child: Text(
-                  cat ?? '',
+                  cat,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -1437,7 +1446,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
   void _showSaiRoundSheet(
     BuildContext context,
     int roundIndex,
-    List<UmrahDua> roundDuas,
+    List<dm.Dua> roundDuas,
     String roundName,
     UmrahGuideLoaded state,
   ) {
@@ -1952,7 +1961,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
   void _showTawafRoundSheet(
     BuildContext context,
     int roundIndex,
-    List<UmrahDua> duas,
+    List<dm.Dua> duas,
     String roundName,
     UmrahGuideLoaded state,
   ) {
@@ -2078,26 +2087,25 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (dua.category != null)
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.primary.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                dua.category!,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.primary,
-                                ),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.primary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              dua.category,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: theme.primary,
                               ),
                             ),
+                          ),
                           DuaWidget(
                             arabicText: dua.arabic,
                             translation: dua.translation ?? '',
@@ -2287,6 +2295,71 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       default:
         return '';
     }
+  }
+
+  Widget _buildBrowseDuasButton({String? initialCategory}) {
+    final theme = context.ramadanTheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: InkWell(
+        onTap: () => DuaBottomSheet.show(context, initialCategory: initialCategory ?? 'عمرة'),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [theme.primary, theme.secondary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: theme.primary.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.menu_book_rounded, color: Colors.white),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'comprehensive_duas'.tr(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'browse_100_duas'.tr(),
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   String _getDuaTranslation(String? step) {

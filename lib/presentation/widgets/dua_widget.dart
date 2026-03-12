@@ -49,8 +49,6 @@ class _DuaContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
-    final secondaryColor = Theme.of(context).colorScheme.secondary;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),

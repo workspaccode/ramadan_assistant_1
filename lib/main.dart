@@ -12,6 +12,7 @@ import 'package:ramadan_assistant/core/services/fcm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
+import 'package:ramadan_assistant/core/services/dua_service.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
@@ -31,6 +32,7 @@ import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 import 'package:tafsir_library/tafsir_library.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +59,7 @@ void main() async {
   }
 
   // Initialize Services
+  await sl<DuaService>().init();
   await NotificationService.initialize();
 
   // Initialize Adhan Alarm Service (full-length Adhan audio)
@@ -209,6 +212,149 @@ class MyApp extends StatelessWidget {
                 },
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Overlay Entry Point ──────────────────────────────────────────
+
+@pragma("vm:entry-point")
+void overlayMain() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: const AzanOverlayWidget(),
+    ),
+  );
+}
+
+class AzanOverlayWidget extends StatefulWidget {
+  const AzanOverlayWidget({super.key});
+
+  @override
+  State<AzanOverlayWidget> createState() => _AzanOverlayWidgetState();
+}
+
+class _AzanOverlayWidgetState extends State<AzanOverlayWidget> {
+  Map<String, dynamic>? _data;
+
+  @override
+  void initState() {
+    super.initState();
+    FlutterOverlayWindow.overlayListener.listen((event) {
+      if (event is Map) {
+        setState(() {
+          _data = Map<String, dynamic>.from(event);
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final title = _data?['title'] ?? 'حان وقت الأذان';
+    final body = _data?['body'] ?? 'أشهد أن لا إله إلا الله';
+    final prayer = _data?['prayer'] ?? '';
+
+    return Material(
+      color: Colors.transparent,
+      child: Center(
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: Colors.white10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 30,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.mosque_rounded, color: Colors.white, size: 32),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (prayer.isNotEmpty)
+                            Text(
+                              'صلاة $prayer',
+                              style: const TextStyle(color: Colors.white70, fontSize: 13),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(28),
+                child: Column(
+                  children: [
+                    Text(
+                      body,
+                      style: const TextStyle(color: Colors.white, fontSize: 17, height: 1.5),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => FlutterOverlayWindow.closeOverlay(),
+                            child: const Text('تجاهل', style: TextStyle(color: Colors.white38)),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF2E7D32),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: () => FlutterOverlayWindow.closeOverlay(),
+                            child: const Text('تم', style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

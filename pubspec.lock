@@ -73,14 +73,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
-  audio_session:
-    dependency: transitive
-    description:
-      name: audio_session
-      sha256: "8f96a7fecbb718cb093070f868b4cdcb8a9b1053dce342ff8ab2fde10eb9afb7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.2"
   audioplayers:
     dependency: "direct main"
     description:
@@ -603,14 +595,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.2.2"
-  flutter_screenutil:
+  flutter_overlay_window:
     dependency: "direct main"
     description:
-      name: flutter_screenutil
-      sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
+      name: flutter_overlay_window
+      sha256: "87a8ed7c47104a9ac1352d081e85304934b3f06ae28507097e49dd5f892e208d"
       url: "https://pub.dev"
     source: hosted
-    version: "5.9.3"
+    version: "0.4.5"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -861,14 +853,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  islamic_utils:
-    dependency: "direct main"
-    description:
-      name: islamic_utils
-      sha256: c70f6a8bf5c9f10cf0a71f562a368e98ea00d5b5a279588def21e8425900e006
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   json_annotation:
     dependency: transitive
     description:
@@ -877,30 +861,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.11.0"
-  just_audio:
-    dependency: "direct main"
-    description:
-      name: just_audio
-      sha256: "9694e4734f515f2a052493d1d7e0d6de219ee0427c7c29492e246ff32a219908"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.10.5"
-  just_audio_platform_interface:
-    dependency: transitive
-    description:
-      name: just_audio_platform_interface
-      sha256: "2532c8d6702528824445921c5ff10548b518b13f808c2e34c2fd54793b999a6a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.6.0"
-  just_audio_web:
-    dependency: transitive
-    description:
-      name: just_audio_web
-      sha256: "6ba8a2a7e87d57d32f0f7b42856ade3d6a9fbe0f1a11fabae0a4f00bb73f0663"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.16"
   latlong2:
     dependency: "direct main"
     description:
@@ -1013,14 +973,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  motor:
-    dependency: transitive
-    description:
-      name: motor
-      sha256: cbd49f21b00e568c2b1a55f134ed803614a107782f4fea7769693bca32940c58
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   native_toolchain_c:
     dependency: transitive
     description:
@@ -1285,14 +1237,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
-  scroll_drag_detector:
-    dependency: transitive
-    description:
-      name: scroll_drag_detector
-      sha256: "287f56dd01c96aeb083b7619cc17eaae9a94df2066f9f4a921d09537dbb2b876"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0+2"
   sensors_plus:
     dependency: "direct main"
     description:
@@ -1397,14 +1341,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  shimmer:
-    dependency: "direct main"
-    description:
-      name: shimmer
-      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   shorebird_code_push:
     dependency: "direct main"
     description:
@@ -1506,14 +1442,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
-  stupid_simple_sheet:
-    dependency: "direct main"
-    description:
-      name: stupid_simple_sheet
-      sha256: "53512ac8cd8b63a179d37b76f243a28485c5f551e428df1a049a794abb0bf204"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.1"
   synchronized:
     dependency: transitive
     description:

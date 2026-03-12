@@ -12,6 +12,7 @@ import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
+import 'package:ramadan_assistant/presentation/screens/settings_screen/alerts_settings_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_dialogs.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
@@ -340,6 +341,21 @@ class SettingsScreenContent extends StatelessWidget {
           state.notificationsEnabled,
           (val) =>
               context.read<SettingsScreenBloc>().add(ToggleNotifications(val)),
+        ),
+        CupertinoListTile(
+          title: Text('manage_alerts'.tr()),
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+          onTap: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: context.read<SettingsScreenBloc>(),
+                  child: const AlertsSettingsScreen(),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );

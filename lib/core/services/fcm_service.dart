@@ -23,7 +23,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
     String category = data['category'] ?? 'general';
     if (type == 'update') {
-      category = track == 'manual-update' ? 'manual_update' : 'auto_update';
+      category = track == 'manual-update' ? 'manual_update' : 'instant_update';
     }
 
     final historyEntry = {
@@ -116,7 +116,7 @@ class FcmService {
 
     String category = data['category'] ?? 'general';
     if (type == 'update') {
-      category = track == 'manual-update' ? 'manual_update' : 'auto_update';
+      category = track == 'manual-update' ? 'manual_update' : 'instant_update';
     }
 
     // Save to history

@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 2.0.5
+version: 2.0.6
 
 environment:
   sdk: ^3.10.7
@@ -55,7 +55,7 @@ dependencies:
   # Text-to-Speech & Audio
   flutter_tts: ^4.2.5
   audioplayers: ^6.6.0
-  just_audio: ^0.10.5
+
 
   # Location & Permissions
   geolocator: ^14.0.2
@@ -75,16 +75,15 @@ dependencies:
   shared_preferences: ^2.5.4
   sensors_plus: ^7.0.0
   url_launcher: ^6.3.2
-  islamic_utils: ^1.0.0
-  shimmer: ^3.0.0
+
   easy_localization: ^3.0.8
-  stupid_simple_sheet: ^0.9.1
+
   shorebird_code_push: ^2.0.5
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
   table_calendar: ^3.2.0
   fl_chart: ^1.1.1
-  flutter_screenutil: ^5.9.3
+
   flutter_dynamic_icon_plus: ^1.4.0
   firebase_remote_config: ^6.2.0
   firebase_core: ^4.5.0
@@ -94,6 +93,7 @@ dependencies:
   quran: ^1.4.1
   tafsir_library: ^1.0.1
   alarm: ^5.2.1
+  flutter_overlay_window: ^0.4.4
 
 dev_dependencies:
   flutter_test:
@@ -140,6 +140,7 @@ flutter:
     - assets/image/tawaf_round_icon.png
     - assets/animations/
     - assets/audio/
+    - assets/data/
     - shorebird.yaml
 
   # An image asset can refer to one or more resolution-specific "variants", see

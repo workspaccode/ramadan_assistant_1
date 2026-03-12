@@ -26,6 +26,8 @@ import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_blo
 import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
 import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/falling_fanous_overlay.dart';
+import 'package:ramadan_assistant/core/services/occasion_service.dart';
+import 'package:ramadan_assistant/presentation/widgets/occasion_greeting_dialog.dart';
 import 'package:vibration/vibration.dart';
 
 class MainScreenContent extends StatefulWidget {
@@ -40,6 +42,35 @@ class _MainScreenContentState extends State<MainScreenContent> {
   void initState() {
     super.initState();
     _requestAllPermissions();
+    _checkOccasions();
+  }
+
+  Future<void> _checkOccasions() async {
+    try {
+      final prefs = await PreferencesService.getInstance();
+      final occasionService = OccasionService(prefs);
+      final activeOccasion = occasionService.getActiveOccasion();
+
+      if (activeOccasion != null) {
+        if (occasionService.shouldShowGreeting(activeOccasion)) {
+          if (mounted) {
+            // Need a slight delay to ensure context is ready for dialog
+             Future.delayed(const Duration(seconds: 1), () {
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => OccasionGreetingDialog(occasion: activeOccasion),
+                );
+                occasionService.markGreetingAsShown(activeOccasion);
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking occasions: $e');
+    }
   }
 
   Future<void> _requestAllPermissions() async {
@@ -50,7 +81,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
       }
       await NotificationService.requestPermissions();
     } catch (e) {
-      print(e.toString());
+      debugPrint('Error loading update details: $e');
       await openAppSettings();
     }
   }

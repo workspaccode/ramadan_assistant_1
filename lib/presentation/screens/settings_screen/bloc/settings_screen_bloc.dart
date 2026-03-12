@@ -36,6 +36,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
   final String? city;
   final String appIcon;
   final bool notificationsEnabled;
+  final bool adhanEnabled;
+  final bool iqamaEnabled;
+  final bool dhikrEnabled;
   final int hijriAdjustment;
 
   const SettingsScreenLoaded({
@@ -54,6 +57,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     this.city,
     required this.appIcon,
     required this.notificationsEnabled,
+    required this.adhanEnabled,
+    required this.iqamaEnabled,
+    required this.dhikrEnabled,
     required this.hijriAdjustment,
   });
 
@@ -73,6 +79,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     String? city,
     String? appIcon,
     bool? notificationsEnabled,
+    bool? adhanEnabled,
+    bool? iqamaEnabled,
+    bool? dhikrEnabled,
     int? hijriAdjustment,
   }) {
     return SettingsScreenLoaded(
@@ -91,6 +100,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
       city: city ?? this.city,
       appIcon: appIcon ?? this.appIcon,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      adhanEnabled: adhanEnabled ?? this.adhanEnabled,
+      iqamaEnabled: iqamaEnabled ?? this.iqamaEnabled,
+      dhikrEnabled: dhikrEnabled ?? this.dhikrEnabled,
       hijriAdjustment: hijriAdjustment ?? this.hijriAdjustment,
     );
   }
@@ -112,6 +124,9 @@ class SettingsScreenLoaded extends SettingsScreenState {
     city,
     appIcon,
     notificationsEnabled,
+    adhanEnabled,
+    iqamaEnabled,
+    dhikrEnabled,
     hijriAdjustment,
   ];
 }
@@ -222,6 +237,27 @@ class UpdateHijriAdjustment extends SettingsScreenEvent {
   List<Object?> get props => [adjustment];
 }
 
+class ToggleAdhanSetting extends SettingsScreenEvent {
+  final bool enabled;
+  const ToggleAdhanSetting(this.enabled);
+  @override
+  List<Object?> get props => [enabled];
+}
+
+class ToggleIqamaSetting extends SettingsScreenEvent {
+  final bool enabled;
+  const ToggleIqamaSetting(this.enabled);
+  @override
+  List<Object?> get props => [enabled];
+}
+
+class ToggleDhikrSetting extends SettingsScreenEvent {
+  final bool enabled;
+  const ToggleDhikrSetting(this.enabled);
+  @override
+  List<Object?> get props => [enabled];
+}
+
 class CheckForUpdates extends SettingsScreenEvent {}
 
 class ResetAllData extends SettingsScreenEvent {}
@@ -241,6 +277,9 @@ class SettingsScreenBloc
   static const String _keyColorPalette = 'color_palette_id';
   static const String _keyAppIcon = 'app_icon_name';
   static const String _keyNotificationsEnabled = 'notifications_enabled';
+  static const String _keyAdhanEnabled = 'adhan_enabled';
+  static const String _keyIqamaEnabled = 'iqama_enabled';
+  static const String _keyDhikrEnabled = 'dhikr_enabled';
   static const String _keyHijriAdjustment = 'hijri_adjustment';
 
   final LocationService _locationService;
@@ -260,6 +299,9 @@ class SettingsScreenBloc
     on<RefreshLocation>(_onRefreshLocation);
     on<UpdateAppIcon>(_onUpdateAppIcon);
     on<ToggleNotifications>(_onToggleNotifications);
+    on<ToggleAdhanSetting>(_onToggleAdhanSetting);
+    on<ToggleIqamaSetting>(_onToggleIqamaSetting);
+    on<ToggleDhikrSetting>(_onToggleDhikrSetting);
     on<UpdateHijriAdjustment>(_onUpdateHijriAdjustment);
     on<CheckForUpdates>(_onCheckForUpdates);
     on<ResetAllData>(_onResetAllData);
@@ -299,6 +341,9 @@ class SettingsScreenBloc
           city: prefs.getString('current_city'),
           appIcon: prefs.getString(_keyAppIcon) ?? 'default',
           notificationsEnabled: prefs.getBool(_keyNotificationsEnabled) ?? true,
+          adhanEnabled: prefs.getBool(_keyAdhanEnabled) ?? true,
+          iqamaEnabled: prefs.getBool(_keyIqamaEnabled) ?? true,
+          dhikrEnabled: prefs.getBool(_keyDhikrEnabled) ?? true,
           hijriAdjustment: prefs.getInt(_keyHijriAdjustment) ?? 0,
         ),
       );
@@ -528,6 +573,39 @@ class SettingsScreenBloc
           notificationsEnabled: event.enabled,
         ),
       );
+    }
+  }
+
+  Future<void> _onToggleAdhanSetting(
+    ToggleAdhanSetting event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_keyAdhanEnabled, event.enabled);
+      emit((state as SettingsScreenLoaded).copyWith(adhanEnabled: event.enabled));
+    }
+  }
+
+  Future<void> _onToggleIqamaSetting(
+    ToggleIqamaSetting event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_keyIqamaEnabled, event.enabled);
+      emit((state as SettingsScreenLoaded).copyWith(iqamaEnabled: event.enabled));
+    }
+  }
+
+  Future<void> _onToggleDhikrSetting(
+    ToggleDhikrSetting event,
+    Emitter<SettingsScreenState> emit,
+  ) async {
+    if (state is SettingsScreenLoaded) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_keyDhikrEnabled, event.enabled);
+      emit((state as SettingsScreenLoaded).copyWith(dhikrEnabled: event.enabled));
     }
   }
 

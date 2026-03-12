@@ -1,354 +1,34 @@
-class UmrahDua {
-  final String arabic;
-  final String? translation;
-  final String? category;
-  final String? source;
-
-  UmrahDua({
-    required this.arabic,
-    this.translation,
-    this.category,
-    this.source,
-  });
-}
+import 'package:ramadan_assistant/core/di/service_locator.dart';
+import 'package:ramadan_assistant/core/services/dua_service.dart';
+import 'package:ramadan_assistant/data/models/dua_model.dart';
 
 class UmrahDuas {
-  static final UmrahDua ishtirat = UmrahDua(
-    arabic: 'اللهمَّ مَحِلِّي حَيْثُ حَبَسْتَنِي',
-    translation:
-        'O Allah, my place of [completion/exit from Ihram] shall be wherever You hold me back.',
-  );
+  static final DuaService _duaService = sl<DuaService>();
 
-  static final String ishtiratFull =
-      'لبيك اللهم عمرة، فإن حَبَسَنِي حابسٌ فَمَحِلِّي حَيْثُ حَبَسْتَنِي';
+  static Dua get ishtirat => _duaService.allDuas.firstWhere(
+        (d) => d.category == 'إحرام' && d.arabic.contains('مَحِلِّي'),
+        orElse: () => const Dua(
+          category: 'إحرام',
+          arabic: 'اللَّهُمَّ مَحِلِّي حَيْثُ حَبَسْتَنِي',
+          translation: 'O Allah, my place of leaving Ihram is where You have held me back.',
+        ),
+      );
 
-  static final String ishtiratInfo =
-      "هذا الدعاء يُسمى 'دعاء الاشتراط'، وهو مهم جدًا لمن يخشى ألا يستطيع إكمال العمرة لسبب طارئ (مثل مرض، تعب مفاجئ، أو أي ظرف يمنعه). إذا قلت هذا الدعاء ومنعك مانع، يجوز لك أن تخلع الإحرام وتعود لحياتك الطبيعية دون أن يكون عليك أي فدية (ذبح هدي).";
+  static const String ishtiratFull =
+      'اللَّهُمَّ إِنِّي أُرِيدُ الْعُمْرَةَ فَيَسِّرْهَا لِي وَتَقَبَّلْهَا مِنِّي، نَوَيْتُ الْعُمْرَةَ وَأَحْرَمْتُ بِهَا لِلَّهِ تَعَالَى، فَإِنْ حَبَسَنِي حَابِسٌ فَمَحِلِّي حَيْثُ حَبَسْتَنِي';
 
-  // static final List<UmrahDua> saiDuas = [
-  //   // أدعية الرزق
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم رب السماوات السبع ورب العرش العظيم، ربنا ورب كل شيء، فالق الحب والنوى، ومنزل التوراة والإنجيل والفرقان، أعوذ بك من شر كل شيء أنت آخذ بناصيته، اللهم أنت الأول فليس قبلك شيء، وأنت الآخر فليس بعدك شيء، وأنت الظاهر فليس فوقك شيء، وأنت الباطن فليس دونك شيء، اقض عنا الدين وأغننا من الفقر',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم مالك الملك، تؤتي الملك من تشاء، وتنزع الملك ممن تشاء، وتعز من تشاء، وتذل من تشاء، بيدك الخير، إنك على كل شيء قدير، رحمن الدنيا والآخرة ورحيمهما، تعطيهما من تشاء، وتمنع منهما من تشاء، ارحمني رحمة تغنيني بها عن رحمة من سواك',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم إني أسألك من فضلك ورحمتك فإنه لا يملك ذلك إلا أنت، حسبنا سيؤتينا الله من فضله إنا إلى الله راغبون',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم يا رازق السائلين، يا راحم المساكين، ويا ذا القوة المتين، ويا خير الناصرين، يا ولي المؤمنين، يا غياث المستغيثين، إياك نعبد وإياك نستعين، اللهم إني أسألك رزقًا واسعًا طيبًا من رزقك',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم ارزقني رزقًا واسعًا حلالاً طيبًا من غير كد، واستجب دعائي من غير رد، وأعوذ بك من الفقر والدين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic: 'اللهم أغننا بحلالك عن حرامك، وبفضلك عمن سواك',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رزق',
-  //     arabic:
-  //         'اللهم يا كافل العباد وواهب الأرزاق، أرزقني نورًا في القلب، وضياء في الوجه، وعافية في البدن، وسعة في المال والعلم والعمل، ومحبة في قلوب الناس، وحسن الصفات وصلاح الأعمال والنيات',
-  //   ),
+  static const String ishtiratInfo =
+      'هذا الدعاء يُسمى \'دعاء الاشتراط\'، وهو مهم جدًا لمن يخشى ألا يستطيع إكمال العمرة لسبب طارئ (مثل مرض، تعب مفاجئ، أو أي ظرف يمنعه). إذا قلت هذا الدعاء ومنعك مانع، يجوز لك أن تخلع الإحرام وتعود لحياتك الطبيعية دون أن يكون عليك أي فدية (ذبح هدي).';
 
-  //   // أدعية الرحمة والمغفرة
-  //   UmrahDua(
-  //     category: 'رحمة ومغفرة',
-  //     arabic:
-  //         'اللهم انصرنا فإنك خير الناصرين، وافتح لنا فأنت خير الفاتحين، واغفر لنا فإنك خير الغافرين، وارحمنا فإنك خير الراحمين، وارزقنا فإنك خير الرازقين، واهدنا ونجنا من القوم الظالمين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رحمة ومغفرة',
-  //     arabic: 'اللهم ارحمني وارزقني وعافني واهدني',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رحمة ومغفرة',
-  //     arabic: 'اللهم اغفر لي وارحمني، وألحقني بالرفيق الأعلى',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رحمة ومغفرة',
-  //     arabic:
-  //         'لا إله إلا الله الحليم الكريم، سبحان الله رب العرش العظيم، الحمد لله رب العالمين، أسألك موجبات رحمتك، وعزائم مغفرتك، والغنيمة من كل بر، والسلامة من كل إثم، لا تدع لي ذنبًا إلا غفرته، ولا همًا إلا فرجته، ولا حاجة هي لك رضا إلا قضيتها يا أرحم الراحمين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'رحمة ومغفرة',
-  //     arabic:
-  //         'اللهم إنا نسألك أن ترحمنا، وتغفر لنا، وأن تتوب علينا، وتعفو عن خطايانا وذنوبنا',
-  //   ),
+  /// Gets Duas for specific Sai category
+  static List<Dua> get saiDuas => _duaService.getByCategory('سعي');
 
-  //   // أدعية الهداية والثبات
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic: 'اللهم يا مقلب القلوب ثبت قلوبنا على دينك',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic: 'اللهم ثبتنا بالقول الثابت في الحياة الدنيا والآخرة',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic:
-  //         'اللهم هب لنا ثبات الثابتين، وإنابة المخلصين، وخشوع المخبتين، وأعمال الصالحين، ويقين الصادقين، وسعادة المتقين، ودرجات الفائزين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic:
-  //         'اللهم يا ودود يا كريم، يا جبار السموات والأرض، يا هادي القلوب اهد قلوبنا، يا مثبت القلوب ثبت قلوبنا',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic:
-  //         'اللهم إنا نسألك الثبات حتى الممات، اللهم يا مقلب القلوب ثبت قلوبنا على دينك حتى نلقاك، واصرفنا إلى طاعتك، واقبضنا إليك غير مفتونين ولا ضالين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic:
-  //         'اللهم احفظ علينا ديننا، وعقولنا، وأبداننا، ونسألك صحة في إيمان، وإيمانًا في حسن خلق، وصلاحًا يتبعه نجاح وفلاح',
-  //   ),
-  //   UmrahDua(
-  //     category: 'هداية وثبات',
-  //     arabic:
-  //         'اللهم اكفنا بحلالك عن حرامك، وبطاعتك عن معصيتك، وأغننا بفضلك عمن سواك',
-  //   ),
-
-  //   // أدعية القبول والعلم
-  //   UmrahDua(
-  //     category: 'قبول وعلم',
-  //     arabic: 'ربنا تقبل منا إنك أنت السميع العليم',
-  //   ),
-  //   UmrahDua(category: 'قبول وعلم', arabic: 'رب زدني علمًا'),
-  //   UmrahDua(
-  //     category: 'قبول وعلم',
-  //     arabic: 'اللهم إني أسألك علمًا نافعًا، ورزقًا طيبًا، وعملاً متقبلاً',
-  //   ),
-  //   UmrahDua(
-  //     category: 'قبول وعلم',
-  //     arabic: 'اللهم ارزقني علمًا نافعًا ورزقًا واسعًا وشفاء من كل داء وسقم',
-  //   ),
-  //   UmrahDua(
-  //     category: 'قبول وعلم',
-  //     arabic:
-  //         'ربنا تقبل منا وعافنا واعف عنا، وعلى طاعتك وشكرك أعنا، وعلى غيرك لا تكلنا، وعلى الإيمان والإسلام الكامل جميعًا توفنا وأنت راض عنا',
-  //   ),
-  //   UmrahDua(
-  //     category: 'قبول وعلم',
-  //     arabic:
-  //         'اللهم إني أسألك العون والثبات، ووجهت وجهي للذي فطر السماوات والأرض حنيفًا، وما أنا من المشركين',
-  //   ),
-
-  //   // أدعية جامعة شاملة
-  //   UmrahDua(
-  //     category: 'أدعية جامعة',
-  //     arabic: 'اللهم إني أسألك الهدى والتقى والعفاف والغنى',
-  //   ),
-  //   UmrahDua(
-  //     category: 'أدعية جامعة',
-  //     arabic:
-  //         'اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والجبن والبخل، وغلبة الدين وقهر الرجال',
-  //   ),
-  //   UmrahDua(
-  //     category: 'أدعية جامعة',
-  //     arabic:
-  //         'اللهم ارحمني بترك المعاصي أبدًا ما أبقيتني، وارحمني أن أتكلف ما لا يعنيني، وأرزقني حسن النظر فيما يرضيك عني يا أرحم الراحمين',
-  //   ),
-  //   UmrahDua(
-  //     category: 'أدعية جامعة',
-  //     arabic: 'اللهم إني أسألك أن تلهمني رشدي، وأن تقيني شر نفسي',
-  //   ),
-  // ];
-
-  /// أدعية السعي مقسمة على 7 أشواط
-  static final List<UmrahDua> saiDuas = [
-    // الشوط الأول (من الصفا إلى المروة)
-    UmrahDua(
-      category: 'الشوط الأول',
-      arabic:
-          'اللهم اجعل سعيي مشكورًا، وذنبي مغفورًا، وعملي مقبولًا، وتجارتي لن تبور',
-    ),
-    UmrahDua(
-      category: 'الشوط الأول',
-      arabic:
-          'اللهم إني أسألك موجبات رحمتك، وعزائم مغفرتك، والسلامة من كل إثم، والغنيمة من كل بر، والفوز بالجنة، والنجاة من النار',
-    ),
-
-    // الشوط الثاني (من المروة إلى الصفا)
-    UmrahDua(
-      category: 'الشوط الثاني',
-      arabic:
-          'اللهم إني أعوذ بك من الشك والشرك والشقاق والنفاق وسوء الأخلاق وسوء المنظر والمنقلب في المال والأهل والولد',
-    ),
-    UmrahDua(
-      category: 'الشوط الثاني',
-      arabic:
-          'اللهم حبب إليّ الإيمان وزينه في قلبي، وكره إليّ الكفر والفسوق والعصيان، واجعلني من الراشدين',
-    ),
-
-    // الشوط الثالث (من الصفا إلى المروة)
-    UmrahDua(
-      category: 'الشوط الثالث',
-      arabic:
-          'اللهم اغفر وارحم، واعف وتكرم، وتجاوز عما تعلم، إنك أنت الأعز الأكرم',
-    ),
-    UmrahDua(
-      category: 'الشوط الثالث',
-      arabic: 'اللهم آتنا في الدنيا حسنة، وفي الآخرة حسنة، وقنا عذاب النار',
-    ),
-
-    // الشوط الرابع (من المروة إلى الصفا)
-    UmrahDua(
-      category: 'الشوط الرابع',
-      arabic:
-          'اللهم إني أسألك الهدى والتقى والعفاف والغنى، اللهم أعني على ذكرك وشكرك وحسن عبادتك',
-    ),
-    UmrahDua(
-      category: 'الشوط الرابع',
-      arabic:
-          'ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب',
-    ),
-
-    // الشوط الخامس (من الصفا إلى المروة)
-    UmrahDua(
-      category: 'الشوط الخامس',
-      arabic:
-          'اللهم افتح لي أبواب رحمتك، وارزقني من فضلك، واكفني بحلالك عن حرامك، وبطاعتك عن معصيتك، وبفضلك عمن سواك',
-    ),
-    UmrahDua(
-      category: 'الشوط الخامس',
-      arabic:
-          'اللهم طهر قلبي من النفاق، وعملي من الرياء، ولساني من الكذب، وعيني من الخيانة، فإنك تعلم خائنة الأعين وما تخفي الصدور',
-    ),
-
-    // الشوط السادس (من المروة إلى الصفا)
-    UmrahDua(
-      category: 'الشوط السادس',
-      arabic: 'اللهم إني أسألك رضوانك والجنة، وأعوذ بك من سخطك والنار',
-    ),
-    UmrahDua(
-      category: 'الشوط السادس',
-      arabic:
-          'اللهم أصلح لي ديني الذي هو عصمة أمري، وأصلح لي دنياي التي فيها معاشي، وأصلح لي آخرتي التي إليها معادي، واجعل الحياة زيادة لي في كل خير، والموت راحة لي من كل شر',
-    ),
-
-    // الشوط السابع (من الصفا إلى المروة)
-    UmrahDua(
-      category: 'الشوط السابع',
-      arabic:
-          'اللهم هذا سعيي قد تم، فتقبله مني، واغفر لي ذنبي، وارحمني إنك أنت الغفور الرحيم',
-    ),
-    UmrahDua(
-      category: 'الشوط السابع',
-      arabic:
-          'اللهم اختم بالصالحات أعمالنا، وثبتنا على الإيمان، واجعل آخر كلامنا من الدنيا لا إله إلا الله، محمد رسول الله',
-    ),
-  ];
-
-  /// الأدعية الثابتة في الطواف والسعي (مأثورة وصحيحة)
-  static final List<UmrahDua> tawafSaiDuas = [
-    // أذكار ثابتة في الطواف
-    UmrahDua(
-      category: 'أذكار ثابتة في الطواف',
-      arabic:
-          'بسم الله، اللهُ أكبر، اللهم إيماناً بك وتصديقاً بكتابك، ووفاءً بعهدك، واتباعاً لسنة نبيك محمد ﷺ',
-      source: 'عند الحجر الأسود - بداية كل شوط',
-    ),
-    UmrahDua(
-      category: 'أذكار ثابتة في الطواف',
-      arabic: 'ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار',
-      source: 'بين الركن اليماني والحجر الأسود - ثابت صحيح',
-    ),
-    UmrahDua(
-      category: 'أذكار ثابتة في الطواف',
-      arabic: 'اللهم اغفر وارحم، واعف عما تعلم، وأنت الأعز الأكرم',
-      source: 'ذكر عام أثناء الطواف - ثابت',
-    ),
-
-    // أدعية مأثورة
-    UmrahDua(
-      category: 'أدعية مأثورة',
-      arabic: 'اللهم إنك عفوٌّ تُحِبُّ العفوَ فاعفُ عني',
-      source: 'صحيح الترمذي - عن عائشة رضي الله عنها',
-    ),
-    UmrahDua(
-      category: 'أدعية مأثورة',
-      arabic: 'اللهم إني أسألك الهدى والتقى والعفاف والغنى',
-      source: 'صحيح مسلم',
-    ),
-    UmrahDua(
-      category: 'أدعية مأثورة',
-      arabic:
-          'اللهم تقبل مني العمرة، واجعلها مبرورة، وسعيي مشكوراً، وذنبي مغفوراً',
-      source: 'دعاء القبول - مأثور',
-    ),
-    UmrahDua(
-      category: 'أدعية مأثورة',
-      arabic:
-          'اللهم تقبل مني طاعتي، وثبّت قلبي على دينك، وأعنّي دائماً على ذكرك، وشكرك، وحسن عبادتك',
-      source: 'دعاء القبول الموسّع - مأثور',
-    ),
-    UmrahDua(
-      category: 'أدعية مأثورة',
-      arabic:
-          'اللهم إني أسألك العفو والعافية في الدنيا والآخرة، اللهم إني أسألك العفو والعافية في ديني ودنياي وأهلي ومالي',
-      source: 'سنن أبي داود',
-    ),
-
-    // أدعية جامعة
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم لك الحمد كله، ولك الملك كله، بيدك الخير كله، إليك يُرجع الأمر كله علانيته وسره، أنت أهل أن تُحمد إنك على كل شيء قدير، اللهم اغفر لي جميع ما مضى من ذنوبي، واعصمني فيما بقي من عمري، وارزقني عملاً زاكياً ترضى به عني',
-      source: 'مسند أحمد - حديث حذيفة',
-    ),
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم إني أسألك الخير كله عاجله وآجله، ما علمت منه وما لم أعلم، وأعوذ بك من الشر كله عاجله وآجله، ما علمت منه وما لم أعلم',
-      source: 'دعاء جامع - مأثور',
-    ),
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم أصلح لي ديني الذي هو عصمة أمري، وأصلح لي دنياي التي فيها معاشي، وأصلح لي آخرتي التي فيها معادي، واجعل الحياة زيادة لي في كل خير، والموت راحة لي من كل شر',
-      source: 'دعاء إصلاح الدنيا والآخرة',
-    ),
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم إني أسألك الجنة وكل ما قرَّب إليها من قول وعمل، وأعوذ بك من النار وكل ما قرَّب إليها من قول وعمل',
-      source: 'دعاء الفوز بالجنة',
-    ),
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم اغفر لي خطيئتي وجهلي، وإسرافي في أمري، وما أنت أعلم به مني، اللهم اغفر لي جِدِّي وهزلي، وخطئي وعمدي، وكل ذلك عندي',
-      source: 'صحيح البخاري',
-    ),
-    UmrahDua(
-      category: 'أدعية جامعة',
-      arabic:
-          'اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت، أعوذ بك من شر ما صنعت، أبوء لك بنعمتك علي وأبوء بذنبي فاغفر لي، فإنه لا يغفر الذنوب إلا أنت',
-      source: 'سيد الاستغفار - صحيح البخاري',
-    ),
-
-    // دعاء الوداع
-    UmrahDua(
-      category: 'دعاء الوداع',
-      arabic:
-          'اللهم ودّاً وتكراراً، لا وداعاً، اللهم لا تجعل هذا آخر عهدي بزيارة بيتك الكريم، وارزقني الحج والعمرة مراتٍ عديدة وأزمنة مديدة',
-      source: 'دعاء وداع البيت - مأثور',
-    ),
-  ];
+  /// Gets Duas for Tawaf/Sai rounds (mabrur/fixed)
+  static List<Dua> get tawafSaiDuas => [
+        ..._duaService.getByCategory('أذكار ثابتة في الطواف'),
+        ..._duaService.getByCategory('أدعية مأثورة'),
+        ..._duaService.getByCategory('أدعية جامعة'),
+      ];
 
   /// Arabic ordinal names for the 7 Tawaf rounds
   static const List<String> tawafRoundNames = [
@@ -362,75 +42,48 @@ class UmrahDuas {
   ];
 
   /// Fixed duas that appear in EVERY round
-  static final List<UmrahDua> _fixedRoundDuas = [
-    UmrahDua(
-      category: 'بداية الشوط',
-      arabic:
-          'بسم الله، اللهُ أكبر، اللهم إيماناً بك وتصديقاً بكتابك، ووفاءً بعهدك، واتباعاً لسنة نبيك محمد ﷺ',
-      source: 'عند الحجر الأسود - بداية كل شوط',
-    ),
-    UmrahDua(
-      category: 'بين الركنين',
-      arabic: 'ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار',
-      source: 'بين الركن اليماني والحجر الأسود - ثابت صحيح',
-    ),
-  ];
+  static List<Dua> get _fixedRoundDuas =>
+      _duaService.getByCategory('أذكار ثابتة في الطواف')
+          .where((d) => d.arabic.contains('إيماناً بك') || d.arabic.contains('حسنة'))
+          .toList();
 
-  /// Distributes the general tawafSaiDuas across 7 rounds.
-  /// Each round gets the 2 fixed duas + 2 unique duas.
-  static List<List<UmrahDua>> get tawafRoundDuas {
-    // Filter out the fixed duas from the main list to avoid duplicates
-    final generalDuas = tawafSaiDuas
-        .where((d) => d.category != 'أذكار ثابتة في الطواف')
-        .toList();
+  /// Gets the full list of Duas for each of the 7 Tawaf rounds
+  static List<List<Dua>> get tawafRoundDuas {
+    final generalDuas = [
+        ..._duaService.getByCategory('أدعية مأثورة'),
+        ..._duaService.getByCategory('أدعية جامعة'),
+    ];
 
     return List.generate(7, (roundIndex) {
-      final roundDuas = <UmrahDua>[..._fixedRoundDuas];
+      final startIndex = (roundIndex * 3) % (generalDuas.isEmpty ? 1 : generalDuas.length);
+      final count = 3;
+      
+      List<Dua> selectedGeneral = [];
+      if (generalDuas.isNotEmpty) {
+        for (int i = 0; i < count; i++) {
+          selectedGeneral.add(generalDuas[(startIndex + i) % generalDuas.length]);
+        }
+      }
 
-      // Assign 2 unique duas per round from the general pool (cycling)
-      final startIdx = (roundIndex * 2) % generalDuas.length;
-      roundDuas.add(generalDuas[startIdx]);
-      roundDuas.add(generalDuas[(startIdx + 1) % generalDuas.length]);
-
-      return roundDuas;
+      return [..._fixedRoundDuas, ...selectedGeneral];
     });
   }
 
-  /// Arabic ordinal names for the 7 Sai rounds
-  static const List<String> saiRoundNames = [
-    'الشوط الأول (إلى المروة)',
-    'الشوط الثاني (إلى الصفا)',
-    'الشوط الثالث (إلى المروة)',
-    'الشوط الرابع (إلى الصفا)',
-    'الشوط الخامس (إلى المروة)',
-    'الشوط السادس (إلى الصفا)',
-    'الشوط السابع (إلى المروة)',
-  ];
+  /// Same for Sai
+  static const List<String> saiRoundNames = tawafRoundNames;
 
   /// Fixed duas that appear in EVERY Sai round
-  static final List<UmrahDua> _fixedSaiRoundDuas = [
-    UmrahDua(
-      category: 'آية السعي',
-      arabic:
-          'إِنَّ الصَّفَا وَالْمَرْوَةَ مِن شَعَائِرِ اللَّهِ ۖ فَمَنْ حَجَّ الْبَيْتَ أَوِ اعْتَمَرَ فَلَا جُنَاحَ عَلَيْهِ أَن يَطَّوَّفَ بِهِمَا ۚ وَمَن تَطَوَّعَ خَيْرًا فَإِنَّ اللَّهَ شَاكِرٌ عَلِيمٌ',
-      source: 'سورة البقرة - 158',
-    ),
-    UmrahDua(
-      category: 'التكبير والتهليل',
-      arabic:
-          'اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَىْءٍ قَدِيرٌ، لاَ إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ الأَحْزَابَ وَحْدَهُ',
-      source: 'صحيح مسلم - يقال عند الوقوف على الصفا والمروة',
-    ),
-  ];
+  static List<Dua> get _fixedSaiRoundDuas => [
+        ..._duaService.getByCategory('آية السعي'),
+        ..._duaService.getByCategory('التكبير والتهليل'),
+      ];
 
   /// Gets the specific duas for a Sai round by its index (0-6).
-  static List<UmrahDua> getSaiRoundDuas(int roundIndex) {
+  static List<Dua> getSaiRoundDuas(int roundIndex) {
     if (roundIndex < 0 || roundIndex > 6) return [];
 
-    final categoryPrefix = tawafRoundNames[roundIndex]; // e.g., 'الشوط الأول'
-    final specificDuas = saiDuas
-        .where((dua) => dua.category?.startsWith(categoryPrefix) == true)
-        .toList();
+    final roundName = tawafRoundNames[roundIndex]; // 'الشوط الأول' etc.
+    final specificDuas = _duaService.getByCategory(roundName);
 
     return [..._fixedSaiRoundDuas, ...specificDuas];
   }

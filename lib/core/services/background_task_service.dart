@@ -124,30 +124,39 @@ Future<void> _scheduleDayPrayerNotifications(
       }
     }
 
-    // Schedule Adhan notification if time hasn't passed
+    // Schedule Adhan alert and notifications if enabled
     if (prayerTime.isAfter(now)) {
-      // 1. Prayer Nearing Reminder (10 mins before)
-      await NotificationService.schedulePrayerNearing(
-        id: prayerId,
-        prayerName: prayerName,
-        prayerTime: prayerTime,
-      );
+      final adhanEnabled = prefs.getBool('adhan_enabled') ?? true;
+      final iqamaEnabled = prefs.getBool('iqama_enabled') ?? true;
+
+      // 1. Prayer Nearing Reminder (10 mins before) - Only if Adhan is enabled
+      if (adhanEnabled) {
+        await NotificationService.schedulePrayerNearing(
+          id: prayerId,
+          prayerName: prayerName,
+          prayerTime: prayerTime,
+        );
+      }
 
       // 2. Adhan Alarm (full-length audio via alarm package)
-      await AdhanAlarmService.scheduleAdhan(
-        id: prayerId,
-        prayerName: prayerName,
-        dateTime: prayerTime,
-        iqamaDelay: delay,
-      );
+      if (adhanEnabled) {
+        await AdhanAlarmService.scheduleAdhan(
+          id: prayerId,
+          prayerName: prayerName,
+          dateTime: prayerTime,
+          iqamaDelay: delay,
+        );
+      }
 
       // 3. Iqama Reminder
-      final iqamaTime = prayerTime.add(Duration(minutes: delay));
-      await NotificationService.scheduleIqamaReminder(
-        id: prayerId + 100, // Offset ID for Iqama
-        prayerName: prayerName,
-        iqamaTime: iqamaTime,
-      );
+      if (iqamaEnabled) {
+        final iqamaTime = prayerTime.add(Duration(minutes: delay));
+        await NotificationService.scheduleIqamaReminder(
+          id: prayerId + 100, // Offset ID for Iqama
+          prayerName: prayerName,
+          iqamaTime: iqamaTime,
+        );
+      }
 
       // 4. Wird Reminder (if plan is pagesPerPrayer)
       final wirdPlanType = prefs.getString('wird_plan_type');

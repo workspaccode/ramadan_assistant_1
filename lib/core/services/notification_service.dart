@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class NotificationService {
   static Future<void> initialize() async {
@@ -103,6 +105,42 @@ class NotificationService {
     });
   }
 
+  /// Save notification to local history in SharedPreferences
+  static Future<void> saveToHistory({
+    required String title,
+    required String body,
+    required String category,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      const String historyKey = 'update_history';
+
+      final historyJson = prefs.getString(historyKey);
+      List<Map<String, dynamic>> history = [];
+      if (historyJson != null && historyJson.isNotEmpty) {
+        final decoded = jsonDecode(historyJson) as List;
+        history = decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+      }
+
+      final entry = {
+        'title': title,
+        'body': body,
+        'category': category,
+        'timestamp': DateTime.now().toIso8601String(),
+        'status': 'applied',
+        'data': data,
+      };
+
+      history.add(entry);
+      if (history.length > 50) history.removeRange(0, history.length - 50);
+
+      await prefs.setString(historyKey, jsonEncode(history));
+    } catch (e) {
+      // Ignore errors in background
+    }
+  }
+
   /// Safe translation fallback for background isolates where EasyLocalization lacks context
   static Future<String> _getTranslation(
     String key, {
@@ -178,6 +216,29 @@ class NotificationService {
         ),
       ],
     );
+
+    // Save to history
+    await saveToHistory(title: title, body: body, category: 'adhan');
+
+    // Show Overlay
+    try {
+      if (await FlutterOverlayWindow.isPermissionGranted()) {
+        await FlutterOverlayWindow.showOverlay(
+          enableDrag: true,
+          flag: OverlayFlag.defaultFlag,
+          alignment: OverlayAlignment.center,
+          height: WindowSize.matchParent,
+          width: WindowSize.matchParent,
+        );
+        await FlutterOverlayWindow.shareData({
+          'title': title,
+          'body': body,
+          'prayer': prayerName,
+        });
+      }
+    } catch (e) {
+      debugPrint('Overlay error: $e');
+    }
   }
 
   /// Schedule prayer notification at specific time
@@ -284,6 +345,9 @@ class NotificationService {
         allowWhileIdle: true,
       ),
     );
+
+    // Save to history
+    await saveToHistory(title: title, body: body, category: 'adhan');
   }
 
   /// Schedule repeating dhikr reminder

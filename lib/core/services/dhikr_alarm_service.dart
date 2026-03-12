@@ -5,6 +5,8 @@ import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/widgets/reminder_alarm_screen.dart';
 
@@ -37,6 +39,9 @@ class DhikrAlarmService {
     Reminder reminder, {
     DateTime? testTime,
   }) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!(prefs.getBool('dhikr_enabled') ?? true)) return;
+
     final now = DateTime.now();
     final scheduledTime =
         testTime ?? now.add(Duration(minutes: reminder.intervalMinutes));
@@ -53,8 +58,7 @@ class DhikrAlarmService {
       id: 1000 + reminder.id, // Custom offset for Dhikr alarms
       dateTime: scheduledTime,
       assetAudioPath: cleanAudioPath,
-      loopAudio:
-          true, // Audio loops until the screen's auto-dismiss timer stops it
+      loopAudio: false, // Audio plays once as requested
       vibrate: true,
       warningNotificationOnKill: Platform.isIOS,
       androidFullScreenIntent: true,
@@ -96,6 +100,32 @@ class DhikrAlarmService {
         fullscreenDialog: true,
       ),
     );
+
+    // Trigger Overlay for extra visibility
+    _showOverlay(alarm);
+  }
+
+  static Future<void> _showOverlay(AlarmSettings settings) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!(prefs.getBool('dhikr_enabled') ?? true)) return;
+
+      await FlutterOverlayWindow.showOverlay(
+        alignment: OverlayAlignment.center,
+        height: 400,
+        width: WindowSize.matchParent,
+        enableDrag: true,
+        flag: OverlayFlag.defaultFlag,
+      );
+
+      // Share notification data with the overlay
+      await FlutterOverlayWindow.shareData({
+        'title': settings.notificationSettings.title,
+        'body': settings.notificationSettings.body,
+      });
+    } catch (e) {
+      debugPrint('Error showing overlay: $e');
+    }
   }
 
   static void markAlarmScreenClosed() {

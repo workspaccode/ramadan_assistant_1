@@ -5,6 +5,8 @@ import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
 
 /// Service for scheduling Adhan alarms using the `alarm` package.
@@ -114,8 +116,39 @@ class AdhanAlarmService {
           fullscreenDialog: true,
         ),
       );
+      
+      // Trigger Overlay
+      _showOverlay(alarm);
     } catch (e) {
       debugPrint('AdhanAlarmService: Error showing AdhanScreen: $e');
+    }
+  }
+
+  static Future<void> _showOverlay(AlarmSettings settings) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final title = settings.notificationSettings.title;
+      final isAdhan = title.contains('موعد صلاة') || title.contains('Adhan');
+      final isIqama = title.contains('إقامة') || title.contains('Iqama');
+      
+      if (isAdhan && !(prefs.getBool('adhan_enabled') ?? true)) return;
+      if (isIqama && !(prefs.getBool('iqama_enabled') ?? true)) return;
+
+      await FlutterOverlayWindow.showOverlay(
+        alignment: OverlayAlignment.center,
+        height: 400,
+        width: WindowSize.matchParent,
+        enableDrag: true,
+        flag: OverlayFlag.defaultFlag,
+      );
+      
+      // Share notification data with the overlay
+      await FlutterOverlayWindow.shareData({
+        'title': settings.notificationSettings.title,
+        'body': settings.notificationSettings.body,
+      });
+    } catch (e) {
+      debugPrint('Error showing overlay: $e');
     }
   }
 
