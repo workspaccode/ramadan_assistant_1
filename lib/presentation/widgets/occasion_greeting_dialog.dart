@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import '../../core/models/islamic_occasion.dart';
-import '../../core/theme/ramadan_theme_extension.dart';
+import 'package:lottie/lottie.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/models/islamic_occasion.dart';
 
 class OccasionGreetingDialog extends StatelessWidget {
   final IslamicOccasion occasion;
@@ -11,117 +12,101 @@ class OccasionGreetingDialog extends StatelessWidget {
     required this.occasion,
   });
 
+  static Future<void> show(BuildContext context, IslamicOccasion occasion) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => OccasionGreetingDialog(occasion: occasion),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final ext = theme.extension<RamadanThemeExtension>();
-    final primaryColor = ext?.primary ?? const Color(0xFF06402B);
-    final accentColor = ext?.accent ?? const Color(0xFFD4AF37);
-
+    final theme = context.ramadanTheme;
+    
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-      child: TweenAnimationBuilder<double>(
-        duration: const Duration(milliseconds: 600),
-        tween: Tween(begin: 0.0, end: 1.0),
-        curve: Curves.easeOutBack,
-        builder: (context, value, child) {
-          return Transform.scale(
-            scale: value,
-            child: Opacity(
-              opacity: value,
-              child: child,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(24, 60, 24, 24),
+            decoration: BoxDecoration(
+              color: theme.background,
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
             ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: ext?.background2 ?? Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: accentColor.withValues(alpha: 0.3), width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Top Pattern/Header
-              Container(
-                height: 120,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  occasion.titleKey.tr(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: theme.primary,
                   ),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
                 ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Decorative patterns could go here
-                    Icon(
-                      Icons.star_rounded,
-                      size: 60,
-                      color: accentColor.withValues(alpha: 0.5),
-                    ),
-                    Icon(
-                      Icons.mosque_rounded,
-                      size: 50,
-                      color: accentColor,
-                    ),
-                  ],
+                const SizedBox(height: 16),
+                Text(
+                  occasion.messageKey.tr(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: theme.textSecondary,
+                    height: 1.5,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              // Content
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    Text(
-                      occasion.titleKey.tr(),
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      occasion.messageKey.tr(),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: ext?.textSecondary,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text('got_it'.tr()),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                    elevation: 0,
+                  ),
+                  child: Text('close'.tr()),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Positioned(
+            top: -50,
+            child: Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                color: theme.primary,
+                shape: BoxShape.circle,
+                border: Border.all(color: theme.background, width: 4),
+              ),
+              child: Center(
+                child: occasion.assetPath != null && occasion.assetPath!.contains('.json')
+                    ? Lottie.asset(occasion.assetPath!, height: 60)
+                    : Icon(
+                        Icons.celebration_rounded,
+                        color: Colors.white,
+                        size: 50,
+                      ),
+              ),
+            ),
+          ),
+          // Confetti or decorative elements could be added here
+        ],
       ),
     );
   }

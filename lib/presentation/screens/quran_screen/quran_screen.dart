@@ -255,7 +255,7 @@ class _QuranScreenState extends State<QuranScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -366,7 +366,7 @@ class _QuranScreenState extends State<QuranScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -432,6 +432,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             onTap: () async {
                               final startPage = await QuranDatabase.instance
                                   .getSurahStartPage(surah.number);
+                              if (!context.mounted) return;
                               Navigator.pop(context);
                               _pageController.jumpToPage(startPage - 1);
                             },
@@ -455,6 +456,7 @@ class _QuranScreenState extends State<QuranScreen> {
                             onTap: () async {
                               final startPage = await QuranDatabase.instance
                                   .getJuzStartPage(juzNum);
+                              if (!context.mounted) return;
                               Navigator.pop(context);
                               _pageController.jumpToPage(startPage - 1);
                             },
@@ -630,7 +632,7 @@ class _QuranScreenState extends State<QuranScreen> {
                               color: theme.cardSurface,
                               border: Border(
                                 bottom: BorderSide(
-                                  color: theme.borderColor.withOpacity(0.1),
+                                  color: theme.borderColor.withValues(alpha: 0.1),
                                 ),
                               ),
                             ),
@@ -688,7 +690,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                     style: isActive
                                         ? TextStyle(
                                             backgroundColor: theme.primary
-                                                .withOpacity(0.2),
+                                                .withValues(alpha: 0.2),
                                             color: theme.primary,
                                           )
                                         : null,
@@ -717,7 +719,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                         text:
                                             ' \uFD3F${_getArabicNumber(verse.number)}\uFD3E ',
                                         style: TextStyle(
-                                          color: theme.primary.withOpacity(0.8),
+                                          color: theme.primary.withValues(alpha: 0.8),
                                           fontSize:
                                               22, // slightly smaller verse brackets
                                         ),

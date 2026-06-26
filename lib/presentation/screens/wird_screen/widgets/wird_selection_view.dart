@@ -114,7 +114,7 @@ class _WirdSelectionViewState extends State<WirdSelectionView> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.primary.withOpacity(0.1)
+              ? theme.primary.withValues(alpha: 0.1)
               : theme.cardSurface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -131,7 +131,7 @@ class _WirdSelectionViewState extends State<WirdSelectionView> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? theme.primary
-                        : theme.textDim.withOpacity(0.1),
+                        : theme.textDim.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

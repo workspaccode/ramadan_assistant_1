@@ -48,8 +48,11 @@ class AdhanAlarmService {
     required DateTime dateTime,
     int iqamaDelay = 10,
   }) async {
-    // Don't schedule if time has already passed
-    if (dateTime.isBefore(DateTime.now())) return;
+    final prefs = await SharedPreferences.getInstance();
+    final adhanEnabled = prefs.getBool('adhan_enabled') ?? true;
+    
+    // Don't schedule if disabled or if time has already passed
+    if (!adhanEnabled || dateTime.isBefore(DateTime.now())) return;
 
     final isFajr = prayerName.toLowerCase() == 'fajr';
     final audioPath = isFajr
@@ -95,6 +98,13 @@ class AdhanAlarmService {
   static Future<void> cancelAll() async {
     await Alarm.stopAll();
     _isAdhanScreenActive = false;
+  }
+
+  /// Cancel specific adhan alarms (id range 1-5)
+  static Future<void> cancelAdhans() async {
+    for (int i = 1; i <= 5; i++) {
+      await Alarm.stop(i);
+    }
   }
 
   /// Called when an alarm starts ringing. Opens the AdhanScreen.

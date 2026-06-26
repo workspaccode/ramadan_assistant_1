@@ -2,7 +2,10 @@ import 'package:adhan_dart/adhan_dart.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final _logger = Logger();
 
 class PrayerData {
   final PrayerTimes prayerTimes;
@@ -31,12 +34,12 @@ class PrayerService {
     final params = _getMethod(method);
     params.madhab = _getMadhab(madhabId ?? 'shafi');
 
-    print('PrayerService: method=$method, methodId=$methodId');
+    _logger.d('PrayerService: method=$method, methodId=$methodId');
 
     // Umm Al-Qura: Add +30 min to Isha during Ramadan
     // Official Umm Al-Qura uses 120 min after Maghrib in Ramadan vs 90 min normally
     final hijri = HijriCalendar.now();
-    print(
+    _logger.d(
       'PrayerService: Hijri date=${hijri.hDay}/${hijri.hMonth}/${hijri.hYear}',
     );
 
@@ -44,14 +47,14 @@ class PrayerService {
       if (hijri.hMonth == 9) {
         // Ramadan
         params.adjustments[Prayer.isha] = 30;
-        print('PrayerService: Applied Ramadan +30 min Isha adjustment');
+        _logger.i('PrayerService: Applied Ramadan +30 min Isha adjustment');
       } else {
-        print(
+        _logger.d(
           'PrayerService: Not Ramadan (hMonth=${hijri.hMonth}), no Isha adjustment',
         );
       }
     } else {
-      print('PrayerService: Not ummAlQura method, no Isha adjustment');
+      _logger.d('PrayerService: Not ummAlQura method, no Isha adjustment');
     }
 
     final date = DateTime.now();
@@ -61,7 +64,7 @@ class PrayerService {
       calculationParameters: params,
     );
 
-    print(
+    _logger.d(
       'PrayerService: Isha=${prayerTimes.isha.toLocal()}, Maghrib=${prayerTimes.maghrib.toLocal()}',
     );
 

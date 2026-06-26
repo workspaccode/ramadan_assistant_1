@@ -126,7 +126,7 @@ class UpdateDetailsDialog extends StatelessWidget {
                       Text(
                         body,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 16,
                           height: 1.5,
                         ),
@@ -259,7 +259,7 @@ class UpdateDetailsDialog extends StatelessWidget {
               width: 6,
               height: 6,
               decoration: BoxDecoration(
-                color: bulletColor.withOpacity(0.8),
+                color: bulletColor.withValues(alpha: 0.8),
                 shape: BoxShape.circle,
               ),
             ),
@@ -267,9 +267,9 @@ class UpdateDetailsDialog extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              text.trim(),
+              text,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 15,
                 height: 1.4,
               ),

@@ -67,6 +67,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       _locationSubscription = locationService.getLocationStream().listen(
         _processLocationUpdate,
         onError: (e) {
+          if (!mounted) return;
           context.read<UmrahGuideBloc>().add(const UpdateAutoTracking(false));
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('error_prefix'.tr(args: [e.toString()]))),
@@ -161,10 +162,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.primary.withOpacity(0.1), width: 2),
+        border: Border.all(color: theme.primary.withValues(alpha: 0.1), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -188,7 +189,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 tileBuilder: (context, tileWidget, tile) {
                   return ColorFiltered(
                     colorFilter: ColorFilter.mode(
-                      theme.primary.withOpacity(0.05),
+                      theme.primary.withValues(alpha: 0.05),
                       BlendMode.srcATop,
                     ),
                     child: tileWidget,
@@ -200,7 +201,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   // Full Path (Background)
                   Polyline(
                     points: [safa, marwa],
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     strokeWidth: 6,
                     strokeCap: StrokeCap.round,
                   ),
@@ -277,11 +278,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                   ),
                 ],
@@ -357,7 +358,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             boxShadow: isTarget
                 ? [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.4),
+                      color: Colors.blue.withValues(alpha: 0.4),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),
@@ -369,7 +370,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -384,7 +385,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
   Widget _buildUserMarker() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.2),
+        color: Colors.blue.withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
       padding: const EdgeInsets.all(6),
@@ -395,7 +396,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           border: Border.all(color: Colors.white, width: 3),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.5),
+              color: Colors.blue.withValues(alpha: 0.5),
               blurRadius: 12,
               spreadRadius: 4,
             ),
@@ -512,7 +513,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.primary.withOpacity(0.2),
+                color: theme.primary.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -588,7 +589,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                           borderRadius: BorderRadius.circular(10),
                           child: LinearProgressIndicator(
                             value: progress,
-                            backgroundColor: Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withValues(alpha: 0.2),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               theme.secondary,
                             ),
@@ -605,7 +606,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -673,7 +674,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: theme.primary.withOpacity(0.1),
+                color: theme.primary.withValues(alpha: 0.1),
               ),
               child: Center(
                 child: (index + 1 >= 3 && index + 1 <= 5)
@@ -827,7 +828,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 ),
                 elevation: 4,
                 shadowColor: (step.completed ? theme.secondary : theme.primary)
-                    .withOpacity(0.4),
+                    .withValues(alpha: 0.4),
               ),
               child: Text(
                 step.completed
@@ -876,7 +877,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: chipColor.withOpacity(0.12),
+        color: chipColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -918,7 +919,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.15)),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -955,7 +956,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.15)),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1055,7 +1056,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               height: 6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: theme.primary.withOpacity(0.6),
+                color: theme.primary.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(width: 10),
@@ -1072,13 +1073,13 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isAutoTracking
-            ? theme.primary.withOpacity(0.08)
-            : theme.cardSurface.withOpacity(0.05),
+            ? theme.primary.withValues(alpha: 0.08)
+            : theme.cardSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isAutoTracking
-              ? theme.primary.withOpacity(0.2)
-              : theme.textDim.withOpacity(0.1),
+              ? theme.primary.withValues(alpha: 0.2)
+              : theme.textDim.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -1112,7 +1113,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           ),
           Switch.adaptive(
             value: isAutoTracking,
-            activeColor: theme.primary,
+            activeTrackColor: theme.primary,
             onChanged: (val) {
               context.read<UmrahGuideBloc>().add(UpdateAutoTracking(val));
               _updateLocationSubscription(val);
@@ -1144,7 +1145,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: theme.primary.withOpacity(0.15),
+                color: theme.primary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -1157,11 +1158,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 'assets/image/safa_marwa_header.png',
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(
-                  color: theme.primary.withOpacity(0.1),
+                  color: theme.primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.mosque_rounded,
                     size: 64,
-                    color: theme.primary.withOpacity(0.3),
+                    color: theme.primary.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -1171,7 +1172,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
                   ),
                 ),
               ),
@@ -1197,10 +1198,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -1226,7 +1227,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
-            color: theme.textDim.withOpacity(0.1),
+            color: theme.textDim.withValues(alpha: 0.1),
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
@@ -1267,23 +1268,23 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? theme.success.withOpacity(0.08)
+                      ? theme.success.withValues(alpha: 0.08)
                       : isActive
-                      ? theme.primary.withOpacity(0.06)
-                      : theme.cardSurface.withOpacity(0.03),
+                      ? theme.primary.withValues(alpha: 0.06)
+                      : theme.cardSurface.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: isCompleted
-                        ? theme.success.withOpacity(0.3)
+                        ? theme.success.withValues(alpha: 0.3)
                         : isActive
-                        ? theme.primary.withOpacity(0.4)
-                        : theme.textDim.withOpacity(0.08),
+                        ? theme.primary.withValues(alpha: 0.4)
+                        : theme.textDim.withValues(alpha: 0.08),
                     width: isActive ? 2 : 1,
                   ),
                   boxShadow: isActive
                       ? [
                           BoxShadow(
-                            color: theme.primary.withOpacity(0.1),
+                            color: theme.primary.withValues(alpha: 0.1),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -1302,11 +1303,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                             ? theme.success
                             : isActive
                             ? theme.primary
-                            : theme.textDim.withOpacity(0.15),
+                            : theme.textDim.withValues(alpha: 0.15),
                         boxShadow: isActive
                             ? [
                                 BoxShadow(
-                                  color: theme.primary.withOpacity(0.3),
+                                  color: theme.primary.withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   spreadRadius: 1,
                                 ),
@@ -1396,7 +1397,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     else if (isPending)
                       Icon(
                         Icons.lock_rounded,
-                        color: theme.textDim.withOpacity(0.5),
+                        color: theme.textDim.withValues(alpha: 0.5),
                         size: 20,
                       ),
                   ],
@@ -1411,9 +1412,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.success.withOpacity(0.12),
+              color: theme.success.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.success.withOpacity(0.3)),
+              border: Border.all(color: theme.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -1486,7 +1487,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   height: 4,
                   margin: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.4),
+                    color: Colors.grey.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -1499,7 +1500,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.primary.withOpacity(0.1),
+                          color: theme.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -1574,7 +1575,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     color: theme.cardSurface,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         offset: const Offset(0, -4),
                         blurRadius: 10,
                       ),
@@ -1673,7 +1674,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: theme.primary.withOpacity(0.15),
+                color: theme.primary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -1686,11 +1687,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 'assets/image/tawaf_header.png',
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(
-                  color: theme.primary.withOpacity(0.1),
+                  color: theme.primary.withValues(alpha: 0.1),
                   child: Icon(
                     Icons.mosque_rounded,
                     size: 64,
-                    color: theme.primary.withOpacity(0.3),
+                    color: theme.primary.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -1700,7 +1701,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
                   ),
                 ),
               ),
@@ -1726,10 +1727,10 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -1755,7 +1756,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
-            color: theme.textDim.withOpacity(0.1),
+            color: theme.textDim.withValues(alpha: 0.1),
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
@@ -1795,23 +1796,23 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? theme.success.withOpacity(0.08)
+                      ? theme.success.withValues(alpha: 0.08)
                       : isActive
-                      ? theme.primary.withOpacity(0.06)
-                      : theme.cardSurface.withOpacity(0.03),
+                      ? theme.primary.withValues(alpha: 0.06)
+                      : theme.cardSurface.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: isCompleted
-                        ? theme.success.withOpacity(0.3)
+                        ? theme.success.withValues(alpha: 0.3)
                         : isActive
-                        ? theme.primary.withOpacity(0.4)
-                        : theme.textDim.withOpacity(0.08),
+                        ? theme.primary.withValues(alpha: 0.4)
+                        : theme.textDim.withValues(alpha: 0.08),
                     width: isActive ? 2 : 1,
                   ),
                   boxShadow: isActive
                       ? [
                           BoxShadow(
-                            color: theme.primary.withOpacity(0.1),
+                            color: theme.primary.withValues(alpha: 0.1),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -1830,11 +1831,11 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                             ? theme.success
                             : isActive
                             ? theme.primary
-                            : theme.textDim.withOpacity(0.15),
+                            : theme.textDim.withValues(alpha: 0.15),
                         boxShadow: isActive
                             ? [
                                 BoxShadow(
-                                  color: theme.primary.withOpacity(0.3),
+                                  color: theme.primary.withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   spreadRadius: 1,
                                 ),
@@ -1905,7 +1906,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: theme.primary.withOpacity(0.1),
+                          color: theme.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -1917,7 +1918,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     else if (isPending)
                       Icon(
                         Icons.lock_outline_rounded,
-                        color: theme.textDim.withOpacity(0.3),
+                        color: theme.textDim.withValues(alpha: 0.3),
                         size: 18,
                       ),
                   ],
@@ -1933,9 +1934,9 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             margin: const EdgeInsets.only(top: 8, bottom: 16),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: theme.success.withOpacity(0.1),
+              color: theme.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: theme.success.withOpacity(0.3)),
+              border: Border.all(color: theme.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -1989,7 +1990,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: theme.textDim.withOpacity(0.3),
+                  color: theme.textDim.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -2162,7 +2163,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         elevation: 4,
-                        shadowColor: theme.primary.withOpacity(0.4),
+                        shadowColor: theme.primary.withValues(alpha: 0.4),
                       ),
                     ),
                   ),
@@ -2181,12 +2182,12 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: value ? theme.success.withOpacity(0.08) : Colors.transparent,
+        color: value ? theme.success.withValues(alpha: 0.08) : Colors.transparent,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: value
-              ? theme.success.withOpacity(0.3)
-              : theme.textDim.withOpacity(0.1),
+              ? theme.success.withValues(alpha: 0.3)
+              : theme.textDim.withValues(alpha: 0.1),
         ),
       ),
       child: Column(
@@ -2225,7 +2226,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: value ? theme.success.withOpacity(0.08) : Colors.transparent,
+        color: value ? theme.success.withValues(alpha: 0.08) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -2315,7 +2316,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: theme.primary.withOpacity(0.3),
+                color: theme.primary.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -2326,7 +2327,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.menu_book_rounded, color: Colors.white),
@@ -2347,7 +2348,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
                     Text(
                       'browse_100_duas'.tr(),
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 12,
                       ),
                     ),
@@ -2404,7 +2405,7 @@ class _UmrahGuideViewState extends State<UmrahGuideView> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: theme.textDim.withOpacity(0.3),
+                color: theme.textDim.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

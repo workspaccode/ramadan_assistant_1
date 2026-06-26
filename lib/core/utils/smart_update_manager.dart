@@ -68,7 +68,9 @@ class SmartUpdateManager {
 
       if (status.isUpdateAvailable && status.isCritical) {
         _logger.w('⚠️ Critical update available! Forcing update...');
-        await _showForceUpdateDialog(context);
+        if (context.mounted) {
+          await _showForceUpdateDialog(context);
+        }
         await _shorebird.update(
           track: shorebird.UpdateTrack(UpdateTrack.criticalUpdate.trackId),
         );
@@ -182,13 +184,14 @@ class SmartUpdateManager {
         final status = await _checkShorebirdUpdate(UpdateTrack.manualUpdate);
 
         if (status.isUpdateAvailable) {
+          if (!context.mounted) return;
           final shouldUpdate = await _showUpdateDialog(
             context,
             metadata: metadata,
             isOptional: metadata.type == UpdateType.optional,
           );
 
-          if (shouldUpdate) {
+          if (shouldUpdate && context.mounted) {
             await _downloadAndShowProgress(context, metadata);
           }
         } else {

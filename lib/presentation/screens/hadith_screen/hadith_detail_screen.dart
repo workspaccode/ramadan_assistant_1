@@ -14,7 +14,7 @@ class HadithDetailScreen extends StatelessWidget {
   void _shareHadith() {
     final text =
         '${hadith.textAr ?? hadith.textEn ?? ''}\n\nالراوي: ${hadith.narrator ?? ''}\nالمصدر: ${hadith.source ?? ''}';
-    Share.share(text);
+    SharePlus.instance.share(ShareParams(text: text));
   }
 
   @override
@@ -28,7 +28,7 @@ class HadithDetailScreen extends StatelessWidget {
             expandedHeight: 100,
             pinned: true,
             elevation: 0,
-            backgroundColor: context.backgroundColor.withOpacity(0.8),
+            backgroundColor: context.backgroundColor.withValues(alpha: 0.8),
             surfaceTintColor: Colors.transparent,
             iconTheme: IconThemeData(color: context.primaryColor),
             flexibleSpace: ClipRect(
@@ -95,7 +95,7 @@ class HadithDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -112,7 +112,7 @@ class HadithDetailScreen extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: context.primaryColor.withOpacity(0.1),
+                            color: context.primaryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -139,7 +139,7 @@ class HadithDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     Divider(
-                      color: context.theme.dividerColor.withOpacity(0.1),
+                      color: context.theme.dividerColor.withValues(alpha: 0.1),
                       thickness: 1,
                     ),
                     const SizedBox(height: 16),
@@ -150,7 +150,7 @@ class HadithDetailScreen extends StatelessWidget {
                           Icon(
                             Icons.person_rounded,
                             size: 20,
-                            color: context.primaryColor.withOpacity(0.7),
+                            color: context.primaryColor.withValues(alpha: 0.7),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -174,7 +174,7 @@ class HadithDetailScreen extends StatelessWidget {
                           Icon(
                             Icons.menu_book_rounded,
                             size: 20,
-                            color: context.primaryColor.withOpacity(0.7),
+                            color: context.primaryColor.withValues(alpha: 0.7),
                           ),
                           const SizedBox(width: 8),
                           Expanded(

@@ -4,10 +4,15 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dynamic_icon_plus/flutter_dynamic_icon_plus.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
+import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
+import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final _logger = Logger();
 
 abstract class SettingsScreenState extends Equatable {
   const SettingsScreenState();
@@ -522,7 +527,7 @@ class SettingsScreenBloc
           );
         }
       } catch (e) {
-        print('Location refresh error: $e');
+        _logger.e('Location refresh error', error: e);
       }
     }
   }
@@ -549,7 +554,7 @@ class SettingsScreenBloc
           );
         }
       } catch (e) {
-        print('Dynamic icon error: $e');
+        _logger.e('Dynamic icon error', error: e);
       }
     }
   }
@@ -584,6 +589,13 @@ class SettingsScreenBloc
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyAdhanEnabled, event.enabled);
       emit((state as SettingsScreenLoaded).copyWith(adhanEnabled: event.enabled));
+      
+      // Re-schedule notifications to apply changes immediately
+      if (!event.enabled) {
+        await AdhanAlarmService.cancelAdhans();
+        await NotificationService.cancelAdhanNotifications();
+      }
+      await BackgroundTaskService.scheduleNotificationsNow();
     }
   }
 
@@ -595,6 +607,12 @@ class SettingsScreenBloc
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyIqamaEnabled, event.enabled);
       emit((state as SettingsScreenLoaded).copyWith(iqamaEnabled: event.enabled));
+      
+      // Re-schedule notifications to apply changes immediately
+      if (!event.enabled) {
+        await NotificationService.cancelIqamaNotifications();
+      }
+      await BackgroundTaskService.scheduleNotificationsNow();
     }
   }
 
@@ -606,6 +624,12 @@ class SettingsScreenBloc
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyDhikrEnabled, event.enabled);
       emit((state as SettingsScreenLoaded).copyWith(dhikrEnabled: event.enabled));
+      
+      // Re-schedule notifications to apply changes immediately
+      if (!event.enabled) {
+        await NotificationService.cancelDhikrNotifications();
+      }
+      await BackgroundTaskService.scheduleNotificationsNow();
     }
   }
 

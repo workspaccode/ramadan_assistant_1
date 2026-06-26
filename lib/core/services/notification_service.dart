@@ -538,6 +538,22 @@ class NotificationService {
     await AwesomeNotifications().cancelAll();
   }
 
+  /// Cancel specific adhan notifications
+  static Future<void> cancelAdhanNotifications() async {
+    await AwesomeNotifications().cancelNotificationsByChannelKey('prayer_times_v2');
+    await AwesomeNotifications().cancelNotificationsByChannelKey('prayer_times_fajr_v2');
+  }
+
+  /// Cancel iqama notifications
+  static Future<void> cancelIqamaNotifications() async {
+    await AwesomeNotifications().cancelNotificationsByChannelKey('iqama_channel');
+  }
+
+  /// Cancel dhikr notifications
+  static Future<void> cancelDhikrNotifications() async {
+    await AwesomeNotifications().cancelNotificationsByChannelKey('reminders');
+  }
+
   /// Show a local notification for app updates (triggered by FCM)
   static Future<void> showUpdateNotification({
     required String title,

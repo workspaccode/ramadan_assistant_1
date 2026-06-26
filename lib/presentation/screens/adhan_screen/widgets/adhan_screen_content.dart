@@ -100,7 +100,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
         if (state is AdhanScreenDhikrCompleted) {
           // Auto-close after dhikr completion with a short delay
           Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) Navigator.pop(context);
+            if (context.mounted) Navigator.pop(context);
           });
         }
       },
@@ -206,7 +206,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                 Text(
                   'adhan_call_to_prayer'.tr(),
                   style: TextStyle(
-                    color: const Color(0xFFD4AF37).withOpacity(0.9),
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.9),
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.5,
@@ -232,7 +232,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                 Text(
                   DateFormat('HH:mm').format(DateTime.now()),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 18,
                     fontWeight: FontWeight.w300,
                     letterSpacing: 3,
@@ -319,7 +319,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                     Text(
                       'post_prayer_adhkar'.tr(),
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -360,7 +360,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                     child: CircularProgressIndicator(
                       value: 1.0,
                       strokeWidth: 4,
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                   // Progress ring
@@ -392,7 +392,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                       Text(
                         '/ ${state.target}',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.4),
+                          color: Colors.white.withValues(alpha: 0.4),
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
                         ),
@@ -410,7 +410,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                 child: Text(
                   'tap_to_tasbih'.tr(),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     fontSize: 14,
                     fontWeight: FontWeight.w300,
                   ),
@@ -452,7 +452,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
             Text(
               'may_allah_accept'.tr(),
               style: TextStyle(
-                color: const Color(0xFFD4AF37).withOpacity(0.9),
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.9),
                 fontSize: 28,
                 fontWeight: FontWeight.w600,
               ),
@@ -461,7 +461,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
             Text(
               'good_deeds'.tr(),
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontSize: 20,
                 fontWeight: FontWeight.w300,
               ),
@@ -498,8 +498,8 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                const Color(0xFFD4AF37).withOpacity(0.15),
-                const Color(0xFFD4AF37).withOpacity(0.05),
+                const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                const Color(0xFFD4AF37).withValues(alpha: 0.05),
                 Colors.transparent,
               ],
               stops: const [0.0, 0.6, 1.0],
@@ -508,7 +508,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
               BoxShadow(
                 color: const Color(
                   0xFFD4AF37,
-                ).withOpacity(_glowAnimation.value * 0.3),
+                ).withValues(alpha: _glowAnimation.value * 0.3),
                 blurRadius: 40,
                 spreadRadius: 10,
               ),
@@ -519,7 +519,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: const Color(0xFFD4AF37).withOpacity(0.6),
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.6),
                 width: 2,
               ),
             ),
@@ -548,7 +548,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                     colors: [
                       const Color(
                         0xFFD4AF37,
-                      ).withOpacity(_glowAnimation.value * 0.08),
+                      ).withValues(alpha: _glowAnimation.value * 0.08),
                       Colors.transparent,
                     ],
                   ),
@@ -567,7 +567,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                     colors: [
                       const Color(
                         0xFF1E8E5C,
-                      ).withOpacity(_glowAnimation.value * 0.1),
+                      ).withValues(alpha: _glowAnimation.value * 0.1),
                       Colors.transparent,
                     ],
                   ),
@@ -601,7 +601,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
               height: starSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(opacity),
+                color: Colors.white.withValues(alpha: opacity),
               ),
             );
           },
@@ -631,12 +631,12 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                   color: isDone
                       ? const Color(0xFFD4AF37)
                       : isActive
-                      ? const Color(0xFFD4AF37).withOpacity(0.8)
-                      : Colors.white.withOpacity(0.2),
+                      ? const Color(0xFFD4AF37).withValues(alpha: 0.8)
+                      : Colors.white.withValues(alpha: 0.2),
                   boxShadow: isActive
                       ? [
                           BoxShadow(
-                            color: const Color(0xFFD4AF37).withOpacity(0.4),
+                            color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
                             blurRadius: 8,
                           ),
                         ]
@@ -648,8 +648,8 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
                 labels[i],
                 style: TextStyle(
                   color: isActive
-                      ? Colors.white.withOpacity(0.7)
-                      : Colors.white.withOpacity(0.3),
+                      ? Colors.white.withValues(alpha: 0.7)
+                      : Colors.white.withValues(alpha: 0.3),
                   fontSize: 11,
                   fontWeight: isActive ? FontWeight.w500 : FontWeight.w300,
                 ),
@@ -673,11 +673,11 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
-          child: Icon(icon, color: Colors.white.withOpacity(0.8), size: 22),
+          child: Icon(icon, color: Colors.white.withValues(alpha: 0.8), size: 22),
         ),
       ),
     );
@@ -703,7 +703,7 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFD4AF37).withOpacity(0.3),
+                color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -743,15 +743,15 @@ class _AdhanScreenContentState extends State<AdhanScreenContent>
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.06),
+            color: Colors.white.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),

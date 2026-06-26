@@ -558,14 +558,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.1"
-  flutter_foreground_task:
-    dependency: "direct main"
-    description:
-      name: flutter_foreground_task
-      sha256: "1903697944a31f596622e51a6af55e3a9dfb27762f9763ab2841184098c6b0ba"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.2.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -599,10 +591,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_overlay_window
-      sha256: "87a8ed7c47104a9ac1352d081e85304934b3f06ae28507097e49dd5f892e208d"
+      sha256: "17988420249da68e421d1b44b511e6113d3de7a9e52c3fbd6d99730508af4580"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.5"
+    version: "0.5.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -937,10 +929,10 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: "12956d0ad8390bbcc63ca2e1469c0619946ccb52809807067a7020d57e647aa6"
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.18"
+    version: "0.12.19"
   material_color_utilities:
     dependency: transitive
     description:
@@ -953,10 +945,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: "1741988757a65eb6b36abe716829688cf01910bbf91c34354ff7ec1c3de2b349"
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.18.0"
   mgrs_dart:
     dependency: transitive
     description:
@@ -1022,7 +1014,7 @@ packages:
     source: hosted
     version: "3.2.1"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -1173,14 +1165,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
-  prayers_times:
-    dependency: "direct main"
-    description:
-      name: prayers_times
-      sha256: dddb63fa5bd10c1c626cb8b0aadf4fd0687b884f26a990fc62065702ac0ca898
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   proj4dart:
     dependency: transitive
     description:
@@ -1213,14 +1197,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  quran:
-    dependency: "direct main"
-    description:
-      name: quran
-      sha256: afee7c882130da65ad3fe225e0f43b958029ebf8f2ddf9d99414e82d8598fcfc
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.1"
   recase:
     dependency: transitive
     description:
@@ -1478,18 +1454,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "93167629bfc610f71560ab9312acdda4959de4df6fac7492c89ff0d3886f6636"
+      sha256: "949a932224383300f01be9221c39180316445ecb8e7547f70a41a35bf421fb9e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.9"
-  timezone:
-    dependency: transitive
-    description:
-      name: timezone
-      sha256: "2236ec079a174ce07434e89fcd3fcda430025eb7692244139a9cf54fdcf1fc7d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.4"
+    version: "0.7.11"
   typed_data:
     dependency: transitive
     description:
@@ -1603,7 +1571,7 @@ packages:
     source: hosted
     version: "1.2.0"
   vector_math:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vector_math
       sha256: d530bd74fea330e6e364cda7a85019c434070188383e1cd8d9777ee586914c5b

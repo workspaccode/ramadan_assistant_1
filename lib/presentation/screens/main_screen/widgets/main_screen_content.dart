@@ -52,7 +52,8 @@ class _MainScreenContentState extends State<MainScreenContent> {
       final activeOccasion = occasionService.getActiveOccasion();
 
       if (activeOccasion != null) {
-        if (occasionService.shouldShowGreeting(activeOccasion)) {
+        final shouldShow = await occasionService.shouldShowGreeting();
+        if (shouldShow) {
           if (mounted) {
             // Need a slight delay to ensure context is ready for dialog
              Future.delayed(const Duration(seconds: 1), () {
@@ -62,9 +63,9 @@ class _MainScreenContentState extends State<MainScreenContent> {
                   barrierDismissible: false,
                   builder: (_) => OccasionGreetingDialog(occasion: activeOccasion),
                 );
-                occasionService.markGreetingAsShown(activeOccasion);
               }
             });
+            occasionService.markGreetingAsShown(activeOccasion);
           }
         }
       }
@@ -529,10 +530,10 @@ class _MainScreenContentState extends State<MainScreenContent> {
         decoration: BoxDecoration(
           color: theme.cardSurface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: theme.borderColor.withOpacity(0.1)),
+          border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -545,7 +546,7 @@ class _MainScreenContentState extends State<MainScreenContent> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 28),

@@ -22,6 +22,12 @@ class IslamicOccasion {
     ),
     IslamicOccasion(
       month: 12, // Dhu al-Hijjah
+      day: 1,
+      titleKey: 'dhu_al_hijjah_title',
+      messageKey: 'dhu_al_hijjah_message',
+    ),
+    IslamicOccasion(
+      month: 12, // Dhu al-Hijjah
       day: 10,
       titleKey: 'eid_al_adha_title',
       messageKey: 'eid_al_adha_message',

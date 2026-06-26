@@ -7,7 +7,7 @@ Future<DateTime?> showIosDateTimePicker(
   DateTime? initialDateTime,
 }) async {
   var temp = initialDateTime ?? DateTime.now();
-  DateTime? result;
+
 
   await showCupertinoModalPopup<void>(
     context: context,
@@ -49,8 +49,7 @@ Future<DateTime?> showIosDateTimePicker(
                       ),
                     ),
                     onPressed: () {
-                      result = temp;
-                      Navigator.pop(context);
+                      Navigator.pop(context, temp);
                     },
                   ),
                 ],
@@ -92,5 +91,5 @@ Future<DateTime?> showIosDateTimePicker(
       );
     },
   );
-  return null;
+  return null; // Should not reach here normally if handled by Navigator.pop
 }

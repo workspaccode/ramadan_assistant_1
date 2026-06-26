@@ -4,7 +4,7 @@ import 'dart:math' show atan2;
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:prayers_times/prayers_times.dart';
+import 'package:adhan_dart/adhan_dart.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vector_math/vector_math.dart' show degrees;
 
@@ -141,13 +141,13 @@ class QiblaScreenBloc extends Bloc<QiblaScreenEvent, QiblaScreenState> {
         return;
       }
 
-      await _initQibla();
+      await _initQibla(emit);
     } catch (e) {
       emit(QiblaScreenError(e.toString()));
     }
   }
 
-  Future<void> _initQibla() async {
+  Future<void> _initQibla(Emitter<QiblaScreenState> emit) async {
     try {
       // 1. Get Location
       Position position;
@@ -164,7 +164,7 @@ class QiblaScreenBloc extends Bloc<QiblaScreenEvent, QiblaScreenState> {
       }
       _lastPosition = position;
 
-      // 2. Calculate Qibla Angle using prayers_times
+      // 2. Calculate Qibla Angle using adhan_dart
       final coordinates = Coordinates(position.latitude, position.longitude);
       _qiblaAngle = Qibla.qibla(coordinates);
 

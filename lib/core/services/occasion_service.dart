@@ -21,13 +21,13 @@ class OccasionService {
 
   /// Determines if the greeting for the given occasion should be shown.
   /// It should be shown at most once every 24 hours during the occasion day.
-  bool shouldShowGreeting(IslamicOccasion occasion) {
-    final lastShown = _prefs.getLastGreetingShowTime(occasion.titleKey);
-    if (lastShown == null) return true;
+  Future<bool> shouldShowGreeting() async {
+    final occasion = getActiveOccasion(); // Changed from getCurrentOccasion to getActiveOccasion
+    if (occasion == null) return false;
 
-    final now = DateTime.now();
-    final difference = now.difference(lastShown);
-    return difference.inHours >= 24;
+    // During holiday (day 1), show every time as requested by user.
+    // We don't save or check the last shown timestamp for the primary occasion day.
+    return true;
   }
 
   /// Marks an occasion greeting as shown.

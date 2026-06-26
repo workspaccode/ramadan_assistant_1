@@ -90,5 +90,6 @@ try {
   // UTF-8 with BOM (Byte Order Mark) is essential for PowerShell 5.1 to read Arabic correctly
   final bytes = [0xEF, 0xBB, 0xBF] + utf8.encode(scriptContent);
   file.writeAsBytesSync(bytes);
+  // ignore: avoid_print
   print('Successfully wrote notify_update.ps1 with UTF-8 BOM');
 }

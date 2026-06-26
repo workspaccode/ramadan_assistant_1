@@ -141,7 +141,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
         border: Border.all(color: theme.borderColor, width: 0.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -153,7 +153,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 20),
@@ -193,7 +193,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
         border: Border.all(color: theme.borderColor, width: 0.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -213,7 +213,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
         },
         calendarStyle: CalendarStyle(
           todayDecoration: BoxDecoration(
-            color: theme.primary.withOpacity(0.3),
+            color: theme.primary.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
           selectedDecoration: BoxDecoration(
@@ -337,7 +337,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.primary.withOpacity(0.1),
+                    color: theme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -458,7 +458,7 @@ class _WirdHistoryViewState extends State<WirdHistoryView> {
               backDrawRodData: BackgroundBarChartRodData(
                 show: true,
                 toY: 20, // Max scale approx
-                color: theme.primary.withOpacity(0.05),
+                color: theme.primary.withValues(alpha: 0.05),
               ),
             ),
           ],

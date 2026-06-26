@@ -71,7 +71,7 @@ class _AudioWaveformWidgetState extends State<AudioWaveformWidget>
               width: 3,
               height: height,
               decoration: BoxDecoration(
-                color: widget.color.withOpacity(widget.isPlaying ? 1.0 : 0.5),
+                color: widget.color.withValues(alpha: widget.isPlaying ? 1.0 : 0.5),
                 borderRadius: BorderRadius.circular(2),
               ),
             );

@@ -28,12 +28,7 @@ class SettingsScreenContent extends StatelessWidget {
 
     return BlocBuilder<SettingsScreenBloc, SettingsScreenState>(
       builder: (context, state) {
-        final backgroundColor = context.isDark
-            ? const Color(0xFF000000)
-            : const Color(0xFFF2F2F7);
-
         return CupertinoPageScaffold(
-          //backgroundColor: backgroundColor,
           child: Container(
             decoration: BoxDecoration(
               gradient: isRamadan
@@ -129,81 +124,7 @@ class SettingsScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildRamadanCard(BuildContext context, bool isRamadan) {
-    if (!isRamadan) {
-      return const SizedBox.shrink();
-    }
-
-    return Card(
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [const Color(0xFF2E7D32), const Color(0xFF4CAF50)],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF2E7D32).withOpacity(0.3),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.nights_stay, color: Colors.white, size: 28),
-                const SizedBox(width: 12),
-                const Text(
-                  'إعدادات رمضان',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Icon(Icons.nights_stay, color: Colors.white, size: 28),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'شهر القرآن والرحمة والمغفرة',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                'َنَصْبٌ فِي خَدِ الْعَدَالَةِ شَهْرُ رَمَضَانَ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildRamadanCard(BuildContext context, bool isRamadan) { ... }
 
   Widget _buildLocationSection(
     BuildContext context,

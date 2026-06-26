@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
@@ -36,6 +39,11 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ إصلاح كراش بدون إنترنت: منع google_fonts من تنزيل الخطوط
+  // الخطوط المخزنة محلياً (cache) ستُستخدم تلقائياً
+  GoogleFonts.config.allowRuntimeFetching = false;
+
   await EasyLocalization.ensureInitialized();
 
   // Initialize Firebase
@@ -43,13 +51,20 @@ void main() async {
 
   await setupServiceLocator();
 
-  // Initialize Smart Update Manager
+  // Initialize Smart Update Manager in background — لا يوقف الـ startup لو الإنترنت مش موجود
   final updateManager = sl<SmartUpdateManager>();
-  await updateManager.initialize();
+  unawaited(updateManager.initialize().catchError((e) {
+    debugPrint('⚠️ SmartUpdateManager init failed (offline?): $e');
+  }));
 
   // Initialize Firebase Cloud Messaging
   await FcmService.initialize();
-  await FcmService.subscribeToTopic('updates');
+  // ✅ إضافة try-catch: subscribeToTopic يحتاج إنترنت
+  try {
+    await FcmService.subscribeToTopic('updates');
+  } catch (e) {
+    debugPrint('⚠️ FCM subscribe failed (offline?): $e');
+  }
 
   // Initialize Tafsir Library
   try {
@@ -221,7 +236,7 @@ class MyApp extends StatelessWidget {
 
 // ─── Overlay Entry Point ──────────────────────────────────────────
 
-@pragma("vm:entry-point")
+@pragma('vm:entry-point')
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(

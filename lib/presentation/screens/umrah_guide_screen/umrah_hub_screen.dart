@@ -6,6 +6,7 @@ import 'package:ramadan_assistant/core/services/umrah_storage_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/data/models/umrah_trip_model.dart';
 import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_guide_screen.dart';
+import 'package:ramadan_assistant/presentation/widgets/duas_bottom_sheet.dart';
 
 class UmrahHubScreen extends StatefulWidget {
   const UmrahHubScreen({super.key});
@@ -119,6 +120,15 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
     ).then((_) => _loadHistory());
   }
 
+  void _showDuasSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const DuasBottomSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -194,6 +204,19 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
                     icon: Icons.location_city_rounded,
                   ),
 
+                  const SizedBox(height: 12),
+
+                  // 100 Duas Card
+                  _buildActionCard(
+                    context,
+                    title: 'browse_100_duas'.tr(),
+                    subtitle: 'comprehensive_duas'.tr(),
+                    icon: Icons.auto_stories_rounded,
+                    color: Colors.amber.shade700,
+                    isActive: false,
+                    onTap: _showDuasSheet,
+                  ),
+
                   const SizedBox(height: 32),
 
                   if (_history.isNotEmpty) ...[
@@ -237,13 +260,13 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isActive
-                ? color.withOpacity(0.5)
-                : theme.textDim.withOpacity(0.1),
+                ? color.withValues(alpha: 0.5)
+                : theme.textDim.withValues(alpha: 0.1),
             width: isActive ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -254,7 +277,7 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 28),
@@ -307,16 +330,16 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.cardSurface.withOpacity(0.6),
+        color: theme.cardSurface.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.textDim.withOpacity(0.1), width: 1),
+        border: Border.all(color: theme.textDim.withValues(alpha: 0.1), width: 1),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.textDim.withOpacity(0.1),
+              color: theme.textDim.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: theme.textDim, size: 28),
@@ -364,7 +387,7 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
       decoration: BoxDecoration(
         color: theme.cardSurface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.textDim.withOpacity(0.1)),
+        border: Border.all(color: theme.textDim.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -372,8 +395,8 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: isCompleted
-                  ? theme.success.withOpacity(0.1)
-                  : theme.primary.withOpacity(0.1),
+                  ? theme.success.withValues(alpha: 0.1)
+                  : theme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -414,8 +437,8 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: isCompleted
-                  ? theme.success.withOpacity(0.1)
-                  : theme.primary.withOpacity(0.1),
+                  ? theme.success.withValues(alpha: 0.1)
+                  : theme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(

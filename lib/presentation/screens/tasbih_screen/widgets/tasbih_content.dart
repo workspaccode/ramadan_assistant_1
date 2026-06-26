@@ -104,47 +104,6 @@ class TasbihView extends StatelessWidget {
     );
   }
 
-  Widget _buildRamadanHeader(BuildContext context, bool isRamadan) {
-    final theme = context.ramadanTheme;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios_new, color: theme.textPrimary),
-              ),
-              Text(
-                'tasbih_title'.tr(),
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(width: 48), // Spacer for balance
-            ],
-          ),
-          if (isRamadan) ...[
-            const SizedBox(height: 8),
-            Text(
-              'وَذَكِرُوا اللَّهَ كَثِيرًا لَعَلَّكُمْ تُفْلِحُونَ',
-              style: TextStyle(
-                color: theme.primary,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Amiri',
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 
   Widget _buildDhikrCard(BuildContext context, TasbihState state) {
     final theme = context.ramadanTheme;

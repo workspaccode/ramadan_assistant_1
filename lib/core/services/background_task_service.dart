@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
@@ -17,8 +17,11 @@ import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/update_details_dialog.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
+
+final _logger = Logger();
 
 /// Callback for background tasks - must be top-level function
 @pragma('vm:entry-point')
@@ -45,7 +48,7 @@ void callbackDispatcher() {
       }
       return true;
     } catch (e) {
-      print('Background Task Error: $e');
+      _logger.e('Background Task Error: $task', error: e);
       return false;
     }
   });
@@ -158,11 +161,12 @@ Future<void> _scheduleDayPrayerNotifications(
         );
       }
 
-      // 4. Wird Reminder (if plan is pagesPerPrayer)
+      // 4. Wird Reminder (if plan is pagesPerPrayer) - Respect Dhikr Enabled setting
+      final dhikrEnabled = prefs.getBool('dhikr_enabled') ?? true;
       final wirdPlanType = prefs.getString('wird_plan_type');
       final wirdPlanValue = prefs.getInt('wird_plan_value');
 
-      if ((wirdPlanType == 'pagesPerPrayer' || wirdPlanType == 'khatma') &&
+      if (dhikrEnabled && (wirdPlanType == 'pagesPerPrayer' || wirdPlanType == 'khatma') &&
           wirdPlanValue != null) {
         // For khatma (1/month), we aim for ~4 pages per prayer (total 21)
         final pagesToRead = wirdPlanType == 'khatma' ? 4 : wirdPlanValue;
@@ -260,7 +264,7 @@ Future<void> _sendIntelligentTasbihReport() async {
 
 class BackgroundTaskService {
   static void initialize() {
-    Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
+    Workmanager().initialize(callbackDispatcher);
   }
 
   static void scheduleDailyUpdate() {
@@ -294,7 +298,7 @@ class BackgroundTaskService {
         prayerService,
       ).timeout(const Duration(minutes: 2));
     } catch (e) {
-      debugPrint('Error scheduling notifications: $e');
+      _logger.e('Error scheduling notifications', error: e);
     }
   }
 
@@ -309,7 +313,7 @@ class BackgroundTaskService {
         await AwesomeNotifications().requestPermissionToSendNotifications();
       }
     } catch (e) {
-      debugPrint('Battery optimization request error: $e');
+      _logger.e('Battery optimization request error', error: e);
     }
   }
 }
@@ -434,7 +438,7 @@ class NotificationActionHandler {
         ),
       );
     } catch (e) {
-      debugPrint('Error showing Adhan screen: $e');
+      _logger.e('Error showing Adhan screen', error: e);
     }
   }
 

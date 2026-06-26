@@ -341,27 +341,22 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
 
       double avg = logs.isNotEmpty ? totalPages / logs.length : 0;
 
-      if (currentPlanState != null) {
-        emit(
-          WirdHistoryLoaded(
-            plan: currentPlanState.plan,
-            completedPages: currentPlanState.completedPages,
-            lastReadPage: currentPlanState.lastReadPage,
-            lastUpdated: currentPlanState.lastUpdated,
-            todayPrayerPages: currentPlanState.todayPrayerPages,
-            selectedDate: currentPlanState.selectedDate,
-            selectedDayPrayerPages: currentPlanState.selectedDayPrayerPages,
-            historyLogs: logs,
-            currentStreak: streak,
-            totalPagesRead: totalPages,
-            averagePagesPerDay: avg,
-            readingDays: readingDays,
-          ),
-        );
-      } else {
-        // Fallback: If we somehow don't have plan state, try to load it or just load progress again
-        add(LoadWirdProgress());
-      }
+      emit(
+        WirdHistoryLoaded(
+          plan: currentPlanState.plan,
+          completedPages: currentPlanState.completedPages,
+          lastReadPage: currentPlanState.lastReadPage,
+          lastUpdated: currentPlanState.lastUpdated,
+          todayPrayerPages: currentPlanState.todayPrayerPages,
+          selectedDate: currentPlanState.selectedDate,
+          selectedDayPrayerPages: currentPlanState.selectedDayPrayerPages,
+          historyLogs: logs,
+          currentStreak: streak,
+          totalPagesRead: totalPages,
+          averagePagesPerDay: avg,
+          readingDays: readingDays,
+        ),
+      );
     } catch (e) {
       emit(WirdError(e.toString()));
     }

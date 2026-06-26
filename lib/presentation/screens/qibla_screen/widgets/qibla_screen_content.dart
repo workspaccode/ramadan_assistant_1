@@ -64,7 +64,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
       // qiblaDirection is absolute angle of Kaaba from North
       // deviceHeading is absolute angle of Device from North
       // needle should point to (qibla - heading) relative to device top
-      final offset = state.qiblaDirection - state.deviceHeading;
+
 
       return Column(
         children: [
@@ -74,7 +74,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
           if (!state.hasCompass)
             Container(
               width: double.infinity,
-              color: Colors.orange.withOpacity(0.1),
+              color: Colors.orange.withValues(alpha: 0.1),
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -270,7 +270,7 @@ class _QiblaScreenContentState extends State<QiblaScreenContent> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withOpacity(0.3),
+                      color: Colors.green.withValues(alpha: 0.3),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),

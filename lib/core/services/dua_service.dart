@@ -3,44 +3,69 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:ramadan_assistant/data/models/dua_model.dart';
 
-class DuaService {
-  static final DuaService _instance = DuaService._internal();
-  factory DuaService() => _instance;
-  DuaService._internal();
+class DuaCategory {
+  final String category;
+  final List<Dua> duas;
 
-  List<Dua> _duas = [];
-  bool _isLoaded = false;
+  DuaCategory({required this.category, required this.duas});
+}
+
+class DuaService {
+  List<Dua> _allDuas = [];
+  List<DuaCategory> _hundredDuas = [];
+
+  List<Dua> get allDuas => _allDuas;
+  List<DuaCategory> get hundredDuas => _hundredDuas;
+  List<String> get categories => _allDuas.map((d) => d.category).toSet().toList();
 
   Future<void> init() async {
-    if (_isLoaded) return;
+    await loadDuas();
+    await load100Duas();
+  }
+
+  Future<void> loadDuas() async {
     try {
       final String response = await rootBundle.loadString('assets/data/duas.json');
       final data = json.decode(response);
-      final List<dynamic> duasList = data['duas'];
-      _duas = duasList.map((e) => Dua.fromJson(e)).toList();
-      _isLoaded = true;
+      final List<dynamic> duaList = data['duas'] ?? [];
+      _allDuas = duaList.map((json) => Dua.fromJson(json)).toList();
+      debugPrint('Loaded ${_allDuas.length} general duas');
     } catch (e) {
-      debugPrint('Error loading duas: $e');
+      debugPrint('Error loading general duas: $e');
     }
   }
 
-  List<Dua> get allDuas => _duas;
-
-  List<String> get categories {
-    return _duas.map((e) => e.category).toSet().toList();
+  Future<void> load100Duas() async {
+    try {
+      final String response = await rootBundle.loadString('assets/data/duas_100.json');
+      final data = await json.decode(response) as List;
+      _hundredDuas = data.map((item) {
+        final categoryName = item['category'] as String;
+        final duasList = (item['duas'] as List).map((d) {
+          return Dua(
+            category: categoryName,
+            arabic: d['text'],
+            translation: d['translation'],
+            source: d['reference'],
+          );
+        }).toList();
+        return DuaCategory(category: categoryName, duas: duasList);
+      }).toList();
+    } catch (e) {
+      _hundredDuas = [];
+    }
   }
 
   List<Dua> getByCategory(String category) {
-    return _duas.where((e) => e.category == category).toList();
+    return _allDuas.where((d) => d.category == category).toList();
   }
 
   List<Dua> search(String query) {
-    if (query.isEmpty) return _duas;
-    final lowercaseQuery = query.toLowerCase();
-    return _duas.where((dua) {
-      return dua.arabic.contains(query) ||
-          (dua.category.toLowerCase().contains(lowercaseQuery)) ||
-          (dua.source?.toLowerCase().contains(lowercaseQuery) ?? false);
-    }).toList();
+    if (query.isEmpty) return _allDuas;
+    return _allDuas.where((d) => 
+      d.arabic.contains(query) || 
+      (d.translation?.contains(query) ?? false) ||
+      d.category.contains(query)
+    ).toList();
   }
 }
