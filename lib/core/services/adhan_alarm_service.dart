@@ -1,9 +1,10 @@
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:async';
 import 'dart:io';
 
 import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:shared_preferences/shared_preferences.dart';

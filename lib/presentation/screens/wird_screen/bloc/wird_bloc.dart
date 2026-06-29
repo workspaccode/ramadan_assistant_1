@@ -292,6 +292,48 @@ class WirdBloc extends Bloc<WirdEvent, WirdState> {
     WirdPlanActive? currentPlanState;
     if (state is WirdPlanActive) {
       currentPlanState = state as WirdPlanActive;
+    } else {
+      try {
+        final progress = await (_database.select(
+          _database.wirdProgress,
+        )..limit(1)).getSingleOrNull();
+
+        if (progress != null) {
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+          final dailyLog = await (_database.select(
+            _database.wirdDailyLogs,
+          )..where((t) => t.date.equals(today))).getSingleOrNull();
+
+          final prayerPages = <String, int>{};
+          if (dailyLog != null) {
+            prayerPages['fajr'] = dailyLog.fajrPages;
+            prayerPages['dhuhr'] = dailyLog.dhuhrPages;
+            prayerPages['asr'] = dailyLog.asrPages;
+            prayerPages['maghrib'] = dailyLog.maghribPages;
+            prayerPages['isha'] = dailyLog.ishaPages;
+            prayerPages['other'] = dailyLog.otherPages;
+          }
+
+          currentPlanState = WirdPlanActive(
+            plan: WirdPlan(
+              type: _parseType(progress.planType),
+              value: progress.planValue,
+            ),
+            completedPages: progress.completedPages,
+            lastReadPage: progress.lastReadPage,
+            lastUpdated: progress.lastUpdated,
+            todayPrayerPages: prayerPages,
+            selectedDate: now,
+            selectedDayPrayerPages: prayerPages,
+          );
+        }
+      } catch (_) {}
+    }
+
+    if (currentPlanState == null) {
+      emit(WirdNoPlan());
+      return;
     }
 
     // Do NOT emit WirdLoading() to avoid resetting TabController in UI

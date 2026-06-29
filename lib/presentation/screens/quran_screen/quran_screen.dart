@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:ramadan_assistant/core/design_system/app_text_styles.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/utils/tajweed_formatter.dart';
@@ -673,7 +673,7 @@ class _QuranScreenState extends State<QuranScreen> {
                               textAlign: TextAlign.justify,
                               textDirection: ui.TextDirection.rtl,
                               text: TextSpan(
-                                style: GoogleFonts.amiriQuran(
+                                style: AppTextStyles.amiriQuran(
                                   fontSize: 26,
                                   height: 2.2,
                                   color: theme.textPrimary,
@@ -703,7 +703,7 @@ class _QuranScreenState extends State<QuranScreen> {
                                         children: TajweedFormatter.getTajweedSpans(
                                           text:
                                               verse.textTajweed ?? verse.textAr,
-                                          baseStyle: GoogleFonts.amiriQuran(
+                                          baseStyle: AppTextStyles.amiriQuran(
                                             fontSize: 26,
                                             height: 2.2,
                                             color: isActive

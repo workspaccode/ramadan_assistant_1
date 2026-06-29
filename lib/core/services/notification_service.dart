@@ -1,7 +1,8 @@
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';

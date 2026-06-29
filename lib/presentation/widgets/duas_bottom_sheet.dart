@@ -1,4 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';

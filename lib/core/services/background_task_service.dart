@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
-import 'package:easy_localization/easy_localization.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

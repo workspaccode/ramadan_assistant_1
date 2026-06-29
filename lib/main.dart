@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:easy_localization/easy_localization.dart';
+import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
@@ -17,6 +16,7 @@ import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/core/services/dua_service.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/firebase_options.dart';
@@ -40,11 +40,9 @@ import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ إصلاح كراش بدون إنترنت: منع google_fonts من تنزيل الخطوط
-  // الخطوط المخزنة محلياً (cache) ستُستخدم تلقائياً
-  GoogleFonts.config.allowRuntimeFetching = false;
 
-  await EasyLocalization.ensureInitialized();
+
+
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -123,15 +121,7 @@ void main() async {
     debugPrint('Running in debug mode - some features optimized');
   }
 
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ar'), Locale('ur')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('ar'),
-      saveLocale: true,
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -171,14 +161,10 @@ class MyApp extends StatelessWidget {
             BlocListener<LanguageBloc, LanguageState>(
               listener: (context, state) {
                 if (state is LanguageLoaded) {
-                  final newLocale = Locale(state.languageCode);
-                  if (context.locale != newLocale) {
-                    context.setLocale(newLocale);
-                    // Refresh prayer times with new locale for geocoding
-                    context.read<PrayerTimesBloc>().add(
-                      LoadPrayerTimes(locale: state.languageCode),
-                    );
-                  }
+                  // Refresh prayer times with new locale for geocoding
+                  context.read<PrayerTimesBloc>().add(
+                    LoadPrayerTimes(locale: state.languageCode),
+                  );
                 }
               },
             ),
@@ -188,8 +174,12 @@ class MyApp extends StatelessWidget {
               },
             ),
           ],
-          child: Builder(
-            builder: (localeContext) {
+          child: BlocBuilder<LanguageBloc, LanguageState>(
+            builder: (context, languageState) {
+              final activeLocale = languageState is LanguageLoaded
+                  ? Locale(languageState.languageCode)
+                  : const Locale('ar');
+
               return BlocBuilder<ThemeBloc, ThemeState>(
                 builder: (themeContext, themeState) {
                   final fontSizeMultiplier = themeState is ThemeLoaded
@@ -203,15 +193,15 @@ class MyApp extends StatelessWidget {
                       : false;
 
                   return MaterialApp(
-                    title: 'تَوب َتِي',
+                    title: 'Ramadan Assistant',
                     debugShowCheckedModeBanner: false,
                     theme: AppTheme.getLightTheme(
-                      localeContext.locale,
+                      activeLocale,
                       fontSizeMultiplier: fontSizeMultiplier,
                       paletteId: colorPaletteId ?? 'emerald',
                     ),
                     darkTheme: AppTheme.getDarkTheme(
-                      localeContext.locale,
+                      activeLocale,
                       fontSizeMultiplier: fontSizeMultiplier,
                       paletteId: colorPaletteId ?? 'emerald',
                     ),
@@ -219,10 +209,15 @@ class MyApp extends StatelessWidget {
                         ? ThemeMode.dark
                         : ThemeMode.light,
                     navigatorKey: NotificationActionHandler.navigatorKey,
-                    localizationsDelegates: localeContext.localizationDelegates,
-                    supportedLocales: localeContext.supportedLocales,
-                    locale: localeContext.locale,
-                    home: const MainScreen(),
+                    localizationsDelegates: AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    locale: activeLocale,
+                    home: Builder(
+                      builder: (context) {
+                        AppLocalizationsLookup.init(context);
+                        return const MainScreen();
+                      },
+                    ),
                   );
                 },
               );

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:ramadan_assistant/core/design_system/app_text_styles.dart';
 
 import 'ramadan_theme_extension.dart';
 
@@ -258,10 +258,7 @@ class AppTheme {
   // ─── Font Family ──────────────────────────────────────────────
 
   static String? _getFontFamily(Locale locale) {
-    // Cairo للعربي، يمكن تغييره لأي لغة أخرى
-    return locale.languageCode == 'ar'
-        ? GoogleFonts.cairo().fontFamily
-        : GoogleFonts.cairo().fontFamily;
+    return AppTextStyles.fontCairo;
   }
 
   // ─── Core Theme Builder ───────────────────────────────────────

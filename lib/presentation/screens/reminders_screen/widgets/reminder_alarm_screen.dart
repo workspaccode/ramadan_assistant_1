@@ -1,8 +1,9 @@
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:async';
 import 'dart:math';
 
 import 'package:alarm/alarm.dart';
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
