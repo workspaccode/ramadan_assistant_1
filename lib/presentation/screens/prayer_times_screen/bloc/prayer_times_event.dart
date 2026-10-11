@@ -9,11 +9,12 @@ abstract class PrayerTimesEvent extends Equatable {
 
 class LoadPrayerTimes extends PrayerTimesEvent {
   final String? locale;
+  final bool requestPermission;
 
-  const LoadPrayerTimes({this.locale});
+  const LoadPrayerTimes({this.locale, this.requestPermission = false});
 
   @override
-  List<Object> get props => [locale ?? ''];
+  List<Object> get props => [locale ?? '', requestPermission];
 }
 
 class RefreshPrayerTimes extends PrayerTimesEvent {}

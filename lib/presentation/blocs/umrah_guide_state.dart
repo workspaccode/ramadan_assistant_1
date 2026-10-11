@@ -19,6 +19,7 @@ class UmrahGuideLoaded extends UmrahGuideState {
   final bool isPrayedAtMaqam;
   final bool isDrunkZamzam;
   final bool isAutoTracking;
+  final bool persistenceFailed;
 
   const UmrahGuideLoaded({
     required this.progress,
@@ -27,6 +28,7 @@ class UmrahGuideLoaded extends UmrahGuideState {
     this.isPrayedAtMaqam = false,
     this.isDrunkZamzam = false,
     this.isAutoTracking = false,
+    this.persistenceFailed = false,
   });
 
   UmrahGuideLoaded copyWith({
@@ -36,6 +38,7 @@ class UmrahGuideLoaded extends UmrahGuideState {
     bool? isPrayedAtMaqam,
     bool? isDrunkZamzam,
     bool? isAutoTracking,
+    bool? persistenceFailed,
   }) {
     return UmrahGuideLoaded(
       progress: progress ?? this.progress,
@@ -44,6 +47,7 @@ class UmrahGuideLoaded extends UmrahGuideState {
       isPrayedAtMaqam: isPrayedAtMaqam ?? this.isPrayedAtMaqam,
       isDrunkZamzam: isDrunkZamzam ?? this.isDrunkZamzam,
       isAutoTracking: isAutoTracking ?? this.isAutoTracking,
+      persistenceFailed: persistenceFailed ?? this.persistenceFailed,
     );
   }
 
@@ -55,7 +59,16 @@ class UmrahGuideLoaded extends UmrahGuideState {
     isPrayedAtMaqam,
     isDrunkZamzam,
     isAutoTracking,
+    persistenceFailed,
   ];
+
+  bool canComplete(String step) =>
+      !persistenceFailed &&
+      switch (step) {
+        'step_tawaf' => tawafCircuits == 7,
+        'step_sai' => saiLaps == 7,
+        _ => true,
+      };
 }
 
 class UmrahGuideError extends UmrahGuideState {

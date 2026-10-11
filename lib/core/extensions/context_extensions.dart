@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
@@ -24,7 +25,7 @@ extension ContextExtensions on BuildContext {
   Color get onPrimaryColor => colorScheme.onPrimary;
   Color get secondaryColor => colorScheme.secondary;
   Color get onSecondaryColor => colorScheme.onSecondary;
-  Color get backgroundColor => colorScheme.surface;
+  Color get backgroundColor => theme.scaffoldBackgroundColor;
   Color get onBackgroundColor => colorScheme.onSurface;
   Color get surfaceColor => colorScheme.surface;
   Color get onSurfaceColor => colorScheme.onSurface;
@@ -47,7 +48,7 @@ extension ContextExtensions on BuildContext {
   Future<T?> push<T extends Object?>(Route<T> route) =>
       Navigator.of(this).push(route);
 
-  Future<T?> pushNamed<T extends Object?>( 
+  Future<T?> pushNamed<T extends Object?>(
     String routeName, {
     Object? arguments,
   }) => Navigator.of(this).pushNamed(routeName, arguments: arguments);
@@ -59,7 +60,11 @@ extension ContextExtensions on BuildContext {
 
 extension StringTranslateExtension on String {
   String tr({List<String>? args, Map<String, String>? namedArgs}) {
-    return AppLocalizationsLookup.translate(this, args: args, namedArgs: namedArgs);
+    return AppLocalizationsLookup.translate(
+      this,
+      args: args,
+      namedArgs: namedArgs,
+    );
   }
 }
 
@@ -67,7 +72,9 @@ class AppLocalizationsLookup {
   static AppLocalizations? _instance;
   static AppLocalizations get instance {
     if (_instance == null) {
-      throw StateError('AppLocalizationsLookup has not been initialized. Call AppLocalizationsLookup.init(context) first.');
+      throw StateError(
+        'AppLocalizationsLookup has not been initialized. Call AppLocalizationsLookup.init(context) first.',
+      );
     }
     return _instance!;
   }
@@ -76,7 +83,11 @@ class AppLocalizationsLookup {
     _instance = AppLocalizations.of(context);
   }
 
-  static String translate(String key, {List<String>? args, Map<String, String>? namedArgs}) {
+  static String translate(
+    String key, {
+    List<String>? args,
+    Map<String, String>? namedArgs,
+  }) {
     switch (key) {
       case 'now':
         return instance.now;
@@ -862,9 +873,94 @@ class AppLocalizationsLookup {
         return instance.comprehensive_duas;
       case 'browse_100_duas':
         return instance.browse_100_duas;
+      case 'update_screen_title':
+        return instance.update_screen_title;
+      case 'update_available_desc':
+        return instance.update_available_desc;
+      case 'size_label':
+        return instance.size_label;
+      case 'downloading_update':
+        return instance.downloading_update;
+      case 'dont_close_app':
+        return instance.dont_close_app;
+      case 'update_completed':
+        return instance.update_completed;
+      case 'restart_to_apply':
+        return instance.restart_to_apply;
+      case 'up_to_date_title':
+        return instance.up_to_date_title;
+      case 'no_updates_available':
+        return instance.no_updates_available;
+      case 'search_again':
+        return instance.search_again;
+      case 'error_occurred':
+        return instance.error_occurred;
+      case 'later':
+        return instance.later;
+      case 'ok':
+        return instance.ok;
+      case 'mandatory_update':
+        return instance.mandatory_update;
+      case 'mandatory_update_desc':
+        return instance.mandatory_update_desc;
+      case 'restart':
+        return instance.restart;
+      case 'no_update_found':
+        return instance.no_update_found;
+      case 'latest_version_msg':
+        return instance.latest_version_msg;
+      case 'update_downloaded_restart':
+        return instance.update_downloaded_restart;
+      case 'update_complete_msg':
+        return instance.update_complete_msg(namedArgs?['title'] ?? '');
+      case 'permissions_rationale_title':
+        return instance.permissions_rationale_title;
+      case 'permissions_rationale_body':
+        return instance.permissions_rationale_body;
+      case 'couldnt_open_page':
+        return instance.couldnt_open_page;
+      case 'sai_header_title':
+        return instance.sai_header_title;
+      case 'tap_to_start_dua':
+        return instance.tap_to_start_dua;
+      case 'completed_praise':
+        return instance.completed_praise;
+      case 'undo':
+        return instance.undo;
+      case 'from_safa_to_marwa':
+        return instance.from_safa_to_marwa;
+      case 'from_marwa_to_safa':
+        return instance.from_marwa_to_safa;
+      case 'sai_completed_snackbar':
+        return instance.sai_completed_snackbar;
+      case 'complete_sai_btn':
+        return instance.complete_sai_btn;
+      case 'complete_lap_next_btn':
+        return instance.complete_lap_next_btn;
+      case 'tawaf_header_title':
+        return instance.tawaf_header_title;
+      case 'tap_to_open_duas':
+        return instance.tap_to_open_duas;
+      case 'done_status':
+        return instance.done_status;
+      case 'pending_status':
+        return instance.pending_status;
+      case 'duas_round_subtitle':
+        return instance.duas_round_subtitle;
+      case 'complete_round_next_btn':
+        return instance.complete_round_next_btn(namedArgs?['round'] ?? '');
+      case 'complete_tawaf_btn':
+        return instance.complete_tawaf_btn;
+      case 'tawaf_completed_snackbar':
+        return instance.tawaf_completed_snackbar;
+      case 'follow_sunnah_fallback':
+        return instance.follow_sunnah_fallback;
+      case 'reset_umrah_confirm_title':
+        return instance.reset_umrah_confirm_title;
+      case 'reset_umrah_confirm_body':
+        return instance.reset_umrah_confirm_body;
       default:
         return key;
     }
   }
 }
-

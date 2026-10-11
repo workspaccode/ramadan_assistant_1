@@ -9,6 +9,8 @@ abstract class UmrahGuideEvent extends Equatable {
 
 class LoadUmrahProgress extends UmrahGuideEvent {}
 
+class RetryUmrahCounterSave extends UmrahGuideEvent {}
+
 class CompleteUmrahStep extends UmrahGuideEvent {
   final int id;
 

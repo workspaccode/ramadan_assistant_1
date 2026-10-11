@@ -2947,6 +2947,584 @@ class WirdDailyLogsCompanion extends UpdateCompanion<WirdDailyLog> {
   }
 }
 
+class $FeatureDocumentsTable extends FeatureDocuments
+    with TableInfo<$FeatureDocumentsTable, FeatureDocument> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FeatureDocumentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _namespaceMeta = const VerificationMeta(
+    'namespace',
+  );
+  @override
+  late final GeneratedColumn<String> namespace = GeneratedColumn<String>(
+    'namespace',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _documentIdMeta = const VerificationMeta(
+    'documentId',
+  );
+  @override
+  late final GeneratedColumn<String> documentId = GeneratedColumn<String>(
+    'document_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _revisionMeta = const VerificationMeta(
+    'revision',
+  );
+  @override
+  late final GeneratedColumn<int> revision = GeneratedColumn<int>(
+    'revision',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadVersionMeta = const VerificationMeta(
+    'payloadVersion',
+  );
+  @override
+  late final GeneratedColumn<int> payloadVersion = GeneratedColumn<int>(
+    'payload_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortKeyMeta = const VerificationMeta(
+    'sortKey',
+  );
+  @override
+  late final GeneratedColumn<String> sortKey = GeneratedColumn<String>(
+    'sort_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pendingSyncMeta = const VerificationMeta(
+    'pendingSync',
+  );
+  @override
+  late final GeneratedColumn<bool> pendingSync = GeneratedColumn<bool>(
+    'pending_sync',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("pending_sync" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    namespace,
+    documentId,
+    payload,
+    revision,
+    payloadVersion,
+    updatedAt,
+    sortKey,
+    deletedAt,
+    pendingSync,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'feature_documents';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FeatureDocument> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('namespace')) {
+      context.handle(
+        _namespaceMeta,
+        namespace.isAcceptableOrUnknown(data['namespace']!, _namespaceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_namespaceMeta);
+    }
+    if (data.containsKey('document_id')) {
+      context.handle(
+        _documentIdMeta,
+        documentId.isAcceptableOrUnknown(data['document_id']!, _documentIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_documentIdMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('revision')) {
+      context.handle(
+        _revisionMeta,
+        revision.isAcceptableOrUnknown(data['revision']!, _revisionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_revisionMeta);
+    }
+    if (data.containsKey('payload_version')) {
+      context.handle(
+        _payloadVersionMeta,
+        payloadVersion.isAcceptableOrUnknown(
+          data['payload_version']!,
+          _payloadVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('sort_key')) {
+      context.handle(
+        _sortKeyMeta,
+        sortKey.isAcceptableOrUnknown(data['sort_key']!, _sortKeyMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('pending_sync')) {
+      context.handle(
+        _pendingSyncMeta,
+        pendingSync.isAcceptableOrUnknown(
+          data['pending_sync']!,
+          _pendingSyncMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {namespace, documentId};
+  @override
+  FeatureDocument map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FeatureDocument(
+      namespace: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}namespace'],
+      )!,
+      documentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      revision: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}revision'],
+      )!,
+      payloadVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}payload_version'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      sortKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sort_key'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      pendingSync: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}pending_sync'],
+      )!,
+    );
+  }
+
+  @override
+  $FeatureDocumentsTable createAlias(String alias) {
+    return $FeatureDocumentsTable(attachedDatabase, alias);
+  }
+}
+
+class FeatureDocument extends DataClass implements Insertable<FeatureDocument> {
+  final String namespace;
+  final String documentId;
+  final String payload;
+  final int revision;
+  final int payloadVersion;
+  final DateTime updatedAt;
+  final String? sortKey;
+  final DateTime? deletedAt;
+  final bool pendingSync;
+  const FeatureDocument({
+    required this.namespace,
+    required this.documentId,
+    required this.payload,
+    required this.revision,
+    required this.payloadVersion,
+    required this.updatedAt,
+    this.sortKey,
+    this.deletedAt,
+    required this.pendingSync,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['namespace'] = Variable<String>(namespace);
+    map['document_id'] = Variable<String>(documentId);
+    map['payload'] = Variable<String>(payload);
+    map['revision'] = Variable<int>(revision);
+    map['payload_version'] = Variable<int>(payloadVersion);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || sortKey != null) {
+      map['sort_key'] = Variable<String>(sortKey);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['pending_sync'] = Variable<bool>(pendingSync);
+    return map;
+  }
+
+  FeatureDocumentsCompanion toCompanion(bool nullToAbsent) {
+    return FeatureDocumentsCompanion(
+      namespace: Value(namespace),
+      documentId: Value(documentId),
+      payload: Value(payload),
+      revision: Value(revision),
+      payloadVersion: Value(payloadVersion),
+      updatedAt: Value(updatedAt),
+      sortKey: sortKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sortKey),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      pendingSync: Value(pendingSync),
+    );
+  }
+
+  factory FeatureDocument.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FeatureDocument(
+      namespace: serializer.fromJson<String>(json['namespace']),
+      documentId: serializer.fromJson<String>(json['documentId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      revision: serializer.fromJson<int>(json['revision']),
+      payloadVersion: serializer.fromJson<int>(json['payloadVersion']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      sortKey: serializer.fromJson<String?>(json['sortKey']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      pendingSync: serializer.fromJson<bool>(json['pendingSync']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'namespace': serializer.toJson<String>(namespace),
+      'documentId': serializer.toJson<String>(documentId),
+      'payload': serializer.toJson<String>(payload),
+      'revision': serializer.toJson<int>(revision),
+      'payloadVersion': serializer.toJson<int>(payloadVersion),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'sortKey': serializer.toJson<String?>(sortKey),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'pendingSync': serializer.toJson<bool>(pendingSync),
+    };
+  }
+
+  FeatureDocument copyWith({
+    String? namespace,
+    String? documentId,
+    String? payload,
+    int? revision,
+    int? payloadVersion,
+    DateTime? updatedAt,
+    Value<String?> sortKey = const Value.absent(),
+    Value<DateTime?> deletedAt = const Value.absent(),
+    bool? pendingSync,
+  }) => FeatureDocument(
+    namespace: namespace ?? this.namespace,
+    documentId: documentId ?? this.documentId,
+    payload: payload ?? this.payload,
+    revision: revision ?? this.revision,
+    payloadVersion: payloadVersion ?? this.payloadVersion,
+    updatedAt: updatedAt ?? this.updatedAt,
+    sortKey: sortKey.present ? sortKey.value : this.sortKey,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    pendingSync: pendingSync ?? this.pendingSync,
+  );
+  FeatureDocument copyWithCompanion(FeatureDocumentsCompanion data) {
+    return FeatureDocument(
+      namespace: data.namespace.present ? data.namespace.value : this.namespace,
+      documentId: data.documentId.present
+          ? data.documentId.value
+          : this.documentId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      revision: data.revision.present ? data.revision.value : this.revision,
+      payloadVersion: data.payloadVersion.present
+          ? data.payloadVersion.value
+          : this.payloadVersion,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      sortKey: data.sortKey.present ? data.sortKey.value : this.sortKey,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      pendingSync: data.pendingSync.present
+          ? data.pendingSync.value
+          : this.pendingSync,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeatureDocument(')
+          ..write('namespace: $namespace, ')
+          ..write('documentId: $documentId, ')
+          ..write('payload: $payload, ')
+          ..write('revision: $revision, ')
+          ..write('payloadVersion: $payloadVersion, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('sortKey: $sortKey, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('pendingSync: $pendingSync')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    namespace,
+    documentId,
+    payload,
+    revision,
+    payloadVersion,
+    updatedAt,
+    sortKey,
+    deletedAt,
+    pendingSync,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FeatureDocument &&
+          other.namespace == this.namespace &&
+          other.documentId == this.documentId &&
+          other.payload == this.payload &&
+          other.revision == this.revision &&
+          other.payloadVersion == this.payloadVersion &&
+          other.updatedAt == this.updatedAt &&
+          other.sortKey == this.sortKey &&
+          other.deletedAt == this.deletedAt &&
+          other.pendingSync == this.pendingSync);
+}
+
+class FeatureDocumentsCompanion extends UpdateCompanion<FeatureDocument> {
+  final Value<String> namespace;
+  final Value<String> documentId;
+  final Value<String> payload;
+  final Value<int> revision;
+  final Value<int> payloadVersion;
+  final Value<DateTime> updatedAt;
+  final Value<String?> sortKey;
+  final Value<DateTime?> deletedAt;
+  final Value<bool> pendingSync;
+  final Value<int> rowid;
+  const FeatureDocumentsCompanion({
+    this.namespace = const Value.absent(),
+    this.documentId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.revision = const Value.absent(),
+    this.payloadVersion = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.sortKey = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.pendingSync = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FeatureDocumentsCompanion.insert({
+    required String namespace,
+    required String documentId,
+    required String payload,
+    required int revision,
+    this.payloadVersion = const Value.absent(),
+    required DateTime updatedAt,
+    this.sortKey = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.pendingSync = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : namespace = Value(namespace),
+       documentId = Value(documentId),
+       payload = Value(payload),
+       revision = Value(revision),
+       updatedAt = Value(updatedAt);
+  static Insertable<FeatureDocument> custom({
+    Expression<String>? namespace,
+    Expression<String>? documentId,
+    Expression<String>? payload,
+    Expression<int>? revision,
+    Expression<int>? payloadVersion,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? sortKey,
+    Expression<DateTime>? deletedAt,
+    Expression<bool>? pendingSync,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (namespace != null) 'namespace': namespace,
+      if (documentId != null) 'document_id': documentId,
+      if (payload != null) 'payload': payload,
+      if (revision != null) 'revision': revision,
+      if (payloadVersion != null) 'payload_version': payloadVersion,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (sortKey != null) 'sort_key': sortKey,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (pendingSync != null) 'pending_sync': pendingSync,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FeatureDocumentsCompanion copyWith({
+    Value<String>? namespace,
+    Value<String>? documentId,
+    Value<String>? payload,
+    Value<int>? revision,
+    Value<int>? payloadVersion,
+    Value<DateTime>? updatedAt,
+    Value<String?>? sortKey,
+    Value<DateTime?>? deletedAt,
+    Value<bool>? pendingSync,
+    Value<int>? rowid,
+  }) {
+    return FeatureDocumentsCompanion(
+      namespace: namespace ?? this.namespace,
+      documentId: documentId ?? this.documentId,
+      payload: payload ?? this.payload,
+      revision: revision ?? this.revision,
+      payloadVersion: payloadVersion ?? this.payloadVersion,
+      updatedAt: updatedAt ?? this.updatedAt,
+      sortKey: sortKey ?? this.sortKey,
+      deletedAt: deletedAt ?? this.deletedAt,
+      pendingSync: pendingSync ?? this.pendingSync,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (namespace.present) {
+      map['namespace'] = Variable<String>(namespace.value);
+    }
+    if (documentId.present) {
+      map['document_id'] = Variable<String>(documentId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (revision.present) {
+      map['revision'] = Variable<int>(revision.value);
+    }
+    if (payloadVersion.present) {
+      map['payload_version'] = Variable<int>(payloadVersion.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (sortKey.present) {
+      map['sort_key'] = Variable<String>(sortKey.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (pendingSync.present) {
+      map['pending_sync'] = Variable<bool>(pendingSync.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeatureDocumentsCompanion(')
+          ..write('namespace: $namespace, ')
+          ..write('documentId: $documentId, ')
+          ..write('payload: $payload, ')
+          ..write('revision: $revision, ')
+          ..write('payloadVersion: $payloadVersion, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('sortKey: $sortKey, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('pendingSync: $pendingSync, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2957,6 +3535,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DuasTable duas = $DuasTable(this);
   late final $WirdProgressTable wirdProgress = $WirdProgressTable(this);
   late final $WirdDailyLogsTable wirdDailyLogs = $WirdDailyLogsTable(this);
+  late final $FeatureDocumentsTable featureDocuments = $FeatureDocumentsTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2969,6 +3550,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     duas,
     wirdProgress,
     wirdDailyLogs,
+    featureDocuments,
   ];
 }
 
@@ -4511,6 +5093,294 @@ typedef $$WirdDailyLogsTableProcessedTableManager =
       WirdDailyLog,
       PrefetchHooks Function()
     >;
+typedef $$FeatureDocumentsTableCreateCompanionBuilder =
+    FeatureDocumentsCompanion Function({
+      required String namespace,
+      required String documentId,
+      required String payload,
+      required int revision,
+      Value<int> payloadVersion,
+      required DateTime updatedAt,
+      Value<String?> sortKey,
+      Value<DateTime?> deletedAt,
+      Value<bool> pendingSync,
+      Value<int> rowid,
+    });
+typedef $$FeatureDocumentsTableUpdateCompanionBuilder =
+    FeatureDocumentsCompanion Function({
+      Value<String> namespace,
+      Value<String> documentId,
+      Value<String> payload,
+      Value<int> revision,
+      Value<int> payloadVersion,
+      Value<DateTime> updatedAt,
+      Value<String?> sortKey,
+      Value<DateTime?> deletedAt,
+      Value<bool> pendingSync,
+      Value<int> rowid,
+    });
+
+class $$FeatureDocumentsTableFilterComposer
+    extends Composer<_$AppDatabase, $FeatureDocumentsTable> {
+  $$FeatureDocumentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get namespace => $composableBuilder(
+    column: $table.namespace,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get documentId => $composableBuilder(
+    column: $table.documentId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get revision => $composableBuilder(
+    column: $table.revision,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sortKey => $composableBuilder(
+    column: $table.sortKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get pendingSync => $composableBuilder(
+    column: $table.pendingSync,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FeatureDocumentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FeatureDocumentsTable> {
+  $$FeatureDocumentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get namespace => $composableBuilder(
+    column: $table.namespace,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get documentId => $composableBuilder(
+    column: $table.documentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get revision => $composableBuilder(
+    column: $table.revision,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sortKey => $composableBuilder(
+    column: $table.sortKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get pendingSync => $composableBuilder(
+    column: $table.pendingSync,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FeatureDocumentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FeatureDocumentsTable> {
+  $$FeatureDocumentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get namespace =>
+      $composableBuilder(column: $table.namespace, builder: (column) => column);
+
+  GeneratedColumn<String> get documentId => $composableBuilder(
+    column: $table.documentId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<int> get revision =>
+      $composableBuilder(column: $table.revision, builder: (column) => column);
+
+  GeneratedColumn<int> get payloadVersion => $composableBuilder(
+    column: $table.payloadVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get sortKey =>
+      $composableBuilder(column: $table.sortKey, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get pendingSync => $composableBuilder(
+    column: $table.pendingSync,
+    builder: (column) => column,
+  );
+}
+
+class $$FeatureDocumentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FeatureDocumentsTable,
+          FeatureDocument,
+          $$FeatureDocumentsTableFilterComposer,
+          $$FeatureDocumentsTableOrderingComposer,
+          $$FeatureDocumentsTableAnnotationComposer,
+          $$FeatureDocumentsTableCreateCompanionBuilder,
+          $$FeatureDocumentsTableUpdateCompanionBuilder,
+          (
+            FeatureDocument,
+            BaseReferences<
+              _$AppDatabase,
+              $FeatureDocumentsTable,
+              FeatureDocument
+            >,
+          ),
+          FeatureDocument,
+          PrefetchHooks Function()
+        > {
+  $$FeatureDocumentsTableTableManager(
+    _$AppDatabase db,
+    $FeatureDocumentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FeatureDocumentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FeatureDocumentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FeatureDocumentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> namespace = const Value.absent(),
+                Value<String> documentId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<int> revision = const Value.absent(),
+                Value<int> payloadVersion = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String?> sortKey = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<bool> pendingSync = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FeatureDocumentsCompanion(
+                namespace: namespace,
+                documentId: documentId,
+                payload: payload,
+                revision: revision,
+                payloadVersion: payloadVersion,
+                updatedAt: updatedAt,
+                sortKey: sortKey,
+                deletedAt: deletedAt,
+                pendingSync: pendingSync,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String namespace,
+                required String documentId,
+                required String payload,
+                required int revision,
+                Value<int> payloadVersion = const Value.absent(),
+                required DateTime updatedAt,
+                Value<String?> sortKey = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<bool> pendingSync = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FeatureDocumentsCompanion.insert(
+                namespace: namespace,
+                documentId: documentId,
+                payload: payload,
+                revision: revision,
+                payloadVersion: payloadVersion,
+                updatedAt: updatedAt,
+                sortKey: sortKey,
+                deletedAt: deletedAt,
+                pendingSync: pendingSync,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FeatureDocumentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FeatureDocumentsTable,
+      FeatureDocument,
+      $$FeatureDocumentsTableFilterComposer,
+      $$FeatureDocumentsTableOrderingComposer,
+      $$FeatureDocumentsTableAnnotationComposer,
+      $$FeatureDocumentsTableCreateCompanionBuilder,
+      $$FeatureDocumentsTableUpdateCompanionBuilder,
+      (
+        FeatureDocument,
+        BaseReferences<_$AppDatabase, $FeatureDocumentsTable, FeatureDocument>,
+      ),
+      FeatureDocument,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4528,4 +5398,6 @@ class $AppDatabaseManager {
       $$WirdProgressTableTableManager(_db, _db.wirdProgress);
   $$WirdDailyLogsTableTableManager get wirdDailyLogs =>
       $$WirdDailyLogsTableTableManager(_db, _db.wirdDailyLogs);
+  $$FeatureDocumentsTableTableManager get featureDocuments =>
+      $$FeatureDocumentsTableTableManager(_db, _db.featureDocuments);
 }

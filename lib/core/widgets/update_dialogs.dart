@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 
 /// Show an update dialog with changelog details
 /// Returns true if user chose to update
@@ -92,7 +93,7 @@ Future<bool> showUpdateDialog(
                       const Icon(Icons.download, size: 16),
                       const SizedBox(width: 6),
                       Text(
-                        'الحجم: $sizeInMB MB',
+                        '${'size_label'.tr()}: $sizeInMB MB',
                         style: const TextStyle(fontSize: 12),
                       ),
                     ],
@@ -106,12 +107,12 @@ Future<bool> showUpdateDialog(
           if (isOptional)
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('لاحقاً'),
+              child: Text('later'.tr()),
             ),
           FilledButton.icon(
             onPressed: () => Navigator.pop(context, true),
             icon: const Icon(Icons.download, size: 18),
-            label: const Text('تحديث الآن'),
+            label: Text('update_now_btn'.tr()),
           ),
         ],
       ),
@@ -129,29 +130,34 @@ Future<void> showForceUpdateDialog(BuildContext context) async {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.warning_amber_rounded,
               color: Colors.redAccent,
               size: 28,
             ),
-            SizedBox(width: 12),
-            Text(
-              'تحديث إلزامي',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'mandatory_update'.tr(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
-        content: const Text(
-          'يوجد تحديث أمني مهم. سيتم تحميل التحديث الآن.',
-          style: TextStyle(fontSize: 14),
+        content: Text(
+          'mandatory_update_desc'.tr(),
+          style: const TextStyle(fontSize: 14),
         ),
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
             style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('حسناً'),
+            child: Text('ok'.tr()),
           ),
         ],
       ),
@@ -190,7 +196,7 @@ Future<void> showProgressDialog(
                     onCancel();
                     Navigator.pop(context);
                   },
-                  child: const Text('إلغاء'),
+                  child: Text('cancel'.tr()),
                 ),
               ]
             : null,
@@ -208,21 +214,21 @@ Future<void> showRestartDialog(BuildContext context) async {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.restart_alt, color: Colors.teal, size: 28),
-            SizedBox(width: 12),
-            Text('إعادة تشغيل'),
+            const Icon(Icons.restart_alt, color: Colors.teal, size: 28),
+            const SizedBox(width: 12),
+            Text('restart'.tr()),
           ],
         ),
-        content: const Text(
-          'تم تحميل التحديث بنجاح. يجب إعادة تشغيل التطبيق لتطبيق التحديث.',
-          style: TextStyle(fontSize: 14),
+        content: Text(
+          'update_downloaded_restart'.tr(),
+          style: const TextStyle(fontSize: 14),
         ),
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('إعادة التشغيل'),
+            child: Text('restart'.tr()),
           ),
         ],
       ),
@@ -238,21 +244,21 @@ Future<void> showNoUpdateDialog(BuildContext context) async {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 12),
-            Text('لا يوجد تحديث'),
+            const Icon(Icons.check_circle, color: Colors.green, size: 28),
+            const SizedBox(width: 12),
+            Text('no_update_found'.tr()),
           ],
         ),
-        content: const Text(
-          'أنت تستخدم أحدث إصدار من التطبيق ✅',
-          style: TextStyle(fontSize: 14),
+        content: Text(
+          'latest_version_msg'.tr(),
+          style: const TextStyle(fontSize: 14),
         ),
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('حسناً'),
+            child: Text('ok'.tr()),
           ),
         ],
       ),
@@ -268,18 +274,18 @@ Future<void> showErrorDialog(BuildContext context, String error) async {
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.redAccent, size: 28),
-            SizedBox(width: 12),
-            Text('خطأ'),
+            const Icon(Icons.error_outline, color: Colors.redAccent, size: 28),
+            const SizedBox(width: 12),
+            Text('error_occurred'.tr()),
           ],
         ),
         content: Text(error, style: const TextStyle(fontSize: 14)),
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('حسناً'),
+            child: Text('ok'.tr()),
           ),
         ],
       ),
@@ -298,21 +304,21 @@ Future<void> showUpdateCompleteDialog(
       textDirection: TextDirection.rtl,
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.celebration, color: Colors.amber, size: 28),
-            SizedBox(width: 12),
-            Text('تم التحديث بنجاح! 🎉'),
+            const Icon(Icons.celebration, color: Colors.amber, size: 28),
+            const SizedBox(width: 12),
+            Text('update_completed'.tr()),
           ],
         ),
         content: Text(
-          'تم تحميل "$updateTitle" بنجاح.\nأعد تشغيل التطبيق لتطبيق التغييرات.',
+          'update_complete_msg'.tr(namedArgs: {'title': updateTitle}),
           style: const TextStyle(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('لاحقاً'),
+            child: Text('later'.tr()),
           ),
           FilledButton.icon(
             onPressed: () {
@@ -320,7 +326,7 @@ Future<void> showUpdateCompleteDialog(
               // The caller should handle app restart
             },
             icon: const Icon(Icons.restart_alt, size: 18),
-            label: const Text('إعادة التشغيل'),
+            label: Text('restart'.tr()),
           ),
         ],
       ),

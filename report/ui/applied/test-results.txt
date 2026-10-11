@@ -1,0 +1,109 @@
+00:00 +0: loading D:/saas/ramadan_assistant/test/home_layout_test.dart
+00:00 +0: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:01 +0: D:/saas/ramadan_assistant/test/reference_ui_test.dart: (setUpAll)
+Loaded 149 general duas
+00:01 +0: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:01 +1: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:01 +2: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:01 +3: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:02 +4: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:02 +5: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:06 +6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ar dark=false scale=1.0
+00:07 +7: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ar dark=false scale=1.0
+00:07 +8: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=true textScale=1.0 has no overflow
+00:08 +9: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ar dark=false scale=1.6
+00:09 +10: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=true textScale=1.6 has no overflow
+00:09 +11: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ar dark=true scale=1.0
+00:10 +12: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home en dark=false textScale=1.0 has no overflow
+00:10 +13: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ar dark=true scale=1.6
+00:11 +14: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home en dark=false textScale=1.6 has no overflow
+00:11 +15: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih en dark=false scale=1.0
+00:12 +16: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home en dark=true textScale=1.0 has no overflow
+00:12 +17: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih en dark=false scale=1.6
+00:13 +18: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home en dark=true textScale=1.6 has no overflow
+00:13 +19: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih en dark=true scale=1.0
+00:13 +20: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=false textScale=1.0 has no overflow
+00:14 +21: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih en dark=true scale=1.6
+00:14 +22: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=false textScale=1.6 has no overflow
+00:14 +23: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=false scale=1.0
+00:15 +24: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:15 +25: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=false scale=1.6
+00:16 +26: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.6 has no overflow
+00:16 +27: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=true scale=1.0
+00:16 +28: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:17 +29: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+Root counter before: مرات 0
+00:18 +30: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=false scale=1.0
+00:19 +31: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=false scale=1.6
+00:20 +32: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=true scale=1.0
+00:22 +33: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=true scale=1.6
+00:23 +34: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=false scale=1.0
+00:24 +35: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=false scale=1.6
+00:25 +36: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=true scale=1.0
+00:26 +37: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=true scale=1.6
+00:27 +38: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=false scale=1.0
+00:28 +39: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=false scale=1.6
+00:29 +40: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=true scale=1.0
+00:30 +41: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=true scale=1.6
+00:31 +42: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=false scale=1.0
+00:33 +43: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=false scale=1.6
+00:34 +44: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=true scale=1.0
+00:35 +45: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=true scale=1.6
+00:36 +46: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=false scale=1.0
+00:37 +47: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=false scale=1.6
+00:37 +48: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=true scale=1.0
+00:38 +49: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=true scale=1.6
+00:39 +50: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=false scale=1.0
+00:40 +51: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=false scale=1.6
+00:40 +52: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=true scale=1.0
+00:41 +53: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=true scale=1.6
+00:42 +54: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=false scale=1.0
+00:43 +55: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=false scale=1.6
+00:44 +56: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=true scale=1.0
+00:45 +57: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=true scale=1.6
+00:45 +58: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=false scale=1.0
+00:46 +59: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=false scale=1.6
+00:46 +60: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=true scale=1.0
+00:47 +61: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=true scale=1.6
+00:47 +62: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=false scale=1.0
+00:48 +63: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=false scale=1.6
+00:48 +64: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=true scale=1.0
+00:49 +65: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=true scale=1.6
+00:49 +66: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=false scale=1.0
+00:50 +67: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=false scale=1.6
+00:50 +68: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=true scale=1.0
+00:51 +69: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=true scale=1.6
+00:51 +70: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=false scale=1.0
+00:51 +71: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=false scale=1.6
+00:52 +72: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=true scale=1.0
+00:52 +73: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=true scale=1.6
+00:53 +74: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=false scale=1.0
+00:53 +75: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=false scale=1.6
+00:54 +76: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=true scale=1.0
+00:54 +77: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=true scale=1.6
+00:54 +78: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=false scale=1.0
+00:56 +79: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=false scale=1.6
+00:56 +80: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=true scale=1.0
+00:57 +81: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=true scale=1.6
+00:58 +82: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=false scale=1.0
+00:58 +83: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=false scale=1.6
+00:59 +84: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=true scale=1.0
+00:59 +85: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=true scale=1.6
+01:00 +86: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=false scale=1.0
+01:00 +87: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=false scale=1.6
+01:01 +88: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=true scale=1.0
+01:01 +89: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=true scale=1.6
+01:02 +90: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=false scale=1.0
+01:03 +91: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=false scale=1.6
+01:03 +92: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=true scale=1.0
+01:04 +93: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=true scale=1.6
+01:04 +94: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=false scale=1.0
+01:04 +95: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=false scale=1.6
+01:05 +96: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=true scale=1.0
+01:05 +97: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=true scale=1.6
+01:06 +98: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=false scale=1.0
+01:06 +99: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=false scale=1.6
+01:06 +100: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=true scale=1.0
+01:07 +101: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=true scale=1.6
+01:07 +102: D:/saas/ramadan_assistant/test/reference_ui_test.dart: (tearDownAll)
+01:07 +102: All tests passed!

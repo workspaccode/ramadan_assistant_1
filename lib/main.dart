@@ -1,22 +1,23 @@
 import 'dart:async';
 
-import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:ramadan_assistant/core/services/dhikr_alarm_service.dart';
+import 'package:ramadan_assistant/core/services/dua_service.dart';
 import 'package:ramadan_assistant/core/services/fcm_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
+import 'package:ramadan_assistant/core/services/personal_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
-import 'package:ramadan_assistant/core/services/dua_service.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/firebase_options.dart';
@@ -32,82 +33,126 @@ import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
-import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
-import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_event.dart';
 import 'package:tafsir_library/tafsir_library.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
-
-
-
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   await setupServiceLocator();
+  runApp(const AppStartup());
+}
 
-  // Initialize Smart Update Manager in background — لا يوقف الـ startup لو الإنترنت مش موجود
-  final updateManager = sl<SmartUpdateManager>();
-  unawaited(updateManager.initialize().catchError((e) {
-    debugPrint('⚠️ SmartUpdateManager init failed (offline?): $e');
-  }));
+/// Renders a first frame while plugins initialize and provides recovery if a
+/// required service fails, rather than leaving the app on its native splash.
+class AppStartup extends StatefulWidget {
+  final Future<void> Function() initialize;
+  final Widget child;
 
-  // Initialize Firebase Cloud Messaging
-  await FcmService.initialize();
-  // ✅ إضافة try-catch: subscribeToTopic يحتاج إنترنت
-  try {
-    await FcmService.subscribeToTopic('updates');
-  } catch (e) {
-    debugPrint('⚠️ FCM subscribe failed (offline?): $e');
+  const AppStartup({
+    super.key,
+    this.initialize = initializeAppServices,
+    this.child = const MyApp(),
+  });
+
+  @override
+  State<AppStartup> createState() => _AppStartupState();
+}
+
+class _AppStartupState extends State<AppStartup> {
+  late Future<void> _initialization;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialization = _initialize();
   }
 
-  // Initialize Tafsir Library
-  try {
-    await TafsirLibrary.initialize();
-  } catch (e) {
-    debugPrint('Error initializing Tafsir Library: $e');
+  Future<void> _initialize() async {
+    try {
+      await widget.initialize();
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'app startup',
+        ),
+      );
+      rethrow;
+    }
   }
 
-  // Initialize Services
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            !snapshot.hasError) {
+          return widget.child;
+        }
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.getLightTheme(const Locale('ar')),
+          home: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              body: SafeArea(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('ثوابتي', style: TextStyle(fontSize: 28)),
+                        const SizedBox(height: 24),
+                        if (snapshot.hasError) ...[
+                          const Text(
+                            'تعذّر بدء التطبيق. حاول مرة أخرى.',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: () => setState(() {
+                              _initialization = _initialize();
+                            }),
+                            child: const Text('إعادة المحاولة'),
+                          ),
+                        ] else ...[
+                          const CircularProgressIndicator(),
+                          const SizedBox(height: 16),
+                          const Text('جارٍ تجهيز التطبيق…'),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+Future<void> initializeAppServices() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await sl<DuaService>().init();
+  // Prepare local tafsir storage before its screens can be opened.
+  await TafsirLibrary.initialize();
   await NotificationService.initialize();
-
-  // Initialize Adhan Alarm Service (full-length Adhan audio)
   await AdhanAlarmService.init(
     navigatorKey: NotificationActionHandler.navigatorKey,
   );
-
-  // Initialize Dhikr Alarm Service (full-length Reminder audio)
   await DhikrAlarmService.init(
     navigatorKey: NotificationActionHandler.navigatorKey,
   );
-
-  BackgroundTaskService.initialize();
-  if (!kDebugMode) {
-    BackgroundTaskService.scheduleDailyUpdate();
-  }
-
-  // Initialize notification action handler
+  await PersonalAlarmService.init(
+    navigatorKey: NotificationActionHandler.navigatorKey,
+  );
   await NotificationActionHandler.initialize();
 
-  // Schedule today's prayer notifications - with error handling
-  try {
-    await BackgroundTaskService.scheduleNotificationsNow();
-  } catch (e) {
-    debugPrint('Error scheduling notifications: $e');
-  }
-
-  // Check for auto updates in background - with delay to prevent startup issues
-  if (!kDebugMode) {
-    Future.delayed(const Duration(minutes: 5), () {
-      updateManager.checkAutoUpdates();
-    });
-  }
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -115,13 +160,54 @@ void main() async {
     ),
   );
 
-  // Add memory management for debug mode
-  if (kDebugMode) {
-    // Disable some heavy features in debug mode
-    debugPrint('Running in debug mode - some features optimized');
+  // Network access and optional scheduling cannot hold up the first screen.
+  unawaited(_initializeOptionalServices());
+}
+
+Future<void> _initializeOptionalServices() async {
+  final updateManager = sl<SmartUpdateManager>();
+  unawaited(
+    updateManager.initialize().catchError((Object error) {
+      debugPrint('SmartUpdateManager initialization failed: $error');
+    }),
+  );
+
+  unawaited(_initializePushMessaging());
+  try {
+    await BackgroundTaskService.initialize();
+    if (!kDebugMode) {
+      await BackgroundTaskService.scheduleDailyUpdate();
+    }
+  } catch (error, stackTrace) {
+    debugPrint('Background scheduling unavailable: $error\n$stackTrace');
   }
 
-  runApp(const MyApp());
+  await BackgroundTaskService.scheduleNotificationsNow(
+    useCachedLocationOnly: true,
+  );
+
+  if (!kDebugMode) {
+    unawaited(
+      Future<void>.delayed(const Duration(minutes: 5), () async {
+        try {
+          await updateManager.checkAutoUpdates();
+        } catch (error, stackTrace) {
+          debugPrint('Automatic update check failed: $error\n$stackTrace');
+        }
+      }),
+    );
+  }
+}
+
+Future<void> _initializePushMessaging() async {
+  try {
+    await FcmService.initialize();
+    await FcmService.subscribeToTopic(
+      'updates',
+    ).timeout(const Duration(seconds: 10));
+  } catch (error, stackTrace) {
+    debugPrint('Push messaging unavailable: $error\n$stackTrace');
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -145,9 +231,6 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ThemeBloc()..add(LoadTheme())),
           BlocProvider(
             create: (context) => LanguageBloc()..add(LoadLanguage()),
-          ),
-          BlocProvider(
-            create: (context) => WirdBloc(sl())..add(LoadWirdProgress()),
           ),
           BlocProvider(create: (context) => TasbihBloc(sl<AppDatabase>())),
           BlocProvider(
@@ -209,7 +292,8 @@ class MyApp extends StatelessWidget {
                         ? ThemeMode.dark
                         : ThemeMode.light,
                     navigatorKey: NotificationActionHandler.navigatorKey,
-                    localizationsDelegates: AppLocalizations.localizationsDelegates,
+                    localizationsDelegates:
+                        AppLocalizations.localizationsDelegates,
                     supportedLocales: AppLocalizations.supportedLocales,
                     locale: activeLocale,
                     home: Builder(
@@ -229,145 +313,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// ─── Overlay Entry Point ──────────────────────────────────────────
-
-@pragma('vm:entry-point')
-void overlayMain() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: const AzanOverlayWidget(),
-    ),
-  );
-}
-
-class AzanOverlayWidget extends StatefulWidget {
-  const AzanOverlayWidget({super.key});
-
-  @override
-  State<AzanOverlayWidget> createState() => _AzanOverlayWidgetState();
-}
-
-class _AzanOverlayWidgetState extends State<AzanOverlayWidget> {
-  Map<String, dynamic>? _data;
-
-  @override
-  void initState() {
-    super.initState();
-    FlutterOverlayWindow.overlayListener.listen((event) {
-      if (event is Map) {
-        setState(() {
-          _data = Map<String, dynamic>.from(event);
-        });
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final title = _data?['title'] ?? 'حان وقت الأذان';
-    final body = _data?['body'] ?? 'أشهد أن لا إله إلا الله';
-    final prayer = _data?['prayer'] ?? '';
-
-    return Material(
-      color: Colors.transparent,
-      child: Center(
-        child: Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
-            borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                blurRadius: 30,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.mosque_rounded, color: Colors.white, size: 32),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (prayer.isNotEmpty)
-                            Text(
-                              'صلاة $prayer',
-                              style: const TextStyle(color: Colors.white70, fontSize: 13),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  children: [
-                    Text(
-                      body,
-                      style: const TextStyle(color: Colors.white, fontSize: 17, height: 1.5),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () => FlutterOverlayWindow.closeOverlay(),
-                            child: const Text('تجاهل', style: TextStyle(color: Colors.white38)),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2E7D32),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            onPressed: () => FlutterOverlayWindow.closeOverlay(),
-                            child: const Text('تم', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// NOTE: The flutter_overlay_window entry point (overlayMain / AzanOverlayWidget)
+// was removed together with the SYSTEM_ALERT_WINDOW permission. The adhan alert
+// is shown via the full-screen AdhanScreen + full-screen intent notification,
+// which works over the lock screen and other apps without a sensitive permission.

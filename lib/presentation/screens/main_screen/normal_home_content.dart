@@ -1,56 +1,73 @@
-import 'package:intl/intl.dart';
+import 'package:adhan_dart/adhan_dart.dart';
+import 'package:ramadan_assistant/core/navigation/feature_routes.dart';
+import 'package:ramadan_assistant/data/models/dhikr_presets.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:intl/intl.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/services/preferences_service.dart';
 import 'package:ramadan_assistant/core/services/quran_database_service.dart';
+import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
+import 'package:ramadan_assistant/core/utils/permission_flow.dart';
+import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
 import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
+import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/prayer_times_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/qibla_screen/qibla_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/quran_screen/download_quran_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/quran_screen/quran_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/tasbih_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_hub_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_bloc.dart';
-import 'package:ramadan_assistant/presentation/screens/wird_screen/bloc/wird_state.dart';
-import 'package:ramadan_assistant/presentation/screens/wird_screen/wird_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
-import 'package:ramadan_assistant/core/services/preferences_service.dart';
-import 'package:ramadan_assistant/core/services/notification_service.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
 
 class NormalHomeContent extends StatefulWidget {
-  const NormalHomeContent({super.key});
+  const NormalHomeContent({super.key, this.isRamadan = false});
+
+  final bool isRamadan;
 
   @override
   State<NormalHomeContent> createState() => _NormalHomeContentState();
 }
 
 class _NormalHomeContentState extends State<NormalHomeContent> {
+  Timer? _clock;
   @override
   void initState() {
     super.initState();
-    _requestAllPermissions();
+    _clock = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted && AppShellScope.isActive(context, 0)) setState(() {});
+    });
+    // Request permissions in-context after the first frame —
+    // never trigger system prompts at cold start (Play UX guidance).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_requestPermissions());
+    });
   }
 
-  Future<void> _requestAllPermissions() async {
-    try {
-      var locationStatus = await Permission.location.status;
-      if (!locationStatus.isGranted) {
-        await Permission.location.request();
+  Future<void> _requestPermissions() async {
+    final locationGranted = await PermissionFlow.requestCorePermissions(
+      context,
+    );
+    if (mounted && locationGranted) {
+      final bloc = context.read<PrayerTimesBloc>();
+      if (bloc.state is PrayerTimesInitial || bloc.state is PrayerTimesError) {
+        bloc.add(LoadPrayerTimes(locale: context.locale.languageCode));
       }
-      await NotificationService.requestPermissions();
-    } catch (e) {
-      debugPrint('Error loading permissions: $e');
     }
+  }
+
+  @override
+  void dispose() {
+    _clock?.cancel();
+    super.dispose();
   }
 
   @override
@@ -61,35 +78,36 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
 
     return Scaffold(
       backgroundColor: context.backgroundColor,
+      bottomNavigationBar: const SakinaBottomBar(),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildSliverAppBar(context, theme, today, gregorian),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+                if (widget.isRamadan) ...[
+                  Text(
+                    'ramadan_kareem'.tr(),
+                    style: context.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 _buildHeroSection(context),
                 const SizedBox(height: 24),
-                const RotatingHadithCard(),
-                const SizedBox(height: 30),
+
                 _buildSectionHeader(
                   context,
-                  'features'.tr(),
+                  context.loc.ui_daily_tools,
                   Icons.grid_view_rounded,
                 ),
                 const SizedBox(height: 16),
                 _buildFeaturesGrid(context),
-                const SizedBox(height: 30),
-                _buildSectionHeader(
-                  context,
-                  'daily_progress'.tr(),
-                  Icons.analytics_rounded,
-                ),
-                const SizedBox(height: 16),
-                _buildActivitySummary(context),
-                const SizedBox(height: 30),
+                const SizedBox(height: 24),
+                const RotatingHadithCard(),
+                const SizedBox(height: 32),
                 _buildSectionHeader(
                   context,
                   'reminders'.tr(),
@@ -97,7 +115,7 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
                 ),
                 const SizedBox(height: 16),
                 _buildRemindersSummary(context),
-                const SizedBox(height: 100),
+                SizedBox(height: 32 + MediaQuery.paddingOf(context).bottom),
               ]),
             ),
           ),
@@ -115,33 +133,46 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
     final locale = context.locale.languageCode;
 
     return SliverAppBar(
-      expandedHeight: 180,
-      floating: false,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: theme.primary,
-      iconTheme: const IconThemeData(color: Colors.white),
+      floating: true,
+      pinned: false,
+      toolbarHeight: 56,
+      centerTitle: true,
+      backgroundColor: theme.background,
+      surfaceTintColor: Colors.transparent,
+      systemOverlayStyle: context.isDark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
+      automaticallyImplyLeading: false,
+      titleSpacing: 20,
+      leading: IconButton(
+        tooltip: 'location'.tr(),
+        icon: const Icon(Icons.location_on_outlined),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+        ),
+      ),
+      title: Text(context.loc.ui_brand, style: context.textTheme.titleLarge),
       actions: [
         FutureBuilder<int>(
           future: PreferencesService.getInstance().then(
             (p) => p.getPendingUpdateCount(),
           ),
-          builder: (context, snapshot) {
-            final count = snapshot.data ?? 0;
-            return IconButton(
-              icon: Badge(
-                isLabelVisible: count > 0,
-                label: Text('$count'),
-                child: const Icon(Icons.notifications_outlined),
-              ),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              ),
-            );
-          },
+          builder: (context, snapshot) => IconButton(
+            tooltip: 'notifications'.tr(),
+            icon: Badge(
+              isLabelVisible: (snapshot.data ?? 0) > 0,
+              label: Text('${snapshot.data ?? 0}'),
+              child: const Icon(Icons.notifications_outlined),
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            ),
+          ),
         ),
         IconButton(
+          tooltip: 'settings_title'.tr(),
           icon: const Icon(Icons.settings_outlined),
           onPressed: () => Navigator.push(
             context,
@@ -150,109 +181,30 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
         ),
         const SizedBox(width: 8),
       ],
-      leading: Center(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(32),
         child: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-            DateFormat('d MMM', locale).format(gregorian),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+          padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 12),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  DateFormat('EEEE، d MMMM', locale).format(gregorian),
+                  style: context.textTheme.bodySmall,
+                ),
+                Text(
+                  '${today.hDay} / ${today.hMonth} / ${today.hYear}',
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: theme.secondary,
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-      leadingWidth: 100,
-      title: BlocBuilder<PrayerTimesBloc, PrayerTimesState>(
-        builder: (context, state) {
-          if (state is PrayerTimesLoaded) {
-            final nextPrayer = _getNextPrayer(state.prayerTimes);
-            return Text(
-              '${nextPrayer.name.tr()}: ${DateFormat('hh:mm a').format(nextPrayer.time)}',
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            );
-          }
-          return const SizedBox.shrink();
-        },
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [theme.primary, theme.secondary],
-                ),
-              ),
-            ),
-            // Subtle diagonal pattern overlay
-            Opacity(
-              opacity: 0.06,
-              child: CustomPaint(
-                painter: _DiagonalPatternPainter(theme.accent),
-              ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      locale == 'ar' ? 'السلام عليكم' : 'Assalamu Alaykum',
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          color: Colors.white.withValues(alpha: 0.9),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${today.hDay} ${today.hMonth} ${today.hYear} هـ',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: Colors.white38,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          DateFormat('EEEE, d MMMM yyyy', locale).format(gregorian),
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -267,84 +219,164 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
           final nextPrayer = _getNextPrayer(state.prayerTimes);
           final progress = _calculateProgress(state.prayerTimes);
 
-          return Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: theme.cardSurface,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: theme.borderColor.withValues(alpha: 0.1),
+          final remaining = nextPrayer.time.difference(DateTime.now());
+          final timeLeft =
+              '${remaining.inHours.toString().padLeft(2, '0')}:${(remaining.inMinutes % 60).toString().padLeft(2, '0')}';
+          return Material(
+            color: SakinaColors.hero(context),
+            borderRadius: BorderRadius.circular(20),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrayerTimesScreen()),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          'next_prayer'.tr(),
-                          style: TextStyle(
-                            color: theme.textSecondary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            'next_prayer'.tr(),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFFCEE8DC),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        Icon(
+                          Icons.wb_twilight_rounded,
+                          color: theme.accent,
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 24,
+                      runSpacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
                         Text(
                           nextPrayer.name.tr(),
-                          style: TextStyle(
-                            color: theme.primary,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
+                          style: context.textTheme.displayMedium?.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          DateFormat.jm(
+                            context.locale.languageCode,
+                          ).format(nextPrayer.time),
+                          style: context.textTheme.headlineLarge?.copyWith(
+                            color: Colors.white,
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Text(
-                        DateFormat('hh:mm a').format(nextPrayer.time),
-                        style: TextStyle(
-                          color: theme.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 16,
+                          color: Color(0xFFCEE8DC),
                         ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            state.locationName,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: const Color(0xFFCEE8DC),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: Colors.white.withValues(alpha: .12),
+                        valueColor: AlwaysStoppedAnimation(theme.accent),
+                        minHeight: 5,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '${context.loc.ui_remaining}  $timeLeft',
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: theme.accent,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: theme.primary.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
-                    minHeight: 12,
-                  ),
+              ),
+            ),
+          );
+        }
+        if (state is PrayerTimesError) {
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: theme.background2,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('prayer_times'.tr(), style: context.textTheme.titleLarge),
+                const SizedBox(height: 8),
+                Text(
+                  'location_error_title'.tr(),
+                  style: context.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: () => context.read<PrayerTimesBloc>().add(
+                        LoadPrayerTimes(
+                          locale: context.locale.languageCode,
+                          requestPermission: true,
+                        ),
+                      ),
+                      icon: const Icon(Icons.refresh),
+                      label: Text('retry'.tr()),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      ),
+                      child: Text('settings_title'.tr()),
+                    ),
+                  ],
                 ),
               ],
             ),
           );
         }
-        return const SizedBox.shrink();
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: theme.background2,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('prayer_times'.tr(), style: context.textTheme.titleLarge),
+              const SizedBox(height: 24),
+              LinearProgressIndicator(semanticsLabel: 'prayer_times'.tr()),
+            ],
+          ),
+        );
       },
     );
   }
@@ -359,12 +391,14 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
       children: [
         Icon(icon, color: theme.primary, size: 24),
         const SizedBox(width: 12),
-        Text(
-          title,
-          style: TextStyle(
-            color: theme.textPrimary,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: theme.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -372,114 +406,135 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
   }
 
   Widget _buildFeaturesGrid(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.25,
-      children: [
-        _buildFeatureCard(
+    final scale = MediaQuery.textScalerOf(context).scale(16) / 16;
+    final features = <Widget>[
+      _buildFeatureCard(
+        context,
+        'quran'.tr(),
+        Icons.menu_book_rounded,
+        () async {
+          final dbExists = await QuranDatabaseService.instance
+              .isDatabaseExists();
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => dbExists
+                    ? const QuranScreen()
+                    : const DownloadQuranScreen(),
+              ),
+            );
+          }
+        },
+      ),
+      _buildFeatureCard(
+        context,
+        'tasbih'.tr(),
+        Icons.touch_app_rounded,
+        () => Navigator.push(
           context,
-          'quran'.tr(),
-          Icons.menu_book_rounded,
-          const Color(0xFF43A047),
-          () async {
-            final dbExists = await QuranDatabaseService.instance
-                .isDatabaseExists();
-            if (context.mounted) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => dbExists
-                      ? const QuranScreen()
-                      : const DownloadQuranScreen(),
-                ),
+          MaterialPageRoute(builder: (_) => const TasbihScreen()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        'reminders'.tr(),
+        Icons.notifications_active_rounded,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const RemindersScreen()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        context.loc.features_worship,
+        Icons.bookmark_outline_rounded,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FeatureRoutes.worship()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        context.loc.features_planner,
+        Icons.calendar_month_outlined,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FeatureRoutes.planner()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        'umrah'.tr(),
+        Icons.map_rounded,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UmrahHubScreen()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        'hadith_title'.tr(),
+        Icons.library_books_rounded,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HadithScreen()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        context.loc.features_library,
+        Icons.auto_stories_outlined,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FeatureRoutes.library()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        context.loc.features_shortcuts,
+        Icons.add_to_home_screen_outlined,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FeatureRoutes.shortcuts()),
+        ),
+      ),
+      _buildFeatureCard(
+        context,
+        context.loc.features_local_data,
+        Icons.phone_android_outlined,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => FeatureRoutes.localData()),
+        ),
+      ),
+    ];
+    return Column(
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 310 || scale > 1.4) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  features[0],
+                  const SizedBox(height: 12),
+                  features[1],
+                ],
               );
             }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: features[0]),
+                const SizedBox(width: 12),
+                Expanded(child: features[1]),
+              ],
+            );
           },
         ),
-        _buildFeatureCard(
-          context,
-          'tasbih'.tr(),
-          Icons.fingerprint_rounded,
-          const Color(0xFF1E88E5),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const TasbihScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'wird_title'.tr(),
-          Icons.auto_stories_rounded,
-          const Color(0xFFD81B60),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const WirdScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'prayer_times'.tr(),
-          Icons.timer_rounded,
-          const Color(0xFFFB8C00),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const PrayerTimesScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'reminders'.tr(),
-          Icons.notifications_active_rounded,
-          const Color(0xFF4527A0),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const RemindersScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'umrah'.tr(),
-          Icons.map_rounded,
-          const Color(0xFF009688),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const UmrahHubScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'qibla'.tr(),
-          Icons.explore_rounded,
-          const Color(0xFF795548),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const QiblaScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'settings_title'.tr(),
-          Icons.settings_suggest_rounded,
-          const Color(0xFF607D8B),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const SettingsScreen()),
-          ),
-        ),
-        _buildFeatureCard(
-          context,
-          'hadith_title'.tr(),
-          Icons.library_books_rounded,
-          const Color(0xFF8E24AA),
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const HadithScreen()),
-          ),
-        ),
+        const SizedBox(height: 16),
+        ...features.skip(2),
       ],
     );
   }
@@ -488,132 +543,49 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
     BuildContext context,
     String title,
     IconData icon,
-    Color color,
     VoidCallback onTap,
   ) {
     final theme = context.ramadanTheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: theme.cardSurface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
+    final featured =
+        icon == Icons.menu_book_rounded || icon == Icons.touch_app_rounded;
+    if (!featured) {
+      return ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        minTileHeight: 64,
+        leading: Icon(icon, color: theme.primary, size: 24),
+        title: Text(title, style: context.textTheme.titleMedium),
+        trailing: Icon(
+          Icons.chevron_right,
+          textDirection: Directionality.of(context),
+          color: theme.textDim,
+          size: 20,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            Flexible(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: theme.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+        onTap: onTap,
+      );
+    }
+    return Material(
+      color: theme.cardSurface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: theme.borderColor),
       ),
-    );
-  }
-
-  Widget _buildActivitySummary(BuildContext context) {
-    final theme = context.ramadanTheme;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: theme.cardSurface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
-      ),
-      child: BlocBuilder<WirdBloc, WirdState>(
-        builder: (context, wirdState) {
-          int streak = 0;
-          int pages = 0;
-
-          if (wirdState is WirdHistoryLoaded) {
-            streak = wirdState.currentStreak;
-            pages = wirdState.completedPages;
-          } else if (wirdState is WirdPlanActive) {
-            pages = wirdState.completedPages;
-          }
-
-          return BlocBuilder<TasbihBloc, TasbihState>(
-            builder: (context, tasbihState) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildActivityStat(
-                    context,
-                    streak.toString(),
-                    'days_streak'.tr(),
-                    Icons.local_fire_department_rounded,
-                  ),
-                  _buildActivityStat(
-                    context,
-                    pages.toString(),
-                    'pages_read'.tr(),
-                    Icons.auto_stories,
-                  ),
-                  _buildActivityStat(
-                    context,
-                    tasbihState.count.toString(),
-                    'tasbih_total'.tr(),
-                    Icons.all_inclusive_rounded,
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildActivityStat(
-    BuildContext context,
-    String value,
-    String label,
-    IconData icon,
-  ) {
-    final theme = context.ramadanTheme;
-    return Column(
-      children: [
-        Icon(icon, color: theme.primary, size: 24),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            color: theme.textPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: theme.primary, size: 28),
+              const SizedBox(height: 16),
+              Text(title, style: context.textTheme.titleMedium),
+            ],
           ),
         ),
-        Text(label, style: TextStyle(color: theme.textSecondary, fontSize: 12)),
-      ],
+      ),
     );
   }
 
@@ -631,7 +603,13 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
           }
 
           return SizedBox(
-            height: 110,
+            height:
+                110 +
+                (MediaQuery.textScalerOf(context).scale(14) / 14 - 1).clamp(
+                      0,
+                      2,
+                    ) *
+                    36,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               separatorBuilder: (_, _) => const SizedBox(width: 16),
@@ -676,10 +654,18 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              reminder.reminderTypes
-                                  .split(',')
-                                  .first
-                                  .toUpperCase(),
+                              DhikrPresets.getTranslation(
+                                DhikrPresets.dhikrList.firstWhere(
+                                  (entry) =>
+                                      entry['id'] ==
+                                      reminder.reminderTypes.split(',').first,
+                                  orElse: () => {
+                                    'arabic': 'reminders'.tr(),
+                                    'translation': 'reminders'.tr(),
+                                  },
+                                ),
+                                context.locale.languageCode,
+                              ),
                               style: TextStyle(
                                 color: theme.textPrimary,
                                 fontWeight: FontWeight.bold,
@@ -691,7 +677,7 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Every ${reminder.intervalMinutes} min',
+                              '${'interval'.tr()}: ${reminder.intervalMinutes} ${'minutes'.tr()}',
                               style: TextStyle(
                                 color: theme.textSecondary,
                                 fontSize: 12,
@@ -734,12 +720,21 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
             'no_active_reminders'.tr(),
             style: TextStyle(color: theme.textSecondary),
           ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const RemindersScreen()),
+            ),
+            icon: const Icon(Icons.add),
+            label: Text('add_reminder'.tr()),
+          ),
         ],
       ),
     );
   }
 
-  ({String name, DateTime time}) _getNextPrayer(dynamic prayerTimes) {
+  ({String name, DateTime time}) _getNextPrayer(PrayerTimes prayerTimes) {
     final now = DateTime.now();
 
     final prayers = [
@@ -759,13 +754,11 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
       }
     }
 
-    final tomorrowFajr = (prayers.first['time'] as DateTime).add(
-      const Duration(days: 1),
-    );
+    final tomorrowFajr = prayerTimes.fajrAfter.toLocal();
     return (name: 'fajr', time: tomorrowFajr);
   }
 
-  double _calculateProgress(dynamic prayerTimes) {
+  double _calculateProgress(PrayerTimes prayerTimes) {
     final now = DateTime.now();
 
     final fajr = prayerTimes.fajr.toLocal();
@@ -778,7 +771,7 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
     DateTime endTime;
 
     if (now.isBefore(fajr)) {
-      startTime = isha.subtract(const Duration(days: 1));
+      startTime = prayerTimes.ishaBefore.toLocal();
       endTime = fajr;
     } else if (now.isBefore(dhuhr)) {
       startTime = fajr;
@@ -794,38 +787,15 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
       endTime = isha;
     } else {
       startTime = isha;
-      endTime = fajr.add(const Duration(days: 1));
+      endTime = prayerTimes.fajrAfter.toLocal();
     }
 
     final totalDuration = endTime.difference(startTime).inSeconds;
     final elapsedDuration = now.difference(startTime).inSeconds;
 
+    if (totalDuration <= 0) {
+      return 0;
+    }
     return (elapsedDuration / totalDuration).clamp(0.0, 1.0);
   }
-}
-
-class _DiagonalPatternPainter extends CustomPainter {
-  final Color color;
-
-  _DiagonalPatternPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = 0.5
-      ..style = PaintingStyle.stroke;
-
-    const spacing = 40.0;
-    for (double x = -size.height; x < size.width + size.height; x += spacing) {
-      canvas.drawLine(
-        Offset(x, 0),
-        Offset(x + size.height, size.height),
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

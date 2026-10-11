@@ -1,13 +1,10 @@
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 class NotificationService {
   static Future<void> initialize() async {
@@ -69,6 +66,15 @@ class NotificationService {
         importance: NotificationImportance.Default,
       ),
       NotificationChannel(
+        channelKey: 'personal_reminders',
+        channelName: 'Personal reminders',
+        channelDescription: 'Appointments and daily reading reminders',
+        defaultColor: AppTheme.primaryColor,
+        importance: NotificationImportance.High,
+        playSound: true,
+        enableVibration: true,
+      ),
+      NotificationChannel(
         channelKey: 'daily_reports',
         channelName: 'Daily Progress Reports',
         channelDescription: 'Summary of your daily worship performance',
@@ -87,23 +93,22 @@ class NotificationService {
   }
 
   static Future<void> requestPermissions() async {
-    await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications(
-          permissions: [
-            NotificationPermission.Alert,
-            NotificationPermission.Sound,
-            NotificationPermission.Badge,
-            NotificationPermission.Vibration,
-            NotificationPermission.Light,
-            NotificationPermission.FullScreenIntent,
-            NotificationPermission.PreciseAlarms,
-            NotificationPermission.CriticalAlert,
-            NotificationPermission.OverrideDnD,
-          ],
-        );
-      }
-    });
+    final isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) {
+      await AwesomeNotifications().requestPermissionToSendNotifications(
+        permissions: [
+          NotificationPermission.Alert,
+          NotificationPermission.Sound,
+          NotificationPermission.Badge,
+          NotificationPermission.Vibration,
+          NotificationPermission.Light,
+          NotificationPermission.FullScreenIntent,
+          NotificationPermission.PreciseAlarms,
+          NotificationPermission.CriticalAlert,
+          NotificationPermission.OverrideDnD,
+        ],
+      );
+    }
   }
 
   /// Save notification to local history in SharedPreferences
@@ -221,25 +226,9 @@ class NotificationService {
     // Save to history
     await saveToHistory(title: title, body: body, category: 'adhan');
 
-    // Show Overlay
-    try {
-      if (await FlutterOverlayWindow.isPermissionGranted()) {
-        await FlutterOverlayWindow.showOverlay(
-          enableDrag: true,
-          flag: OverlayFlag.defaultFlag,
-          alignment: OverlayAlignment.center,
-          height: WindowSize.matchParent,
-          width: WindowSize.matchParent,
-        );
-        await FlutterOverlayWindow.shareData({
-          'title': title,
-          'body': body,
-          'prayer': prayerName,
-        });
-      }
-    } catch (e) {
-      debugPrint('Overlay error: $e');
-    }
+    // NOTE: The system overlay (flutter_overlay_window) was removed —
+    // fullScreenIntent: true above already shows the adhan alert over the
+    // lock screen and other apps without SYSTEM_ALERT_WINDOW.
   }
 
   /// Schedule prayer notification at specific time
@@ -380,43 +369,6 @@ class NotificationService {
     );
   }
 
-  /// Schedule Wird reminder after prayer
-  static Future<void> scheduleWirdReminder({
-    required int id,
-    required String prayerName,
-    required DateTime reminderTime,
-    required int pages,
-  }) async {
-    final localizedPrayer = await _getTranslation(prayerName.toLowerCase());
-    final title = await _getTranslation('notification_wird_title');
-    final body = await _getTranslation(
-      'notification_wird_body',
-      args: ['$pages', localizedPrayer],
-    );
-
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: id,
-        channelKey: 'reminders',
-        title: title,
-        body: body,
-        category: NotificationCategory.Reminder,
-        wakeUpScreen: true,
-        payload: {'type': 'wird', 'prayer': prayerName},
-      ),
-      schedule: NotificationCalendar(
-        year: reminderTime.year,
-        month: reminderTime.month,
-        day: reminderTime.day,
-        hour: reminderTime.hour,
-        minute: reminderTime.minute,
-        second: 0,
-        preciseAlarm: true,
-        allowWhileIdle: true,
-      ),
-    );
-  }
-
   static Future<void> schedulePrayerNearing({
     required int id,
     required String prayerName,
@@ -541,13 +493,19 @@ class NotificationService {
 
   /// Cancel specific adhan notifications
   static Future<void> cancelAdhanNotifications() async {
-    await AwesomeNotifications().cancelNotificationsByChannelKey('prayer_times_v2');
-    await AwesomeNotifications().cancelNotificationsByChannelKey('prayer_times_fajr_v2');
+    await AwesomeNotifications().cancelNotificationsByChannelKey(
+      'prayer_times_v2',
+    );
+    await AwesomeNotifications().cancelNotificationsByChannelKey(
+      'prayer_times_fajr_v2',
+    );
   }
 
   /// Cancel iqama notifications
   static Future<void> cancelIqamaNotifications() async {
-    await AwesomeNotifications().cancelNotificationsByChannelKey('iqama_channel');
+    await AwesomeNotifications().cancelNotificationsByChannelKey(
+      'iqama_channel',
+    );
   }
 
   /// Cancel dhikr notifications

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -75,11 +74,12 @@ class SmartUpdateManager {
           track: shorebird.UpdateTrack(UpdateTrack.criticalUpdate.trackId),
         );
 
-        // Restart app
+        // Ask the user to restart the app themselves — never exit(0):
+        // a hard process kill mid-session is jarring and can look like a
+        // crash to Android's app-not-responding / crash reporting.
         if (context.mounted) {
           await _showRestartDialog(context);
         }
-        exit(0);
       }
     } catch (e) {
       _logger.e('❌ Error checking critical updates: $e');

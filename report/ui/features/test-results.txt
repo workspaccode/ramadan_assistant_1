@@ -1,0 +1,578 @@
+00:00 +0: loading D:/saas/ramadan_assistant/test/adhan_presentation_test.dart
+00:00 +0: D:/saas/ramadan_assistant/test/adhan_presentation_test.dart: Local clock and scheduled trigger share one active route
+00:00 +1: D:/saas/ramadan_assistant/test/adhan_presentation_test.dart: Navigation failure releases presentation guard
+AdhanAlarmService: Error showing AdhanScreen: Bad state: navigation failed
+00:00 +2: D:/saas/ramadan_assistant/test/adhan_presentation_test.dart: Dhikr and unrelated alarms cannot open the Adhan screen
+00:15 +3: D:/saas/ramadan_assistant/test/audio_request_lifecycle_test.dart: Repeated playback keeps one completion listener
+00:15 +4: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:15 +5: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:15 +6: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:15 +7: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:15 +7: D:/saas/ramadan_assistant/test/audio_request_lifecycle_test.dart: Native playback failure leaves recoverable non-playing state
+Audio operation failed: Bad state: native player unavailable
+00:15 +8: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:17 +9: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:17 +10: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup renders immediately while initialization is pending
+00:17 +11: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Failed haptic plugin does not interrupt tasbih counting
+00:17 +12: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Failed haptic plugin does not interrupt tasbih counting
+Tasbih haptic feedback unavailable: PlatformException(unavailable, null, null, null)
+00:17 +13: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +14: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +15: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +16: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +17: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +17: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Tasbih save failure preserves the session on reset and dhikr change
+Tasbih session save failed: SqliteException(1811): while executing statement, simulated write failure, constraint failed (code 1811)
+  Causing statement: INSERT INTO "tasbih_sessions" ("dhikr_name", "count", "target_count", "created_at", "completed_at") VALUES (?, ?, ?, ?, ?), parameters: SubhanAllah, 1, 1, 1791710500, 1791710500
+#0      throwException (package:sqlite3/src/implementation/exception.dart:101:3)
+#1      StatementImplementation._execute (package:sqlite3/src/implementation/statement.dart:80:7)
+#2      StatementImplementation.executeWith (package:sqlite3/src/implementation/statement.dart:302:5)
+#3      CommonPreparedStatement.execute (package:sqlite3/src/statement.dart:81:12)
+#4      Sqlite3Delegate.runWithArgsSync (package:drift/src/sqlite3/database.dart:155:14)
+#5      _NativeDelegate.runInsert.<anonymous closure> (package:drift/native.dart:440:7)
+#6      new Future.sync (dart:async/future.dart:325:27)
+#7      _NativeDelegate.runInsert (package:drift/native.dart:439:19)
+#8      _BaseExecutor.runInsert.<anonymous closure> (package:drift/src/runtime/executor/helpers/engines.dart:110:19)
+#9      _BaseExecutor._synchronized (package:drift/src/runtime/executor/helpers/engines.dart:64:20)
+#10     _BaseExecutor.runInsert (package:drift/src/runtime/executor/helpers/engines.dart:107:12)
+#11     InsertStatement.insert.<anonymous closure> (package:drift/src/runtime/query_builder/statements/insert.dart:77:26)
+#12     DatabaseConnectionUser.doWhenOpened.<anonymous closure> (package:drift/src/runtime/api/connection_user.dart:172:16)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#14     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#15     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#16     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#17     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+<asynchronous suspension>
+#18     InsertStatement.insert (package:drift/src/runtime/query_builder/statements/insert.dart:76:12)
+<asynchronous suspension>
+#19     TasbihBloc._saveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:154:25)
+<asynchronous suspension>
+#20     TasbihBloc._trySaveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:167:7)
+<asynchronous suspension>
+#21     TasbihBloc._onIncrementCounter (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:201:7)
+<asynchronous suspension>
+#22     new TasbihBloc.<anonymous closure> (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:117:11)
+<asynchronous suspension>
+#23     Bloc.on.<anonymous closure>.handleEvent (package:bloc/src/bloc.dart:226:13)
+<asynchronous suspension>
+
+Tasbih session save failed: SqliteException(1811): while executing statement, simulated write failure, constraint failed (code 1811)
+  Causing statement: INSERT INTO "tasbih_sessions" ("dhikr_name", "count", "target_count", "created_at", "completed_at") VALUES (?, ?, ?, ?, ?), parameters: SubhanAllah, 1, 1, 1791710500, 1791710501
+#0      throwException (package:sqlite3/src/implementation/exception.dart:101:3)
+#1      StatementImplementation._execute (package:sqlite3/src/implementation/statement.dart:80:7)
+#2      StatementImplementation.executeWith (package:sqlite3/src/implementation/statement.dart:302:5)
+#3      CommonPreparedStatement.execute (package:sqlite3/src/statement.dart:81:12)
+#4      Sqlite3Delegate.runWithArgsSync (package:drift/src/sqlite3/database.dart:155:14)
+#5      _NativeDelegate.runInsert.<anonymous closure> (package:drift/native.dart:440:7)
+#6      new Future.sync (dart:async/future.dart:325:27)
+#7      _NativeDelegate.runInsert (package:drift/native.dart:439:19)
+#8      _BaseExecutor.runInsert.<anonymous closure> (package:drift/src/runtime/executor/helpers/engines.dart:110:19)
+#9      _BaseExecutor._synchronized (package:drift/src/runtime/executor/helpers/engines.dart:64:20)
+#10     _BaseExecutor.runInsert (package:drift/src/runtime/executor/helpers/engines.dart:107:12)
+#11     InsertStatement.insert.<anonymous closure> (package:drift/src/runtime/query_builder/statements/insert.dart:77:26)
+#12     DatabaseConnectionUser.doWhenOpened.<anonymous closure> (package:drift/src/runtime/api/connection_user.dart:172:16)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#14     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#15     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#16     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#17     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+<asynchronous suspension>
+#18     InsertStatement.insert (package:drift/src/runtime/query_builder/statements/insert.dart:76:12)
+<asynchronous suspension>
+#19     TasbihBloc._saveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:154:25)
+<asynchronous suspension>
+#20     TasbihBloc._trySaveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:167:7)
+<asynchronous suspension>
+#21     TasbihBloc._onResetCounter (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:244:10)
+<asynchronous suspension>
+#22     new TasbihBloc.<anonymous closure> (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:119:11)
+<asynchronous suspension>
+#23     Bloc.on.<anonymous closure>.handleEvent (package:bloc/src/bloc.dart:226:13)
+<asynchronous suspension>
+
+Tasbih session save failed: SqliteException(1811): while executing statement, simulated write failure, constraint failed (code 1811)
+  Causing statement: INSERT INTO "tasbih_sessions" ("dhikr_name", "count", "target_count", "created_at", "completed_at") VALUES (?, ?, ?, ?, ?), parameters: SubhanAllah, 1, 1, 1791710500, 1791710501
+#0      throwException (package:sqlite3/src/implementation/exception.dart:101:3)
+#1      StatementImplementation._execute (package:sqlite3/src/implementation/statement.dart:80:7)
+#2      StatementImplementation.executeWith (package:sqlite3/src/implementation/statement.dart:302:5)
+#3      CommonPreparedStatement.execute (package:sqlite3/src/statement.dart:81:12)
+#4      Sqlite3Delegate.runWithArgsSync (package:drift/src/sqlite3/database.dart:155:14)
+#5      _NativeDelegate.runInsert.<anonymous closure> (package:drift/native.dart:440:7)
+#6      new Future.sync (dart:async/future.dart:325:27)
+#7      _NativeDelegate.runInsert (package:drift/native.dart:439:19)
+#8      _BaseExecutor.runInsert.<anonymous closure> (package:drift/src/runtime/executor/helpers/engines.dart:110:19)
+#9      _BaseExecutor._synchronized (package:drift/src/runtime/executor/helpers/engines.dart:64:20)
+#10     _BaseExecutor.runInsert (package:drift/src/runtime/executor/helpers/engines.dart:107:12)
+#11     InsertStatement.insert.<anonymous closure> (package:drift/src/runtime/query_builder/statements/insert.dart:77:26)
+#12     DatabaseConnectionUser.doWhenOpened.<anonymous closure> (package:drift/src/runtime/api/connection_user.dart:172:16)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#14     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#15     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#16     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#17     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+<asynchronous suspension>
+#18     InsertStatement.insert (package:drift/src/runtime/query_builder/statements/insert.dart:76:12)
+<asynchronous suspension>
+#19     TasbihBloc._saveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:154:25)
+<asynchronous suspension>
+#20     TasbihBloc._trySaveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:167:7)
+<asynchronous suspension>
+#21     TasbihBloc._onChangeDhikr (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:261:10)
+<asynchronous suspension>
+#22     new TasbihBloc.<anonymous closure> (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:121:11)
+<asynchronous suspension>
+#23     Bloc.on.<anonymous closure>.handleEvent (package:bloc/src/bloc.dart:226:13)
+<asynchronous suspension>
+
+Tasbih session save failed: SqliteException(1811): while executing statement, simulated write failure, constraint failed (code 1811)
+  Causing statement: INSERT INTO "tasbih_sessions" ("dhikr_name", "count", "target_count", "created_at", "completed_at") VALUES (?, ?, ?, ?, ?), parameters: SubhanAllah, 1, 1, 1791710500, 1791710501
+#0      throwException (package:sqlite3/src/implementation/exception.dart:101:3)
+#1      StatementImplementation._execute (package:sqlite3/src/implementation/statement.dart:80:7)
+#2      StatementImplementation.executeWith (package:sqlite3/src/implementation/statement.dart:302:5)
+#3      CommonPreparedStatement.execute (package:sqlite3/src/statement.dart:81:12)
+#4      Sqlite3Delegate.runWithArgsSync (package:drift/src/sqlite3/database.dart:155:14)
+#5      _NativeDelegate.runInsert.<anonymous closure> (package:drift/native.dart:440:7)
+#6      new Future.sync (dart:async/future.dart:325:27)
+#7      _NativeDelegate.runInsert (package:drift/native.dart:439:19)
+#8      _BaseExecutor.runInsert.<anonymous closure> (package:drift/src/runtime/executor/helpers/engines.dart:110:19)
+#9      _BaseExecutor._synchronized (package:drift/src/runtime/executor/helpers/engines.dart:64:20)
+#10     _BaseExecutor.runInsert (package:drift/src/runtime/executor/helpers/engines.dart:107:12)
+#11     InsertStatement.insert.<anonymous closure> (package:drift/src/runtime/query_builder/statements/insert.dart:77:26)
+#12     DatabaseConnectionUser.doWhenOpened.<anonymous closure> (package:drift/src/runtime/api/connection_user.dart:172:16)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#14     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#15     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#16     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#17     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+<asynchronous suspension>
+#18     InsertStatement.insert (package:drift/src/runtime/query_builder/statements/insert.dart:76:12)
+<asynchronous suspension>
+#19     TasbihBloc._saveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:154:25)
+<asynchronous suspension>
+#20     TasbihBloc._trySaveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:167:7)
+<asynchronous suspension>
+#21     new TasbihBloc.<anonymous closure> (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:125:15)
+<asynchronous suspension>
+#22     Bloc.on.<anonymous closure>.handleEvent (package:bloc/src/bloc.dart:226:13)
+<asynchronous suspension>
+
+00:17 +18: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +18: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Tasbih save failure preserves the session on reset and dhikr change
+Tasbih haptic feedback unavailable: MissingPluginException(No implementation found for method vibrate on channel vibration)
+00:17 +19: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +19: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Tasbih save retry persists once and restores completed state
+Tasbih session save failed: SqliteException(1811): while executing statement, simulated write failure, constraint failed (code 1811)
+  Causing statement: INSERT INTO "tasbih_sessions" ("dhikr_name", "count", "target_count", "created_at", "completed_at") VALUES (?, ?, ?, ?, ?), parameters: SubhanAllah, 1, 1, 1791710501, 1791710501
+#0      throwException (package:sqlite3/src/implementation/exception.dart:101:3)
+#1      StatementImplementation._execute (package:sqlite3/src/implementation/statement.dart:80:7)
+#2      StatementImplementation.executeWith (package:sqlite3/src/implementation/statement.dart:302:5)
+#3      CommonPreparedStatement.execute (package:sqlite3/src/statement.dart:81:12)
+#4      Sqlite3Delegate.runWithArgsSync (package:drift/src/sqlite3/database.dart:155:14)
+#5      _NativeDelegate.runInsert.<anonymous closure> (package:drift/native.dart:440:7)
+#6      new Future.sync (dart:async/future.dart:325:27)
+#7      _NativeDelegate.runInsert (package:drift/native.dart:439:19)
+#8      _BaseExecutor.runInsert.<anonymous closure> (package:drift/src/runtime/executor/helpers/engines.dart:110:19)
+#9      _BaseExecutor._synchronized (package:drift/src/runtime/executor/helpers/engines.dart:64:20)
+#10     _BaseExecutor.runInsert (package:drift/src/runtime/executor/helpers/engines.dart:107:12)
+#11     InsertStatement.insert.<anonymous closure> (package:drift/src/runtime/query_builder/statements/insert.dart:77:26)
+#12     DatabaseConnectionUser.doWhenOpened.<anonymous closure> (package:drift/src/runtime/api/connection_user.dart:172:16)
+#13     StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#14     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#15     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#16     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#17     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+<asynchronous suspension>
+#18     InsertStatement.insert (package:drift/src/runtime/query_builder/statements/insert.dart:76:12)
+<asynchronous suspension>
+#19     TasbihBloc._saveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:154:25)
+<asynchronous suspension>
+#20     TasbihBloc._trySaveSession (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:167:7)
+<asynchronous suspension>
+#21     TasbihBloc._onIncrementCounter (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:201:7)
+<asynchronous suspension>
+#22     new TasbihBloc.<anonymous closure> (package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart:117:11)
+<asynchronous suspension>
+#23     Bloc.on.<anonymous closure>.handleEvent (package:bloc/src/bloc.dart:226:13)
+<asynchronous suspension>
+
+00:17 +20: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +20: D:/saas/ramadan_assistant/test/crash_recovery_test.dart: Tasbih save retry persists once and restores completed state
+Tasbih haptic feedback unavailable: MissingPluginException(No implementation found for method vibrate on channel vibration)
+00:17 +21: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:17 +22: D:/saas/ramadan_assistant/test/app_startup_recovery_test.dart: Startup failure presents retry and retry opens the app
+00:19 +23: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Favorites and valid media survive repository recreation without duplication
+00:19 +24: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Favorites and valid media survive repository recreation without duplication
+00:19 +25: D:/saas/ramadan_assistant/test/features/planner/planner_cubit_test.dart: Storage failure preserves form and does not schedule a nonexistent event
+00:19 +26: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Unsafe links and corrupt saved media do not enter the library
+00:19 +27: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Unsafe links and corrupt saved media do not enter the library
+00:19 +28: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Unsafe links and corrupt saved media do not enter the library
+00:19 +29: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Unsafe links and corrupt saved media do not enter the library
+00:19 +30: D:/saas/ramadan_assistant/test/features/planner/planner_cubit_test.dart: Disposed screen does not receive late load emissions
+00:19 +31: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Mutation failure retains content and successful retry recovers
+00:19 +32: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Mutation failure retains content and successful retry recovers
+00:19 +33: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Mutation failure retains content and successful retry recovers
+00:19 +34: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Late load completion after disposal cannot emit
+00:19 +35: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Playback failures recover and completion clears active state
+00:19 +36: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Disposal stops pending playback without waiting for stale completion
+00:19 +37: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:20 +38: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:20 +39: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:21 +40: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:21 +41: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:21 +42: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:21 +43: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ar fits 320px at 2x type
+00:22 +44: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library reader ar fits 320px at 2x type
+00:22 +45: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list en fits 320px at 2x type
+00:23 +46: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library reader en fits 320px at 2x type
+00:23 +47: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library list ur fits 320px at 2x type
+00:23 +48: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Library reader ur fits 320px at 2x type
+00:24 +49: D:/saas/ramadan_assistant/test/features/library/library_test.dart: Search empty state resets and favorite filter recovers
+00:25 +50: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:26 +51: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:26 +52: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:26 +53: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:26 +54: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:27 +55: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:27 +56: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:27 +57: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:27 +58: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +59: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +60: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +61: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +62: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +63: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +64: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +65: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +66: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +67: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +68: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +69: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:28 +70: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:31 +70: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=false at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms ar dark=false at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:31 +70 -1: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Add and edit appointment through the real form
+00:31 +70 -1: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=false at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms ar dark=false at320 large text
+  
+00:31 +71 -1: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:32 +71 -1: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=true at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms ar dark=true at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:32 +71 -2: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:32 +71 -2: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=true at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms ar dark=true at320 large text
+  
+00:32 +72 -2: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ar dark=false textScale=1.0 has no overflow
+00:33 +73 -2: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=false at320 large text
+00:33 +74 -2: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=false at320 large text
+00:33 +75 -2: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=false at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms en dark=false at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:33 +75 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:33 +75 -3: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=false at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms en dark=false at320 large text
+  
+00:34 +76 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:34 +77 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:34 +78 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:34 +78 -3: D:/saas/ramadan_assistant/test/prayer_request_lifecycle_test.dart: Geocoder timeout still returns calculated prayers with localized fallback
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   PrayerService.getPrayerTimes (package:ramadan_assistant/core/services/prayer_service.dart:41:13)
+│ #1   PrayerService.getCurrentPrayerData (package:ramadan_assistant/core/services/prayer_service.dart:120:25)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ 🐛 PrayerService: method=muslimWorldLeague, methodId=null
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   PrayerService.getPrayerTimes (package:ramadan_assistant/core/services/prayer_service.dart:46:13)
+│ #1   PrayerService.getCurrentPrayerData (package:ramadan_assistant/core/services/prayer_service.dart:120:25)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ 🐛 PrayerService: Hijri date=30/4/1448
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   PrayerService.getPrayerTimes (package:ramadan_assistant/core/services/prayer_service.dart:61:15)
+│ #1   PrayerService.getCurrentPrayerData (package:ramadan_assistant/core/services/prayer_service.dart:120:25)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ 🐛 PrayerService: Not ummAlQura method, no Isha adjustment
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+│ #0   PrayerService.getPrayerTimes (package:ramadan_assistant/core/services/prayer_service.dart:71:13)
+│ #1   PrayerService.getCurrentPrayerData (package:ramadan_assistant/core/services/prayer_service.dart:120:25)
+├┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+│ 🐛 PrayerService: Isha=2026-10-11 19:09:00.000, Maghrib=2026-10-11 18:00:00.000
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+00:34 +79 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:34 +80 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:34 +81 -3: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:35 +81 -3: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=true at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms en dark=true at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:35 +81 -4: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:35 +81 -4: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=true at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms en dark=true at320 large text
+  
+00:35 +82 -4: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:35 +83 -4: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:35 +83 -4: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ur dark=false at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms ur dark=false at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:35 +83 -5: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:35 +83 -5: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ur dark=false at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms ur dark=false at320 large text
+  
+00:35 +84 -5: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:36 +85 -5: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:36 +86 -5: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Another audio source completion cannot advance Quran
+00:37 +87 -5: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Planner light and dark visual captures
+00:37 +88 -5: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Planner light and dark visual captures
+00:37 +89 -5: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Planner light and dark visual captures
+00:37 +89 -5: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ur dark=true at320 large text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.firstWhere (dart:core/iterable.dart:722:5)
+#1      main.<anonymous closure> (file:///D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart:100:16)
+<asynchronous suspension>
+#2      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#3      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Worship tabs and forms ur dark=true at320 large text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:37 +89 -6: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Planner light and dark visual captures
+00:37 +89 -6: D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ur dark=true at320 large text [E]
+  Test failed. See exception logs above.
+  The test description was: Worship tabs and forms ur dark=true at320 large text
+  
+00:37 +90 -6: D:/saas/ramadan_assistant/test/features/planner/planner_widget_test.dart: Planner light and dark visual captures
+00:37 +91 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +92 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +93 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +94 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +95 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +96 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +97 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +98 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +99 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +100 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +101 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Async Quran start cannot claim playback after another source takes over
+00:38 +102 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=false textScale=1.6 has no overflow
+00:38 +103 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Stopping Quran playback cancels a pending next-page continuation
+00:38 +104 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:38 +105 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:38 +106 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:38 +107 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:39 +108 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Home ur dark=true textScale=1.0 has no overflow
+00:39 +109 -6: D:/saas/ramadan_assistant/test/quran_database_safety_test.dart: Concurrent downloads publish one validated DB and preserve an installed DB
+00:39 +109 -6: D:/saas/ramadan_assistant/test/navigation_lifecycle_test.dart: Download callbacks after disposal are safe (fails=true)
+Error downloading database: Bad state: Offline
+00:39 +110 -6: D:/saas/ramadan_assistant/test/quran_database_safety_test.dart: Concurrent downloads publish one validated DB and preserve an installed DB
+00:39 +111 -6: D:/saas/ramadan_assistant/test/quran_database_safety_test.dart: Concurrent downloads publish one validated DB and preserve an installed DB
+00:39 +112 -6: D:/saas/ramadan_assistant/test/quran_database_safety_test.dart: Concurrent downloads publish one validated DB and preserve an installed DB
+00:39 +113 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:40 +113 -6: D:/saas/ramadan_assistant/test/quran_database_safety_test.dart: A corrupt download cannot replace the existing file
+Failed to download database: FormatException: Downloaded Quran database is incomplete
+00:40 +114 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:40 +115 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:40 +116 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:40 +117 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:41 +117 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: (setUpAll)
+Loaded 149 general duas
+00:41 +117 -6: D:/saas/ramadan_assistant/test/home_layout_test.dart: Root tabs show one navigation bar and retain dhikr counts
+00:41 +118 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:42 +119 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:42 +120 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:43 +121 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:43 +122 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:44 +123 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:45 +124 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:45 +125 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:45 +126 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:45 +126 -6: D:/saas/ramadan_assistant/test/umrah_location_lifecycle_test.dart: (setUpAll)
+Loaded 149 general duas
+00:45 +126 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:45 +127 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:46 +128 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:46 +129 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:46 +130 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:47 +131 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:47 +132 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:48 +133 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:48 +134 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Target chips, picker keyboard and reset use the route-local bloc
+00:48 +135 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=false scale=1.0
+00:48 +136 -6: D:/saas/ramadan_assistant/test/tasbih_controls_recovery_test.dart: Save failure retains the count and exposes an accessible retry
+00:48 +137 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=false scale=1.6
+00:48 +138 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=true scale=1.0
+00:49 +139 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: tasbih ur dark=true scale=1.6
+00:49 +140 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=false scale=1.0
+00:51 +141 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=false scale=1.6
+00:51 +142 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=true scale=1.0
+00:52 +143 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ar dark=true scale=1.6
+00:53 +144 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=false scale=1.0
+00:54 +145 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=false scale=1.6
+00:55 +146 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=true scale=1.0
+00:55 +147 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr en dark=true scale=1.6
+00:56 +148 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=false scale=1.0
+00:57 +149 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=false scale=1.6
+00:57 +150 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=true scale=1.0
+00:58 +151 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: dhikr ur dark=true scale=1.6
+00:58 +152 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=false scale=1.0
+00:59 +153 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=false scale=1.6
+01:00 +154 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=true scale=1.0
+01:00 +155 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ar dark=true scale=1.6
+01:01 +156 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=false scale=1.0
+01:01 +157 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=false scale=1.6
+01:01 +158 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=true scale=1.0
+01:02 +159 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith en dark=true scale=1.6
+01:02 +160 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=false scale=1.0
+01:02 +161 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=false scale=1.6
+01:03 +162 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=true scale=1.0
+01:03 +163 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: hadith ur dark=true scale=1.6
+01:03 +164 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=false scale=1.0
+01:04 +165 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=false scale=1.6
+01:04 +166 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=true scale=1.0
+01:05 +167 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ar dark=true scale=1.6
+01:05 +168 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=false scale=1.0
+01:06 +169 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=false scale=1.6
+01:06 +170 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=true scale=1.0
+01:06 +171 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings en dark=true scale=1.6
+01:07 +172 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=false scale=1.0
+01:07 +173 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=false scale=1.6
+01:07 +174 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=true scale=1.0
+01:07 +175 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: settings ur dark=true scale=1.6
+01:08 +176 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=false scale=1.0
+01:08 +177 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=false scale=1.6
+01:08 +178 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=true scale=1.0
+01:08 +179 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ar dark=true scale=1.6
+01:09 +180 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=false scale=1.0
+01:09 +181 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=false scale=1.6
+01:09 +182 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=true scale=1.0
+01:09 +183 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers en dark=true scale=1.6
+01:09 +184 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=false scale=1.0
+01:09 +185 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=false scale=1.6
+01:10 +186 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=true scale=1.0
+01:10 +187 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: prayers ur dark=true scale=1.6
+01:10 +188 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=false scale=1.0
+01:11 +189 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=false scale=1.6
+01:11 +190 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=true scale=1.0
+01:12 +191 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ar dark=true scale=1.6
+01:12 +192 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=false scale=1.0
+01:12 +193 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=false scale=1.6
+01:12 +194 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=true scale=1.0
+01:13 +195 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah en dark=true scale=1.6
+01:13 +196 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=false scale=1.0
+01:13 +197 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=false scale=1.6
+01:13 +198 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=true scale=1.0
+01:13 +199 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: umrah ur dark=true scale=1.6
+01:14 +200 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=false scale=1.0
+01:14 +201 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=false scale=1.6
+01:14 +202 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=true scale=1.0
+01:14 +203 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ar dark=true scale=1.6
+01:14 +204 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=false scale=1.0
+01:15 +205 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=false scale=1.6
+01:15 +206 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=true scale=1.0
+01:15 +207 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders en dark=true scale=1.6
+01:15 +208 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=false scale=1.0
+01:15 +209 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=false scale=1.6
+01:15 +210 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=true scale=1.0
+01:16 +211 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: reminders ur dark=true scale=1.6
+01:16 +212 -6: D:/saas/ramadan_assistant/test/reference_ui_test.dart: (tearDownAll)
+01:16 +212 -6: Some tests failed.
+
+Failing tests:
+  D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=false at320 large text
+  D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms ar dark=true at320 large text
+  D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=false at320 large text
+  D:/saas/ramadan_assistant/test/features/worship/worship_layout_test.dart: Worship tabs and forms en dark=true at320 large text
+  ... and 2 more

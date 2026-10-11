@@ -1,6 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
@@ -18,22 +18,22 @@ class AlertsSettingsScreen extends StatelessWidget {
           );
         }
 
-        return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(
+        return Scaffold(
+          bottomNavigationBar: const SakinaBottomBar(selectedIndex: 1),
+          appBar: AppBar(
+            title: Text(
               'manage_alerts'.tr(),
               style: TextStyle(
                 color: context.isDark ? Colors.white : Colors.black,
                 fontFamily: 'Cairo',
               ),
             ),
-            previousPageTitle: 'settings_title'.tr(),
           ),
-          child: SafeArea(
+          body: SafeArea(
             bottom: false,
             child: ListView(
               children: [
-                CupertinoListSection.insetGrouped(
+                SakinaSettingsSection(
                   header: Text('prayer_alerts'.tr().toUpperCase()),
                   children: [
                     _buildSwitchTile(
@@ -41,18 +41,22 @@ class AlertsSettingsScreen extends StatelessWidget {
                       'adhan_alerts'.tr(),
                       'adhan_alerts_desc'.tr(),
                       state.adhanEnabled,
-                      (val) => context.read<SettingsScreenBloc>().add(ToggleAdhanSetting(val)),
+                      (val) => context.read<SettingsScreenBloc>().add(
+                        ToggleAdhanSetting(val),
+                      ),
                     ),
                     _buildSwitchTile(
                       context,
                       'iqama_alerts'.tr(),
                       'iqama_alerts_desc'.tr(),
                       state.iqamaEnabled,
-                      (val) => context.read<SettingsScreenBloc>().add(ToggleIqamaSetting(val)),
+                      (val) => context.read<SettingsScreenBloc>().add(
+                        ToggleIqamaSetting(val),
+                      ),
                     ),
                   ],
                 ),
-                CupertinoListSection.insetGrouped(
+                SakinaSettingsSection(
                   header: Text('reminders'.tr().toUpperCase()),
                   children: [
                     _buildSwitchTile(
@@ -60,7 +64,9 @@ class AlertsSettingsScreen extends StatelessWidget {
                       'dhikr_reminders'.tr(),
                       'dhikr_reminders_desc'.tr(),
                       state.dhikrEnabled,
-                      (val) => context.read<SettingsScreenBloc>().add(ToggleDhikrSetting(val)),
+                      (val) => context.read<SettingsScreenBloc>().add(
+                        ToggleDhikrSetting(val),
+                      ),
                     ),
                   ],
                 ),
@@ -70,7 +76,9 @@ class AlertsSettingsScreen extends StatelessWidget {
                     'alerts_settings_footer'.tr(),
                     style: TextStyle(
                       fontSize: 13,
-                      color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                      color: CupertinoColors.secondaryLabel.resolveFrom(
+                        context,
+                      ),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -90,7 +98,7 @@ class AlertsSettingsScreen extends StatelessWidget {
     bool value,
     Function(bool) onChanged,
   ) {
-    return CupertinoListTile(
+    return SakinaSettingsTile(
       title: Text(title),
       subtitle: Text(subtitle),
       trailing: CupertinoSwitch(

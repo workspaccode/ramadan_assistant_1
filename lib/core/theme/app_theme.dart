@@ -21,21 +21,21 @@ class AppTheme {
   // ─── DARK Extensions ─────────────────────────────────────────
 
   static const _darkEmerald = RamadanThemeExtension(
-    primary: Color(0xFFD4AF37), // Gold (أبرز على خلفية داكنة)
-    secondary: Color(0xFF06402B),
+    primary: Color(0xFF9CD5AD),
+    secondary: Color(0xFFE0BF78),
     background: Color(0xFF000000),
-    background2: Color(0xFF1C1C1E),
-    cardSurface: Color(0xFF1C1C1E),
-    glassSurface: Color(0x1AFFFFFF),
-    borderColor: Color(0xFF2C2C2E),
-    success: Color(0xFF34C759),
-    error: Color(0xFFFF3B30),
-    warning: Color(0xFFFF9500),
-    info: Color(0xFF007AFF),
-    accent: Color(0xFFD4AF37),
-    textPrimary: Colors.white,
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFF48484A),
+    background2: Color(0xFF101411),
+    cardSurface: Color(0xFF151A17),
+    glassSurface: Color(0x1A9CD5AD),
+    borderColor: Color(0xFF303C33),
+    success: Color(0xFF9CD5AD),
+    error: Color(0xFFFF938A),
+    warning: Color(0xFFEAB678),
+    info: Color(0xFFA2C7D8),
+    accent: Color(0xFFFFD85A),
+    textPrimary: Color(0xFFF3F5F0),
+    textSecondary: Color(0xFFB2BDB4),
+    textDim: Color(0xFF8E9D91),
   );
 
   static const _darkMidnight = RamadanThemeExtension(
@@ -52,8 +52,8 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFFC0C0C0),
     textPrimary: Colors.white,
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFF48484A),
+    textSecondary: Color(0xFFB2BDB4),
+    textDim: Color(0xFF969F99),
   );
 
   static const _darkDesert = RamadanThemeExtension(
@@ -70,8 +70,8 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFFC2B280),
     textPrimary: Colors.white,
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFF48484A),
+    textSecondary: Color(0xFFB2BDB4),
+    textDim: Color(0xFF969F99),
   );
 
   static const _darkOcean = RamadanThemeExtension(
@@ -88,28 +88,28 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFF2EC4B6),
     textPrimary: Colors.white,
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFF48484A),
+    textSecondary: Color(0xFFB2BDB4),
+    textDim: Color(0xFF969F99),
   );
 
   // ─── LIGHT Extensions ─────────────────────────────────────────
 
   static const _lightEmerald = RamadanThemeExtension(
-    primary: Color(0xFF06402B),
-    secondary: Color(0xFFD4AF37),
-    background: Color(0xFFF2F2F7),
-    background2: Color(0xFFFFFFFF),
+    primary: Color(0xFF0B5844),
+    secondary: Color(0xFF806016),
+    background: Color(0xFFFFFFFF),
+    background2: Color(0xFFE1F4E9),
     cardSurface: Color(0xFFFFFFFF),
-    glassSurface: Color(0x1A000000),
-    borderColor: Color(0xFFE5E5EA),
-    success: Color(0xFF34C759),
-    error: Color(0xFFFF3B30),
-    warning: Color(0xFFFF9500),
-    info: Color(0xFF007AFF),
-    accent: Color(0xFFD4AF37),
-    textPrimary: Color(0xFF1C1C1E),
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFFC7C7CC),
+    glassSurface: Color(0x1426734D),
+    borderColor: Color(0xFFDEEDE5),
+    success: Color(0xFF0B5844),
+    error: Color(0xFFB83B36),
+    warning: Color(0xFFAA6226),
+    info: Color(0xFF386D86),
+    accent: Color(0xFFFFD85A),
+    textPrimary: Color(0xFF1C3023),
+    textSecondary: Color(0xFF52685A),
+    textDim: Color(0xFF596B60),
   );
 
   static const _lightMidnight = RamadanThemeExtension(
@@ -126,8 +126,8 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFF001F3F),
     textPrimary: Color(0xFF1C1C1E),
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFFC7C7CC),
+    textSecondary: Color(0xFF59645C),
+    textDim: Color(0xFF637167),
   );
 
   static const _lightDesert = RamadanThemeExtension(
@@ -144,8 +144,8 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFF800000),
     textPrimary: Color(0xFF1C1C1E),
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFFC7C7CC),
+    textSecondary: Color(0xFF59645C),
+    textDim: Color(0xFF637167),
   );
 
   static const _lightOcean = RamadanThemeExtension(
@@ -162,8 +162,8 @@ class AppTheme {
     info: Color(0xFF007AFF),
     accent: Color(0xFF0D4F6B),
     textPrimary: Color(0xFF1C1C1E),
-    textSecondary: Color(0xFF8E8E93),
-    textDim: Color(0xFFC7C7CC),
+    textSecondary: Color(0xFF59645C),
+    textDim: Color(0xFF637167),
   );
 
   // ─── Palette Info (for Settings UI) ──────────────────────────
@@ -285,7 +285,7 @@ class AppTheme {
     final colorScheme = ColorScheme(
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
       primary: ext.primary,
-      onPrimary: Colors.white,
+      onPrimary: isDarkMode ? const Color(0xFF14231A) : Colors.white,
       primaryContainer: ext.primary.withValues(alpha: 0.15),
       onPrimaryContainer: ext.primary,
       secondary: ext.secondary,
@@ -309,9 +309,22 @@ class AppTheme {
       primaryColor: ext.primary,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: ext.background,
+      cardColor: ext.cardSurface,
       fontFamily: fontFamily,
       textTheme: textTheme,
       extensions: [ext],
+      cupertinoOverrideTheme: getCupertinoTheme(
+        isDarkMode: isDarkMode,
+        locale: locale,
+        fontSizeMultiplier: fontSizeMultiplier,
+        paletteId: ext == _darkEmerald || ext == _lightEmerald
+            ? 'emerald'
+            : ext == _darkMidnight || ext == _lightMidnight
+            ? 'midnight'
+            : ext == _darkDesert || ext == _lightDesert
+            ? 'desert'
+            : 'ocean',
+      ),
 
       // ─── Card ────────────────────────────────────────────────
       cardTheme: CardThemeData(
@@ -320,14 +333,14 @@ class AppTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           side: BorderSide(color: ext.borderColor, width: 0.5),
         ),
       ),
 
       // ─── AppBar ───────────────────────────────────────────────
       appBarTheme: AppBarTheme(
-        backgroundColor: ext.background2.withValues(alpha: 0.94),
+        backgroundColor: ext.background,
         foregroundColor: ext.textPrimary,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
@@ -384,7 +397,7 @@ class AppTheme {
 
       // ─── Dialog ───────────────────────────────────────────────
       dialogTheme: DialogThemeData(
-        backgroundColor: isDarkMode ? const Color(0xFF2C2C2E) : Colors.white,
+        backgroundColor: ext.cardSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         titleTextStyle: TextStyle(
           fontFamily: fontFamily,
@@ -398,11 +411,11 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: ext.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: colorScheme.onPrimary,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
           textStyle: TextStyle(
             fontFamily: fontFamily,
@@ -435,7 +448,7 @@ class AppTheme {
           side: BorderSide(color: ext.primary.withValues(alpha: 0.3)),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(20),
           ),
           textStyle: TextStyle(
             fontFamily: fontFamily,
@@ -449,12 +462,25 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.all(Colors.white),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return iosSystemGreen;
+          if (states.contains(WidgetState.selected)) return ext.primary;
           return isDarkMode
               ? Colors.white.withValues(alpha: 0.15)
               : const Color(0xFFE9E9EB);
         }),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+      ),
+
+      chipTheme: ChipThemeData(
+        backgroundColor: ext.background2,
+        selectedColor: ext.primary,
+        showCheckmark: false,
+        side: BorderSide.none,
+        shape: const StadiumBorder(),
+        labelStyle: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 13 * fontSizeMultiplier,
+          color: ext.primary,
+        ),
       ),
 
       // ─── List Tile ────────────────────────────────────────────
@@ -489,9 +515,7 @@ class AppTheme {
       // ─── Input ────────────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDarkMode
-            ? Colors.white.withValues(alpha: 0.08)
-            : const Color(0xFFF2F2F7),
+        fillColor: ext.cardSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
@@ -536,20 +560,6 @@ class AppTheme {
       ),
 
       // ─── Chip ─────────────────────────────────────────────────
-      chipTheme: ChipThemeData(
-        backgroundColor: isDarkMode
-            ? Colors.white.withValues(alpha: 0.08)
-            : const Color(0xFFF2F2F7),
-        selectedColor: ext.primary.withValues(alpha: 0.15),
-        labelStyle: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: 13 * fontSizeMultiplier,
-          fontWeight: FontWeight.w500,
-          color: ext.textPrimary,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        side: BorderSide.none,
-      ),
 
       // ─── Slider ───────────────────────────────────────────────
       sliderTheme: SliderThemeData(
@@ -595,7 +605,7 @@ class AppTheme {
       // ─── FAB ──────────────────────────────────────────────────
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: ext.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: colorScheme.onPrimary,
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -698,16 +708,12 @@ class AppTheme {
         ? _getDarkExtension(paletteId)
         : _getLightExtension(paletteId);
     final fontFamily = _getFontFamily(locale);
-    final textColor = isDarkMode
-        ? CupertinoColors.white
-        : CupertinoColors.black;
+    final textColor = ext.textPrimary;
 
     return CupertinoThemeData(
       brightness: isDarkMode ? Brightness.dark : Brightness.light,
       primaryColor: ext.primary,
-      scaffoldBackgroundColor: isDarkMode
-          ? CupertinoColors.black
-          : CupertinoColors.systemGroupedBackground,
+      scaffoldBackgroundColor: ext.background,
       barBackgroundColor: ext.background2.withValues(alpha: 0.94),
       textTheme: CupertinoTextThemeData(
         primaryColor: ext.primary,

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/data/models/hadith_presets.dart';
@@ -61,16 +60,9 @@ class _RotatingHadithCardState extends State<RotatingHadithCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: theme.cardSurface,
+        color: theme.secondary.withValues(alpha: context.isDark ? 0.10 : 0.06),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.primary.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: theme.secondary.withValues(alpha: 0.16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,13 +72,14 @@ class _RotatingHadithCardState extends State<RotatingHadithCard> {
             children: [
               Icon(Icons.format_quote_rounded, color: theme.primary, size: 28),
               const SizedBox(width: 8),
-              Text(
-                'daily_hadith'.tr(),
-                style: TextStyle(
-                  color: theme.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+              Flexible(
+                child: Text(
+                  'daily_hadith'.tr(),
+                  style: TextStyle(
+                    color: theme.primary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -97,10 +90,10 @@ class _RotatingHadithCardState extends State<RotatingHadithCard> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: theme.textPrimary,
-              fontSize: lang == 'ar' ? 20 : 16,
+              fontSize: 18,
               height: 1.6,
               fontWeight: lang == 'ar' ? FontWeight.w500 : FontWeight.normal,
-              fontFamily: lang == 'ar' ? 'Amiri' : null,
+              fontFamily: 'Cairo',
             ),
           ),
           const SizedBox(height: 16),

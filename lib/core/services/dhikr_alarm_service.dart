@@ -1,15 +1,13 @@
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:async';
 import 'dart:io';
 
 import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/presentation/screens/reminders_screen/widgets/reminder_alarm_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for scheduling Dhikr (Reminder) alarms using the `alarm` package.
 class DhikrAlarmService {
@@ -28,7 +26,7 @@ class DhikrAlarmService {
     _ringingSubscription = Alarm.ringing.listen((AlarmSet alarmSet) {
       for (final alarm in alarmSet.alarms) {
         // Dhikr alarm IDs are typically higher than prayer IDs (1000+)
-        if (alarm.id >= 1000) {
+        if (alarm.id >= 1000 && alarm.id < 1000000000) {
           _onAlarmRinging(alarm);
         }
       }
@@ -57,6 +55,7 @@ class DhikrAlarmService {
 
     final alarmSettings = AlarmSettings(
       id: 1000 + reminder.id, // Custom offset for Dhikr alarms
+      allowSameSecondScheduling: true,
       dateTime: scheduledTime,
       assetAudioPath: cleanAudioPath,
       loopAudio: false, // Audio plays once as requested
@@ -101,32 +100,8 @@ class DhikrAlarmService {
         fullscreenDialog: true,
       ),
     );
-
-    // Trigger Overlay for extra visibility
-    _showOverlay(alarm);
-  }
-
-  static Future<void> _showOverlay(AlarmSettings settings) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!(prefs.getBool('dhikr_enabled') ?? true)) return;
-
-      await FlutterOverlayWindow.showOverlay(
-        alignment: OverlayAlignment.center,
-        height: 400,
-        width: WindowSize.matchParent,
-        enableDrag: true,
-        flag: OverlayFlag.defaultFlag,
-      );
-
-      // Share notification data with the overlay
-      await FlutterOverlayWindow.shareData({
-        'title': settings.notificationSettings.title,
-        'body': settings.notificationSettings.body,
-      });
-    } catch (e) {
-      debugPrint('Error showing overlay: $e');
-    }
+    // NOTE: The system overlay (flutter_overlay_window) was removed —
+    // the full-screen ReminderAlarmScreen covers this alert instead.
   }
 
   static void markAlarmScreenClosed() {

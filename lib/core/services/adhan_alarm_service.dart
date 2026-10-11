@@ -1,14 +1,12 @@
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'dart:async';
 import 'dart:io';
 
 import 'package:alarm/alarm.dart';
 import 'package:alarm/utils/alarm_set.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for scheduling Adhan alarms using the `alarm` package.
 /// This replaces AwesomeNotifications for prayer audio playback,
@@ -20,6 +18,7 @@ class AdhanAlarmService {
   /// This should be the same key used by NotificationActionHandler.
   static GlobalKey<NavigatorState>? _navigatorKey;
   static bool _isAdhanScreenActive = false;
+  static int _presentation = 0;
 
   /// Initialize the alarm service and listen for ringing events.
   static Future<void> init({
@@ -29,7 +28,7 @@ class AdhanAlarmService {
     await Alarm.init();
 
     // Listen for alarm ringing events
-    _ringingSubscription?.cancel();
+    await _ringingSubscription?.cancel();
     _ringingSubscription = Alarm.ringing.listen((AlarmSet alarmSet) {
       for (final alarm in alarmSet.alarms) {
         _onAlarmRinging(alarm);
@@ -51,7 +50,7 @@ class AdhanAlarmService {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final adhanEnabled = prefs.getBool('adhan_enabled') ?? true;
-    
+
     // Don't schedule if disabled or if time has already passed
     if (!adhanEnabled || dateTime.isBefore(DateTime.now())) return;
 
@@ -64,6 +63,7 @@ class AdhanAlarmService {
 
     final alarmSettings = AlarmSettings(
       id: id,
+      allowSameSecondScheduling: true,
       dateTime: dateTime,
       assetAudioPath: audioPath,
       loopAudio: false,
@@ -110,8 +110,9 @@ class AdhanAlarmService {
 
   /// Called when an alarm starts ringing. Opens the AdhanScreen.
   static void _onAlarmRinging(AlarmSettings alarm) {
-    if (_isAdhanScreenActive) return;
-    _isAdhanScreenActive = true;
+    if (!isPrayerAlarmId(alarm.id)) return;
+    final navigator = _navigatorKey?.currentState;
+    if (navigator == null) return;
 
     // Extract prayer name from the alarm ID
     final prayerName = _getPrayerNameFromId(alarm.id);
@@ -120,46 +121,31 @@ class AdhanAlarmService {
       'AdhanAlarmService: Alarm ringing for $prayerName (id=${alarm.id})',
     );
 
+    unawaited(presentAdhan(navigator, prayerName: prayerName));
+  }
+
+  static bool isPrayerAlarmId(int id) => id >= 1 && id <= 5;
+
+  /// All foreground triggers share the same presentation guard, so the local
+  /// prayer clock and native alarm cannot stack two full-screen routes.
+  static Future<void> presentAdhan(
+    NavigatorState navigator, {
+    required String prayerName,
+  }) async {
+    if (_isAdhanScreenActive || !navigator.mounted) return;
+    _isAdhanScreenActive = true;
+    final presentation = ++_presentation;
     try {
-      _navigatorKey?.currentState?.push(
-        MaterialPageRoute(
+      await navigator.push<void>(
+        MaterialPageRoute<void>(
           builder: (_) => AdhanScreen(prayerName: prayerName),
           fullscreenDialog: true,
         ),
       );
-      
-      // Trigger Overlay
-      _showOverlay(alarm);
-    } catch (e) {
-      debugPrint('AdhanAlarmService: Error showing AdhanScreen: $e');
-    }
-  }
-
-  static Future<void> _showOverlay(AlarmSettings settings) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final title = settings.notificationSettings.title;
-      final isAdhan = title.contains('موعد صلاة') || title.contains('Adhan');
-      final isIqama = title.contains('إقامة') || title.contains('Iqama');
-      
-      if (isAdhan && !(prefs.getBool('adhan_enabled') ?? true)) return;
-      if (isIqama && !(prefs.getBool('iqama_enabled') ?? true)) return;
-
-      await FlutterOverlayWindow.showOverlay(
-        alignment: OverlayAlignment.center,
-        height: 400,
-        width: WindowSize.matchParent,
-        enableDrag: true,
-        flag: OverlayFlag.defaultFlag,
-      );
-      
-      // Share notification data with the overlay
-      await FlutterOverlayWindow.shareData({
-        'title': settings.notificationSettings.title,
-        'body': settings.notificationSettings.body,
-      });
-    } catch (e) {
-      debugPrint('Error showing overlay: $e');
+    } catch (error) {
+      debugPrint('AdhanAlarmService: Error showing AdhanScreen: $error');
+    } finally {
+      if (presentation == _presentation) _isAdhanScreenActive = false;
     }
   }
 

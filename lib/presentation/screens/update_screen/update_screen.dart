@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UpdateScreen extends StatefulWidget {
   final Map<String, dynamic>? updateData;
@@ -19,14 +20,51 @@ class _UpdateScreenState extends State<UpdateScreen> {
   _UpdateState _state = _UpdateState.checking;
   String? _errorMessage;
 
+  // Language-aware update payload (title_xx / description_xx keys).
+  String? _localizedTitle;
+  String? _localizedDescription;
+  List<dynamic>? _localizedChangelog;
+
   @override
   void initState() {
     super.initState();
     // If we have data, show it; otherwise, check for updates
     if (widget.updateData != null) {
       _state = _UpdateState.available;
+      _localizeUpdateData();
     } else {
       _checkForUpdates();
+    }
+  }
+
+  /// Picks the update title/description/changelog for the user's language,
+  /// falling back to Arabic, then to any available key — instead of always
+  /// showing the Arabic payload to English/Urdu users.
+  Future<void> _localizeUpdateData() async {
+    final data = widget.updateData;
+    if (data == null) return;
+
+    String lang = 'ar';
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      lang = prefs.getString('language_code') ?? 'ar';
+    } catch (_) {}
+
+    List<dynamic>? pickList(String base) {
+      final raw = data['${base}_$lang'] ?? data['${base}_ar'] ?? data[base];
+      return raw is List && raw.isNotEmpty ? raw : null;
+    }
+
+    if (mounted) {
+      setState(() {
+        _localizedTitle =
+            data['title_$lang'] ?? data['title_ar'] ?? data['title'];
+        _localizedDescription =
+            data['description_$lang'] ??
+            data['description_ar'] ??
+            data['description'];
+        _localizedChangelog = pickList('changelog') ?? pickList('features');
+      });
     }
   }
 
@@ -73,7 +111,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
             backgroundColor: theme.primary.withValues(alpha: 0.9),
             border: null,
             largeTitle: Text(
-              'تحديث التطبيق',
+              'update_screen_title'.tr(),
               style: TextStyle(
                 color: context.isDark
                     ? CupertinoColors.white
@@ -121,7 +159,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           const CupertinoActivityIndicator(radius: 20),
           const SizedBox(height: 24),
           Text(
-            'جاري البحث عن تحديثات...',
+            'checking_updates'.tr(),
             style: TextStyle(color: theme.textSecondary, fontSize: 16),
           ),
         ],
@@ -133,9 +171,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
     final theme = context.ramadanTheme;
     final data = widget.updateData;
 
-    final title = data?['title_ar'] ?? 'تحديث جديد متاح';
-    final description = data?['description_ar'] ?? 'يتوفر تحديث جديد للتطبيق';
-    final changelog = data?['changelog_ar'];
+    final title = _localizedTitle ?? 'new_update'.tr();
+    final description = _localizedDescription ?? 'update_available_desc'.tr();
+    final changelog = _localizedChangelog;
     final size = data?['size_in_mb'];
 
     return Column(
@@ -176,7 +214,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         ),
 
         // Changelog
-        if (changelog != null && changelog is List && changelog.isNotEmpty) ...[
+        if (changelog != null && changelog.isNotEmpty) ...[
           const SizedBox(height: 24),
           Container(
             width: double.infinity,
@@ -192,7 +230,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'ما الجديد:',
+                  'new_features'.tr(),
                   style: TextStyle(
                     color: theme.primary,
                     fontSize: 14,
@@ -239,7 +277,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
               Icon(Icons.download, size: 16, color: theme.textDim),
               const SizedBox(width: 6),
               Text(
-                'الحجم: $size MB',
+                '${'size_label'.tr()}: $size MB',
                 style: TextStyle(color: theme.textDim, fontSize: 13),
               ),
             ],
@@ -255,9 +293,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
           child: FilledButton.icon(
             onPressed: _performUpdate,
             icon: const Icon(Icons.download_rounded),
-            label: const Text(
-              'تحديث الآن',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            label: Text(
+              'update_now_btn'.tr(),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             style: FilledButton.styleFrom(
               backgroundColor: theme.primary,
@@ -287,7 +325,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'جاري تحميل التحديث...',
+            'downloading_update'.tr(),
             style: TextStyle(
               color: theme.textPrimary,
               fontSize: 18,
@@ -296,7 +334,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'يرجى عدم إغلاق التطبيق',
+            'dont_close_app'.tr(),
             style: TextStyle(color: theme.textSecondary, fontSize: 14),
           ),
         ],
@@ -324,7 +362,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'تم التحديث بنجاح! 🎉',
+            'update_completed'.tr(),
             style: TextStyle(
               color: theme.textPrimary,
               fontSize: 24,
@@ -333,7 +371,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'أعد تشغيل التطبيق لتطبيق التغييرات',
+            'restart_to_apply'.tr(),
             style: TextStyle(color: theme.textSecondary, fontSize: 16),
             textAlign: TextAlign.center,
           ),
@@ -344,7 +382,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
             child: FilledButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back_rounded),
-              label: const Text('رجوع', style: TextStyle(fontSize: 18)),
+              label: Text('back'.tr(), style: const TextStyle(fontSize: 18)),
               style: FilledButton.styleFrom(
                 backgroundColor: theme.primary,
                 shape: RoundedRectangleBorder(
@@ -378,7 +416,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'أنت تستخدم أحدث إصدار ✅',
+            'up_to_date_title'.tr(),
             style: TextStyle(
               color: theme.textPrimary,
               fontSize: 22,
@@ -387,14 +425,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'لا توجد تحديثات متاحة حالياً',
+            'no_updates_available'.tr(),
             style: TextStyle(color: theme.textSecondary, fontSize: 16),
           ),
           const SizedBox(height: 32),
           TextButton.icon(
             onPressed: _checkForUpdates,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('إعادة البحث'),
+            label: Text('search_again'.tr()),
           ),
         ],
       ),
@@ -421,7 +459,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'حدث خطأ',
+            'error_occurred'.tr(),
             style: TextStyle(
               color: theme.textPrimary,
               fontSize: 22,
@@ -442,7 +480,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           TextButton.icon(
             onPressed: _checkForUpdates,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('إعادة المحاولة'),
+            label: Text('retry'.tr()),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/umrah_storage_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
 import 'package:ramadan_assistant/data/models/umrah_trip_model.dart';
+import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_guide_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/duas_bottom_sheet.dart';
 
@@ -101,9 +103,12 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
     await _storageService?.startNewTrip(selectedDateTime);
     if (!mounted) return;
 
-    // Clear the DB progress for the new trip
+    // Clear the DB progress AND persisted trip counters (tawaf/sa'i/etc.)
+    // for the new trip — otherwise the wizard restores the previous
+    // trip's progress from SharedPreferences.
     final db = context.read<AppDatabase>();
     await db.delete(db.umrahProgress).go();
+    await UmrahGuideBloc.clearPersistedCounters();
 
     _loadHistory();
 
@@ -140,6 +145,7 @@ class _UmrahHubScreenState extends State<UmrahHubScreen> {
     final activeTrip = _storageService?.getActiveTrip();
 
     return Scaffold(
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 0),
       backgroundColor: theme.background,
       appBar: AppBar(
         title: Text(

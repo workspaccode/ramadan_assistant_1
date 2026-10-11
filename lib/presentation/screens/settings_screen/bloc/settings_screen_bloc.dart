@@ -219,7 +219,12 @@ class UpdateSettingsColorPalette extends SettingsScreenEvent {
   List<Object?> get props => [paletteId];
 }
 
-class RefreshLocation extends SettingsScreenEvent {}
+class RefreshLocation extends SettingsScreenEvent {
+  const RefreshLocation({this.requestPermission = true});
+  final bool requestPermission;
+  @override
+  List<Object?> get props => [requestPermission];
+}
 
 class UpdateAppIcon extends SettingsScreenEvent {
   final String iconName;
@@ -355,7 +360,7 @@ class SettingsScreenBloc
 
       // Auto-refresh location on load if not present
       if (prefs.getString('current_country') == null) {
-        add(RefreshLocation());
+        add(const RefreshLocation(requestPermission: false));
       }
     } catch (e) {
       emit(SettingsScreenError(e.toString()));
@@ -505,7 +510,9 @@ class SettingsScreenBloc
   ) async {
     if (state is SettingsScreenLoaded) {
       try {
-        final position = await _locationService.getCurrentLocation();
+        final position = await _locationService.getCurrentLocation(
+          requestPermission: event.requestPermission,
+        );
         final placemark = await _locationService.getAddressFromCoordinates(
           position,
         );
@@ -588,8 +595,10 @@ class SettingsScreenBloc
     if (state is SettingsScreenLoaded) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyAdhanEnabled, event.enabled);
-      emit((state as SettingsScreenLoaded).copyWith(adhanEnabled: event.enabled));
-      
+      emit(
+        (state as SettingsScreenLoaded).copyWith(adhanEnabled: event.enabled),
+      );
+
       // Re-schedule notifications to apply changes immediately
       if (!event.enabled) {
         await AdhanAlarmService.cancelAdhans();
@@ -606,8 +615,10 @@ class SettingsScreenBloc
     if (state is SettingsScreenLoaded) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyIqamaEnabled, event.enabled);
-      emit((state as SettingsScreenLoaded).copyWith(iqamaEnabled: event.enabled));
-      
+      emit(
+        (state as SettingsScreenLoaded).copyWith(iqamaEnabled: event.enabled),
+      );
+
       // Re-schedule notifications to apply changes immediately
       if (!event.enabled) {
         await NotificationService.cancelIqamaNotifications();
@@ -623,8 +634,10 @@ class SettingsScreenBloc
     if (state is SettingsScreenLoaded) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyDhikrEnabled, event.enabled);
-      emit((state as SettingsScreenLoaded).copyWith(dhikrEnabled: event.enabled));
-      
+      emit(
+        (state as SettingsScreenLoaded).copyWith(dhikrEnabled: event.enabled),
+      );
+
       // Re-schedule notifications to apply changes immediately
       if (!event.enabled) {
         await NotificationService.cancelDhikrNotifications();
@@ -661,8 +674,35 @@ class SettingsScreenBloc
     ResetAllData event,
     Emitter<SettingsScreenState> emit,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    add(LoadSettings());
+    // This action restores settings. Clearing all preferences also erased
+    // counters mid-Umrah and unrelated notification history.
+    emit(SettingsScreenLoading());
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      for (final key in [
+        _keyCalculationMethod,
+        _keyMadhab,
+        _keyIqamaSystem,
+        _keyIqamaPreset,
+        _keyIqamaDelays,
+        _keyFajrAdhan,
+        _keyOtherAdhan,
+        _keyFajrIqama,
+        _keyOtherIqama,
+        _keyFontSize,
+        _keyColorPalette,
+        _keyAppIcon,
+        _keyNotificationsEnabled,
+        _keyAdhanEnabled,
+        _keyIqamaEnabled,
+        _keyDhikrEnabled,
+        _keyHijriAdjustment,
+      ]) {
+        if (!await prefs.remove(key)) throw StateError('Settings reset failed');
+      }
+      add(LoadSettings());
+    } catch (error) {
+      emit(SettingsScreenError(error.toString()));
+    }
   }
 }

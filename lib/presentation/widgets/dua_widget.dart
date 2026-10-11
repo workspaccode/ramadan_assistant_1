@@ -83,7 +83,7 @@ class _DuaContent extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Amiri',
+                  fontFamily: 'AmiriQuran',
                   height: 1.8,
                   //  color: isDark ? secondaryColor : primaryColor,
                 ),

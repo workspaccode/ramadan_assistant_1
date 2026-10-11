@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/test_service.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
@@ -17,6 +17,7 @@ import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/sett
 import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_dialogs.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 class SettingsScreenContent extends StatelessWidget {
   const SettingsScreenContent({super.key});
@@ -28,8 +29,10 @@ class SettingsScreenContent extends StatelessWidget {
 
     return BlocBuilder<SettingsScreenBloc, SettingsScreenState>(
       builder: (context, state) {
-        return CupertinoPageScaffold(
-          child: Container(
+        return Scaffold(
+          bottomNavigationBar: const SakinaBottomBar(selectedIndex: 1),
+          backgroundColor: context.backgroundColor,
+          body: Container(
             decoration: BoxDecoration(
               gradient: isRamadan
                   ? LinearGradient(
@@ -61,10 +64,46 @@ class SettingsScreenContent extends StatelessWidget {
                         _buildIqamaSection(context, state),
                         _buildAudioSection(context, state),
                         _buildAdminSection(context, state),
-                        _buildTestSection(context),
+                        // Developer-only test tiles must never appear in release builds
+                        if (kDebugMode) _buildTestSection(context),
                         _buildFooter(context),
                         const SizedBox(height: 40),
                       ]),
+                    ),
+                  )
+                else if (state is SettingsScreenError)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: SakinaCard(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.settings_outlined,
+                                size: 32,
+                                color: context.primaryColor,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'something_went_wrong'.tr(),
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 16),
+                              FilledButton.icon(
+                                icon: const Icon(Icons.refresh),
+                                label: Text('retry'.tr()),
+                                onPressed: () => context
+                                    .read<SettingsScreenBloc>()
+                                    .add(LoadSettings()),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   )
                 else
@@ -80,47 +119,11 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildRamadanAppBar(BuildContext context, bool isRamadan) {
-    final titleText = 'settings_title'.tr();
-
-    return CupertinoSliverNavigationBar(
-      backgroundColor:
-          (isRamadan ? const Color(0xFF2E7D32) : context.primaryColor)
-              .withValues(alpha: 0.8),
-      border: null,
-      largeTitle: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (isRamadan) ...[
-            SvgPicture.asset(
-              'assets/image/ramadan_star.svg',
-              width: 18,
-              height: 18,
-              colorFilter: const ColorFilter.mode(
-                Colors.white,
-                BlendMode.srcIn,
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-          Text(
-            titleText,
-            style: TextStyle(
-              color: context.isDark
-                  ? CupertinoColors.white
-                  : CupertinoColors.black,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Cairo',
-            ),
-          ),
-        ],
-      ),
-      // trailing: CupertinoButton(
-      //   padding: EdgeInsets.zero,
-      //   child: const Icon(CupertinoIcons.refresh),
-      //   onPressed: () {
-      //     context.read<SettingsScreenBloc>().add(LoadSettings());
-      //   },
-      // ),
+    return SliverAppBar(
+      title: Text('settings_title'.tr()),
+      centerTitle: true,
+      pinned: true,
+      backgroundColor: context.backgroundColor,
     );
   }
 
@@ -130,17 +133,17 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('location'.tr().toUpperCase()),
       children: [
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('current_location'.tr()),
           subtitle: Text(
             '${state.city ?? 'unknown'.tr()}, ${state.country ?? ''}',
           ),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.location_north_fill, size: 20),
+            child: const Icon(Icons.location_on_outlined, size: 20),
             onPressed: () =>
                 context.read<SettingsScreenBloc>().add(RefreshLocation()),
           ),
@@ -153,7 +156,7 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('appearance'.tr().toUpperCase()),
       children: [
         BlocBuilder<ThemeBloc, ThemeState>(
@@ -181,10 +184,10 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListTile(
+    return SakinaSettingsTile(
       title: Text('color_palette'.tr()),
       additionalInfo: Text((state.colorPaletteId ?? 'default').tr()),
-      trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+      trailing: const Icon(Icons.chevron_right, size: 14),
       onTap: () {
         SettingsDialogs.showColorPaletteDialog(
           context,
@@ -208,10 +211,10 @@ class SettingsScreenContent extends StatelessWidget {
 
         final langNames = {'ar': 'العربية', 'en': 'English', 'ur': 'اردو'};
 
-        return CupertinoListTile(
+        return SakinaSettingsTile(
           title: Text('language'.tr()),
           additionalInfo: Text(langNames[langCode] ?? langCode),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+          trailing: const Icon(Icons.chevron_right, size: 14),
           onTap: () {
             SettingsDialogs.showLanguageDialog(
               context,
@@ -230,7 +233,7 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('app_icon'.tr().toUpperCase()),
       children: [
         _buildDropdownTile(
@@ -252,7 +255,7 @@ class SettingsScreenContent extends StatelessWidget {
     BuildContext context,
     SettingsScreenLoaded state,
   ) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('notifications'.tr().toUpperCase()),
       children: [
         _buildSwitchTile(
@@ -263,9 +266,9 @@ class SettingsScreenContent extends StatelessWidget {
           (val) =>
               context.read<SettingsScreenBloc>().add(ToggleNotifications(val)),
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('manage_alerts'.tr()),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+          trailing: const Icon(Icons.chevron_right, size: 14),
           onTap: () {
             Navigator.push(
               context,
@@ -283,7 +286,7 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildHijriSection(BuildContext context, SettingsScreenLoaded state) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('hijri_calendar'.tr().toUpperCase()),
       children: [
         _buildDropdownTile(
@@ -314,7 +317,7 @@ class SettingsScreenContent extends StatelessWidget {
     final theme = context.ramadanTheme;
     return Column(
       children: [
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('font_size'.tr()),
           additionalInfo: Text('${(state.fontSizeMultiplier * 100).toInt()}%'),
           subtitle: SizedBox(
@@ -359,7 +362,7 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildPrayerSection(BuildContext context, SettingsScreenLoaded state) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('prayer_times_title'.tr().toUpperCase()),
       children: [
         _buildDropdownTile(
@@ -387,7 +390,7 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildIqamaSection(BuildContext context, SettingsScreenLoaded state) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('iqama_settings'.tr().toUpperCase()),
       children: [
         _buildDropdownTile(
@@ -432,7 +435,7 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildAudioSection(BuildContext context, SettingsScreenLoaded state) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('audio_settings'.tr().toUpperCase()),
       children: [
         _buildAudioTile(
@@ -472,10 +475,10 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildAdminSection(BuildContext context, SettingsScreenLoaded state) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: Text('admin'.tr().toUpperCase()),
       children: [
-        CupertinoListTile(
+        SakinaSettingsTile(
           leading: const Icon(
             CupertinoIcons.cloud_download,
             color: CupertinoColors.activeBlue,
@@ -488,7 +491,7 @@ class SettingsScreenContent extends StatelessWidget {
             );
           },
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           leading: const Icon(
             CupertinoIcons.trash,
             color: CupertinoColors.destructiveRed,
@@ -504,10 +507,10 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildTestSection(BuildContext context) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       header: const Text('DEVELOPER TESTING'),
       children: [
-        CupertinoListTile(
+        SakinaSettingsTile(
           leading: const Icon(CupertinoIcons.bell, color: Color(0xFFD4AF37)),
           title: const Text('Test Adhan (10s)'),
           onTap: () async {
@@ -518,7 +521,7 @@ class SettingsScreenContent extends StatelessWidget {
             );
           },
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           leading: const Icon(
             CupertinoIcons.time,
             color: CupertinoColors.activeBlue,
@@ -532,7 +535,7 @@ class SettingsScreenContent extends StatelessWidget {
             );
           },
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           leading: const Icon(
             CupertinoIcons.infinite,
             color: CupertinoColors.activeGreen,
@@ -551,17 +554,23 @@ class SettingsScreenContent extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context) {
-    return CupertinoListSection.insetGrouped(
+    return SakinaSettingsSection(
       footer: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text(
-              'app_version'.tr(namedArgs: {'version': '2.4.1'}),
-              style: TextStyle(
-                color: CupertinoColors.secondaryLabel.resolveFrom(context),
-                fontSize: 13,
-              ),
+            FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                final version = snapshot.data?.version ?? '';
+                return Text(
+                  'app_version'.tr(namedArgs: {'version': version}),
+                  style: TextStyle(
+                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                    fontSize: 13,
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 8),
             Text(
@@ -576,29 +585,50 @@ class SettingsScreenContent extends StatelessWidget {
         ),
       ),
       children: [
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('about_app'.tr()),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://tawabti.app/about'),
+          trailing: const Icon(Icons.chevron_right, size: 14),
+          onTap: () => _launchURL(context, 'https://tawabti.app/about'),
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('privacy_policy'.tr()),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://tawabti.app/privacy'),
+          trailing: const Icon(Icons.chevron_right, size: 14),
+          onTap: () => _launchURL(context, 'https://tawabti.app/privacy'),
         ),
-        CupertinoListTile(
+        SakinaSettingsTile(
           title: Text('terms_of_service'.tr()),
-          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
-          onTap: () => _launchURL('https://tawabti.app/terms'),
+          trailing: const Icon(Icons.chevron_right, size: 14),
+          onTap: () => _launchURL(context, 'https://tawabti.app/terms'),
         ),
       ],
     );
   }
 
-  Future<void> _launchURL(String url) async {
+  Future<void> _launchURL(BuildContext context, String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+    var launched = false;
+    try {
+      launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      launched = false;
+    }
+
+    // Never fail silently — a dead policy link looks like a broken app to
+    // users (and to Play reviewers tapping the privacy policy entry).
+    if (!launched && context.mounted) {
+      showCupertinoDialog<void>(
+        context: context,
+        builder: (ctx) => CupertinoAlertDialog(
+          title: Text('error_occurred'.tr()),
+          content: Text('couldnt_open_page'.tr()),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('ok'.tr()),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -637,7 +667,7 @@ class SettingsScreenContent extends StatelessWidget {
     bool value,
     Function(bool) onChanged,
   ) {
-    return CupertinoListTile(
+    return SakinaSettingsTile(
       title: Text(title),
       subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
       trailing: CupertinoSwitch(
@@ -661,10 +691,10 @@ class SettingsScreenContent extends StatelessWidget {
         displayValues?[currentValue] ??
         (translateOptions ? currentValue.tr() : currentValue);
 
-    return CupertinoListTile(
+    return SakinaSettingsTile(
       title: Text(title),
       additionalInfo: Text(infoText),
-      trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
+      trailing: const Icon(Icons.chevron_right, size: 14),
       onTap: () {
         showModalBottomSheet(
           context: context,
@@ -711,7 +741,7 @@ class SettingsScreenContent extends StatelessWidget {
                     final label =
                         displayValues?[option] ??
                         (translateOptions ? option.tr() : option);
-                    return CupertinoListTile(
+                    return SakinaSettingsTile(
                       title: Text(
                         label,
                         style: TextStyle(
@@ -754,7 +784,7 @@ class SettingsScreenContent extends StatelessWidget {
     int currentValue,
     Function(int) onChanged,
   ) {
-    return CupertinoListTile(
+    return SakinaSettingsTile(
       title: Text(title),
       additionalInfo: Text('$currentValue $subtitle'),
       onTap: () {

@@ -1,9 +1,19 @@
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/quran_database_service.dart';
 import 'package:ramadan_assistant/presentation/screens/quran_screen/quran_screen.dart';
 
 class DownloadQuranScreen extends StatefulWidget {
-  const DownloadQuranScreen({super.key});
+  const DownloadQuranScreen({
+    super.key,
+    this.returnToCaller = false,
+    this.downloadDatabase,
+    this.seedTajweed,
+  });
+  final bool returnToCaller;
+  final Future<void> Function(ValueChanged<double>)? downloadDatabase;
+  final Future<void> Function(ValueChanged<double>)? seedTajweed;
 
   @override
   State<DownloadQuranScreen> createState() => _DownloadQuranScreenState();
@@ -12,34 +22,44 @@ class DownloadQuranScreen extends StatefulWidget {
 class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
   bool _isDownloading = false;
   double _progress = 0.0;
-  String _status =
-      'الرجاء تنزيل المصحف أول مرة فقط'; // Please download the Mushaf for the first time only
+  bool _isPreparing = false;
+  bool _hasError = false;
+
+  void _onProgress(double progress) {
+    if (!mounted) return;
+    setState(
+      () => _progress = progress.isFinite ? progress.clamp(0.0, 1.0) : 0,
+    );
+  }
 
   Future<void> _startDownload() async {
+    if (_isDownloading) return;
     setState(() {
       _isDownloading = true;
-      _status = 'جاري التنزيل...'; // Downloading...
+      _isPreparing = false;
+      _hasError = false;
+      _progress = 0;
     });
 
     try {
-      await QuranDatabaseService.instance.downloadDatabase((progress) {
-        setState(() {
-          _progress = progress;
-        });
-      });
-
-      setState(() {
-        _progress = 0.0;
-        _status = 'جاري إعداد قواعد التجويد...'; // Setting up Tajweed rules...
-      });
-
-      await QuranDatabaseService.instance.fetchAndSeedTajweedData((progress) {
-        setState(() {
-          _progress = progress;
-        });
-      });
+      await (widget.downloadDatabase ??
+          QuranDatabaseService.instance.downloadDatabase)(_onProgress);
 
       if (mounted) {
+        setState(() {
+          _progress = 0.0;
+          _isPreparing = true;
+        });
+      }
+
+      await (widget.seedTajweed ??
+          QuranDatabaseService.instance.fetchAndSeedTajweedData)(_onProgress);
+
+      if (mounted) {
+        if (widget.returnToCaller) {
+          Navigator.pop(context, true);
+          return;
+        }
         // Navigate to the actual Quran screen once download finishes and replace this screen
         Navigator.pushReplacement(
           context,
@@ -47,11 +67,13 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
         );
       }
     } catch (e) {
-      setState(() {
-        _isDownloading = false;
-        _progress = 0.0;
-        _status = 'حدث خطأ: ${e.toString()}'; // Error downloading with details
-      });
+      if (mounted) {
+        setState(() {
+          _isDownloading = false;
+          _progress = 0.0;
+          _hasError = true;
+        });
+      }
       debugPrint('Error downloading database: $e');
     }
   }
@@ -59,13 +81,8 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'المصحف الشريف',
-          style: TextStyle(fontFamily: 'Amiri'),
-        ),
-        centerTitle: true,
-      ),
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 2),
+      appBar: AppBar(title: Text('quran'.tr()), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -73,14 +90,18 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.menu_book_rounded,
                   size: 100,
-                  color: Colors.teal,
+                  color: context.primaryColor,
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  _status,
+                  _hasError
+                      ? 'error_occurred'.tr()
+                      : _isPreparing
+                      ? context.loc.ui_quran_preparing
+                      : context.loc.ui_quran_download_prompt,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -107,16 +128,17 @@ class _DownloadQuranScreenState extends State<DownloadQuranScreen> {
                   ElevatedButton.icon(
                     onPressed: _startDownload,
                     icon: const Icon(Icons.download),
-                    label: const Text(
-                      'تنزيل المصحف',
-                      style: TextStyle(fontSize: 18, fontFamily: 'Amiri'),
+                    label: Text(
+                      _hasError
+                          ? 'retry'.tr()
+                          : context.loc.ui_quran_download_action,
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 16,
                       ),
-                      backgroundColor: Colors.teal,
+                      backgroundColor: context.primaryColor,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

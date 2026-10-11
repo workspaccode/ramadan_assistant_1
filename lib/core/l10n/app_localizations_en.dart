@@ -857,11 +857,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checking_updates => 'Checking for updates...';
 
   @override
-  String get reset_all_data => 'Reset All Data';
+  String get reset_all_data => 'Restore default settings';
 
   @override
   String get reset_confirmation_msg =>
-      'Are you sure you want to reset all data? This cannot be undone.';
+      'Restore prayer, alert and appearance settings? Worship records, appointments and Umrah progress will be kept.';
 
   @override
   String get about => 'About';
@@ -1240,4 +1240,847 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browse_100_duas => 'Browse 100+ Duas';
+
+  @override
+  String get update_screen_title => 'App Update';
+
+  @override
+  String get update_available_desc => 'A new update is available for the app';
+
+  @override
+  String get size_label => 'Size';
+
+  @override
+  String get downloading_update => 'Downloading update...';
+
+  @override
+  String get dont_close_app => 'Please don\'t close the app';
+
+  @override
+  String get update_completed => 'Update completed successfully!';
+
+  @override
+  String get restart_to_apply => 'Restart the app to apply the changes';
+
+  @override
+  String get up_to_date_title => 'You are using the latest version ✅';
+
+  @override
+  String get no_updates_available => 'No updates are currently available';
+
+  @override
+  String get search_again => 'Search Again';
+
+  @override
+  String get error_occurred => 'An error occurred';
+
+  @override
+  String get later => 'Later';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get mandatory_update => 'Mandatory Update';
+
+  @override
+  String get mandatory_update_desc =>
+      'An important security update is available. The update will be downloaded now.';
+
+  @override
+  String get restart => 'Restart';
+
+  @override
+  String get no_update_found => 'No Update Available';
+
+  @override
+  String get latest_version_msg =>
+      'You are using the latest version of the app ✅';
+
+  @override
+  String get update_downloaded_restart =>
+      'The update was downloaded successfully. Restart the app to apply it.';
+
+  @override
+  String update_complete_msg(String title) {
+    return '\"$title\" was downloaded successfully.\nRestart the app to apply the changes.';
+  }
+
+  @override
+  String get permissions_rationale_title => 'Enable Prayer Alerts';
+
+  @override
+  String get permissions_rationale_body =>
+      'Tawabti needs your location to calculate accurate prayer times and Qibla direction, and notification permission to alert you with adhan on time. You can change these anytime in Settings.';
+
+  @override
+  String get couldnt_open_page =>
+      'Couldn\'t open this page. Please check your internet connection and try again later.';
+
+  @override
+  String get sai_header_title => 'Sa\'i between Safa and Marwa';
+
+  @override
+  String get tap_to_start_dua => 'Tap here to start and make dua';
+
+  @override
+  String get completed_praise => 'Completed, all praise to Allah';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get from_safa_to_marwa => 'From Safa to Marwa';
+
+  @override
+  String get from_marwa_to_safa => 'From Marwa to Safa';
+
+  @override
+  String get sai_completed_snackbar => 'Sa\'i completed, all praise to Allah';
+
+  @override
+  String get complete_sai_btn => 'Complete Sa\'i';
+
+  @override
+  String get complete_lap_next_btn => 'Complete this lap and move to the next';
+
+  @override
+  String get tawaf_header_title => 'Tawaf around the Kaaba';
+
+  @override
+  String get tap_to_open_duas => 'Tap to open duas and dhikr';
+
+  @override
+  String get done_status => 'Done ✓';
+
+  @override
+  String get pending_status => 'Pending';
+
+  @override
+  String get duas_round_subtitle => 'Duas and dhikr for this round';
+
+  @override
+  String complete_round_next_btn(String round) {
+    return 'Complete $round and move to the next';
+  }
+
+  @override
+  String get complete_tawaf_btn => 'Complete Tawaf';
+
+  @override
+  String get tawaf_completed_snackbar => 'Tawaf completed, all praise to Allah';
+
+  @override
+  String get follow_sunnah_fallback => 'Follow the Sunnah.';
+
+  @override
+  String get reset_umrah_confirm_title => 'Reset Umrah?';
+
+  @override
+  String get reset_umrah_confirm_body =>
+      'This will reset all steps and progress counters (Tawaf, Sa\'i, Maqam, Zamzam). Continue?';
+
+  @override
+  String get ui_home => 'Home';
+
+  @override
+  String get ui_brand => 'Tawabti';
+
+  @override
+  String get ui_tasbih_activity => 'Tasbih & activity';
+
+  @override
+  String get ui_selected_dhikr => 'Selected dhikr';
+
+  @override
+  String get ui_session => 'This session';
+
+  @override
+  String get ui_remaining => 'Remaining';
+
+  @override
+  String get ui_activity_history => 'Activity history';
+
+  @override
+  String get ui_total_sessions => 'Saved sessions';
+
+  @override
+  String get ui_completed_sessions => 'Completed sessions';
+
+  @override
+  String get ui_adhkar_library => 'Dhikr & duas';
+
+  @override
+  String get ui_reminders_intro =>
+      'Gentle reminders throughout your day. Choose a dhikr and a time that suits you.';
+
+  @override
+  String get ui_hadith_intro =>
+      'Read and reflect. Search the library and choose a book to read.';
+
+  @override
+  String get ui_hadith_search => 'Search hadith or narrator';
+
+  @override
+  String get ui_no_results => 'No results for this search';
+
+  @override
+  String get ui_all => 'All';
+
+  @override
+  String get ui_copied => 'Dhikr copied';
+
+  @override
+  String get ui_copy => 'Copy text';
+
+  @override
+  String get ui_speak => 'Listen to dhikr';
+
+  @override
+  String get ui_saved_dhikr => 'Dhikr in your library';
+
+  @override
+  String get ui_listen_stop => 'Stop listening';
+
+  @override
+  String get ui_prayer_settings => 'Prayer times & adhan settings';
+
+  @override
+  String get ui_your_tools => 'Your daily companion';
+
+  @override
+  String get ui_tasbih_category => 'Tasbih';
+
+  @override
+  String get ui_salawat_category => 'Salawat';
+
+  @override
+  String get ui_tawheed_category => 'Tawheed';
+
+  @override
+  String get ui_istighfar_category => 'Istighfar';
+
+  @override
+  String get ui_dua_category => 'Dua';
+
+  @override
+  String get ui_quran_download_prompt =>
+      'Download the Quran once to read offline.';
+
+  @override
+  String get ui_quran_download_action => 'Download Quran';
+
+  @override
+  String get ui_quran_preparing => 'Preparing Tajweed…';
+
+  @override
+  String get ui_quran_empty_page => 'No verses are available on this page.';
+
+  @override
+  String get ui_tasbih_save_failed =>
+      'Could not save this session. Your current count is unchanged.';
+
+  @override
+  String get ui_daily_tools => 'Daily tools';
+
+  @override
+  String get features_worship => 'Wird & worship';
+
+  @override
+  String get features_planner => 'My planner';
+
+  @override
+  String get features_library => 'Knowledge library';
+
+  @override
+  String get features_shortcuts => 'Home shortcuts';
+
+  @override
+  String get features_shortcuts_intro =>
+      'Open your favorite tool from your phone’s home screen. Choose a tool, then confirm in the system dialog.';
+
+  @override
+  String get features_pin_requested =>
+      'Shortcut requested. Confirm in your phone’s dialog.';
+
+  @override
+  String get features_shortcuts_unsupported =>
+      'Pinned shortcuts are unavailable on this device or launcher.';
+
+  @override
+  String get features_action_failed =>
+      'Could not complete this action. Try again.';
+
+  @override
+  String get features_local_data => 'My local data';
+
+  @override
+  String get features_local_intro =>
+      'Your appointments, worship records and favorites are stored on this device. Server sync is not configured yet.';
+
+  @override
+  String get features_pending_label => 'Records ready for future sync';
+
+  @override
+  String get features_on_device => 'Saved on device';
+
+  @override
+  String get features_reminder_title => 'Time for your daily wird';
+
+  @override
+  String get features_reminder_body =>
+      'Open your reading app, then record your progress in Tawabti.';
+
+  @override
+  String get library_title => 'Knowledge library';
+
+  @override
+  String get library_intro =>
+      'Brief sourced stories and short hadith summaries to read or listen to.';
+
+  @override
+  String get library_companions => 'Companion stories';
+
+  @override
+  String get library_short_hadith => 'Short hadith summaries';
+
+  @override
+  String get library_favorites => 'Favorites';
+
+  @override
+  String get library_search => 'Search titles or text';
+
+  @override
+  String get library_summary_note =>
+      'A summary of the meaning; read the full narration at its source.';
+
+  @override
+  String get library_source => 'Read source';
+
+  @override
+  String get library_hadith_books => 'Open hadith books';
+
+  @override
+  String get library_read_aloud => 'Read aloud with device voice';
+
+  @override
+  String get library_stop => 'Stop listening';
+
+  @override
+  String get library_media => 'Attached media';
+
+  @override
+  String get library_no_media =>
+      'No media attached. Add an audio, video, or image link for this item.';
+
+  @override
+  String get library_add_media => 'Add media link';
+
+  @override
+  String get library_audio => 'Audio';
+
+  @override
+  String get library_video => 'External video';
+
+  @override
+  String get library_image => 'Image';
+
+  @override
+  String get library_link => 'HTTPS link';
+
+  @override
+  String get library_link_label => 'Link title (optional)';
+
+  @override
+  String get library_invalid_link =>
+      'Enter a valid HTTPS link without a username or password.';
+
+  @override
+  String get library_user_media =>
+      'Your attached link; an internet connection is required.';
+
+  @override
+  String get library_save_failed =>
+      'Could not complete this change. Try again.';
+
+  @override
+  String get library_playback_failed =>
+      'Media or device voice could not start. Continue reading or try again.';
+
+  @override
+  String get library_remove_media => 'Remove link';
+
+  @override
+  String get library_favorite_add => 'Add to favorites';
+
+  @override
+  String get library_favorite_remove => 'Remove from favorites';
+
+  @override
+  String get library_save => 'Save link';
+
+  @override
+  String get library_no_favorites =>
+      'No favorites yet. Use the heart on an item to save it here.';
+
+  @override
+  String get planner_title => 'My appointments';
+
+  @override
+  String get planner_local_hint =>
+      'Your appointments and reminders are stored on this device. Choose a day or add an appointment.';
+
+  @override
+  String get planner_add_event => 'Add appointment';
+
+  @override
+  String get planner_calendar_view => 'Calendar';
+
+  @override
+  String get planner_list_view => 'All appointments';
+
+  @override
+  String get planner_empty_title => 'Room for your next appointment';
+
+  @override
+  String get planner_empty_body =>
+      'Add an appointment, its time, and an optional reminder to see it here.';
+
+  @override
+  String get planner_title_label => 'Appointment title';
+
+  @override
+  String get planner_start_label => 'Starts';
+
+  @override
+  String get planner_end_label => 'Ends';
+
+  @override
+  String get planner_reminder_label => 'Reminder';
+
+  @override
+  String get planner_no_reminder => 'No reminder';
+
+  @override
+  String get planner_at_start => 'At the start';
+
+  @override
+  String get planner_five_minutes => '5 minutes before';
+
+  @override
+  String get planner_ten_minutes => '10 minutes before';
+
+  @override
+  String get planner_thirty_minutes => '30 minutes before';
+
+  @override
+  String get planner_hour_before => '1 hour before';
+
+  @override
+  String get planner_day_before => '1 day before';
+
+  @override
+  String get planner_notes_label => 'Notes';
+
+  @override
+  String get planner_meet_label => 'Google Meet link';
+
+  @override
+  String get planner_meet_manual_hint =>
+      'Paste an existing meeting link, or create a meeting in Google Meet and copy its link here. Automatic conference creation inside the app requires Google authorization and is not configured yet.';
+
+  @override
+  String get planner_meet_new => 'Create meeting in browser';
+
+  @override
+  String get planner_meet_open => 'Open meeting';
+
+  @override
+  String get planner_meet_failed =>
+      'Could not open the meeting. Check the link and your browser app.';
+
+  @override
+  String get planner_save => 'Save appointment';
+
+  @override
+  String get planner_edit => 'Edit';
+
+  @override
+  String get planner_delete => 'Delete';
+
+  @override
+  String get planner_delete_confirm =>
+      'Delete this local appointment and reminder? Its device calendar copy will remain.';
+
+  @override
+  String get planner_cancel => 'Cancel';
+
+  @override
+  String get planner_retry => 'Retry';
+
+  @override
+  String get planner_event_saved => 'Appointment saved';
+
+  @override
+  String get planner_event_deleted => 'Local appointment deleted';
+
+  @override
+  String get planner_load_failed => 'Could not load appointments. Try again.';
+
+  @override
+  String get planner_save_failed =>
+      'Could not save the appointment. Your form is preserved; try again.';
+
+  @override
+  String get planner_delete_failed =>
+      'Could not cancel the reminder or delete the appointment. Try again.';
+
+  @override
+  String get planner_permission_denied =>
+      'The appointment is saved, but notifications are not allowed. Enable permission in app settings, then enable its reminder again.';
+
+  @override
+  String get planner_reminder_expired =>
+      'The appointment is saved. Its reminder time has passed; edit the date or choose a reminder closer to its start.';
+
+  @override
+  String get planner_reminder_failed =>
+      'The appointment is saved, but its reminder was not scheduled. Enable the reminder again.';
+
+  @override
+  String get planner_reminder_retry => 'Enable reminder';
+
+  @override
+  String get planner_calendar_connect => 'Connect device calendar';
+
+  @override
+  String get planner_calendar_hint =>
+      'With your permission, show calendars and accounts on this device. Copy appointments to them or import a local copy. Google account synchronization is managed by device settings.';
+
+  @override
+  String get planner_calendar_account => 'Calendar and account';
+
+  @override
+  String get planner_calendar_empty =>
+      'No appointments this month in the selected calendar.';
+
+  @override
+  String get planner_calendar_import => 'Copy to my appointments';
+
+  @override
+  String get planner_calendar_export => 'Save to device calendar';
+
+  @override
+  String get planner_calendar_permission =>
+      'Calendar permission was denied. Enable it in app settings, then connect again.';
+
+  @override
+  String get planner_calendar_unavailable =>
+      'Device calendar integration is unavailable on this platform. Local appointments remain available.';
+
+  @override
+  String get planner_calendar_failed =>
+      'Could not complete the device calendar operation. Your local appointment was preserved; try again.';
+
+  @override
+  String get planner_calendar_read_only =>
+      'This calendar is read-only. Select one that allows new appointments.';
+
+  @override
+  String get planner_calendar_saved => 'A copy was saved to device calendar';
+
+  @override
+  String get planner_local_event => 'On this device';
+
+  @override
+  String get planner_invalid_title =>
+      'Enter an appointment title, up to 160 characters.';
+
+  @override
+  String get planner_invalid_dates => 'The end must be after the start.';
+
+  @override
+  String get planner_invalid_meet =>
+      'Enter a valid meeting link such as https://meet.google.com/abc-defg-hij';
+
+  @override
+  String get features_complete_round => 'Finish a circuit';
+
+  @override
+  String get features_read_round => 'Read circuit supplications';
+
+  @override
+  String get features_counter_save_failed =>
+      'Counter could not be saved. Your count is kept here; retry before closing the app.';
+
+  @override
+  String get worship_choose_date => 'Choose date';
+
+  @override
+  String get worship_title => 'My worship';
+
+  @override
+  String get worship_today => 'Today';
+
+  @override
+  String get worship_wird => 'Quran plan';
+
+  @override
+  String get worship_nawafil => 'Voluntary';
+
+  @override
+  String get worship_qada => 'Missed prayers';
+
+  @override
+  String worship_today_progress(Object count) {
+    return '$count of 5 prayers recorded complete';
+  }
+
+  @override
+  String get worship_manual_hint =>
+      'Record your own worship. Opening a reader never marks your Quran plan complete.';
+
+  @override
+  String get worship_pending => 'Not recorded';
+
+  @override
+  String get worship_completed => 'Completed';
+
+  @override
+  String get worship_missed => 'Missed';
+
+  @override
+  String get worship_save => 'Save';
+
+  @override
+  String get worship_cancel => 'Cancel';
+
+  @override
+  String get worship_retry => 'Retry';
+
+  @override
+  String get worship_fajr => 'Fajr';
+
+  @override
+  String get worship_dhuhr => 'Dhuhr';
+
+  @override
+  String get worship_asr => 'Asr';
+
+  @override
+  String get worship_maghrib => 'Maghrib';
+
+  @override
+  String get worship_isha => 'Isha';
+
+  @override
+  String get worship_plan_empty => 'Start a reading routine at your own pace.';
+
+  @override
+  String get worship_edit_plan => 'Set reading plan';
+
+  @override
+  String get worship_daily_pages => 'Pages per day';
+
+  @override
+  String get worship_start_page => 'Next page';
+
+  @override
+  String get worship_reminder => 'Daily reminder';
+
+  @override
+  String get worship_reader => 'Quran reader app';
+
+  @override
+  String get worship_no_reader => 'No reader app available';
+
+  @override
+  String worship_pages_range(Object end, Object start) {
+    return 'Pages $start–$end';
+  }
+
+  @override
+  String get worship_wrap_hint => 'Continue at page 1 after page 604.';
+
+  @override
+  String get worship_open_reader => 'Open reader';
+
+  @override
+  String get worship_confirm_reading => 'I finished today’s reading';
+
+  @override
+  String get worship_reminder_body => 'Your daily Quran reading is ready.';
+
+  @override
+  String get worship_add_voluntary => 'Record voluntary worship';
+
+  @override
+  String get worship_no_logs =>
+      'Your voluntary prayers and fasting will appear here.';
+
+  @override
+  String get worship_duha => 'Duha';
+
+  @override
+  String get worship_witr => 'Witr';
+
+  @override
+  String get worship_rawatib => 'Sunnah prayers';
+
+  @override
+  String get worship_nightPrayer => 'Night prayer';
+
+  @override
+  String get worship_fasting => 'Voluntary fast';
+
+  @override
+  String get worship_units => 'Rakats';
+
+  @override
+  String get worship_note => 'Note (optional)';
+
+  @override
+  String worship_units_value(Object count) {
+    return '$count rakats';
+  }
+
+  @override
+  String get worship_qada_hint =>
+      'Enter the missed prayers you know about. Today’s records remain separate; no years or obligations are estimated.';
+
+  @override
+  String get worship_opening => 'Enter opening counts';
+
+  @override
+  String get worship_opening_hint =>
+      'Enter a count for each prayer; use 0 if none. Future changes are recorded as adjustments.';
+
+  @override
+  String worship_remaining(Object count) {
+    return '$count remaining';
+  }
+
+  @override
+  String get worship_pay => 'Record qada';
+
+  @override
+  String get worship_adjust => 'Adjust count';
+
+  @override
+  String get worship_count => 'Count';
+
+  @override
+  String get worship_adjust_delta => 'Change (+ add / − remove)';
+
+  @override
+  String get worship_reason => 'Reason for adjustment';
+
+  @override
+  String get worship_history => 'Ledger history';
+
+  @override
+  String get worship_no_history => 'No ledger entries yet.';
+
+  @override
+  String get worship_payment => 'Qada recorded';
+
+  @override
+  String get worship_adjustment => 'Adjustment';
+
+  @override
+  String get worship_opening_event => 'Opening count';
+
+  @override
+  String get worship_saved => 'Saved';
+
+  @override
+  String get worship_load_failed => 'Could not load your records. Retry.';
+
+  @override
+  String get worship_save_failed =>
+      'Could not save. Your existing records are safe; retry.';
+
+  @override
+  String get worship_reminder_failed =>
+      'Plan saved. The reminder could not be scheduled; check notification permissions and save again.';
+
+  @override
+  String get worship_reader_unavailable =>
+      'The reader could not open. Choose an available app in your plan.';
+
+  @override
+  String get worship_invalid_plan =>
+      'Use 1–604 for pages and a valid reminder time.';
+
+  @override
+  String get worship_invalid_count =>
+      'Enter a whole count from 0 to 1,000,000,000.';
+
+  @override
+  String get worship_invalid_units => 'Enter 1–1000 rakats; a fast is one day.';
+
+  @override
+  String get worship_invalid_day => 'Choose a valid date.';
+
+  @override
+  String get worship_today_only =>
+      'Reading completion can be recorded for today.';
+
+  @override
+  String get worship_future_day => 'Future worship cannot be marked complete.';
+
+  @override
+  String get worship_plan_required => 'Set a reading plan first.';
+
+  @override
+  String get worship_ledger_initialized =>
+      'Opening counts already exist. Use an adjustment.';
+
+  @override
+  String get worship_adjustment_reason =>
+      'Enter a nonzero whole change and explain the adjustment.';
+
+  @override
+  String get worship_invalid_note => 'Keep notes within 500 characters.';
+
+  @override
+  String get worship_duplicate_request =>
+      'This action was already recorded with different values.';
+
+  @override
+  String get worship_opening_required => 'Enter opening counts first.';
+
+  @override
+  String get worship_exceeds_remaining =>
+      'This would make the remaining count negative.';
+
+  @override
+  String get planner_calendar_no_accounts =>
+      'No calendars are available on this device. Add an account or calendar in Android settings, then connect again. You can use local appointments now.';
+
+  @override
+  String get worship_refresh_failed =>
+      'Saved. The updated records could not be loaded; refresh instead of recording again.';
+
+  @override
+  String worship_pages_wrap_range(Object first, Object second) {
+    return 'Pages $first, then $second';
+  }
+
+  @override
+  String get planner_alarm_until_stopped => 'Ring until stopped';
+
+  @override
+  String get planner_alarm_description =>
+      'The short built-in tone repeats and the device vibrates until you press Stop alarm. Regular reminders remain a single notification.';
+
+  @override
+  String get planner_personal_alarm => 'Appointment alarm';
+
+  @override
+  String get planner_alarm_stop => 'Stop alarm';
+
+  @override
+  String get planner_alarm_stop_failed =>
+      'Could not stop the alarm. Try again, or use Stop in its alarm notification.';
 }

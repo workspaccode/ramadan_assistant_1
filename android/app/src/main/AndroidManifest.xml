@@ -3,10 +3,15 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <!-- NOTE: RECORD_AUDIO intentionally removed — the app only uses Text-To-Speech (output),
+         never microphone input. Sensitive permissions trigger extra Play Console review. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- NOTE: Background location intentionally REMOVED. Background prayer scheduling
+         uses the last-known (cached) position saved during foreground use. Avoids the
+         Play Console background-location declaration + video review entirely. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -16,14 +21,11 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- NOTE: SYSTEM_ALERT_WINDOW (draw-over overlay) intentionally REMOVED — the adhan
+         alert is now shown via the full-screen intent activity (USE_FULL_SCREEN_INTENT),
+         which covers locked screens AND foreground apps without a sensitive permission. -->
 
     <application android:label="توبتى" android:name="${applicationName}" android:icon="@mipmap/launcher_icon" android:enableOnBackInvokedCallback="true" android:allowBackup="false" android:fullBackupContent="false">
-
-        <!-- Overlay Window Service -->
-        <service android:name="com.flutter_overlay_window.flutter_overlay_window.OverlayService" android:exported="false" />
 
         <!-- Main Activity -->
         <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop" android:taskAffinity="" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize" android:showWhenLocked="true" android:turnScreenOn="true">
@@ -67,6 +69,17 @@
 
     <!-- Package Visibility -->
     <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

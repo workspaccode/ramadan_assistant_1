@@ -1,6 +1,6 @@
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
-
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +56,9 @@ final List<QuranReciter> availableReciters = [
 ];
 
 class QuranScreen extends StatefulWidget {
-  const QuranScreen({super.key});
+  const QuranScreen({super.key, this.audioService, this.database});
+  final AudioService? audioService;
+  final QuranDatabase? database;
 
   @override
   State<QuranScreen> createState() => _QuranScreenState();
@@ -65,8 +67,22 @@ class QuranScreen extends StatefulWidget {
 class _QuranScreenState extends State<QuranScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 1;
+  int _pageRetryCount = 0;
+  int _playbackEpoch = 0;
+  int? _audioGeneration;
+  bool get _ownsAudio =>
+      _audioGeneration != null &&
+      _audioGeneration == _audioService.playbackGeneration;
+  int? _autoAdvancePage;
+  bool _surahsFailed = false;
+  final Map<int, Future<List<VerseEntity>>> _pageLoads = {};
+  final Map<String, TapGestureRecognizer> _verseRecognizers = {};
+
+  Future<List<VerseEntity>> _loadPage(int page) =>
+      _pageLoads.putIfAbsent(page, () => _database.getVersesByPage(page));
   bool _isPlaying = false;
-  final AudioService _audioService = AudioService();
+  late final AudioService _audioService = widget.audioService ?? AudioService();
+  QuranDatabase get _database => widget.database ?? QuranDatabase.instance;
   List<SurahEntity> _surahs = [];
   StreamSubscription<void>? _playerCompleteSubscription;
   bool _isTajweedEnabled = false; // Optional Tajweed toggle
@@ -85,19 +101,19 @@ class _QuranScreenState extends State<QuranScreen> {
     // Listen to player completions to auto-play next verse
     _playerCompleteSubscription = _audioService.onPlayerComplete.listen((_) {
       if (!mounted) return;
+      if (!_ownsAudio) {
+        if (_isPlaying) _clearPlayback();
+        return;
+      }
       _playNextVerse();
     });
   }
 
   Future<void> _playNextVerse() async {
+    if (!_playbackIsCurrent(_playbackEpoch)) return;
     // If the reciter doesn't support ayah format, we play page mode, so this listener shouldn't try to play next verse.
     if (!_selectedReciter.hasAyahFormat) {
-      if (_currentPlayingVerse != null) {
-        setState(() {
-          _isPlaying = false;
-          _currentPlayingVerse = null;
-        });
-      }
+      _clearPlayback();
       return;
     }
 
@@ -116,24 +132,35 @@ class _QuranScreenState extends State<QuranScreen> {
     // If this was the last verse on the page, flip the page and play the first verse of the new page.
     else if (_currentPage < 604) {
       final nextPage = _currentPage + 1;
-
-      _pageController.animateToPage(
-        nextPage - 1, // 0-indexed
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-
-      // We wait for the page animation and the FutureBuilder to load the new verses,
-      // then we find the new first verse and play it.
-      Future.delayed(const Duration(milliseconds: 800), () async {
-        if (!mounted) return;
-        final newVerses = await QuranDatabase.instance.getVersesByPage(
-          nextPage,
+      final epoch = _playbackEpoch;
+      if (!_pageController.hasClients) return;
+      _autoAdvancePage = nextPage;
+      try {
+        await _pageController.animateToPage(
+          nextPage - 1, // 0-indexed
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
         );
-        if (newVerses.isNotEmpty) {
-          _playVerse(newVerses.first);
+
+        if (!_playbackIsCurrent(epoch)) return;
+        final newVerses = await _loadPage(nextPage);
+        if (!_playbackIsCurrent(epoch) || _currentPage != nextPage) {
+          return;
         }
-      });
+        _currentPageVerses = newVerses;
+        if (newVerses.isNotEmpty) {
+          await _playVerse(newVerses.first);
+        } else {
+          await _stopPlayback();
+        }
+      } catch (error) {
+        if (_playbackIsCurrent(epoch)) {
+          await _stopPlayback();
+          if (mounted) _showAudioError();
+        }
+      } finally {
+        if (_autoAdvancePage == nextPage) _autoAdvancePage = null;
+      }
     } else {
       // End of Quran
       setState(() {
@@ -144,9 +171,16 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   Future<void> _loadSurahs() async {
-    final surahs = await QuranDatabase.instance.getAllSurahs();
-    if (mounted) {
-      setState(() => _surahs = surahs);
+    try {
+      final surahs = await _database.getAllSurahs();
+      if (mounted) {
+        setState(() {
+          _surahs = surahs;
+          _surahsFailed = false;
+        });
+      }
+    } catch (error) {
+      if (mounted) setState(() => _surahsFailed = true);
     }
   }
 
@@ -161,33 +195,85 @@ class _QuranScreenState extends State<QuranScreen> {
 
   @override
   void dispose() {
+    final ownsAudio = _ownsAudio;
+    _playbackEpoch++;
+    for (final recognizer in _verseRecognizers.values) {
+      recognizer.dispose();
+    }
     _playerCompleteSubscription?.cancel();
     _pageController.dispose();
-    _audioService.stop();
+    if (ownsAudio) unawaited(_audioService.stop());
     super.dispose();
   }
 
   void _onPageChanged(int index) {
+    final automatic = _autoAdvancePage == index + 1;
+    final ownsAudio = _ownsAudio;
     setState(() {
       _currentPage = index + 1;
-      _audioService.stop();
-      _isPlaying = false;
+      _currentPageVerses = [];
       _currentPlayingVerse = null;
+      if (!automatic) {
+        _playbackEpoch++;
+        _isPlaying = false;
+        _audioGeneration = null;
+      }
     });
+    if (!automatic && ownsAudio) unawaited(_audioService.stop());
   }
 
-  Future<void> _toggleAudio() async {
-    if (_isPlaying) {
-      await _audioService.stop();
+  void _clearPlayback() {
+    _playbackEpoch++;
+    _autoAdvancePage = null;
+    _audioGeneration = null;
+    if (mounted) {
       setState(() {
         _isPlaying = false;
         _currentPlayingVerse = null;
       });
+    }
+  }
+
+  bool _playbackIsCurrent(int epoch) {
+    if (!mounted || epoch != _playbackEpoch || !_isPlaying) return false;
+    if (!_ownsAudio) {
+      _clearPlayback();
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _stopPlayback() async {
+    final ownsAudio = _ownsAudio;
+    _clearPlayback();
+    if (ownsAudio) await _audioService.stop();
+  }
+
+  void _showAudioError() => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text('audio_not_available'.tr())));
+
+  Future<void> _toggleAudio() async {
+    if (_isPlaying) {
+      await _stopPlayback();
     } else {
       if (_selectedReciter.hasAyahFormat) {
         // Try to start from the first verse of the current page if none selected
-        if (_currentPageVerses.isNotEmpty) {
-          _playVerse(_currentPlayingVerse ?? _currentPageVerses.first);
+        final page = _currentPage;
+        final epoch = ++_playbackEpoch;
+        final generation = _audioService.playbackGeneration;
+        try {
+          final verses = await _loadPage(page);
+          if (!mounted ||
+              epoch != _playbackEpoch ||
+              page != _currentPage ||
+              generation != _audioService.playbackGeneration) {
+            return;
+          }
+          _currentPageVerses = verses;
+          if (verses.isNotEmpty) await _playVerse(verses.first);
+        } catch (error) {
+          if (mounted && epoch == _playbackEpoch) _showAudioError();
         }
       } else if (_selectedReciter.hasPageFormat) {
         // Play by page
@@ -200,8 +286,16 @@ class _QuranScreenState extends State<QuranScreen> {
               )
             : 'https://everyayah.com/data/${_selectedReciter.identifier}/PageMp3s/Page$pageNumStr.mp3';
 
+        final epoch = ++_playbackEpoch;
         setState(() => _isPlaying = true);
-        await _audioService.playUrl(audioUrl);
+        final playback = _audioService.playUrl(audioUrl);
+        _audioGeneration = _audioService.playbackGeneration;
+        await playback;
+        if (!_playbackIsCurrent(epoch)) return;
+        if (!_audioService.isPlaying) {
+          setState(() => _isPlaying = false);
+          _showAudioError();
+        }
       } else {
         ScaffoldMessenger.of(
           context,
@@ -211,6 +305,7 @@ class _QuranScreenState extends State<QuranScreen> {
   }
 
   Future<void> _playVerse(VerseEntity verse) async {
+    if (!mounted) return;
     if (!_selectedReciter.hasAyahFormat) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('ayah_highlighting_not_available'.tr())),
@@ -218,6 +313,7 @@ class _QuranScreenState extends State<QuranScreen> {
       return;
     }
 
+    final epoch = ++_playbackEpoch;
     setState(() {
       _currentPlayingVerse = verse;
       _isPlaying = true;
@@ -231,7 +327,17 @@ class _QuranScreenState extends State<QuranScreen> {
     final audioUrl =
         'https://everyayah.com/data/${_selectedReciter.identifier}/$fileName';
 
-    await _audioService.playUrl(audioUrl);
+    final playback = _audioService.playUrl(audioUrl);
+    _audioGeneration = _audioService.playbackGeneration;
+    await playback;
+    if (!_playbackIsCurrent(epoch)) return;
+    if (!_audioService.isPlaying) {
+      setState(() {
+        _isPlaying = false;
+        _currentPlayingVerse = null;
+      });
+      _showAudioError();
+    }
   }
 
   void showReciterBottomSheet() {
@@ -319,18 +425,20 @@ class _QuranScreenState extends State<QuranScreen> {
                               color: theme.primary,
                             )
                           : null,
-                      onTap: () {
-                        setState(() {
-                          _selectedReciter = reciter;
-                        });
-                        // If already playing, stop current and start new
-                        if (_isPlaying) {
-                          _audioService.stop().then((_) {
-                            setState(() => _isPlaying = false);
-                            _toggleAudio(); // Restart with new reciter
-                          });
-                        }
+                      onTap: () async {
+                        final restart = _isPlaying && _ownsAudio;
+                        final page = _currentPage;
+                        setState(() => _selectedReciter = reciter);
                         context.pop();
+                        final stopped = _stopPlayback();
+                        final epoch = _playbackEpoch;
+                        await stopped;
+                        if (!mounted ||
+                            epoch != _playbackEpoch ||
+                            page != _currentPage) {
+                          return;
+                        }
+                        if (restart) await _toggleAudio();
                       },
                     );
                   },
@@ -341,6 +449,35 @@ class _QuranScreenState extends State<QuranScreen> {
         );
       },
     );
+  }
+
+  Future<void> _jumpToIndex(
+    BuildContext sheetContext,
+    Future<int> Function() loadPage,
+  ) async {
+    final stop = _stopPlayback();
+    final epoch = _playbackEpoch;
+    try {
+      await stop;
+      final startPage = await loadPage();
+      if (!mounted ||
+          !sheetContext.mounted ||
+          epoch != _playbackEpoch ||
+          !_pageController.hasClients) {
+        return;
+      }
+      if (startPage < 1 || startPage > 604) {
+        throw StateError('Invalid Quran page');
+      }
+      Navigator.pop(sheetContext);
+      _pageController.jumpToPage(startPage - 1);
+    } catch (error) {
+      if (mounted && sheetContext.mounted && epoch == _playbackEpoch) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('error_occurred'.tr())));
+      }
+    }
   }
 
   void showIndexBottomSheet(BuildContext context) {
@@ -388,57 +525,69 @@ class _QuranScreenState extends State<QuranScreen> {
                   child: TabBarView(
                     children: [
                       // Surahs List
-                      ListView.builder(
-                        itemCount: _surahs.length,
-                        itemBuilder: (context, index) {
-                          final surah = _surahs[index];
-                          return ListTile(
-                            leading: Container(
-                              width: 36,
-                              height: 36,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                image: const DecorationImage(
-                                  image: AssetImage(
-                                    'assets/image/tawaf_round_icon.png',
-                                  ), // using existing Islamic pattern
-                                  fit: BoxFit.cover,
+                      if (_surahsFailed)
+                        Center(
+                          child: FilledButton.icon(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await _loadSurahs();
+                            },
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: Text('retry'.tr()),
+                          ),
+                        )
+                      else
+                        ListView.builder(
+                          itemCount: _surahs.length,
+                          itemBuilder: (context, index) {
+                            final surah = _surahs[index];
+                            return ListTile(
+                              leading: Container(
+                                width: 36,
+                                height: 36,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                      'assets/image/tawaf_round_icon.png',
+                                    ), // using existing Islamic pattern
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                child: Text(
+                                  '${surah.number}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: theme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                '${surah.number}',
+                              title: Text(
+                                surah.nameAr,
+                                style: TextStyle(
+                                  fontFamily: 'Amiri',
+                                  fontSize: 18,
+                                  color: theme.textPrimary,
+                                ),
+                              ),
+                              subtitle: Text(
+                                '${surah.revelationPlaceAr} - ${'verses_count'.tr(args: [surah.versesCount.toString()])}',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: theme.primary,
-                                  fontWeight: FontWeight.bold,
+                                  color: theme.textSecondary,
                                 ),
                               ),
-                            ),
-                            title: Text(
-                              surah.nameAr,
-                              style: TextStyle(
-                                fontFamily: 'Amiri',
-                                fontSize: 18,
-                                color: theme.textPrimary,
-                              ),
-                            ),
-                            subtitle: Text(
-                              '${surah.revelationPlaceAr} - ${'verses_count'.tr(args: [surah.versesCount.toString()])}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: theme.textSecondary,
-                              ),
-                            ),
-                            onTap: () async {
-                              final startPage = await QuranDatabase.instance
-                                  .getSurahStartPage(surah.number);
-                              if (!context.mounted) return;
-                              Navigator.pop(context);
-                              _pageController.jumpToPage(startPage - 1);
-                            },
-                          );
-                        },
-                      ),
+                              onTap: () async {
+                                await _jumpToIndex(
+                                  context,
+                                  () =>
+                                      _database.getSurahStartPage(surah.number),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       // Juz List
                       ListView.builder(
                         itemCount: 30,
@@ -454,11 +603,10 @@ class _QuranScreenState extends State<QuranScreen> {
                               ),
                             ),
                             onTap: () async {
-                              final startPage = await QuranDatabase.instance
-                                  .getJuzStartPage(juzNum);
-                              if (!context.mounted) return;
-                              Navigator.pop(context);
-                              _pageController.jumpToPage(startPage - 1);
+                              await _jumpToIndex(
+                                context,
+                                () => _database.getJuzStartPage(juzNum),
+                              );
                             },
                           );
                         },
@@ -479,6 +627,7 @@ class _QuranScreenState extends State<QuranScreen> {
     final theme = context.ramadanTheme;
 
     return Scaffold(
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 2),
       backgroundColor: theme.background,
       appBar: AppBar(
         title: Column(
@@ -512,12 +661,7 @@ class _QuranScreenState extends State<QuranScreen> {
             ),
           ],
         ),
-        leading: GestureDetector(
-          onTap: () {
-            context.pop();
-          },
-          child: Icon(Icons.arrow_back, color: theme.textPrimary),
-        ),
+        automaticallyImplyLeading: !AppShellScope.contains(context),
         actions: [
           // Audio Player Controls
           Row(
@@ -572,7 +716,7 @@ class _QuranScreenState extends State<QuranScreen> {
           IconButton(
             icon: Icon(Icons.list_alt_rounded, color: theme.primary),
             onPressed: () => showIndexBottomSheet(context),
-            tooltip: 'الفهرس',
+            tooltip: 'surahs'.tr(),
           ),
         ],
       ),
@@ -588,19 +732,40 @@ class _QuranScreenState extends State<QuranScreen> {
               itemBuilder: (context, index) {
                 final pageNum = index + 1;
                 return FutureBuilder<List<VerseEntity>>(
-                  future: QuranDatabase.instance.getVersesByPage(pageNum),
+                  key: ValueKey('quran-page-$pageNum-retry-$_pageRetryCount'),
+                  future: _loadPage(pageNum),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snapshot.hasError) {
-                      return const Center(child: Text('Error loading page'));
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(height: 8),
+                            Text('error_occurred'.tr()),
+                            TextButton.icon(
+                              onPressed: () => setState(() {
+                                _pageLoads.remove(pageNum);
+                                _pageRetryCount++;
+                              }),
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text('retry'.tr()),
+                            ),
+                          ],
+                        ),
+                      );
                     }
 
                     final verses = snapshot.data ?? [];
                     if (verses.isEmpty) {
-                      return const Center(
-                        child: Text('No verses found on this page'),
+                      return Center(
+                        child: Text(context.loc.ui_quran_empty_page),
                       );
                     }
 
@@ -632,7 +797,9 @@ class _QuranScreenState extends State<QuranScreen> {
                               color: theme.cardSurface,
                               border: Border(
                                 bottom: BorderSide(
-                                  color: theme.borderColor.withValues(alpha: 0.1),
+                                  color: theme.borderColor.withValues(
+                                    alpha: 0.1,
+                                  ),
                                 ),
                               ),
                             ),
@@ -694,10 +861,12 @@ class _QuranScreenState extends State<QuranScreen> {
                                             color: theme.primary,
                                           )
                                         : null,
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        _playVerse(verse);
-                                      },
+                                    recognizer: _verseRecognizers.putIfAbsent(
+                                      '${verse.surahNumber}:${verse.number}',
+                                      () =>
+                                          TapGestureRecognizer()
+                                            ..onTap = () => _playVerse(verse),
+                                    ),
                                     children: [
                                       TextSpan(
                                         children: TajweedFormatter.getTajweedSpans(
@@ -719,7 +888,9 @@ class _QuranScreenState extends State<QuranScreen> {
                                         text:
                                             ' \uFD3F${_getArabicNumber(verse.number)}\uFD3E ',
                                         style: TextStyle(
-                                          color: theme.primary.withValues(alpha: 0.8),
+                                          color: theme.primary.withValues(
+                                            alpha: 0.8,
+                                          ),
                                           fontSize:
                                               22, // slightly smaller verse brackets
                                         ),

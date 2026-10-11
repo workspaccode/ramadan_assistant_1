@@ -1,6 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
@@ -15,13 +15,14 @@ class RemindersContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.backgroundColor,
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 3),
       appBar: AppBar(
         backgroundColor: context.backgroundColor,
         elevation: 0,
         title: Text(
           'reminders_title'.tr(),
           style: context.titleLarge?.copyWith(
-            fontSize: 24,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -54,42 +55,62 @@ class RemindersContent extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
+  Widget _intro(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: SakinaCard(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(CupertinoIcons.bell_slash, size: 80, color: Colors.grey[300]),
-          const SizedBox(height: 20),
-          Text(
-            'no_reminders'.tr(),
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey,
-            ),
+          SakinaBadge(
+            'reminders_title'.tr(),
+            gold: true,
+            icon: Icons.notifications_none_rounded,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
-            'tap_add_dhikr'.tr(),
-            style: TextStyle(color: Colors.grey[500], fontSize: 15),
-          ),
-          const SizedBox(height: 30),
-          CupertinoButton.filled(
-            onPressed: () => _showAddReminderSheet(context),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(CupertinoIcons.add, size: 20),
-                const SizedBox(width: 8),
-                Text('add_reminder'.tr()),
-              ],
-            ),
+            context.loc.ui_reminders_intro,
+            style: context.textTheme.bodyMedium?.copyWith(height: 1.8),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+
+  Widget _buildEmptyState(BuildContext context) => ListView(
+    padding: const EdgeInsets.all(16),
+    children: [
+      _intro(context),
+      SakinaCard(
+        child: Column(
+          children: [
+            Icon(
+              Icons.notifications_none_rounded,
+              size: 48,
+              color: context.primaryColor,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'no_reminders'.tr(),
+              style: context.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'tap_add_dhikr'.tr(),
+              style: context.textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            FilledButton.icon(
+              onPressed: () => _showAddReminderSheet(context),
+              icon: const Icon(Icons.add),
+              label: Text('add_reminder'.tr()),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 
   Widget _buildReminderList(BuildContext context, List<Reminder> reminders) {
     final isDark = context.isDark;
@@ -98,9 +119,10 @@ class RemindersContent extends StatelessWidget {
     }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemCount: reminders.length,
+      itemCount: reminders.length + 1,
       itemBuilder: (context, index) {
-        final reminder = reminders[index];
+        if (index == 0) return _intro(context);
+        final reminder = reminders[index - 1];
         final reminderTypes = reminder.reminderTypes.split(',');
         final audioPaths = reminder.audioPaths?.split(',') ?? [];
 
@@ -127,7 +149,8 @@ class RemindersContent extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+              color: context.ramadanTheme.cardSurface,
+              border: Border.all(color: context.ramadanTheme.borderColor),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 if (!isDark)
@@ -183,7 +206,7 @@ class RemindersContent extends StatelessWidget {
                                 style: context.titleLarge?.copyWith(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'Amiri',
+                                  fontFamily: 'Cairo',
                                 ),
                               ),
                             );
@@ -278,7 +301,7 @@ class RemindersContent extends StatelessWidget {
             ? context.primaryColor.withValues(alpha: 0.15)
             : (isDark
                   ? Colors.white.withValues(alpha: 0.08)
-                  : const Color(0xFFF2F2F7)),
+                  : SakinaColors.mint(context)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -337,11 +360,13 @@ class RemindersContent extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _localizeInterval(reminder.intervalMinutes),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                Expanded(
+                  child: Text(
+                    _localizeInterval(reminder.intervalMinutes),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
                 ),
                 Icon(
@@ -387,11 +412,13 @@ class RemindersContent extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _localizeRepeat(reminder.repeatCount ?? 0),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : Colors.black87,
+                Expanded(
+                  child: Text(
+                    _localizeRepeat(reminder.repeatCount ?? 0),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
                 ),
                 Icon(
@@ -765,7 +792,7 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
             ? context.primaryColor.withValues(alpha: 0.1)
             : (isDark
                   ? Colors.white.withValues(alpha: 0.05)
-                  : const Color(0xFFF2F2F7)),
+                  : SakinaColors.mint(context)),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSelected ? context.primaryColor : Colors.transparent,
@@ -779,7 +806,7 @@ class _AddReminderSheetState extends State<_AddReminderSheet> {
         ),
         subtitle: Text(
           dhikr['arabic'] ?? '',
-          style: const TextStyle(fontFamily: 'Amiri', fontSize: 18),
+          style: const TextStyle(fontFamily: 'Cairo', fontSize: 18),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,

@@ -1,0 +1,21 @@
+{
+  "reset_all_data": {"ar":"استعادة الإعدادات الافتراضية","en":"Restore default settings","ur":"پہلے سے طے شدہ ترتیبات بحال کریں"},
+  "reset_confirmation_msg": {"ar":"استعادة إعدادات الصلاة والتنبيهات والمظهر؟ ستبقى سجلات العبادات والمواعيد وتقدم العمرة محفوظة.","en":"Restore prayer, alert and appearance settings? Worship records, appointments and Umrah progress will be kept.","ur":"نماز، اطلاع اور ظاہری ترتیبات بحال کریں؟ عبادات، اوقات اور عمرہ کی پیش رفت محفوظ رہیں گے۔"},
+  "features_complete_round": {"ar":"أتممت شوطًا","en":"Finish a circuit","ur":"ایک چکر مکمل"},
+  "features_read_round": {"ar":"قراءة أدعية الشوط","en":"Read circuit supplications","ur":"چکر کی دعائیں پڑھیں"},
+  "features_counter_save_failed": {"ar":"تعذّر حفظ العداد. العدد ظاهر هنا؛ أعد الحفظ قبل إغلاق التطبيق.","en":"Counter could not be saved. Your count is kept here; retry before closing the app.","ur":"گنتی محفوظ نہیں ہوئی۔ تعداد یہاں موجود ہے؛ ایپ بند کرنے سے پہلے دوبارہ محفوظ کریں۔"},
+  "features_worship": {"ar":"وردي وعباداتي","en":"Wird & worship","ur":"ورد اور عبادات"},
+  "features_planner": {"ar":"مواعيدي وتقويمي","en":"My planner","ur":"میرے اوقات"},
+  "features_library": {"ar":"مكتبة المعرفة","en":"Knowledge library","ur":"علمی کتب خانہ"},
+  "features_shortcuts": {"ar":"اختصارات الشاشة","en":"Home shortcuts","ur":"ہوم شارٹ کٹس"},
+  "features_shortcuts_intro": {"ar":"افتح أداتك المفضلة مباشرة من شاشة الهاتف. اختَر الأداة ثم أكّد الإضافة في نافذة النظام.","en":"Open your favorite tool from your phone’s home screen. Choose a tool, then confirm in the system dialog.","ur":"فون کی ہوم اسکرین سے اپنی پسندیدہ سہولت کھولیں۔ سہولت منتخب کرکے نظام کے پیغام میں تصدیق کریں۔"},
+  "features_pin_requested": {"ar":"تم طلب الاختصار. أكّد الإضافة في نافذة الهاتف.","en":"Shortcut requested. Confirm in your phone’s dialog.","ur":"شارٹ کٹ کی درخواست ہوگئی۔ فون کے پیغام میں تصدیق کریں۔"},
+  "features_shortcuts_unsupported": {"ar":"إضافة الاختصارات غير متاحة على هذا الجهاز أو مشغّل الشاشة.","en":"Pinned shortcuts are unavailable on this device or launcher.","ur":"اس آلے یا لانچر پر شارٹ کٹس دستیاب نہیں۔"},
+  "features_action_failed": {"ar":"تعذّر إتمام العملية. حاول مرة أخرى.","en":"Could not complete this action. Try again.","ur":"یہ عمل مکمل نہیں ہوسکا۔ دوبارہ کوشش کریں۔"},
+  "features_local_data": {"ar":"بياناتي المحلية","en":"My local data","ur":"میرا مقامی ڈیٹا"},
+  "features_local_intro": {"ar":"المواعيد وسجلات العبادات والمفضلة محفوظة على هذا الجهاز. الربط بالسيرفر غير مفعّل حاليًا.","en":"Your appointments, worship records and favorites are stored on this device. Server sync is not configured yet.","ur":"اوقات، عبادات کا ریکارڈ اور پسندیدہ مواد اس آلے پر محفوظ ہیں۔ سرور کی مطابقت ابھی ترتیب نہیں دی گئی۔"},
+  "features_pending_label": {"ar":"سجلات جاهزة للربط لاحقًا","en":"Records ready for future sync","ur":"آئندہ مطابقت کے لیے تیار ریکارڈ"},
+  "features_on_device": {"ar":"محفوظ على الجهاز","en":"Saved on device","ur":"آلے پر محفوظ"},
+  "features_reminder_title": {"ar":"وقت وردك اليومي","en":"Time for your daily wird","ur":"روزانہ ورد کا وقت"},
+  "features_reminder_body": {"ar":"افتح تطبيق القراءة، ثم سجّل ما قرأته في ثوابتي.","en":"Open your reading app, then record your progress in Tawabti.","ur":"پڑھنے کی ایپ کھولیں، پھر اپنی پیش رفت ثوابتی میں درج کریں۔"}
+}

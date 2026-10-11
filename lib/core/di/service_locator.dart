@@ -1,4 +1,7 @@
 import 'package:get_it/get_it.dart';
+import 'package:ramadan_assistant/core/persistence/document_store.dart';
+import 'package:ramadan_assistant/core/persistence/drift_document_store.dart';
+import 'package:ramadan_assistant/core/platform/feature_platform.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/core/utils/smart_update_manager.dart';
@@ -12,6 +15,10 @@ final sl = GetIt.instance;
 Future<void> setupServiceLocator() async {
   // Database
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
+  sl.registerLazySingleton<DocumentStore>(
+    () => DriftDocumentStore(sl<AppDatabase>()),
+  );
+  sl.registerLazySingleton<FeaturePlatform>(() => FeaturePlatform());
 
   // Services
   sl.registerLazySingleton<LocationService>(() => LocationService());

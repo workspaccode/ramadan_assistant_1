@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale;
+import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +26,8 @@ class PrayerData {
 }
 
 class PrayerService {
+  PrayerService({this.geocodingTimeout = const Duration(seconds: 8)});
+  final Duration geocodingTimeout;
   PrayerTimes getPrayerTimes(
     Position position, {
     String? methodId,
@@ -80,19 +84,27 @@ class PrayerService {
     String? methodId = prefs.getString('calculation_method');
     String? madhabId = prefs.getString('madhab');
 
-    String locationName = 'Unknown Location';
+    final language = ['ar', 'en', 'ur'].contains(localeLanguageCode)
+        ? localeLanguageCode!
+        : 'en';
+    String locationName = lookupAppLocalizations(Locale(language)).unknown;
     String? country;
     try {
       if (localeLanguageCode != null) {
-        await setLocaleIdentifier(localeLanguageCode);
+        await setLocaleIdentifier(localeLanguageCode).timeout(geocodingTimeout);
       }
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
-      );
+      ).timeout(geocodingTimeout);
       if (placemarks.isNotEmpty) {
         final p = placemarks.first;
-        locationName = '${p.locality}, ${p.country}';
+        final parts = [p.locality ?? p.subAdministrativeArea, p.country]
+            .whereType<String>()
+            .map((part) => part.trim())
+            .where((part) => part.isNotEmpty)
+            .toList();
+        if (parts.isNotEmpty) locationName = parts.join(', ');
         country = p.country;
       }
     } catch (_) {}

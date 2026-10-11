@@ -10,6 +10,7 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
   final LocationService _locationService;
   final PrayerService _prayerService;
   Timer? _timer;
+  int _loadRequest = 0;
 
   PrayerTimesBloc(this._locationService, this._prayerService)
     : super(PrayerTimesInitial()) {
@@ -22,14 +23,19 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
     LoadPrayerTimes event,
     Emitter<PrayerTimesState> emit,
   ) async {
+    final request = ++_loadRequest;
     emit(PrayerTimesLoading());
     try {
-      final position = await _locationService.getCurrentLocation();
+      final position = await _locationService.getCurrentLocation(
+        requestPermission: event.requestPermission,
+      );
+      if (emit.isDone || request != _loadRequest) return;
 
       final prayerData = await _prayerService.getCurrentPrayerData(
         position,
         localeLanguageCode: event.locale,
       );
+      if (emit.isDone || request != _loadRequest) return;
 
       emit(
         PrayerTimesLoaded(
@@ -39,6 +45,7 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone || request != _loadRequest) return;
       emit(PrayerTimesError(e.toString()));
     }
   }
@@ -55,6 +62,7 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
 
   @override
   Future<void> close() {
+    _loadRequest++;
     _timer?.cancel();
     return super.close();
   }
@@ -63,6 +71,6 @@ class PrayerTimesBloc extends Bloc<PrayerTimesEvent, PrayerTimesState> {
     RefreshPrayerTimes event,
     Emitter<PrayerTimesState> emit,
   ) async {
-    add(LoadPrayerTimes());
+    add(const LoadPrayerTimes(requestPermission: true));
   }
 }

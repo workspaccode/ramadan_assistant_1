@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,9 +17,46 @@ class QuranDatabaseService {
   final String dbDownloadUrl =
       'https://raw.githubusercontent.com/rn0x/Quran-Data/version-2.0/data/sqlite/database.sqlite';
 
-  QuranDatabaseService._init();
+  QuranDatabaseService._init() : databasePath = null, client = null;
+  @visibleForTesting
+  QuranDatabaseService.testing({
+    required this.databasePath,
+    required this.client,
+  });
+  final Future<String> Function()? databasePath;
+  final Dio? client;
+  Future<void>? _downloadInFlight;
+  Future<void>? _seedInFlight;
+
+  /// Verify the installed file before sending a reader into an incomplete DB.
+  static Future<bool> isUsableDatabase(File file) async {
+    if (!await file.exists() || await file.length() < 100) return false;
+    final database = NativeDatabase(file, enableMigrations: false);
+    try {
+      await database.ensureOpen(_QuranValidationUser());
+      await database.runCustom('PRAGMA busy_timeout = 2000');
+      final verses = await database.runSelect(
+        'SELECT surah_number, number, text_ar, text_en, juz, page, sajda FROM verses LIMIT 1',
+        [],
+      );
+      final surahs = await database.runSelect(
+        'SELECT number, name_ar, name_en, name_transliteration, revelation_place_ar, revelation_place_en, verses_count, words_count, letters_count FROM surahs LIMIT 1',
+        [],
+      );
+      final check = await database.runSelect('PRAGMA quick_check', []);
+      return verses.isNotEmpty &&
+          surahs.isNotEmpty &&
+          check.length == 1 &&
+          check.first.values.single == 'ok';
+    } catch (_) {
+      return false;
+    } finally {
+      await database.close();
+    }
+  }
 
   Future<String> getDatabasePath() async {
+    if (databasePath != null) return databasePath!();
     final dbFolder = await getApplicationDocumentsDirectory();
     final path = join(dbFolder.path, databaseName);
     return path;
@@ -26,11 +64,27 @@ class QuranDatabaseService {
 
   Future<bool> isDatabaseExists() async {
     final path = await getDatabasePath();
-    return File(path).exists();
+    return isUsableDatabase(File(path));
   }
 
   Future<void> downloadDatabase(Function(double) onProgress) async {
+    if (_downloadInFlight != null) return _downloadInFlight!;
+    final operation = _downloadDatabase(onProgress);
+    _downloadInFlight = operation;
+    try {
+      await operation;
+    } finally {
+      _downloadInFlight = null;
+    }
+  }
+
+  Future<void> _downloadDatabase(Function(double) onProgress) async {
     final path = await getDatabasePath();
+    if (await isUsableDatabase(File(path))) {
+      onProgress(1);
+      return;
+    }
+    final partial = File('$path.download');
 
     // Ensure directory exists
     try {
@@ -38,37 +92,53 @@ class QuranDatabaseService {
     } catch (_) {}
 
     try {
-      final dio = Dio();
+      final dio = client ?? Dio();
       await dio.download(
         dbDownloadUrl,
-        path,
+        partial.path,
         onReceiveProgress: (received, total) {
-          if (total != -1) {
+          if (total > 0) {
             final progress = received / total;
             onProgress(progress);
           }
         },
       );
+      if (!await isUsableDatabase(partial)) {
+        throw const FormatException('Downloaded Quran database is incomplete');
+      }
+      // Only publish the complete, validated file; preserve an existing valid DB.
+      if (!await isUsableDatabase(File(path))) await partial.rename(path);
+      onProgress(1);
     } catch (e) {
       // Clean up the partial file if download fails
       debugPrint('Failed to download database: $e');
-      if (await File(path).exists()) {
-        await File(path).delete();
-      }
       throw Exception('Failed to download database: $e');
+    } finally {
+      if (await partial.exists()) await partial.delete();
     }
   }
 
   // Parses the AlQuran Cloud quran-tajweed JSON Edition and stores it in SQLite
   Future<void> fetchAndSeedTajweedData(Function(double) onProgress) async {
+    if (_seedInFlight != null) return _seedInFlight!;
+    final operation = _seedTajweedData(onProgress);
+    _seedInFlight = operation;
+    try {
+      await operation;
+    } finally {
+      _seedInFlight = null;
+    }
+  }
+
+  Future<void> _seedTajweedData(Function(double) onProgress) async {
     const String url = 'https://api.alquran.cloud/v1/quran/quran-tajweed';
 
     try {
-      final dio = Dio();
+      final dio = client ?? Dio();
       final response = await dio.get(
         url,
         onReceiveProgress: (received, total) {
-          if (total != -1) {
+          if (total > 0) {
             final progress =
                 (received / total) * 0.5; // Download is 50% of the work
             onProgress(progress);
@@ -123,10 +193,22 @@ class QuranDatabaseService {
         });
 
         onProgress(1.0);
+      } else {
+        throw StateError('Tajweed service returned ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Failed to seed Tajweed data: $e');
       throw Exception('Failed to sync Tajweed data: $e');
     }
   }
+}
+
+class _QuranValidationUser implements QueryExecutorUser {
+  @override
+  int get schemaVersion => 1;
+  @override
+  Future<void> beforeOpen(
+    QueryExecutor executor,
+    OpeningDetails details,
+  ) async {}
 }

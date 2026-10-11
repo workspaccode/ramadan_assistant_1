@@ -1,3 +1,4 @@
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class HadithDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 3),
       backgroundColor: context.backgroundColor,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),

@@ -845,11 +845,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checking_updates => 'جاري التحقق من وجود تحديثات...';
 
   @override
-  String get reset_all_data => 'إعادة تعيين كافة البيانات';
+  String get reset_all_data => 'استعادة الإعدادات الافتراضية';
 
   @override
   String get reset_confirmation_msg =>
-      'هل أنت متأكد أنك تريد إعادة تعيين كافة البيانات؟ لا يمكن التراجع عن هذا الإجراء.';
+      'استعادة إعدادات الصلاة والتنبيهات والمظهر؟ ستبقى سجلات العبادات والمواعيد وتقدم العمرة محفوظة.';
 
   @override
   String get about => 'حول التطبيق';
@@ -1137,7 +1137,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String end_prefix(String end) {
-    return 'End: $end';
+    return 'النهاية: $end';
   }
 
   @override
@@ -1165,7 +1165,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get category_all => 'الكل';
 
   @override
-  String get category_auto_update => 'Auto Updates';
+  String get category_auto_update => 'التحديثات التلقائية';
 
   @override
   String get category_manual_update => 'التحديثات اليدوية';
@@ -1221,4 +1221,842 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get browse_100_duas => 'تصفح أكثر من 100 دعاء من السنة الصحيحة';
+
+  @override
+  String get update_screen_title => 'تحديث التطبيق';
+
+  @override
+  String get update_available_desc => 'يتوفر تحديث جديد للتطبيق';
+
+  @override
+  String get size_label => 'الحجم';
+
+  @override
+  String get downloading_update => 'جاري تحميل التحديث...';
+
+  @override
+  String get dont_close_app => 'يرجى عدم إغلاق التطبيق';
+
+  @override
+  String get update_completed => 'تم التحديث بنجاح! 🎉';
+
+  @override
+  String get restart_to_apply => 'أعد تشغيل التطبيق لتطبيق التغييرات';
+
+  @override
+  String get up_to_date_title => 'أنت تستخدم أحدث إصدار ✅';
+
+  @override
+  String get no_updates_available => 'لا توجد تحديثات متاحة حالياً';
+
+  @override
+  String get search_again => 'إعادة البحث';
+
+  @override
+  String get error_occurred => 'حدث خطأ';
+
+  @override
+  String get later => 'لاحقاً';
+
+  @override
+  String get ok => 'حسناً';
+
+  @override
+  String get mandatory_update => 'تحديث إلزامي';
+
+  @override
+  String get mandatory_update_desc =>
+      'يوجد تحديث أمني مهم. سيتم تحميل التحديث الآن.';
+
+  @override
+  String get restart => 'إعادة تشغيل';
+
+  @override
+  String get no_update_found => 'لا يوجد تحديث';
+
+  @override
+  String get latest_version_msg => 'أنت تستخدم أحدث إصدار من التطبيق ✅';
+
+  @override
+  String get update_downloaded_restart =>
+      'تم تحميل التحديث بنجاح. يجب إعادة تشغيل التطبيق لتطبيق التحديث.';
+
+  @override
+  String update_complete_msg(String title) {
+    return 'تم تحميل \"$title\" بنجاح.\nأعد تشغيل التطبيق لتطبيق التغييرات.';
+  }
+
+  @override
+  String get permissions_rationale_title => 'تمكين تنبيهات الصلاة';
+
+  @override
+  String get permissions_rationale_body =>
+      'يحتاج توبتى إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة، وإلى إذن الإشعارات لتنبيهك بالأذان في وقته. يمكنك تغيير هذه الأذونات في أي وقت من الإعدادات.';
+
+  @override
+  String get couldnt_open_page =>
+      'تعذر فتح الصفحة. يرجى التحقق من اتصالك بالإنترنت والمحاولة لاحقاً.';
+
+  @override
+  String get sai_header_title => 'السعي بين الصفا والمروة';
+
+  @override
+  String get tap_to_start_dua => 'اضغط هنا للبدء والدعاء';
+
+  @override
+  String get completed_praise => 'مكتمل بحمد الله';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get from_safa_to_marwa => 'من الصفا إلى المروة';
+
+  @override
+  String get from_marwa_to_safa => 'من المروة إلى الصفا';
+
+  @override
+  String get sai_completed_snackbar => 'تم السعي بحمد الله';
+
+  @override
+  String get complete_sai_btn => 'إتمام السعي';
+
+  @override
+  String get complete_lap_next_btn => 'إتمام الشوط والانتقال للتالي';
+
+  @override
+  String get tawaf_header_title => 'الطواف حول الكعبة';
+
+  @override
+  String get tap_to_open_duas => 'اضغط لفتح الأدعية والأذكار';
+
+  @override
+  String get done_status => 'تم ✓';
+
+  @override
+  String get pending_status => 'في الانتظار';
+
+  @override
+  String get duas_round_subtitle => 'أدعية وأذكار هذا الشوط';
+
+  @override
+  String complete_round_next_btn(String round) {
+    return 'إتمام $round والانتقال للتالي';
+  }
+
+  @override
+  String get complete_tawaf_btn => 'إتمام الطواف';
+
+  @override
+  String get tawaf_completed_snackbar => 'تم الطواف بحمد الله';
+
+  @override
+  String get follow_sunnah_fallback => 'اتبع السنة.';
+
+  @override
+  String get reset_umrah_confirm_title => 'إعادة ضبط العمرة؟';
+
+  @override
+  String get reset_umrah_confirm_body =>
+      'سيتم إعادة ضبط جميع الخطوات وعدادات التقدم (الطواف، السعي، المقام، زمزم). هل تريد المتابعة؟';
+
+  @override
+  String get ui_home => 'الرئيسية';
+
+  @override
+  String get ui_brand => 'ثوابتي';
+
+  @override
+  String get ui_tasbih_activity => 'السبحة والنشاط';
+
+  @override
+  String get ui_selected_dhikr => 'الذكر المختار';
+
+  @override
+  String get ui_session => 'هذه الجلسة';
+
+  @override
+  String get ui_remaining => 'المتبقي';
+
+  @override
+  String get ui_activity_history => 'سجل النشاط';
+
+  @override
+  String get ui_total_sessions => 'الجلسات المحفوظة';
+
+  @override
+  String get ui_completed_sessions => 'الجلسات المكتملة';
+
+  @override
+  String get ui_adhkar_library => 'الأذكار والأدعية';
+
+  @override
+  String get ui_reminders_intro =>
+      'تذكيرات هادئة للذكر خلال يومك. اختر الذكر والوقت الذي يناسبك.';
+
+  @override
+  String get ui_hadith_intro =>
+      'اقرأ وتدبّر. ابحث في المكتبة واختر الكتاب الذي تريد قراءته.';
+
+  @override
+  String get ui_hadith_search => 'ابحث في نص الحديث أو الراوي';
+
+  @override
+  String get ui_no_results => 'لا توجد نتائج لهذا البحث';
+
+  @override
+  String get ui_all => 'الكل';
+
+  @override
+  String get ui_copied => 'تم نسخ الذكر';
+
+  @override
+  String get ui_copy => 'نسخ النص';
+
+  @override
+  String get ui_speak => 'استمع إلى الذكر';
+
+  @override
+  String get ui_saved_dhikr => 'ذكر محفوظ في المكتبة';
+
+  @override
+  String get ui_listen_stop => 'إيقاف الاستماع';
+
+  @override
+  String get ui_prayer_settings => 'إعدادات مواقيت الصلاة والأذان';
+
+  @override
+  String get ui_your_tools => 'رفيقك في كل يوم';
+
+  @override
+  String get ui_tasbih_category => 'التسبيح';
+
+  @override
+  String get ui_salawat_category => 'الصلاة على النبي';
+
+  @override
+  String get ui_tawheed_category => 'التوحيد';
+
+  @override
+  String get ui_istighfar_category => 'الاستغفار';
+
+  @override
+  String get ui_dua_category => 'الدعاء';
+
+  @override
+  String get ui_quran_download_prompt =>
+      'نزّل المصحف مرة واحدة للقراءة دون إنترنت.';
+
+  @override
+  String get ui_quran_download_action => 'تنزيل المصحف';
+
+  @override
+  String get ui_quran_preparing => 'جاري إعداد قواعد التجويد…';
+
+  @override
+  String get ui_quran_empty_page => 'لا توجد آيات متاحة في هذه الصفحة.';
+
+  @override
+  String get ui_tasbih_save_failed =>
+      'تعذّر حفظ الجلسة. العداد الحالي لم يتغير.';
+
+  @override
+  String get ui_daily_tools => 'أدواتك اليومية';
+
+  @override
+  String get features_worship => 'وردي وعباداتي';
+
+  @override
+  String get features_planner => 'مواعيدي وتقويمي';
+
+  @override
+  String get features_library => 'مكتبة المعرفة';
+
+  @override
+  String get features_shortcuts => 'اختصارات الشاشة';
+
+  @override
+  String get features_shortcuts_intro =>
+      'افتح أداتك المفضلة مباشرة من شاشة الهاتف. اختَر الأداة ثم أكّد الإضافة في نافذة النظام.';
+
+  @override
+  String get features_pin_requested =>
+      'تم طلب الاختصار. أكّد الإضافة في نافذة الهاتف.';
+
+  @override
+  String get features_shortcuts_unsupported =>
+      'إضافة الاختصارات غير متاحة على هذا الجهاز أو مشغّل الشاشة.';
+
+  @override
+  String get features_action_failed => 'تعذّر إتمام العملية. حاول مرة أخرى.';
+
+  @override
+  String get features_local_data => 'بياناتي المحلية';
+
+  @override
+  String get features_local_intro =>
+      'المواعيد وسجلات العبادات والمفضلة محفوظة على هذا الجهاز. الربط بالسيرفر غير مفعّل حاليًا.';
+
+  @override
+  String get features_pending_label => 'سجلات جاهزة للربط لاحقًا';
+
+  @override
+  String get features_on_device => 'محفوظ على الجهاز';
+
+  @override
+  String get features_reminder_title => 'وقت وردك اليومي';
+
+  @override
+  String get features_reminder_body =>
+      'افتح تطبيق القراءة، ثم سجّل ما قرأته في ثوابتي.';
+
+  @override
+  String get library_title => 'مكتبة المعرفة';
+
+  @override
+  String get library_intro =>
+      'قصص مختصرة من مصادر موثقة، ومعاني أحاديث قصيرة للقراءة والاستماع.';
+
+  @override
+  String get library_companions => 'قصص الصحابة';
+
+  @override
+  String get library_short_hadith => 'معاني أحاديث قصيرة';
+
+  @override
+  String get library_favorites => 'المفضلة';
+
+  @override
+  String get library_search => 'ابحث في العنوان أو النص';
+
+  @override
+  String get library_summary_note =>
+      'ملخص للمعنى؛ اقرأ الرواية الكاملة في المصدر.';
+
+  @override
+  String get library_source => 'قراءة المصدر';
+
+  @override
+  String get library_hadith_books => 'فتح كتب الحديث';
+
+  @override
+  String get library_read_aloud => 'قراءة النص بصوت الجهاز';
+
+  @override
+  String get library_stop => 'إيقاف الاستماع';
+
+  @override
+  String get library_media => 'الوسائط المضافة';
+
+  @override
+  String get library_no_media =>
+      'لم تُضف وسائط لهذا النص. يمكنك إضافة رابط صوت أو فيديو أو صورة.';
+
+  @override
+  String get library_add_media => 'إضافة رابط وسائط';
+
+  @override
+  String get library_audio => 'صوت';
+
+  @override
+  String get library_video => 'فيديو خارجي';
+
+  @override
+  String get library_image => 'صورة';
+
+  @override
+  String get library_link => 'رابط HTTPS';
+
+  @override
+  String get library_link_label => 'عنوان الرابط (اختياري)';
+
+  @override
+  String get library_invalid_link =>
+      'أدخل رابط HTTPS صالحًا دون اسم مستخدم أو كلمة مرور.';
+
+  @override
+  String get library_user_media => 'رابط أضفته أنت؛ يحتاج اتصالًا بالإنترنت.';
+
+  @override
+  String get library_save_failed => 'تعذر إتمام التغيير. حاول مرة أخرى.';
+
+  @override
+  String get library_playback_failed =>
+      'تعذر تشغيل الوسائط أو صوت الجهاز. يمكنك متابعة القراءة أو المحاولة مجددًا.';
+
+  @override
+  String get library_remove_media => 'حذف الرابط';
+
+  @override
+  String get library_favorite_add => 'إضافة إلى المفضلة';
+
+  @override
+  String get library_favorite_remove => 'إزالة من المفضلة';
+
+  @override
+  String get library_save => 'حفظ الرابط';
+
+  @override
+  String get library_no_favorites =>
+      'لا توجد عناصر مفضلة بعد. أضف نصًا باستخدام رمز القلب.';
+
+  @override
+  String get planner_title => 'مواعيدي';
+
+  @override
+  String get planner_local_hint =>
+      'مواعيدك وتذكيراتك محفوظة على هذا الجهاز. اختر يومًا أو أضف موعدًا.';
+
+  @override
+  String get planner_add_event => 'إضافة موعد';
+
+  @override
+  String get planner_calendar_view => 'التقويم';
+
+  @override
+  String get planner_list_view => 'كل المواعيد';
+
+  @override
+  String get planner_empty_title => 'مساحة لموعدك القادم';
+
+  @override
+  String get planner_empty_body =>
+      'أضف موعدًا ووقته وتذكيرًا اختياريًا ليظهر هنا.';
+
+  @override
+  String get planner_title_label => 'عنوان الموعد';
+
+  @override
+  String get planner_start_label => 'البداية';
+
+  @override
+  String get planner_end_label => 'النهاية';
+
+  @override
+  String get planner_reminder_label => 'التذكير';
+
+  @override
+  String get planner_no_reminder => 'بدون تذكير';
+
+  @override
+  String get planner_at_start => 'عند البداية';
+
+  @override
+  String get planner_five_minutes => 'قبل ٥ دقائق';
+
+  @override
+  String get planner_ten_minutes => 'قبل ١٠ دقائق';
+
+  @override
+  String get planner_thirty_minutes => 'قبل ٣٠ دقيقة';
+
+  @override
+  String get planner_hour_before => 'قبل ساعة';
+
+  @override
+  String get planner_day_before => 'قبل يوم';
+
+  @override
+  String get planner_notes_label => 'ملاحظات';
+
+  @override
+  String get planner_meet_label => 'رابط Google Meet';
+
+  @override
+  String get planner_meet_manual_hint =>
+      'ألصق رابط اجتماع موجود، أو أنشئ اجتماعًا في Google Meet ثم انسخ رابطه هنا. إنشاء رابط تلقائيًا داخل التطبيق يحتاج ربط حساب Google ولم يُفعّل بعد.';
+
+  @override
+  String get planner_meet_new => 'إنشاء اجتماع في المتصفح';
+
+  @override
+  String get planner_meet_open => 'فتح الاجتماع';
+
+  @override
+  String get planner_meet_failed =>
+      'تعذّر فتح الاجتماع. تحقق من الرابط وتطبيق المتصفح.';
+
+  @override
+  String get planner_save => 'حفظ الموعد';
+
+  @override
+  String get planner_edit => 'تعديل';
+
+  @override
+  String get planner_delete => 'حذف';
+
+  @override
+  String get planner_delete_confirm =>
+      'حذف هذا الموعد المحلي وتذكيره؟ النسخة الموجودة في تقويم الجهاز ستبقى كما هي.';
+
+  @override
+  String get planner_cancel => 'إلغاء';
+
+  @override
+  String get planner_retry => 'إعادة المحاولة';
+
+  @override
+  String get planner_event_saved => 'تم حفظ الموعد';
+
+  @override
+  String get planner_event_deleted => 'تم حذف الموعد المحلي';
+
+  @override
+  String get planner_load_failed => 'تعذّر تحميل المواعيد. أعد المحاولة.';
+
+  @override
+  String get planner_save_failed =>
+      'تعذّر حفظ الموعد. بياناتك في النموذج محفوظة؛ أعد المحاولة.';
+
+  @override
+  String get planner_delete_failed =>
+      'تعذّر إلغاء التذكير أو حذف الموعد. أعد المحاولة.';
+
+  @override
+  String get planner_permission_denied =>
+      'تم حفظ الموعد، لكن إذن الإشعارات غير متاح. فعّل الإذن من إعدادات التطبيق ثم أعد تفعيل التذكير.';
+
+  @override
+  String get planner_reminder_expired =>
+      'تم حفظ الموعد. وقت التذكير مضى؛ عدّل الموعد أو اختر تذكيرًا أقرب إلى بدايته.';
+
+  @override
+  String get planner_reminder_failed =>
+      'تم حفظ الموعد، لكن التذكير لم يُجدول. أعد تفعيل التذكير.';
+
+  @override
+  String get planner_reminder_retry => 'تفعيل التذكير';
+
+  @override
+  String get planner_calendar_connect => 'ربط تقويم الجهاز';
+
+  @override
+  String get planner_calendar_hint =>
+      'بعد موافقتك نعرض التقويمات والحسابات الموجودة على الجهاز. يمكن نسخ المواعيد إليها أو استيراد نسخة محلية. مزامنة حساب Google تديرها إعدادات الجهاز.';
+
+  @override
+  String get planner_calendar_account => 'التقويم والحساب';
+
+  @override
+  String get planner_calendar_empty =>
+      'لا توجد مواعيد في هذا الشهر في التقويم المختار.';
+
+  @override
+  String get planner_calendar_import => 'نسخ إلى مواعيدي';
+
+  @override
+  String get planner_calendar_export => 'حفظ في تقويم الجهاز';
+
+  @override
+  String get planner_calendar_permission =>
+      'إذن التقويم مرفوض. فعّله من إعدادات التطبيق ثم اضغط ربط التقويم.';
+
+  @override
+  String get planner_calendar_unavailable =>
+      'تكامل تقويم الجهاز غير متاح على هذا النظام. المواعيد المحلية متاحة.';
+
+  @override
+  String get planner_calendar_failed =>
+      'تعذّر تنفيذ العملية في تقويم الجهاز. الموعد المحلي لم يُحذف؛ أعد المحاولة.';
+
+  @override
+  String get planner_calendar_read_only =>
+      'هذا التقويم للقراءة فقط. اختر تقويمًا يسمح بإضافة المواعيد.';
+
+  @override
+  String get planner_calendar_saved => 'تم حفظ نسخة في تقويم الجهاز';
+
+  @override
+  String get planner_local_event => 'على الجهاز';
+
+  @override
+  String get planner_invalid_title =>
+      'أدخل عنوانًا للموعد، بحد أقصى ١٦٠ حرفًا.';
+
+  @override
+  String get planner_invalid_dates => 'يجب أن تكون نهاية الموعد بعد بدايته.';
+
+  @override
+  String get planner_invalid_meet =>
+      'أدخل رابط اجتماع صالحًا مثل https://meet.google.com/abc-defg-hij';
+
+  @override
+  String get features_complete_round => 'أتممت شوطًا';
+
+  @override
+  String get features_read_round => 'قراءة أدعية الشوط';
+
+  @override
+  String get features_counter_save_failed =>
+      'تعذّر حفظ العداد. العدد ظاهر هنا؛ أعد الحفظ قبل إغلاق التطبيق.';
+
+  @override
+  String get worship_choose_date => 'اختيار التاريخ';
+
+  @override
+  String get worship_title => 'عباداتي';
+
+  @override
+  String get worship_today => 'اليوم';
+
+  @override
+  String get worship_wird => 'ورد القرآن';
+
+  @override
+  String get worship_nawafil => 'النوافل';
+
+  @override
+  String get worship_qada => 'الفوائت';
+
+  @override
+  String worship_today_progress(Object count) {
+    return 'سجّلت إتمام $count من 5 صلوات';
+  }
+
+  @override
+  String get worship_manual_hint =>
+      'سجّل عبادتك بنفسك. فتح تطبيق المصحف لا يسجّل إتمام الورد تلقائيًا.';
+
+  @override
+  String get worship_pending => 'لم تُسجّل';
+
+  @override
+  String get worship_completed => 'أتممتها';
+
+  @override
+  String get worship_missed => 'فاتتني';
+
+  @override
+  String get worship_save => 'حفظ';
+
+  @override
+  String get worship_cancel => 'إلغاء';
+
+  @override
+  String get worship_retry => 'إعادة المحاولة';
+
+  @override
+  String get worship_fajr => 'الفجر';
+
+  @override
+  String get worship_dhuhr => 'الظهر';
+
+  @override
+  String get worship_asr => 'العصر';
+
+  @override
+  String get worship_maghrib => 'المغرب';
+
+  @override
+  String get worship_isha => 'العشاء';
+
+  @override
+  String get worship_plan_empty => 'ابدأ وردًا يناسب وقتك، ولو صفحات قليلة.';
+
+  @override
+  String get worship_edit_plan => 'ضبط خطة الورد';
+
+  @override
+  String get worship_daily_pages => 'الصفحات يوميًا';
+
+  @override
+  String get worship_start_page => 'الصفحة التالية';
+
+  @override
+  String get worship_reminder => 'تذكير يومي';
+
+  @override
+  String get worship_reader => 'تطبيق المصحف';
+
+  @override
+  String get worship_no_reader => 'لا يتوفر تطبيق مصحف';
+
+  @override
+  String worship_pages_range(Object end, Object start) {
+    return 'الصفحات $start–$end';
+  }
+
+  @override
+  String get worship_wrap_hint => 'أكمل من الصفحة 1 بعد الصفحة 604.';
+
+  @override
+  String get worship_open_reader => 'فتح المصحف';
+
+  @override
+  String get worship_confirm_reading => 'أتممت ورد اليوم';
+
+  @override
+  String get worship_reminder_body => 'حان وقت وردك اليومي من القرآن.';
+
+  @override
+  String get worship_add_voluntary => 'تسجيل نافلة';
+
+  @override
+  String get worship_no_logs => 'تظهر هنا نوافلك وصيامك التطوعي.';
+
+  @override
+  String get worship_duha => 'الضحى';
+
+  @override
+  String get worship_witr => 'الوتر';
+
+  @override
+  String get worship_rawatib => 'السنن الرواتب';
+
+  @override
+  String get worship_nightPrayer => 'قيام الليل';
+
+  @override
+  String get worship_fasting => 'صيام تطوعي';
+
+  @override
+  String get worship_units => 'الركعات';
+
+  @override
+  String get worship_note => 'ملاحظة (اختياري)';
+
+  @override
+  String worship_units_value(Object count) {
+    return '$count ركعات';
+  }
+
+  @override
+  String get worship_qada_hint =>
+      'أدخل ما تعرفه من فوائتك. سجل اليوم مستقل، ولا تُقدّر سنوات أو واجبات تلقائيًا.';
+
+  @override
+  String get worship_opening => 'إدخال رصيد الفوائت';
+
+  @override
+  String get worship_opening_hint =>
+      'أدخل عددًا لكل صلاة، أو 0 إن لم توجد. التغييرات اللاحقة تُسجّل كتعديلات.';
+
+  @override
+  String worship_remaining(Object count) {
+    return 'المتبقي $count';
+  }
+
+  @override
+  String get worship_pay => 'تسجيل قضاء';
+
+  @override
+  String get worship_adjust => 'تعديل الرصيد';
+
+  @override
+  String get worship_count => 'العدد';
+
+  @override
+  String get worship_adjust_delta => 'التغيير (+ إضافة / − خصم)';
+
+  @override
+  String get worship_reason => 'سبب التعديل';
+
+  @override
+  String get worship_history => 'سجل الفوائت';
+
+  @override
+  String get worship_no_history => 'لم تُسجّل حركات بعد.';
+
+  @override
+  String get worship_payment => 'قضاء مسجّل';
+
+  @override
+  String get worship_adjustment => 'تعديل';
+
+  @override
+  String get worship_opening_event => 'رصيد افتتاحي';
+
+  @override
+  String get worship_saved => 'تم الحفظ';
+
+  @override
+  String get worship_load_failed => 'تعذّر تحميل سجلك. أعد المحاولة.';
+
+  @override
+  String get worship_save_failed =>
+      'تعذّر الحفظ. سجلك السابق محفوظ؛ أعد المحاولة.';
+
+  @override
+  String get worship_reminder_failed =>
+      'حُفظت الخطة وتعذّر إعداد التذكير. تحقق من إذن الإشعارات ثم احفظ مجددًا.';
+
+  @override
+  String get worship_reader_unavailable =>
+      'تعذّر فتح المصحف. اختر تطبيقًا متاحًا في خطة الورد.';
+
+  @override
+  String get worship_invalid_plan =>
+      'أدخل صفحات من 1 إلى 604 ووقت تذكير صالحًا.';
+
+  @override
+  String get worship_invalid_count =>
+      'أدخل عددًا صحيحًا من 0 إلى 1,000,000,000.';
+
+  @override
+  String get worship_invalid_units =>
+      'أدخل من 1 إلى 1000 ركعة؛ الصيام يوم واحد.';
+
+  @override
+  String get worship_invalid_day => 'اختر تاريخًا صالحًا.';
+
+  @override
+  String get worship_today_only => 'يمكن تسجيل إتمام الورد لليوم.';
+
+  @override
+  String get worship_future_day => 'لا يمكن تسجيل إتمام عبادة مستقبلية.';
+
+  @override
+  String get worship_plan_required => 'اضبط خطة الورد أولًا.';
+
+  @override
+  String get worship_ledger_initialized =>
+      'أُدخل الرصيد الافتتاحي سابقًا. استخدم التعديل.';
+
+  @override
+  String get worship_adjustment_reason =>
+      'أدخل تغييرًا صحيحًا غير صفري وسبب التعديل.';
+
+  @override
+  String get worship_invalid_note => 'اجعل الملاحظة في حدود 500 حرف.';
+
+  @override
+  String get worship_duplicate_request =>
+      'سُجّلت هذه الحركة مسبقًا بقيم مختلفة.';
+
+  @override
+  String get worship_opening_required => 'أدخل رصيد الفوائت أولًا.';
+
+  @override
+  String get worship_exceeds_remaining =>
+      'هذا التغيير يجعل الرصيد المتبقي سالبًا.';
+
+  @override
+  String get planner_calendar_no_accounts =>
+      'لا توجد تقويمات متاحة على الجهاز. أضف حسابًا أو تقويمًا من إعدادات Android، ثم أعد الربط. يمكنك استخدام مواعيدك المحلية الآن.';
+
+  @override
+  String get worship_refresh_failed =>
+      'تم الحفظ وتعذّر عرض السجل المحدّث. أعد التحميل بدلًا من تسجيل الحركة مجددًا.';
+
+  @override
+  String worship_pages_wrap_range(Object first, Object second) {
+    return 'الصفحات $first، ثم $second';
+  }
+
+  @override
+  String get planner_alarm_until_stopped => 'منبّه مستمر حتى الإيقاف';
+
+  @override
+  String get planner_alarm_description =>
+      'تتكرر النغمة القصيرة المضمنة ويهتز الجهاز حتى تضغط إيقاف المنبّه. تظل التذكيرات العادية إشعارًا واحدًا.';
+
+  @override
+  String get planner_personal_alarm => 'منبّه موعدك';
+
+  @override
+  String get planner_alarm_stop => 'إيقاف المنبّه';
+
+  @override
+  String get planner_alarm_stop_failed =>
+      'تعذر إيقاف المنبّه. حاول مرة أخرى؛ يمكنك أيضًا استخدام زر الإيقاف في إشعار المنبّه.';
 }

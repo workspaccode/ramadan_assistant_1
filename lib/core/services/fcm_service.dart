@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
@@ -60,48 +62,81 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class FcmService {
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static bool _handlersRegistered = false;
 
-  /// Initialize FCM — request permission, get token, set up handlers
+  /// Initialize FCM — set up handlers + token.
+  ///
+  /// NOTE: Notification permission is intentionally NOT requested here.
+  /// Asking before the first frame violates Google Play UX guidance
+  /// (permissions must be requested in context). The request happens in
+  /// PermissionFlow.requestCorePermissions() from the home screen, after a
+  /// rationale dialog the user can decline.
   static Future<void> initialize() async {
     try {
-      // Request permission
-      final settings = await _messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
-      _logger.i('🔔 FCM permission: ${settings.authorizationStatus}');
+      // Network/token failures must not prevent local message handlers.
+      if (!_handlersRegistered) {
+        _messaging.onTokenRefresh.listen(
+          (newToken) => _logger.i('🔑 FCM Token refreshed: $newToken'),
+          onError: (Object error, StackTrace stackTrace) => _logger.e(
+            'FCM token refresh failed',
+            error: error,
+            stackTrace: stackTrace,
+          ),
+        );
+        FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler,
+        );
+        FirebaseMessaging.onMessage.listen(
+          (message) => unawaited(_handleForegroundMessage(message)),
+          onError: (Object error, StackTrace stackTrace) => _logger.e(
+            'FCM message stream failed',
+            error: error,
+            stackTrace: stackTrace,
+          ),
+        );
+        FirebaseMessaging.onMessageOpenedApp.listen(
+          _onMessageOpenedApp,
+          onError: (Object error, StackTrace stackTrace) => _logger.e(
+            'FCM notification tap stream failed',
+            error: error,
+            stackTrace: stackTrace,
+          ),
+        );
+        _handlersRegistered = true;
+      }
 
-      // Get FCM token
-      final token = await _messaging.getToken();
-      _logger.i('🔑 FCM Token: $token');
+      // Check (don't request) current authorization status
+      final settings = await _messaging.getNotificationSettings();
+      _logger.i('🔔 FCM authorization status: ${settings.authorizationStatus}');
 
-      // Listen for token refresh
-      _messaging.onTokenRefresh.listen((newToken) {
-        _logger.i('🔑 FCM Token refreshed: $newToken');
-      });
-
-      // Register background handler
-      FirebaseMessaging.onBackgroundMessage(
-        _firebaseMessagingBackgroundHandler,
-      );
-
-      // Foreground messages
-      FirebaseMessaging.onMessage.listen(_onForegroundMessage);
-
-      // When app is opened from notification tap
-      FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpenedApp);
-
+      // Get FCM token (works regardless of notification permission on Android)
       // Check if app was opened from a terminated state via notification
       final initialMessage = await _messaging.getInitialMessage();
       if (initialMessage != null) {
         _onMessageOpenedApp(initialMessage);
       }
 
+      final token = await _messaging.getToken().timeout(
+        const Duration(seconds: 10),
+      );
+      _logger.i('🔑 FCM Token: $token');
+
       _logger.i('✅ FCM initialized successfully');
     } catch (e) {
       _logger.e('❌ FCM initialization error: $e');
+    }
+  }
+
+  static Future<void> _handleForegroundMessage(RemoteMessage message) async {
+    try {
+      await _onForegroundMessage(message);
+    } catch (error, stackTrace) {
+      // Stream.listen does not await async callbacks; report their failures.
+      _logger.e(
+        'FCM foreground message failed: ${message.messageId}',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 

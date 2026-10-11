@@ -60,7 +60,8 @@ class Audios extends Table {
 
 @DriftDatabase(tables: [Surahs, Verses, Audios])
 class QuranDatabase extends _$QuranDatabase {
-  QuranDatabase() : super(_openConnection());
+  QuranDatabase([QueryExecutor? executor])
+    : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 2;
@@ -76,6 +77,17 @@ class QuranDatabase extends _$QuranDatabase {
           // Schema changed, but standard migration not needed right now
         }
       },
+      beforeOpen: (_) async {
+        // The offline source can predate optional Tajweed coloring.
+        final columns = await customSelect('PRAGMA table_info(verses)').get();
+        if (!columns.any(
+          (column) => column.read<String>('name') == 'text_tajweed',
+        )) {
+          await customStatement(
+            'ALTER TABLE verses ADD COLUMN text_tajweed TEXT',
+          );
+        }
+      },
     );
   }
 
@@ -84,15 +96,24 @@ class QuranDatabase extends _$QuranDatabase {
 
   // Query Methods
   Future<List<VerseEntity>> getVersesByPage(int pageNum) {
-    return (select(verses)..where((v) => v.page.equals(pageNum))).get();
+    return (select(verses)
+          ..where((v) => v.page.equals(pageNum))
+          ..orderBy([
+            (v) => OrderingTerm.asc(v.surahNumber),
+            (v) => OrderingTerm.asc(v.number),
+          ]))
+        .get();
   }
 
   Future<List<VerseEntity>> getSurahVerses(int surahNum) {
-    return (select(verses)..where((v) => v.surahNumber.equals(surahNum))).get();
+    return (select(verses)
+          ..where((v) => v.surahNumber.equals(surahNum))
+          ..orderBy([(v) => OrderingTerm.asc(v.number)]))
+        .get();
   }
 
   Future<List<SurahEntity>> getAllSurahs() {
-    return select(surahs).get();
+    return (select(surahs)..orderBy([(s) => OrderingTerm.asc(s.number)])).get();
   }
 
   // Used for Fihris (Index)
@@ -100,6 +121,7 @@ class QuranDatabase extends _$QuranDatabase {
     final verse =
         await (select(verses)
               ..where((v) => v.surahNumber.equals(surahNum))
+              ..orderBy([(v) => OrderingTerm.asc(v.number)])
               ..limit(1))
             .getSingle();
     return verse.page;
@@ -109,6 +131,11 @@ class QuranDatabase extends _$QuranDatabase {
     final verse =
         await (select(verses)
               ..where((v) => v.juz.equals(juzNum))
+              ..orderBy([
+                (v) => OrderingTerm.asc(v.page),
+                (v) => OrderingTerm.asc(v.surahNumber),
+                (v) => OrderingTerm.asc(v.number),
+              ])
               ..limit(1))
             .getSingle();
     return verse.page;

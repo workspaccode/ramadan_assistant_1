@@ -1,15 +1,42 @@
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:adhan_dart/adhan_dart.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
+import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
+import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+typedef PrayerEntry = ({String name, DateTime time});
+
+List<PrayerEntry> obligatoryPrayers(PrayerTimes times) => [
+  (name: 'fajr', time: times.fajr.toLocal()),
+  (name: 'dhuhr', time: times.dhuhr.toLocal()),
+  (name: 'asr', time: times.asr.toLocal()),
+  (name: 'maghrib', time: times.maghrib.toLocal()),
+  (name: 'isha', time: times.isha.toLocal()),
+];
+
+PrayerEntry nextObligatoryPrayer(PrayerTimes times, DateTime now) =>
+    obligatoryPrayers(times).firstWhere(
+      (prayer) => prayer.time.isAfter(now),
+      orElse: () => (name: 'fajr', time: times.fajrAfter.toLocal()),
+    );
+
+PrayerEntry? dueObligatoryPrayer(PrayerTimes times, DateTime now) {
+  for (final prayer in obligatoryPrayers(times)) {
+    final elapsed = now.difference(prayer.time);
+    if (!elapsed.isNegative && elapsed <= const Duration(seconds: 2)) {
+      return prayer;
+    }
+  }
+  return null;
+}
 
 class PrayerTimesContent extends StatefulWidget {
   final PrayerTimesLoaded state;
@@ -20,23 +47,72 @@ class PrayerTimesContent extends StatefulWidget {
   State<PrayerTimesContent> createState() => _PrayerTimesContentState();
 }
 
-class _PrayerTimesContentState extends State<PrayerTimesContent> {
+class _PrayerTimesContentState extends State<PrayerTimesContent>
+    with WidgetsBindingObserver {
   bool _isAdhanScreenShowing = false;
   String? _lastTriggeredPrayer;
   late DateTime _localCurrentTime;
   Timer? _localTimer;
+  PrayerTimes? _dailyTimes;
+
+  PrayerTimes get _times {
+    final source = widget.state.prayerTimes;
+    final today = DateUtils.dateOnly(_localCurrentTime);
+    if (DateUtils.isSameDay(source.date, today)) return source;
+    if (_dailyTimes == null || !DateUtils.isSameDay(_dailyTimes!.date, today)) {
+      _dailyTimes = PrayerTimes(
+        date: today,
+        coordinates: source.coordinates,
+        calculationParameters: source.calculationParameters,
+      );
+    }
+    return _dailyTimes!;
+  }
+
+  @override
+  void didUpdateWidget(PrayerTimesContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.state.prayerTimes != widget.state.prayerTimes) {
+      _dailyTimes = null;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _localCurrentTime = DateTime.now();
-    _startLocalTimer();
     // Defer the adhan check to after the widget is mounted
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _checkAndShowAdhan();
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _localCurrentTime = DateTime.now();
+    _syncLocalTimer();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!mounted) return;
+    if (state == AppLifecycleState.resumed) {
+      setState(() => _localCurrentTime = DateTime.now());
+    }
+    _syncLocalTimer();
+  }
+
+  void _syncLocalTimer() {
+    _localTimer?.cancel();
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    if (AppShellScope.isActive(context, 1) &&
+        (lifecycle == null || lifecycle == AppLifecycleState.resumed)) {
+      _startLocalTimer();
+    }
   }
 
   void _startLocalTimer() {
@@ -53,53 +129,52 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
   @override
   void dispose() {
     _localTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   void _checkAndShowAdhan() {
-    if (_isAdhanScreenShowing) return;
-
-    final times = widget.state.prayerTimes;
-    final nextPrayer = times.nextPrayer();
-    final nextPrayerTime = _getNextPrayerTime(times, nextPrayer);
-    final timeUntilNext = nextPrayerTime.difference(_localCurrentTime);
-    final prayerKey = _getNextPrayerKey(times);
-
-    // Trigger adhan exactly at prayer time (within 2 second window for reliability)
-    if (timeUntilNext.inSeconds >= 0 && timeUntilNext.inSeconds <= 2) {
-      // Prevent multiple triggers for same prayer
-      if (_lastTriggeredPrayer == prayerKey) return;
-
-      _lastTriggeredPrayer = prayerKey;
-      _showAdhanScreen(prayerKey);
+    if (_isAdhanScreenShowing ||
+        !AppShellScope.isActive(context, 1) ||
+        ModalRoute.of(context)?.isCurrent == false ||
+        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+      return;
     }
-    // Reset trigger when counting down to next prayer
-    else if (timeUntilNext.inSeconds > 2) {
-      if (_lastTriggeredPrayer != prayerKey) {
-        _lastTriggeredPrayer = null;
-      }
-    }
+    final due = dueObligatoryPrayer(_times, _localCurrentTime);
+    if (due == null) return;
+    final trigger = '${due.name}:${due.time.millisecondsSinceEpoch}';
+    if (_lastTriggeredPrayer == trigger) return;
+    _lastTriggeredPrayer = trigger;
+    _showAdhanScreen(due.name);
   }
 
-  void _showAdhanScreen(String prayerKey) {
+  Future<void> _showAdhanScreen(String prayerKey) async {
     if (_isAdhanScreenShowing) return;
     _isAdhanScreenShowing = true;
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AdhanScreen(prayerName: prayerKey),
-        fullscreenDialog: true,
-      ),
-    ).then((_) {
-      _isAdhanScreenShowing = false;
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (!mounted ||
+          !(prefs.getBool('adhan_enabled') ?? true) ||
+          !AppShellScope.isActive(context, 1) ||
+          ModalRoute.of(context)?.isCurrent == false ||
+          WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+        return;
+      }
+      await AdhanAlarmService.presentAdhan(
+        Navigator.of(context),
+        prayerName: prayerKey,
+      );
+    } catch (error) {
+      debugPrint('Could not open Adhan: $error');
+    } finally {
+      if (mounted) _isAdhanScreenShowing = false;
+    }
   }
 
   // Calculate Duha prayer time (10:30 AM to 30 minutes before Dhuhr)
   DateTime? _getDuhaTime(PrayerTimes times) {
     final now = DateTime.now();
-    final dhuhrTime = times.dhuhr;
+    final dhuhrTime = times.dhuhr.toLocal();
 
     final duhaStart = DateTime(now.year, now.month, now.day, 10, 30);
     final duhaEnd = dhuhrTime.subtract(const Duration(minutes: 30));
@@ -285,7 +360,9 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
                         child: _buildModalStatCard(
                           context,
                           'prayer_time'.tr(),
-                          DateFormat.jm().format(prayerInfo['time']),
+                          DateFormat.jm(
+                            context.locale.languageCode,
+                          ).format(prayerInfo['time']),
                           Icons.access_time_filled_rounded,
                           theme.primary,
                         ),
@@ -534,450 +611,200 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
   @override
   Widget build(BuildContext context) {
     final state = widget.state;
-    final times = state.prayerTimes;
-    final formatter = DateFormat.jm();
+    final times = _times;
+    final formatter = DateFormat.jm(context.locale.languageCode);
     final nextPrayerInfo = _getNextPrayerInfo(times);
     final nextPrayerTime = nextPrayerInfo['time'] as DateTime;
-    final timeUntilNext = nextPrayerTime.difference(_localCurrentTime);
     final theme = context.ramadanTheme;
-
+    final prayers = [
+      (
+        name: 'fajr',
+        time: times.fajr.toLocal(),
+        icon: Icons.wb_twilight_rounded,
+      ),
+      (
+        name: 'dhuhr',
+        time: times.dhuhr.toLocal(),
+        icon: Icons.wb_sunny_outlined,
+      ),
+      (name: 'asr', time: times.asr.toLocal(), icon: Icons.wb_sunny_rounded),
+      (
+        name: 'maghrib',
+        time: times.maghrib.toLocal(),
+        icon: Icons.nightlight_outlined,
+      ),
+      (name: 'isha', time: times.isha.toLocal(), icon: Icons.bedtime_outlined),
+    ];
     return Scaffold(
-      backgroundColor: context.backgroundColor,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          // Parallax Header with Luxury Pattern
-          SliverAppBar(
-            expandedHeight: 320,
-            pinned: true,
-            stretch: true,
-            backgroundColor: context.primaryColor,
-            elevation: 0,
-            leading: GestureDetector(
-              onTap: () {
-                context.pop();
-              },
-              child: Icon(Icons.arrow_back, color: Colors.white, weight: 600),
-            ),
-            flexibleSpace: FlexibleSpaceBar(
-              stretchModes: const [
-                StretchMode.zoomBackground,
-                StretchMode.blurBackground,
-              ],
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  // Gradient Base
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          context.primaryColor,
-                          context.primaryColor.withValues(alpha: 0.8),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Luxury Pattern Overlay
-                  Opacity(
-                    opacity: 0.15,
-                    child: Image.asset(
-                      'assets/image/islamic_pattern_premium_gold_1771758633652.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  // Animated Content
-                  SafeArea(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 20),
-                        // Location Info
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                CupertinoIcons.location_solid,
-                                color: context.secondaryColor.withValues(
-                                  alpha: 0.9,
-                                ),
-                                size: 16,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                state.locationName,
-                                style: TextStyle(
-                                  color: context.secondaryColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Big Time
-                        Text(
-                          DateFormat('hh:mm').format(_localCurrentTime),
-                          style: TextStyle(
-                            color: context.secondaryColor,
-                            fontSize: 72,
-                            fontWeight: FontWeight.w100,
-                            letterSpacing: -2,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              DateFormat('ss').format(_localCurrentTime),
-                              style: TextStyle(
-                                color: context.secondaryColor.withValues(
-                                  alpha: 0.6,
-                                ),
-                                fontSize: 24,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              DateFormat('a').format(_localCurrentTime),
-                              style: TextStyle(
-                                color: context.secondaryColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      appBar: AppBar(
+        title: Text('prayer_times'.tr()),
+        automaticallyImplyLeading: !AppShellScope.contains(context),
+        actions: [
+          IconButton(
+            tooltip: 'settings_title'.tr(),
+            icon: const Icon(Icons.tune_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
             ),
           ),
-
-          const SliverToBoxAdapter(child: SizedBox(height: 60)),
-
-          // Floating Next Prayer Card
-          SliverToBoxAdapter(
-            child: Transform.translate(
-              offset: const Offset(0, -40),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: theme.background.withValues(alpha: 0.8),
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'next_prayer'.tr().toUpperCase(),
-                                  style: TextStyle(
-                                    color: theme.primary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  nextPrayerInfo['name'].toString().tr(),
-                                  style: TextStyle(
-                                    color: theme.textPrimary,
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                _formatDuration(timeUntilNext),
-                                style: TextStyle(
-                                  color: theme.textPrimary,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                'time_remaining'.tr(),
-                                style: TextStyle(
-                                  color: theme.textSecondary,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                size: 18,
+                color: context.primaryColor,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  state.locationName,
+                  style: context.textTheme.bodySmall,
                 ),
               ),
-            ),
+            ],
           ),
-
-          // Date & Duha Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        DateFormat(
-                          'EEEE, d MMMM',
-                          context.locale.languageCode,
-                        ).format(_localCurrentTime),
-                        style: TextStyle(
-                          color: theme.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _getLocalizedHijriDate(context),
-                        style: TextStyle(
-                          color: theme.textSecondary,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+          const SizedBox(height: 16),
+          SakinaCard(
+            color: SakinaColors.hero(context),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'next_prayer'.tr(),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFFCEE8DC),
                   ),
-                  // Premium Duha Button
-                  GestureDetector(
-                    onTap: () => _showPrayerDetailModal(context, 'duha', times),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.secondary,
-                            theme.secondary.withValues(alpha: 0.7),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.secondary.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            CupertinoIcons.sun_max_fill,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'duha'.tr(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      (nextPrayerInfo['name'] as String).tr(),
+                      style: context.textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    Text(
+                      formatter.format(nextPrayerTime),
+                      style: context.textTheme.headlineLarge?.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Divider(color: Colors.white.withValues(alpha: .15)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      context.loc.ui_remaining,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFFCEE8DC),
+                      ),
+                    ),
+                    Text(
+                      _formatDuration(
+                        nextPrayerTime.difference(_localCurrentTime),
+                      ),
+                      style: context.textTheme.headlineMedium?.copyWith(
+                        color: theme.accent,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-
-          // Prayer Times List
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final prayers = [
-                  {
-                    'name': 'fajr',
-                    'time': times.fajr.toLocal(),
-                    'icon': Icons.wb_twilight_rounded,
-                    'color': const Color(0xFF64B5F6),
-                  },
-                  {
-                    'name': 'dhuhr',
-                    'time': times.dhuhr.toLocal(),
-                    'icon': Icons.wb_sunny_rounded,
-                    'color': const Color(0xFFFFB74D),
-                  },
-                  {
-                    'name': 'asr',
-                    'time': times.asr.toLocal(),
-                    'icon': Icons.wb_sunny_outlined,
-                    'color': const Color(0xFF9575CD),
-                  },
-                  {
-                    'name': 'maghrib',
-                    'time': times.maghrib.toLocal(),
-                    'icon': Icons.nightlight_round,
-                    'color': const Color(0xFFE57373),
-                  },
-                  {
-                    'name': 'isha',
-                    'time': times.isha.toLocal(),
-                    'icon': Icons.bedtime_rounded,
-                    'color': const Color(0xFF7986CB),
-                  },
-                ];
-
-                final prayer = prayers[index];
-                final isNext = prayer['name'] == nextPrayerInfo['name'];
-                final prayerColor = prayer['color'] as Color;
-
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: isNext
-                        ? prayerColor.withValues(alpha: 0.08)
-                        : theme.cardSurface,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
+          const SizedBox(height: 24),
+          Text(
+            _getLocalizedHijriDate(context),
+            style: context.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 16),
+          SakinaCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SakinaSectionTitle('today'.tr(), icon: Icons.mosque_outlined),
+                const SizedBox(height: 16),
+                ...prayers.map((prayer) {
+                  final isNext = prayer.name == nextPrayerInfo['name'];
+                  final passed = prayer.time.isBefore(_localCurrentTime);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Material(
                       color: isNext
-                          ? prayerColor
-                          : theme.borderColor.withValues(alpha: 0.05),
-                      width: isNext ? 2 : 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.02),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: InkWell(
-                    onTap: () => _showPrayerDetailModal(
-                      context,
-                      prayer['name'] as String,
-                      times,
-                    ),
-                    borderRadius: BorderRadius.circular(24),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: prayerColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Icon(
-                              prayer['icon'] as IconData,
-                              color: prayerColor,
-                              size: 28,
-                            ),
+                          ? SakinaColors.mint(context)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: () =>
+                            _showPrayerDetailModal(context, prayer.name, times),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Icon(
+                                prayer.icon,
+                                color: isNext
+                                    ? context.primaryColor
+                                    : theme.textSecondary,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      prayer.name.tr(),
+                                      style: context.textTheme.titleMedium,
+                                    ),
+                                    Text(
+                                      isNext
+                                          ? 'next_prayer'.tr()
+                                          : passed
+                                          ? 'passed'.tr()
+                                          : 'upcoming'.tr(),
+                                      style: context.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                formatter.format(prayer.time),
+                                style: context.textTheme.titleMedium,
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  prayer['name'].toString().tr(),
-                                  style: TextStyle(
-                                    color: theme.textPrimary,
-                                    fontSize: 18,
-                                    fontWeight: isNext
-                                        ? FontWeight.bold
-                                        : FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  formatter.format(prayer['time'] as DateTime),
-                                  style: TextStyle(
-                                    color: theme.textSecondary,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (isNext)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: prayerColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'next'.tr().toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            )
-                          else
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              color: theme.textDim,
-                            ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }, childCount: 5),
+                  );
+                }),
+              ],
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          const SizedBox(height: 16),
+          TextButton.icon(
+            icon: Icon(Icons.wb_sunny_outlined, color: theme.secondary),
+            label: Text('duha'.tr()),
+            onPressed: () => _showPrayerDetailModal(context, 'duha', times),
+          ),
         ],
       ),
     );
@@ -998,66 +825,19 @@ class _PrayerTimesContentState extends State<PrayerTimesContent> {
   }
 
   Map<String, dynamic> _getNextPrayerInfo(PrayerTimes times) {
-    final now = _localCurrentTime;
-    final prayers = [
-      {'name': 'fajr', 'time': times.fajr.toLocal()},
-      {'name': 'dhuhr', 'time': times.dhuhr.toLocal()},
-      {'name': 'asr', 'time': times.asr.toLocal()},
-      {'name': 'maghrib', 'time': times.maghrib.toLocal()},
-      {'name': 'isha', 'time': times.isha.toLocal()},
-    ];
-
-    for (final prayer in prayers) {
-      if (now.isBefore(prayer['time'] as DateTime)) {
-        return prayer;
-      }
-    }
-
-    // If all prayers have passed, return tomorrow's Fajr
-    final tomorrowFajr = prayers.first['time'] as DateTime;
-    return {'name': 'fajr', 'time': tomorrowFajr.add(const Duration(days: 1))};
-  }
-
-  DateTime _getNextPrayerTime(PrayerTimes times, Prayer nextPrayer) {
-    switch (nextPrayer) {
-      case Prayer.fajr:
-        return times.fajr.toLocal();
-      case Prayer.dhuhr:
-        return times.dhuhr.toLocal();
-      case Prayer.asr:
-        return times.asr.toLocal();
-      case Prayer.maghrib:
-        return times.maghrib.toLocal();
-      case Prayer.isha:
-        return times.isha.toLocal();
-      default:
-        return times.fajr.toLocal();
-    }
-  }
-
-  String _getNextPrayerKey(PrayerTimes times) {
-    final now = _localCurrentTime;
-    final prayers = [
-      {'name': 'fajr', 'time': times.fajr.toLocal()},
-      {'name': 'dhuhr', 'time': times.dhuhr.toLocal()},
-      {'name': 'asr', 'time': times.asr.toLocal()},
-      {'name': 'maghrib', 'time': times.maghrib.toLocal()},
-      {'name': 'isha', 'time': times.isha.toLocal()},
-    ];
-
-    for (final prayer in prayers) {
-      if (now.isBefore(prayer['time'] as DateTime)) {
-        return prayer['name'] as String;
-      }
-    }
-
-    return 'fajr';
+    final next = nextObligatoryPrayer(times, _localCurrentTime);
+    return {'name': next.name, 'time': next.time};
   }
 
   String _getLocalizedHijriDate(BuildContext context) {
     final now = HijriCalendar.now();
     // The hijri package uses setLocal to change language globally for the calendar
-    HijriCalendar.setLocal(context.locale.languageCode);
-    return now.toFormat('dd MMMM yyyy');
+    final previousLanguage = HijriCalendar.language;
+    try {
+      HijriCalendar.setLocal(context.locale.languageCode == 'en' ? 'en' : 'ar');
+      return now.toFormat('dd MMMM yyyy');
+    } finally {
+      HijriCalendar.setLocal(previousLanguage);
+    }
   }
 }

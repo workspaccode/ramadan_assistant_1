@@ -3,21 +3,21 @@ import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
-import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-
 import 'package:flutter/material.dart';
+import 'package:ramadan_assistant/core/platform/feature_platform.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
+import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
 import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
-import 'package:ramadan_assistant/presentation/screens/adhan_screen/adhan_screen.dart';
+import 'package:ramadan_assistant/presentation/screens/iqama_screen/iqama_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/update_details_dialog.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -32,13 +32,22 @@ void callbackDispatcher() {
         final locationService = LocationService();
         final prayerService = PrayerService();
 
-        // Add timeout to prevent hanging
-        await locationService.getCurrentLocation().timeout(
+        // Use the last-known (cached) position instead of requesting a fresh
+        // GPS fix in the background — avoids ACCESS_BACKGROUND_LOCATION,
+        // which requires a sensitive-permission declaration on Google Play.
+        final position = await locationService.getCachedPosition().timeout(
           const Duration(seconds: 30),
         );
 
+        if (position == null) {
+          // No location has ever been cached (user never granted permission).
+          // Retry on the next periodic run instead of failing hard.
+          _logger.w('No cached position available — skipping this run');
+          return false;
+        }
+
         await _scheduleDayPrayerNotifications(
-          await locationService.getCurrentLocation(),
+          position,
           prayerService,
         ).timeout(const Duration(minutes: 2));
       } else if (task == 'tasbihReportTask') {
@@ -160,25 +169,6 @@ Future<void> _scheduleDayPrayerNotifications(
           iqamaTime: iqamaTime,
         );
       }
-
-      // 4. Wird Reminder (if plan is pagesPerPrayer) - Respect Dhikr Enabled setting
-      final dhikrEnabled = prefs.getBool('dhikr_enabled') ?? true;
-      final wirdPlanType = prefs.getString('wird_plan_type');
-      final wirdPlanValue = prefs.getInt('wird_plan_value');
-
-      if (dhikrEnabled && (wirdPlanType == 'pagesPerPrayer' || wirdPlanType == 'khatma') &&
-          wirdPlanValue != null) {
-        // For khatma (1/month), we aim for ~4 pages per prayer (total 21)
-        final pagesToRead = wirdPlanType == 'khatma' ? 4 : wirdPlanValue;
-
-        final reminderTime = prayerTime.add(const Duration(minutes: 20));
-        await NotificationService.scheduleWirdReminder(
-          id: prayerId + 200, // Offset ID for Wird
-          prayerName: prayerName,
-          reminderTime: reminderTime,
-          pages: pagesToRead,
-        );
-      }
     }
   }
 
@@ -263,13 +253,13 @@ Future<void> _sendIntelligentTasbihReport() async {
 }
 
 class BackgroundTaskService {
-  static void initialize() {
-    Workmanager().initialize(callbackDispatcher);
+  static Future<void> initialize() async {
+    await Workmanager().initialize(callbackDispatcher);
   }
 
-  static void scheduleDailyUpdate() {
+  static Future<void> scheduleDailyUpdate() async {
     // Run at midnight to schedule next day's prayers
-    Workmanager().registerPeriodicTask(
+    await Workmanager().registerPeriodicTask(
       'daily-prayer-update',
       'prayerUpdateTask',
       frequency: const Duration(hours: 24),
@@ -285,14 +275,27 @@ class BackgroundTaskService {
   }
 
   /// Manually trigger prayer notification scheduling (for initial load)
-  static Future<void> scheduleNotificationsNow() async {
+  static Future<void> scheduleNotificationsNow({
+    bool useCachedLocationOnly = false,
+  }) async {
     final locationService = LocationService();
     final prayerService = PrayerService();
 
     try {
-      final position = await locationService.getCurrentLocation().timeout(
-        const Duration(seconds: 30),
-      );
+      Position? position;
+      try {
+        position = useCachedLocationOnly
+            ? await locationService.getCachedPosition()
+            : await locationService.getCurrentLocation().timeout(
+                const Duration(seconds: 30),
+              );
+      } catch (_) {
+        // Permission not yet granted / location services off — fall back to
+        // the last-known position so prayer alerts are still scheduled.
+        position = await locationService.getCachedPosition();
+      }
+      if (position == null) return;
+
       await _scheduleDayPrayerNotifications(
         position,
         prayerService,
@@ -326,7 +329,7 @@ class NotificationActionHandler {
 
   static Future<void> initialize() async {
     // Listen for notification actions
-    AwesomeNotifications().setListeners(
+    await AwesomeNotifications().setListeners(
       onActionReceivedMethod: onActionReceivedMethod,
       onNotificationCreatedMethod: onNotificationCreatedMethod,
       onNotificationDisplayedMethod: onNotificationDisplayedMethod,
@@ -378,6 +381,13 @@ class NotificationActionHandler {
       final prayer = payload['prayer'];
       final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
 
+      if (type == 'planner' || type == 'worship') {
+        FeatureNavigation.request(
+          type == 'planner' ? AppShortcut.planner : AppShortcut.worship,
+        );
+        return;
+      }
+
       if (receivedAction.buttonKeyPressed == 'OPEN_ADHAN') {
         await _showAdhanScreen(prayer ?? 'Prayer', delay);
       } else if (receivedAction.buttonKeyPressed == 'OPEN_UPDATE') {
@@ -386,12 +396,18 @@ class NotificationActionHandler {
         );
       } else if (receivedAction.buttonKeyPressed == 'DISMISS') {
         _isAdhanScreenActive = false;
-        await AwesomeNotifications().cancelAll();
+        if (receivedAction.id != null) {
+          await AwesomeNotifications().cancel(receivedAction.id!);
+        }
       } else if (type == 'adhan') {
         // Default tap on adhan notification
         await _showAdhanScreen(prayer ?? 'Prayer', delay);
       } else if (type == 'iqama') {
-        navigatorKey.currentState?.pushNamed('/iqama', arguments: prayer);
+        navigatorKey.currentState?.push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => IqamaScreen(prayerName: prayer ?? 'Prayer'),
+          ),
+        );
       } else if (type == 'update') {
         // Tapped update notification - Show rich details dialog
         final context = navigatorKey.currentContext;
@@ -427,19 +443,9 @@ class NotificationActionHandler {
     String prayerName,
     int iqamaDelay,
   ) async {
-    if (_isAdhanScreenActive) return;
-    _isAdhanScreenActive = true;
-
-    try {
-      navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => AdhanScreen(prayerName: prayerName),
-          fullscreenDialog: true,
-        ),
-      );
-    } catch (e) {
-      _logger.e('Error showing Adhan screen', error: e);
-    }
+    final navigator = navigatorKey.currentState;
+    if (navigator == null) return;
+    await AdhanAlarmService.presentAdhan(navigator, prayerName: prayerName);
   }
 
   static void markAdhanScreenClosed() {

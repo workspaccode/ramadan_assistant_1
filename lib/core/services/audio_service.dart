@@ -1,187 +1,208 @@
+import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Service for playing Islamic audio files (Adhan, Iqama, Dhikr)
+/// One foreground player; each new control request supersedes older work.
 class AudioService {
-  static final AudioService _instance = AudioService._internal();
+  static final AudioService _instance = AudioService._withPlayer(AudioPlayer());
   factory AudioService() => _instance;
-  AudioService._internal();
+  AudioService._withPlayer(this._audioPlayer) {
+    _completion = _audioPlayer.onPlayerComplete.listen(
+      (_) {
+        if (!_disposed) _isPlaying = false;
+      },
+      onError: (Object error, StackTrace stack) {
+        _isPlaying = false;
+        debugPrint('Audio playback stream failed: $error');
+      },
+    );
+  }
+  @visibleForTesting
+  AudioService.forTesting(AudioPlayer player) : this._withPlayer(player);
 
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer;
+  late final StreamSubscription<void> _completion;
+  Future<void> _queue = Future.value();
   bool _isPlaying = false;
+  bool _disposed = false;
+  int _generation = 0;
 
   bool get isPlaying => _isPlaying;
-
-  /// Stream to listen when a track finishes playing
+  int get playbackGeneration => _generation;
   Stream<void> get onPlayerComplete => _audioPlayer.onPlayerComplete;
 
-  /// Play Adhan audio
-  Future<void> playAdhan({bool isFajr = false, String? customSound}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final fileName =
-        customSound ??
-        (isFajr
-            ? (prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3')
-            : (prefs.getString('other_adhan_sound') ?? 'azan8.mp3'));
-    await _playAsset(fileName);
+  int _newRequest() {
+    _isPlaying = false;
+    return ++_generation;
   }
 
-  /// Play Iqama reminder sound
+  Future<void> _enqueue(Future<void> Function() action, {int? generation}) {
+    final next = _queue.then((_) async {
+      if (_disposed || (generation != null && generation != _generation)) {
+        return;
+      }
+      try {
+        await action();
+      } catch (error) {
+        if (generation == _generation) _isPlaying = false;
+        debugPrint('Audio operation failed: $error');
+      }
+    });
+    _queue = next;
+    return next;
+  }
+
+  Future<void> _play(Source source, {int? request}) {
+    final generation = request ?? _newRequest();
+    return _enqueue(() async {
+      await _audioPlayer.stop();
+      if (_disposed || generation != _generation) return;
+      await _audioPlayer.play(source);
+      if (!_disposed && generation == _generation) _isPlaying = true;
+    }, generation: generation);
+  }
+
+  Future<void> playAdhan({bool isFajr = false, String? customSound}) async {
+    final request = _newRequest();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (_disposed || request != _generation) return;
+      final file =
+          customSound ??
+          (isFajr
+              ? prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3'
+              : prefs.getString('other_adhan_sound') ?? 'azan8.mp3');
+      await _play(AssetSource('audio/$file'), request: request);
+    } catch (error) {
+      debugPrint('Adhan audio setup failed: $error');
+    }
+  }
+
   Future<void> playIqamaReminder({
     bool isFajr = false,
     String? customSound,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final fileName =
-        customSound ??
-        (isFajr
-            ? (prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3')
-            : (prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3'));
-    await _playAsset(fileName);
-  }
-
-  /// Play Tasbih click sound
-  Future<void> playTasbihClick() async {
-    await _playAsset('tasbih_click.wav');
-  }
-
-  /// Play Tasbih complete sound (when goal reached)
-  Future<void> playTasbihComplete() async {
-    await _playAsset('tasbih_complete.mp3');
-  }
-
-  /// Play Dhikr audio by file name
-  Future<void> playDhikr(String audioFileName) async {
-    await _playAsset(audioFileName);
-  }
-
-  /// Play Dhikr audio in background (for notifications)
-  @pragma('vm:entry-point')
-  static Future<void> playDhikrInBackground(String audioFileName) async {
+    final request = _newRequest();
     try {
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.play(AssetSource('audio/$audioFileName'));
-
-      audioPlayer.onPlayerComplete.listen((_) {
-        audioPlayer.dispose();
-      });
-
-      Future.delayed(const Duration(seconds: 30), () {
-        audioPlayer.dispose();
-      });
-    } catch (e) {
-      debugPrint('Error playing background audio $audioFileName: $e');
+      final prefs = await SharedPreferences.getInstance();
+      if (_disposed || request != _generation) return;
+      final file =
+          customSound ??
+          (isFajr
+              ? prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3'
+              : prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3');
+      await _play(AssetSource('audio/$file'), request: request);
+    } catch (error) {
+      debugPrint('Iqama audio setup failed: $error');
     }
   }
 
-  /// Play Adhan audio in background (for notifications)
+  Future<void> playTasbihClick() =>
+      _play(AssetSource('audio/tasbih_click.wav'));
+  Future<void> playTasbihComplete() =>
+      _play(AssetSource('audio/tasbih_complete.mp3'));
+  Future<void> playDhikr(String file) => _play(AssetSource('audio/$file'));
+  Future<void> playUrl(String url) => _play(UrlSource(url));
+
+  Future<void> stop() {
+    final request = _newRequest();
+    return _enqueue(_audioPlayer.stop, generation: request);
+  }
+
+  Future<void> pause() {
+    final request = _newRequest();
+    return _enqueue(_audioPlayer.pause, generation: request);
+  }
+
+  Future<void> resume() {
+    final request = _newRequest();
+    return _enqueue(() async {
+      await _audioPlayer.resume();
+      if (!_disposed && request == _generation) _isPlaying = true;
+    }, generation: request);
+  }
+
+  Future<void> setVolume(double volume) =>
+      _enqueue(() => _audioPlayer.setVolume(volume.clamp(0.0, 1.0)));
+
+  Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
+    _newRequest();
+    await _completion.cancel();
+    await _queue;
+    try {
+      await _audioPlayer.dispose();
+    } catch (error) {
+      debugPrint('Audio cleanup failed: $error');
+    }
+  }
+
+  /// A temporary background player has exactly one cleanup path, including
+  /// playback errors and the maximum-duration fallback.
+  static Future<void> _playInBackground(String file, Duration maximum) async {
+    final player = AudioPlayer();
+    Timer? timeout;
+    StreamSubscription<void>? completion;
+    var finished = false;
+    Future<void> finish() async {
+      if (finished) return;
+      finished = true;
+      timeout?.cancel();
+      await completion?.cancel();
+      try {
+        await player.dispose();
+      } catch (error) {
+        debugPrint('Background audio cleanup failed: $error');
+      }
+    }
+
+    try {
+      completion = player.onPlayerComplete.listen(
+        (_) => unawaited(finish()),
+        onError: (Object error, StackTrace stack) {
+          debugPrint('Background audio stream failed: $error');
+          unawaited(finish());
+        },
+      );
+      await player.play(AssetSource('audio/$file'));
+      if (!finished) timeout = Timer(maximum, () => unawaited(finish()));
+    } catch (error) {
+      debugPrint('Background audio failed: $error');
+      await finish();
+    }
+  }
+
+  @pragma('vm:entry-point')
+  static Future<void> playDhikrInBackground(String file) =>
+      _playInBackground(file, const Duration(seconds: 30));
+
   @pragma('vm:entry-point')
   static Future<void> playAdhanInBackground({bool isFajr = false}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final fileName = isFajr
-          ? (prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3')
-          : (prefs.getString('other_adhan_sound') ?? 'azan8.mp3');
-
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.play(AssetSource('audio/$fileName'));
-
-      audioPlayer.onPlayerComplete.listen((_) {
-        audioPlayer.dispose();
-      });
-
-      Future.delayed(const Duration(seconds: 60), () {
-        audioPlayer.dispose();
-      });
-    } catch (e) {
-      debugPrint('Error playing background adhan: $e');
+      final file = isFajr
+          ? prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3'
+          : prefs.getString('other_adhan_sound') ?? 'azan8.mp3';
+      await _playInBackground(file, const Duration(seconds: 60));
+    } catch (error) {
+      debugPrint('Background adhan setup failed: $error');
     }
   }
 
-  /// Play Iqama reminder sound in background
   @pragma('vm:entry-point')
   static Future<void> playIqamaReminderInBackground({
     bool isFajr = false,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final fileName = isFajr
-          ? (prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3')
-          : (prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3');
-
-      final audioPlayer = AudioPlayer();
-      await audioPlayer.play(AssetSource('audio/$fileName'));
-
-      audioPlayer.onPlayerComplete.listen((_) {
-        audioPlayer.dispose();
-      });
-
-      Future.delayed(const Duration(seconds: 15), () {
-        audioPlayer.dispose();
-      });
-    } catch (e) {
-      debugPrint('Error playing background iqama reminder: $e');
+      final file = isFajr
+          ? prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3'
+          : prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3';
+      await _playInBackground(file, const Duration(seconds: 15));
+    } catch (error) {
+      debugPrint('Background iqama setup failed: $error');
     }
-  }
-
-  /// Play asset file
-  Future<void> _playAsset(String fileName) async {
-    try {
-      await stop();
-      await _audioPlayer.play(AssetSource('audio/$fileName'));
-      _isPlaying = true;
-
-      _audioPlayer.onPlayerComplete.listen((_) {
-        _isPlaying = false;
-      });
-    } catch (e) {
-      debugPrint('Error playing audio $fileName: $e');
-      _isPlaying = false;
-    }
-  }
-
-  /// Play audio from a URL
-  Future<void> playUrl(String url) async {
-    try {
-      await stop();
-      await _audioPlayer.play(UrlSource(url));
-      _isPlaying = true;
-
-      _audioPlayer.onPlayerComplete.listen((_) {
-        _isPlaying = false;
-      });
-    } catch (e) {
-      debugPrint('Error playing url $url: $e');
-      _isPlaying = false;
-    }
-  }
-
-  /// Stop current playback
-  Future<void> stop() async {
-    await _audioPlayer.stop();
-    _isPlaying = false;
-  }
-
-  /// Pause current playback
-  Future<void> pause() async {
-    await _audioPlayer.pause();
-    _isPlaying = false;
-  }
-
-  /// Resume playback
-  Future<void> resume() async {
-    await _audioPlayer.resume();
-    _isPlaying = true;
-  }
-
-  /// Set volume (0.0 to 1.0)
-  Future<void> setVolume(double volume) async {
-    await _audioPlayer.setVolume(volume.clamp(0.0, 1.0));
-  }
-
-  /// Dispose resources
-  Future<void> dispose() async {
-    await _audioPlayer.dispose();
   }
 }

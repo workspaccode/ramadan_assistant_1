@@ -69,6 +69,21 @@ class WirdDailyLogs extends Table {
   IntColumn get otherPages => integer().withDefault(const Constant(0))();
 }
 
+/// Versioned feature records and a durable outbox, alongside legacy tables.
+class FeatureDocuments extends Table {
+  TextColumn get namespace => text()();
+  TextColumn get documentId => text()();
+  TextColumn get payload => text()();
+  IntColumn get revision => integer()();
+  IntColumn get payloadVersion => integer().withDefault(const Constant(1))();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get sortKey => text().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+  BoolColumn get pendingSync => boolean().withDefault(const Constant(true))();
+  @override
+  Set<Column> get primaryKey => {namespace, documentId};
+}
+
 @DriftDatabase(
   tables: [
     PrayerLogs,
@@ -78,19 +93,22 @@ class WirdDailyLogs extends Table {
     Duas,
     WirdProgress,
     WirdDailyLogs,
+    FeatureDocuments,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
       onCreate: (m) async {
         await m.createAll();
+        await _createDocumentIndexes();
       },
       onUpgrade: (m, from, to) async {
         if (from < 2) {
@@ -120,8 +138,19 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(wirdProgress, wirdProgress.lastReadPage);
           await m.createTable(wirdDailyLogs);
         }
+        if (from < 6) {
+          await m.createTable(featureDocuments);
+          await _createDocumentIndexes();
+        }
       },
     );
+  }
+
+  Future<void> _createDocumentIndexes() async {
+    await customStatement('CREATE INDEX IF NOT EXISTS feature_documents_range '
+        'ON feature_documents(namespace, deleted_at, sort_key)');
+    await customStatement('CREATE INDEX IF NOT EXISTS feature_documents_outbox '
+        'ON feature_documents(pending_sync, updated_at)');
   }
 
   static QueryExecutor _openConnection() {

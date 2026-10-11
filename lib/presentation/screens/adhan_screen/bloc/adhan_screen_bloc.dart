@@ -109,9 +109,8 @@ class AdhanScreenBloc extends Bloc<AdhanScreenEvent, AdhanScreenState> {
   final AudioService _audioService = AudioService();
   Timer? _timer;
 
-  AdhanScreenBloc({required AppDatabase database, required String prayerName})
-    : _database = database,
-      super(AdhanScreenInitial()) {
+  AdhanScreenBloc({required this._database, required String prayerName})
+    : super(AdhanScreenInitial()) {
     on<StartAdhanScreen>(_onStart);
     on<TickElapsed>(_onTick);
     on<StartDhikr>(_onStartDhikr);
