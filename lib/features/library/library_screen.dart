@@ -7,8 +7,7 @@ import 'library_models.dart';
 import 'library_reading_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
-  const LibraryScreen({super.key, required this.onOpenHadith});
-  final VoidCallback onOpenHadith;
+  const LibraryScreen({super.key});
   @override
   State<LibraryScreen> createState() => _LibraryScreenState();
 }
@@ -132,12 +131,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
               ],
             ),
             const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: widget.onOpenHadith,
-              icon: const Icon(Icons.auto_stories_outlined),
-              label: Text(context.loc.library_hadith_books),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
             if (state.loading) const LinearProgressIndicator(),
             if (state.loadFailed)
               SakinaCard(

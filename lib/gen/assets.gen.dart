@@ -30,26 +30,8 @@ class $AssetsAnimationsGen {
 class $AssetsAudioGen {
   const $AssetsAudioGen();
 
-  /// File path: assets/audio/MakkahIQamah.mp3
-  String get makkahIQamah => 'assets/audio/MakkahIQamah.mp3';
-
   /// File path: assets/audio/README.md
   String get readme => 'assets/audio/README.md';
-
-  /// File path: assets/audio/adhan_fajr.mp3
-  String get adhanFajr => 'assets/audio/adhan_fajr.mp3';
-
-  /// File path: assets/audio/adhan_regular.mp3
-  String get adhanRegular => 'assets/audio/adhan_regular.mp3';
-
-  /// File path: assets/audio/azan8.mp3
-  String get azan8 => 'assets/audio/azan8.mp3';
-
-  /// File path: assets/audio/azanfajr.mp3
-  String get azanfajr => 'assets/audio/azanfajr.mp3';
-
-  /// File path: assets/audio/shaykhmohamedgary.mp3
-  String get shaykhmohamedgary => 'assets/audio/shaykhmohamedgary.mp3';
 
   /// File path: assets/audio/tasbih_click.wav
   String get tasbihClick => 'assets/audio/tasbih_click.wav';
@@ -61,17 +43,7 @@ class $AssetsAudioGen {
   $AssetsAudioZakrGen get zakr => const $AssetsAudioZakrGen();
 
   /// List of all assets
-  List<String> get values => [
-    makkahIQamah,
-    readme,
-    adhanFajr,
-    adhanRegular,
-    azan8,
-    azanfajr,
-    shaykhmohamedgary,
-    tasbihClick,
-    tasbihComplete,
-  ];
+  List<String> get values => [readme, tasbihClick, tasbihComplete];
 }
 
 class $AssetsDataGen {
@@ -92,10 +64,6 @@ class $AssetsDataGen {
 
 class $AssetsImageGen {
   const $AssetsImageGen();
-
-  /// File path: assets/image/hajr_aswad.png
-  AssetGenImage get hajrAswad =>
-      const AssetGenImage('assets/image/hajr_aswad.png');
 
   /// File path: assets/image/islamic_luxury_pattern_1771758573216.png
   AssetGenImage get islamicLuxuryPattern1771758573216 => const AssetGenImage(
@@ -119,10 +87,6 @@ class $AssetsImageGen {
   /// File path: assets/image/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/image/logo.png');
 
-  /// File path: assets/image/maqam_ibrahim.png
-  AssetGenImage get maqamIbrahim =>
-      const AssetGenImage('assets/image/maqam_ibrahim.png');
-
   /// File path: assets/image/ramadan_lantern.svg
   String get ramadanLantern => 'assets/image/ramadan_lantern.svg';
 
@@ -132,33 +96,16 @@ class $AssetsImageGen {
   /// File path: assets/image/ramadan_star.svg
   String get ramadanStar => 'assets/image/ramadan_star.svg';
 
-  /// File path: assets/image/safa_marwa_header.png
-  AssetGenImage get safaMarwaHeader =>
-      const AssetGenImage('assets/image/safa_marwa_header.png');
-
-  /// File path: assets/image/tawaf_header.png
-  AssetGenImage get tawafHeader =>
-      const AssetGenImage('assets/image/tawaf_header.png');
-
-  /// File path: assets/image/tawaf_round_icon.png
-  AssetGenImage get tawafRoundIcon =>
-      const AssetGenImage('assets/image/tawaf_round_icon.png');
-
   /// List of all assets
   List<dynamic> get values => [
-    hajrAswad,
     islamicLuxuryPattern1771758573216,
     islamicPattern,
     islamicPatternGold1771757427651,
     islamicPatternPremiumGold1771758633652,
     logo,
-    maqamIbrahim,
     ramadanLantern,
     ramadanMoon,
     ramadanStar,
-    safaMarwaHeader,
-    tawafHeader,
-    tawafRoundIcon,
   ];
 }
 
@@ -184,10 +131,6 @@ class $AssetsAudioZakrGen {
   /// File path: assets/audio/zakr/Allahu-Akbar.wav
   String get allahuAkbar => 'assets/audio/zakr/Allahu-Akbar.wav';
 
-  /// File path: assets/audio/zakr/Allahumma-salli-ala-muhammad.wav
-  String get allahummaSalliAlaMuhammad =>
-      'assets/audio/zakr/Allahumma-salli-ala-muhammad.wav';
-
   /// File path: assets/audio/zakr/alah-msaly-ala-nabyna-mohamed.mp3
   String get alahMsalyAlaNabynaMohamed =>
       'assets/audio/zakr/alah-msaly-ala-nabyna-mohamed.mp3';
@@ -207,12 +150,8 @@ class $AssetsAudioZakrGen {
   String get astkhfrAlah => 'assets/audio/zakr/astkhfr-alah.wav';
 
   /// File path: assets/audio/zakr/la-hawla-wa-la-quwwata-illAllah.mp3
-  String get laHawlaWaLaQuwwataIllAllahMp3 =>
+  String get laHawlaWaLaQuwwataIllAllah =>
       'assets/audio/zakr/la-hawla-wa-la-quwwata-illAllah.mp3';
-
-  /// File path: assets/audio/zakr/la-hawla-wa-la-quwwata-illAllah.wav
-  String get laHawlaWaLaQuwwataIllAllahWav =>
-      'assets/audio/zakr/la-hawla-wa-la-quwwata-illAllah.wav';
 
   /// File path: assets/audio/zakr/la-ilaha-illallah.wav
   String get laIlahaIllallah => 'assets/audio/zakr/la-ilaha-illallah.wav';
@@ -238,14 +177,12 @@ class $AssetsAudioZakrGen {
   /// List of all assets
   List<String> get values => [
     allahuAkbar,
-    allahummaSalliAlaMuhammad,
     alahMsalyAlaNabynaMohamed,
     alhamduLillahRabbilAalameen,
     alhamduLillah,
     astaghfirullahWaAtubu,
     astkhfrAlah,
-    laHawlaWaLaQuwwataIllAllahMp3,
-    laHawlaWaLaQuwwataIllAllahWav,
+    laHawlaWaLaQuwwataIllAllah,
     laIlahaIllallah,
     salyAlaMohamed,
     subhanAllahBeautifulVoice,

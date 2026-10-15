@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
@@ -24,7 +23,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     'maintenance',
     'greeting',
     'exclusive',
-    'adhan',
     'general',
   ];
 
@@ -248,10 +246,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       case 'exclusive':
         categoryColor = const Color(0xFFFFD600);
         categoryIcon = Icons.star_rounded;
-        break;
-      case 'adhan':
-        categoryColor = theme.primary;
-        categoryIcon = Icons.mosque_rounded;
         break;
       default:
         categoryColor = const Color(0xFF448AFF);

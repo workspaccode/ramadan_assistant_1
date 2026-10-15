@@ -15,7 +15,6 @@ import 'package:ramadan_assistant/presentation/screens/main_screen/main_screen.d
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,12 +33,6 @@ class _TasbihBloc extends Cubit<TasbihState> implements TasbihBloc {
           currentDhikr: 'SubhanAllah',
         ),
       );
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _RemindersBloc extends Cubit<RemindersState> implements RemindersBloc {
-  _RemindersBloc() : super(const RemindersLoaded([]));
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -84,14 +77,12 @@ void main() {
             ),
           );
           final tasbih = _TasbihBloc();
-          final reminders = _RemindersBloc();
           final boundary = GlobalKey();
           await tester.pumpWidget(
             MultiBlocProvider(
               providers: [
                 BlocProvider<PrayerTimesBloc>.value(value: prayer),
                 BlocProvider<TasbihBloc>.value(value: tasbih),
-                BlocProvider<RemindersBloc>.value(value: reminders),
               ],
               child: MaterialApp(
                 locale: Locale(locale),
@@ -148,7 +139,6 @@ void main() {
           await tester.pumpWidget(const SizedBox());
           await prayer.close();
           await tasbih.close();
-          await reminders.close();
         });
       }
     }
@@ -163,13 +153,11 @@ void main() {
     AppTabNavigation.index.value = 0;
     final prayer = _PrayerBloc(PrayerTimesLoading());
     final tasbih = _TasbihBloc();
-    final reminders = _RemindersBloc();
     await tester.pumpWidget(
       MultiBlocProvider(
         providers: [
           BlocProvider<PrayerTimesBloc>.value(value: prayer),
           BlocProvider<TasbihBloc>.value(value: tasbih),
-          BlocProvider<RemindersBloc>.value(value: reminders),
         ],
         child: MaterialApp(
           locale: const Locale('ar'),
@@ -212,7 +200,6 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await prayer.close();
     await tasbih.close();
-    await reminders.close();
     AppTabNavigation.index.value = 0;
   });
 }

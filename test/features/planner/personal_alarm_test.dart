@@ -163,8 +163,8 @@ void main() {
     ringing.add(AlarmSet([alarm]));
     await tester.pumpAndSettle();
     expect(find.byType(PersonalAlarmScreen), findsNothing);
-    await PersonalAlarmService.dispose();
-    await ringing.close();
+    await tester.runAsync(PersonalAlarmService.dispose);
+    await tester.runAsync(ringing.close);
     expect(tester.takeException(), isNull);
   });
 

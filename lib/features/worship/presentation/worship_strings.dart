@@ -48,6 +48,29 @@ const worshipCopy = <String, Map<String, String>>{
     'worship_pages_range': 'Pages {start}–{end}',
     'worship_wrap_hint': 'Continue at page 1 after page 604.',
     'worship_open_reader': 'Open reader',
+    'worship_overlay': 'Show floating helper over the reading app',
+    'worship_overlay_hint':
+        'A small movable card with today\'s target appears over your chosen reader only. It never records reading for you.',
+    'worship_overlay_unavailable':
+        'Floating helper is off (permission not granted). Your reader opened normally.',
+    'worship_overlay_why_title': 'Allow display over other apps?',
+    'worship_overlay_why_body':
+        'To show today\'s target above your Quran app, Android needs the "Display over other apps" permission. It is used only for this small card, only over the app you chose, and you can turn it off at any time. Nothing is read from or sent from that app. If you decline, the wird works exactly as before.',
+    'worship_overlay_continue': 'Continue to settings',
+    'worship_overlay_autohide': 'Hide the helper when I leave the reading app',
+    'worship_overlay_autohide_hint':
+        'Optional. Needs Usage Access. Without it the helper stays until you close it or 30 minutes pass.',
+    'worship_overlay_usage_title': 'Allow Usage Access?',
+    'worship_overlay_usage_body':
+        'Android uses "Usage Access" to tell which app is in front. It is used only to hide the card when you leave your reading app. Nothing is stored or shared. You can skip this; the card then stays until closed.',
+    'worship_overlay_title': 'Today\'s wird',
+    'worship_overlay_done': 'Done',
+    'worship_overlay_close': 'Close',
+    'worship_overlay_confirm_title': 'Confirm today\'s reading',
+    'worship_overlay_confirm_body':
+        'Did you read {range}? Confirm only if you actually finished it.',
+    'worship_overlay_confirm_yes': 'Yes, I read it',
+    'worship_overlay_confirm_no': 'Not yet',
     'worship_confirm_reading': 'I finished today’s reading',
     'worship_reminder_body': 'Your daily Quran reading is ready.',
     'worship_add_voluntary': 'Record voluntary worship',
@@ -136,6 +159,29 @@ const worshipCopy = <String, Map<String, String>>{
     'worship_pages_range': 'الصفحات {start}–{end}',
     'worship_wrap_hint': 'أكمل من الصفحة 1 بعد الصفحة 604.',
     'worship_open_reader': 'فتح المصحف',
+    'worship_overlay': 'إظهار مساعد عائم فوق تطبيق القراءة',
+    'worship_overlay_hint':
+        'تظهر بطاقة صغيرة قابلة للتحريك بهدف اليوم فوق تطبيق المصحف الذي اخترته فقط. لا تسجّل قراءتك نيابةً عنك.',
+    'worship_overlay_unavailable':
+        'المساعد العائم متوقف (لم يتم منح الإذن). فُتح المصحف بشكل عادي.',
+    'worship_overlay_why_title': 'السماح بالعرض فوق التطبيقات الأخرى؟',
+    'worship_overlay_why_body':
+        'لعرض هدف اليوم فوق تطبيق المصحف يحتاج أندرويد إلى إذن «العرض فوق التطبيقات الأخرى». يُستخدم فقط لهذه البطاقة الصغيرة وفوق التطبيق الذي اخترته، ويمكنك إيقافه في أي وقت. لا يتم قراءة أي شيء من ذلك التطبيق ولا إرسال أي بيانات. إن رفضت يعمل الورد كما كان تمامًا.',
+    'worship_overlay_continue': 'المتابعة إلى الإعدادات',
+    'worship_overlay_autohide': 'إخفاء المساعد عند مغادرة تطبيق القراءة',
+    'worship_overlay_autohide_hint':
+        'اختياري. يحتاج إذن «الوصول إلى بيانات الاستخدام». بدونه يبقى المساعد حتى تغلقه أو تمر ٣٠ دقيقة.',
+    'worship_overlay_usage_title': 'السماح بالوصول إلى بيانات الاستخدام؟',
+    'worship_overlay_usage_body':
+        'يستخدم أندرويد هذا الإذن لمعرفة التطبيق الظاهر أمامك. نستخدمه فقط لإخفاء البطاقة عند مغادرتك تطبيق القراءة، ولا يُخزَّن أو يُشارَك أي شيء. يمكنك التخطي وستبقى البطاقة حتى تغلقها.',
+    'worship_overlay_title': 'ورد اليوم',
+    'worship_overlay_done': 'تم',
+    'worship_overlay_close': 'إغلاق',
+    'worship_overlay_confirm_title': 'تأكيد قراءة اليوم',
+    'worship_overlay_confirm_body':
+        'هل قرأت {range}؟ أكّد فقط إن أتممتها فعلًا.',
+    'worship_overlay_confirm_yes': 'نعم، قرأتها',
+    'worship_overlay_confirm_no': 'ليس بعد',
     'worship_confirm_reading': 'أتممت ورد اليوم',
     'worship_reminder_body': 'حان وقت وردك اليومي من القرآن.',
     'worship_add_voluntary': 'تسجيل نافلة',
@@ -221,6 +267,29 @@ const worshipCopy = <String, Map<String, String>>{
     'worship_pages_range': 'صفحات {start}–{end}',
     'worship_wrap_hint': 'صفحہ 604 کے بعد صفحہ 1 سے جاری رکھیں۔',
     'worship_open_reader': 'قرآن کھولیں',
+    'worship_overlay': 'پڑھنے والی ایپ پر تیرتا مددگار دکھائیں',
+    'worship_overlay_hint':
+        'آپ کی منتخب قرآن ایپ پر ہی آج کے ہدف کا چھوٹا قابلِ حرکت کارڈ نظر آئے گا۔ یہ آپ کی تلاوت خود درج نہیں کرتا۔',
+    'worship_overlay_unavailable':
+        'تیرتا مددگار بند ہے (اجازت نہیں ملی)۔ قرآن ایپ معمول کے مطابق کھلی۔',
+    'worship_overlay_why_title': 'دوسری ایپس کے اوپر دکھانے کی اجازت دیں؟',
+    'worship_overlay_why_body':
+        'آج کا ہدف قرآن ایپ کے اوپر دکھانے کے لیے اینڈرائیڈ کو «دوسری ایپس کے اوپر ڈسپلے» کی اجازت درکار ہے۔ یہ صرف اس چھوٹے کارڈ کے لیے، صرف آپ کی منتخب ایپ پر استعمال ہوگی اور آپ کسی بھی وقت بند کر سکتے ہیں۔ اس ایپ سے کچھ پڑھا یا بھیجا نہیں جاتا۔ انکار پر ورد پہلے کی طرح چلتا ہے۔',
+    'worship_overlay_continue': 'ترتیبات پر جائیں',
+    'worship_overlay_autohide': 'پڑھنے والی ایپ چھوڑنے پر مددگار چھپا دیں',
+    'worship_overlay_autohide_hint':
+        'اختیاری۔ «استعمال تک رسائی» درکار ہے۔ اس کے بغیر مددگار بند کرنے یا ۳۰ منٹ تک رہتا ہے۔',
+    'worship_overlay_usage_title': 'استعمال تک رسائی کی اجازت دیں؟',
+    'worship_overlay_usage_body':
+        'اینڈرائیڈ یہ اجازت یہ جاننے کے لیے استعمال کرتا ہے کہ کون سی ایپ سامنے ہے۔ ہم اسے صرف کارڈ چھپانے کے لیے استعمال کرتے ہیں، کچھ محفوظ یا شیئر نہیں ہوتا۔ آپ چھوڑ سکتے ہیں؛ کارڈ بند کرنے تک رہے گا۔',
+    'worship_overlay_title': 'آج کا ورد',
+    'worship_overlay_done': 'مکمل',
+    'worship_overlay_close': 'بند کریں',
+    'worship_overlay_confirm_title': 'آج کی تلاوت کی تصدیق',
+    'worship_overlay_confirm_body':
+        'کیا آپ نے {range} پڑھے؟ صرف تب تصدیق کریں جب واقعی مکمل کیے ہوں۔',
+    'worship_overlay_confirm_yes': 'ہاں، پڑھ لیے',
+    'worship_overlay_confirm_no': 'ابھی نہیں',
     'worship_confirm_reading': 'آج کا ورد مکمل کیا',
     'worship_reminder_body': 'روزانہ قرآن کے ورد کا وقت ہے۔',
     'worship_add_voluntary': 'نفلی عبادت درج کریں',

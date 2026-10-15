@@ -45,7 +45,6 @@ dependencies:
   drift: ^2.32.0
   drift_flutter: ^0.3.0
   sqlite3_flutter_libs: ^0.6.0+eol
-  path_provider: ^2.1.5
 
   # State Management
   flutter_bloc: ^9.1.1
@@ -62,12 +61,8 @@ dependencies:
   permission_handler: ^12.0.1
   geocoding: ^4.0.0
   dio: ^5.9.2
-  path: ^1.9.0
-  vector_math: ^2.2.0
-  share_plus: ^13.2.0
 
   # UI & User Experience
-  flutter_svg: ^2.2.3
   lottie: ^3.3.2
   intl: ^0.20.2
   hijri: ^3.0.0
@@ -76,10 +71,6 @@ dependencies:
   url_launcher: ^6.3.2
 
   shorebird_code_push: ^2.0.5
-  flutter_map: ^8.2.2
-  latlong2: ^0.9.1
-  table_calendar: ^3.2.0
-  fl_chart: ^1.1.1
 
   flutter_dynamic_icon_plus: ^1.4.0
   firebase_remote_config: ^6.2.0
@@ -87,8 +78,10 @@ dependencies:
   firebase_messaging: ^16.1.2
   package_info_plus: ^10.2.0
   logger: ^2.6.2
-  tafsir_library: ^1.0.1
   alarm: ^5.2.1
+  connectivity_plus: ^7.3.1
+  video_player: ^2.14.1
+  chewie: ^1.17.2
 
 dev_dependencies:
   flutter_test:
@@ -132,10 +125,6 @@ flutter:
     - assets/image/islamic_pattern.svg
     - assets/image/ramadan_star.svg
     - assets/image/ramadan_lantern.svg
-    - assets/image/tawaf_header.png
-    - assets/image/hajr_aswad.png
-    - assets/image/maqam_ibrahim.png
-    - assets/image/tawaf_round_icon.png
     - assets/animations/
     - assets/audio/
     - assets/data/

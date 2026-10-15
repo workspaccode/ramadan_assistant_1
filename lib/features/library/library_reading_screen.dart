@@ -8,6 +8,7 @@ import 'library_cubit.dart';
 import 'library_models.dart';
 import 'library_playback.dart';
 import 'library_screen.dart' show libraryMediaLabel;
+import 'library_video_player.dart';
 
 class LibraryReadingScreen extends StatefulWidget {
   const LibraryReadingScreen({
@@ -43,6 +44,15 @@ class _LibraryReadingScreenState extends State<LibraryReadingScreen>
     WidgetsBinding.instance.removeObserver(this);
     unawaited(_playback.close());
     super.dispose();
+  }
+
+  String? _videoId;
+
+  Future<void> _toggleVideo(String id) async {
+    // Only one sound source at a time: stop voice/audio before video starts.
+    if (_videoId != id) await _playback.stop();
+    if (!mounted) return;
+    setState(() => _videoId = _videoId == id ? null : id);
   }
 
   Future<void> _openLink(Uri uri) async {
@@ -217,10 +227,34 @@ class _LibraryReadingScreenState extends State<LibraryReadingScreen>
                       const SizedBox(height: 8),
                       if (media.kind == LibraryMediaKind.image)
                         _LibraryNetworkImage(media: media),
+                      if (_videoId == media.id)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: LibraryVideoPlayer(
+                            key: ValueKey(media.id),
+                            url: media.url,
+                            onFailed: () {},
+                          ),
+                        ),
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
                         children: [
+                          if (media.kind == LibraryMediaKind.video &&
+                              libraryIsDirectVideo(media.url))
+                            FilledButton.icon(
+                              onPressed: () => _toggleVideo(media.id),
+                              icon: Icon(
+                                _videoId == media.id
+                                    ? Icons.close_rounded
+                                    : Icons.play_circle_outline_rounded,
+                              ),
+                              label: Text(
+                                _videoId == media.id
+                                    ? context.loc.library_video_hide
+                                    : context.loc.library_video_play,
+                              ),
+                            ),
                           if (media.kind != LibraryMediaKind.image)
                             OutlinedButton.icon(
                               onPressed: () =>

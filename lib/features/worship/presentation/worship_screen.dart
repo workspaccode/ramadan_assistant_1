@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../presentation/widgets/sakina_ui.dart';
 import '../domain/worship_models.dart';
+import '../domain/worship_ports.dart';
 import 'worship_cubit.dart';
 import 'worship_strings.dart';
 
@@ -31,10 +32,14 @@ class WorshipScreen extends StatefulWidget {
 class _WorshipScreenState extends State<WorshipScreen>
     with WidgetsBindingObserver {
   Timer? _rollover;
+  StreamSubscription<void>? _confirmSub;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _confirmSub = widget.cubit.confirmRequests.listen(
+      (_) => _confirmFromOverlay(),
+    );
     widget.cubit.load();
     _rollover = Timer.periodic(const Duration(minutes: 1), (_) {
       if (mounted &&
@@ -55,6 +60,7 @@ class _WorshipScreenState extends State<WorshipScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _rollover?.cancel();
+    _confirmSub?.cancel();
     super.dispose();
   }
 
@@ -187,6 +193,69 @@ class _WorshipScreenState extends State<WorshipScreen>
     ),
   );
 
+  String? _rangeText(int? start, int? end) => start == null || end == null
+      ? null
+      : end < start
+      ? worshipText(
+          context,
+          'worship_pages_wrap_range',
+          args: {
+            'first': '\u2066${start == 604 ? '604' : '$start–604'}\u2069',
+            'second': '\u2066${end == 1 ? '1' : '1–$end'}\u2069',
+          },
+        )
+      : worshipText(
+          context,
+          'worship_pages_range',
+          args: {'start': '\u2066$start', 'end': '$end\u2069'},
+        );
+
+  Future<void> _confirmFromOverlay() async {
+    final snapshot = widget.cubit.state.snapshot;
+    final today = worshipDay(widget.cubit.repository.clock());
+    if (!mounted ||
+        snapshot == null ||
+        snapshot.plan == null ||
+        snapshot.completion != null ||
+        snapshot.day != today) {
+      return;
+    }
+    final range = _rangeText(snapshot.plan!.nextPage, snapshot.plan!.endPage);
+    final yes = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(worshipText(context, 'worship_overlay_confirm_title')),
+        content: Text(
+          worshipText(
+            context,
+            'worship_overlay_confirm_body',
+            args: {'range': range ?? ''},
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(worshipText(context, 'worship_overlay_confirm_no')),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(worshipText(context, 'worship_overlay_confirm_yes')),
+          ),
+        ],
+      ),
+    );
+    if (yes == true && mounted) await widget.cubit.completeWird();
+  }
+
+  void _openReader(String? range) => widget.cubit.openReader(
+    overlayCopy: ReaderOverlayCopy(
+      title: worshipText(context, 'worship_overlay_title'),
+      body: range ?? '',
+      doneLabel: worshipText(context, 'worship_overlay_done'),
+      closeLabel: worshipText(context, 'worship_overlay_close'),
+    ),
+  );
+
   Widget _list(List<Widget> children) => ListView(
     padding: const EdgeInsets.all(16),
     children: children
@@ -270,22 +339,7 @@ class _WorshipScreenState extends State<WorshipScreen>
     final completion = snapshot.completion;
     final start = completion?.startPage ?? plan?.nextPage;
     final end = completion?.endPage ?? plan?.endPage;
-    final range = start == null || end == null
-        ? null
-        : end < start
-        ? worshipText(
-            context,
-            'worship_pages_wrap_range',
-            args: {
-              'first': '\u2066${start == 604 ? '604' : '$start–604'}\u2069',
-              'second': '\u2066${end == 1 ? '1' : '1–$end'}\u2069',
-            },
-          )
-        : worshipText(
-            context,
-            'worship_pages_range',
-            args: {'start': '\u2066$start', 'end': '$end\u2069'},
-          );
+    final range = _rangeText(start, end);
     return _list([
       SakinaCard(
         child: Column(
@@ -331,7 +385,7 @@ class _WorshipScreenState extends State<WorshipScreen>
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: state.busy ? null : widget.cubit.openReader,
+                onPressed: state.busy ? null : () => _openReader(range),
                 icon: const Icon(Icons.open_in_new),
                 label: Text(worshipText(context, 'worship_open_reader')),
               ),
@@ -598,10 +652,14 @@ class _PlanSheetState extends _EditorState<_PlanSheet> {
   );
   TimeOfDay? reminder;
   String? appId;
+  bool overlay = false;
+  bool autoHide = false;
   @override
   void initState() {
     super.initState();
     final plan = widget.cubit.state.snapshot?.plan;
+    overlay = plan?.overlayEnabled ?? false;
+    autoHide = plan?.overlayAutoHide ?? false;
     if (plan?.reminderMinute != null) {
       reminder = TimeOfDay(
         hour: plan!.reminderMinute! ~/ 60,
@@ -619,6 +677,65 @@ class _PlanSheetState extends _EditorState<_PlanSheet> {
     pages.dispose();
     start.dispose();
     super.dispose();
+  }
+
+  Future<bool> _explain(String title, String body, String action) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(worshipText(context, title)),
+          content: Text(worshipText(context, body)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(worshipText(context, 'worship_cancel')),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(worshipText(context, action)),
+            ),
+          ],
+        ),
+      ) ??
+      false;
+
+  /// Explains first; only an explicit "continue" sends the user to Android settings.
+  Future<void> _toggleOverlay(bool enabled) async {
+    if (!enabled) {
+      setState(() {
+        overlay = false;
+        autoHide = false;
+      });
+      return;
+    }
+    final status = await widget.cubit.overlayStatus();
+    if (!status.canDraw) {
+      if (!mounted ||
+          !await _explain(
+            'worship_overlay_why_title',
+            'worship_overlay_why_body',
+            'worship_overlay_continue',
+          )) {
+        return;
+      }
+      await widget.cubit.openOverlaySettings();
+    }
+    if (mounted) setState(() => overlay = true);
+  }
+
+  Future<void> _toggleAutoHide(bool enabled) async {
+    if (enabled && !(await widget.cubit.overlayStatus()).usageAccess) {
+      if (!mounted ||
+          !await _explain(
+            'worship_overlay_usage_title',
+            'worship_overlay_usage_body',
+            'worship_overlay_continue',
+          )) {
+        return;
+      }
+      await widget.cubit.openUsageSettings();
+    }
+    if (mounted) setState(() => autoHide = enabled);
   }
 
   @override
@@ -646,6 +763,21 @@ class _PlanSheetState extends _EditorState<_PlanSheet> {
             .toList(),
         onChanged: saving ? null : (value) => setState(() => appId = value),
       ),
+      SwitchListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(worshipText(context, 'worship_overlay')),
+        subtitle: Text(worshipText(context, 'worship_overlay_hint')),
+        value: overlay,
+        onChanged: saving ? null : _toggleOverlay,
+      ),
+      if (overlay)
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(worshipText(context, 'worship_overlay_autohide')),
+          subtitle: Text(worshipText(context, 'worship_overlay_autohide_hint')),
+          value: autoHide,
+          onChanged: saving ? null : _toggleAutoHide,
+        ),
       SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(worshipText(context, 'worship_reminder')),
@@ -695,6 +827,8 @@ class _PlanSheetState extends _EditorState<_PlanSheet> {
             dailyPages: count,
             nextPage: next,
             readerAppId: appId,
+            overlayEnabled: overlay,
+            overlayAutoHide: overlay && autoHide,
             reminderMinute: reminder == null
                 ? null
                 : reminder!.hour * 60 + reminder!.minute,

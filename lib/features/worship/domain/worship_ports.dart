@@ -18,3 +18,56 @@ abstract interface class WorshipReminderPort {
   });
   Future<void> cancelDailyWird();
 }
+
+class OverlayStatus {
+  const OverlayStatus({this.canDraw = false, this.usageAccess = false});
+  final bool canDraw;
+  final bool usageAccess;
+}
+
+/// Already-localized text for the floating helper (the port never translates).
+class ReaderOverlayRequest {
+  const ReaderOverlayRequest({
+    required this.packageName,
+    required this.title,
+    required this.body,
+    required this.doneLabel,
+    required this.closeLabel,
+    this.autoHide = false,
+    this.timeout = const Duration(minutes: 30),
+  });
+  final String packageName;
+  final String title;
+  final String body;
+  final String doneLabel;
+  final String closeLabel;
+  final bool autoHide;
+  final Duration timeout;
+}
+
+/// Optional bubble over the chosen reader. Showing it never asserts reading: its
+/// Done button only asks the app to confirm; recording stays a user decision.
+abstract interface class ReaderOverlayPort {
+  Future<OverlayStatus> status();
+  Future<void> openOverlaySettings();
+  Future<void> openUsageSettings();
+  Future<bool> show(ReaderOverlayRequest request);
+  Future<void> hide();
+
+  /// True once if the bubble's Done button asked for confirmation. The Done
+  /// button reopens the worship screen, whose load() consumes this flag.
+  Future<bool> takePendingDone();
+}
+
+class ReaderOverlayCopy {
+  const ReaderOverlayCopy({
+    required this.title,
+    required this.body,
+    required this.doneLabel,
+    required this.closeLabel,
+  });
+  final String title;
+  final String body;
+  final String doneLabel;
+  final String closeLabel;
+}

@@ -6,6 +6,8 @@ class WorshipCodec {
     'nextPage': value.nextPage,
     'reminderMinute': value.reminderMinute,
     'readerAppId': value.readerAppId,
+    'overlayEnabled': value.overlayEnabled,
+    'overlayAutoHide': value.overlayAutoHide,
   };
   static WirdPlan readPlan(Map<String, Object?> data) {
     final value = WirdPlan(
@@ -13,6 +15,8 @@ class WorshipCodec {
       nextPage: data['nextPage'] as int,
       reminderMinute: data['reminderMinute'] as int?,
       readerAppId: data['readerAppId'] as String?,
+      overlayEnabled: data['overlayEnabled'] as bool? ?? false,
+      overlayAutoHide: data['overlayAutoHide'] as bool? ?? false,
     );
     value.validate();
     return value;

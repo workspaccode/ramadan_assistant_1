@@ -40,15 +40,18 @@ class SakinaCard extends StatelessWidget {
   final Color? color;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => SizedBox(
     width: double.infinity,
-    padding: padding,
-    decoration: BoxDecoration(
+    // Material (not DecoratedBox) so ListTile ink and splashes stay visible.
+    child: Material(
       color: color ?? context.ramadanTheme.cardSurface,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: context.ramadanTheme.borderColor),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: context.ramadanTheme.borderColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(padding: padding, child: child),
     ),
-    child: child,
   );
 }
 
@@ -263,14 +266,12 @@ class SakinaBottomBar extends StatelessWidget {
     final labels = [
       context.loc.ui_home,
       'tab_prayers'.tr(),
-      'quran'.tr(),
-      'tab_reminders'.tr(),
+      'tab_adhkar'.tr(),
       'tab_tasbih'.tr(),
     ];
     final icons = [
       Icons.home_outlined,
       Icons.access_time_rounded,
-      Icons.menu_book_outlined,
       Icons.auto_stories_outlined,
       Icons.touch_app_outlined,
     ];

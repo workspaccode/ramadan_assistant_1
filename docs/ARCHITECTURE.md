@@ -2,11 +2,21 @@
 
 ## Requirements and scope
 
-Personal mobile companion: Umrah, appointments/alarms, Quran wird, voluntary
+Personal mobile companion: appointments/alarms, Quran wird, voluntary
 worship, prayer tracking, historical missed-prayer ledger, shortcuts and a
 multimedia library. Arabic first, with English and Urdu retained. User selected
 local storage now and server integration later; reading opens an external app
-without overlays or usage surveillance.
+and, only if the user opts in, a small floating helper over that one reader app
+(no accessibility, no screen reading; usage access is a second optional opt-in).
+
+Removed (2026-10-14): adhan/iqama audio alerts and the in-app Mushaf.
+Removed (2026-10-16): all prayer-time notifications and all dhikr reminders
+(Reminders screen/bloc, `DhikrAlarmService`, `reminders` channel and table).
+Bottom navigation is unchanged: four root tabs Home 0, Prayers 1, Dhikr 2
+(dhikr library only) and Tasbih 3. Remaining notifications: planner/wird
+reminders, the daily Islamic tip and tasbih summary (Workmanager
+`dailyExtrasTask`) and FCM pushes; `Alarm.init()` is called once in `main.dart`.
+`adhan_dart` remains only as the prayer-time calculation library.
 
 ## Planning assumptions and capacity
 
@@ -49,7 +59,7 @@ every trivial getter.
 schemaVersion, revision, updatedAt UTC, optional sortKey, deletedAt tombstone,
 and pendingSync. Feature payloads are validated in typed data repositories.
 Calendar dates for worship are explicit local day keys; scheduled instants are
-UTC. Existing prayer/tasbih/Umrah/Quran tables remain intact.
+UTC. Existing prayer/tasbih tables remain intact; the legacy `umrah_progress` table is dropped by the schema 7 migration; the `reminders` table is dropped by schema 8.
 
 ## API and platform contracts
 
@@ -62,6 +72,16 @@ Android MethodChannel: `app.tawabti/features`.
 - Calendar: `calendar.list`, `calendar.events`, `calendar.create`,
   `calendar.update`, `calendar.delete`.
 - Reader: `reader.apps`, `reader.open`.
+
+Second channel `app.tawabti/overlay` (reading helper): `overlay.status`,
+`overlay.openSettings`, `overlay.openUsageSettings`, `overlay.show`,
+`overlay.hide`, `overlay.takePendingDone`. Dart side: `ReaderOverlayPort`
+(domain) with `AndroidReaderOverlay` adapter, injected into `WorshipCubit` next
+to `QuranReaderPort`. Native: `ReaderOverlayBridge` + foreground service
+`ReaderOverlayService` (specialUse, TYPE_APPLICATION_OVERLAY view). The bubble's
+Done only sets a process-wide pending flag and reopens the worship screen, whose
+`load()` consumes it and shows a confirmation; recording still goes through
+`completeWird()` after the user's Yes.
 - Shortcuts: `shortcuts.supported`, `shortcuts.pin`, `shortcuts.dynamic`,
   `shortcuts.initial`; native event `shortcut.open`.
 

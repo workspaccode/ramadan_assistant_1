@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// One foreground player; each new control request supersedes older work.
 class AudioService {
@@ -61,41 +60,6 @@ class AudioService {
       await _audioPlayer.play(source);
       if (!_disposed && generation == _generation) _isPlaying = true;
     }, generation: generation);
-  }
-
-  Future<void> playAdhan({bool isFajr = false, String? customSound}) async {
-    final request = _newRequest();
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (_disposed || request != _generation) return;
-      final file =
-          customSound ??
-          (isFajr
-              ? prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3'
-              : prefs.getString('other_adhan_sound') ?? 'azan8.mp3');
-      await _play(AssetSource('audio/$file'), request: request);
-    } catch (error) {
-      debugPrint('Adhan audio setup failed: $error');
-    }
-  }
-
-  Future<void> playIqamaReminder({
-    bool isFajr = false,
-    String? customSound,
-  }) async {
-    final request = _newRequest();
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (_disposed || request != _generation) return;
-      final file =
-          customSound ??
-          (isFajr
-              ? prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3'
-              : prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3');
-      await _play(AssetSource('audio/$file'), request: request);
-    } catch (error) {
-      debugPrint('Iqama audio setup failed: $error');
-    }
   }
 
   Future<void> playTasbihClick() =>
@@ -177,32 +141,4 @@ class AudioService {
   @pragma('vm:entry-point')
   static Future<void> playDhikrInBackground(String file) =>
       _playInBackground(file, const Duration(seconds: 30));
-
-  @pragma('vm:entry-point')
-  static Future<void> playAdhanInBackground({bool isFajr = false}) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final file = isFajr
-          ? prefs.getString('fajr_adhan_sound') ?? 'azanfajr.mp3'
-          : prefs.getString('other_adhan_sound') ?? 'azan8.mp3';
-      await _playInBackground(file, const Duration(seconds: 60));
-    } catch (error) {
-      debugPrint('Background adhan setup failed: $error');
-    }
-  }
-
-  @pragma('vm:entry-point')
-  static Future<void> playIqamaReminderInBackground({
-    bool isFajr = false,
-  }) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final file = isFajr
-          ? prefs.getString('fajr_iqama_sound') ?? 'MakkahIQamah.mp3'
-          : prefs.getString('other_iqama_sound') ?? 'MakkahIQamah.mp3';
-      await _playInBackground(file, const Duration(seconds: 15));
-    } catch (error) {
-      debugPrint('Background iqama setup failed: $error');
-    }
-  }
 }

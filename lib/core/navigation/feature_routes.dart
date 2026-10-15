@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ramadan_assistant/core/di/service_locator.dart';
+import 'package:ramadan_assistant/core/persistence/auto_sync_service.dart';
 import 'package:ramadan_assistant/core/persistence/document_store.dart';
+import 'package:ramadan_assistant/core/persistence/prefs_sync_endpoint.dart';
 import 'package:ramadan_assistant/core/platform/feature_platform.dart';
 import 'package:ramadan_assistant/features/library/library_cubit.dart';
 import 'package:ramadan_assistant/features/library/library_repository.dart';
@@ -15,8 +17,6 @@ import 'package:ramadan_assistant/features/worship/data/android_worship_adapters
 import 'package:ramadan_assistant/features/worship/data/worship_repository.dart';
 import 'package:ramadan_assistant/features/worship/presentation/worship_cubit.dart';
 import 'package:ramadan_assistant/features/worship/presentation/worship_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_hub_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 /// The composition boundary keeps service lookup out of feature widgets.
@@ -30,6 +30,7 @@ class FeatureRoutes {
     create: (_) => WorshipCubit(
       WorshipRepository(sl<DocumentStore>()),
       readers: const AndroidQuranReader(),
+      overlays: AndroidReaderOverlay(),
       reminders: AwesomeWorshipReminder(),
     ),
     child: Builder(
@@ -38,16 +39,14 @@ class FeatureRoutes {
   );
   static Widget library() => BlocProvider<LibraryCubit>(
     create: (_) => LibraryCubit(LibraryRepository(sl<DocumentStore>()))..load(),
-    child: Builder(
-      builder: (context) => LibraryScreen(
-        onOpenHadith: () => Navigator.of(
-          context,
-        ).push(MaterialPageRoute<void>(builder: (_) => const HadithScreen())),
-      ),
-    ),
+    child: const LibraryScreen(),
   );
   static Widget shortcuts() => ShortcutsScreen(platform: sl<FeaturePlatform>());
-  static Widget localData() => LocalDataScreen(store: sl<DocumentStore>());
+  static Widget localData() => LocalDataScreen(
+    store: sl<DocumentStore>(),
+    endpoint: sl<PrefsSyncEndpointSource>(),
+    sync: sl<AutoSyncService>(),
+  );
 
   static Future<void> openShortcut(
     BuildContext context,
@@ -55,7 +54,7 @@ class FeatureRoutes {
   ) async {
     if (!context.mounted) return;
     if (shortcut == AppShortcut.tasbih || shortcut == AppShortcut.prayers) {
-      AppTabNavigation.select(context, shortcut == AppShortcut.tasbih ? 4 : 1);
+      AppTabNavigation.select(context, shortcut == AppShortcut.tasbih ? 3 : 1);
       return;
     }
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -65,7 +64,6 @@ class FeatureRoutes {
           AppShortcut.worship => worship(),
           AppShortcut.planner => planner(),
           AppShortcut.library => library(),
-          AppShortcut.umrah => const UmrahHubScreen(),
           _ => const SizedBox.shrink(),
         },
       ),

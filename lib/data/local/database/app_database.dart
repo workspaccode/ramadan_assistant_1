@@ -20,28 +20,9 @@ class TasbihSessions extends Table {
   DateTimeColumn get completedAt => dateTime().nullable()();
 }
 
-class Reminders extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get reminderTypes => text()(); // comma-separated dhikr IDs
-  TextColumn get offsets =>
-      text().nullable()(); // comma-separated offsets in seconds
-  IntColumn get intervalMinutes => integer()();
-  IntColumn get repeatCount => integer().nullable()();
-  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
-  TextColumn get audioPaths =>
-      text().nullable()(); // comma-separated audio paths
-}
-
-class UmrahProgress extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get step => text()();
-  BoolColumn get completed => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get completedAt => dateTime().nullable()();
-}
-
 class Duas extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get category => text()(); // umrah, daily, etc.
+  TextColumn get category => text()(); // daily, etc.
   TextColumn get arabicText => text()();
   TextColumn get transliteration => text().nullable()();
   TextColumn get translation => text()();
@@ -88,8 +69,6 @@ class FeatureDocuments extends Table {
   tables: [
     PrayerLogs,
     TasbihSessions,
-    Reminders,
-    UmrahProgress,
     Duas,
     WirdProgress,
     WirdDailyLogs,
@@ -101,7 +80,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration {
@@ -111,25 +90,6 @@ class AppDatabase extends _$AppDatabase {
         await _createDocumentIndexes();
       },
       onUpgrade: (m, from, to) async {
-        if (from < 2) {
-          // Migration from 1 to 2
-          try {
-            await customStatement(
-              'ALTER TABLE reminders ADD COLUMN reminder_types TEXT NOT NULL DEFAULT "salawat"',
-            );
-            await m.addColumn(reminders, reminders.offsets);
-            await m.addColumn(reminders, reminders.audioPaths);
-          } catch (e) {
-            // Ignore errors if columns already exist
-          }
-        }
-
-        if (from < 3) {
-          // Migration to 3: Cleanly recreate table to fix any naming conflicts (reminder_type vs reminder_types)
-          await m.deleteTable(reminders.actualTableName);
-          await m.createTable(reminders);
-        }
-
         if (from < 4) {
           await m.createTable(wirdProgress);
         }
@@ -142,15 +102,27 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(featureDocuments);
           await _createDocumentIndexes();
         }
+        if (from < 7) {
+          // The Umrah feature was removed; drop its leftover progress table.
+          await customStatement('DROP TABLE IF EXISTS umrah_progress');
+        }
+        if (from < 8) {
+          // Dhikr reminders were removed; drop their leftover table.
+          await customStatement('DROP TABLE IF EXISTS reminders');
+        }
       },
     );
   }
 
   Future<void> _createDocumentIndexes() async {
-    await customStatement('CREATE INDEX IF NOT EXISTS feature_documents_range '
-        'ON feature_documents(namespace, deleted_at, sort_key)');
-    await customStatement('CREATE INDEX IF NOT EXISTS feature_documents_outbox '
-        'ON feature_documents(pending_sync, updated_at)');
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS feature_documents_range '
+      'ON feature_documents(namespace, deleted_at, sort_key)',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS feature_documents_outbox '
+      'ON feature_documents(pending_sync, updated_at)',
+    );
   }
 
   static QueryExecutor _openConnection() {

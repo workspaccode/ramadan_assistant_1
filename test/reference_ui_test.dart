@@ -14,25 +14,15 @@ import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/l10n/app_localizations.dart';
 import 'package:ramadan_assistant/core/theme/app_theme.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
-import 'package:ramadan_assistant/data/models/hadith_model.dart';
-import 'package:ramadan_assistant/data/models/hadith_presets.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_state.dart';
-import 'package:ramadan_assistant/presentation/cubits/hadith/hadith_cubit.dart';
-import 'package:ramadan_assistant/presentation/cubits/hadith/hadith_state.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/widgets/tasbih_content.dart';
 import 'package:ramadan_assistant/presentation/screens/dhikr_screen/dhikr_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_screen_content.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/widgets/prayer_times_content.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/widgets/reminders_content.dart';
-import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/widgets/umrah_guide_content.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 class _Tasbih extends Cubit<TasbihState> implements TasbihBloc {
@@ -61,29 +51,6 @@ class _Tasbih extends Cubit<TasbihState> implements TasbihBloc {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _Hadith extends Cubit<HadithState> implements HadithCubit {
-  _Hadith()
-    : super(
-        HadithLoaded(
-          HadithPresets.hadithList
-              .take(4)
-              .map(
-                (h) => Hadith(
-                  id: h.id,
-                  textAr: h.arabic,
-                  textEn: h.translation,
-                  source: h.source,
-                ),
-              )
-              .toList(),
-        ),
-      );
-  @override
-  Future<void> loadHadiths({String? url}) async {}
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
 class _Settings extends Cubit<SettingsScreenState>
     implements SettingsScreenBloc {
   _Settings()
@@ -91,59 +58,13 @@ class _Settings extends Cubit<SettingsScreenState>
         const SettingsScreenLoaded(
           calculationMethod: 'ummAlQura',
           madhab: 'shafi',
-          iqamaSystem: 'manual',
-          iqamaPreset: 'saudi',
-          iqamaDelays: {
-            'fajr': 15,
-            'dhuhr': 15,
-            'asr': 15,
-            'maghrib': 5,
-            'isha': 15,
-          },
-          fajrAdhanSound: 'azanfajr.mp3',
-          otherAdhanSound: 'azan8.mp3',
-          fajrIqamaSound: 'MakkahIQamah.mp3',
-          otherIqamaSound: 'MakkahIQamah.mp3',
           fontSizeMultiplier: 1,
           colorPaletteId: 'emerald',
           country: 'السعودية',
           city: 'مكة المكرمة',
           appIcon: 'default',
           notificationsEnabled: true,
-          adhanEnabled: true,
-          iqamaEnabled: true,
-          dhikrEnabled: true,
           hijriAdjustment: 0,
-        ),
-      );
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _Reminders extends Cubit<RemindersState> implements RemindersBloc {
-  _Reminders()
-    : super(
-        const RemindersLoaded([
-          Reminder(
-            id: 1,
-            reminderTypes: 'salawat',
-            intervalMinutes: 30,
-            isActive: true,
-          ),
-        ]),
-      );
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _Umrah extends Cubit<UmrahGuideState> implements UmrahGuideBloc {
-  _Umrah()
-    : super(
-        const UmrahGuideLoaded(
-          tawafCircuits: 3,
-          progress: [
-            UmrahProgressData(id: 1, step: 'step_tawaf', completed: false),
-          ],
         ),
       );
   @override
@@ -178,15 +99,7 @@ void main() {
         );
     AppTabNavigation.index.value = 0;
   });
-  for (final page in [
-    'tasbih',
-    'dhikr',
-    'hadith',
-    'settings',
-    'prayers',
-    'umrah',
-    'reminders',
-  ]) {
+  for (final page in ['tasbih', 'dhikr', 'settings', 'prayers']) {
     for (final locale in ['ar', 'en', 'ur']) {
       for (final dark in [false, true]) {
         for (final scale in [1.0, 1.6]) {
@@ -206,11 +119,7 @@ void main() {
                 ..addFont(rootBundle.load(entry.value));
               await loader.load();
             }
-            final tasbih = _Tasbih(),
-                hadith = _Hadith(),
-                settings = _Settings(),
-                reminders = _Reminders(),
-                umrah = _Umrah();
+            final tasbih = _Tasbih(), settings = _Settings();
             final boundary = GlobalKey();
             final prayer = PrayerTimesLoaded(
               prayerTimes: PrayerTimes(
@@ -226,20 +135,15 @@ void main() {
                 sessions: Stream.value(const <TasbihSession>[]),
               ),
               'dhikr' => const DhikrScreen(),
-              'hadith' => const HadithScreen(),
               'settings' => const SettingsScreenContent(),
               'prayers' => PrayerTimesContent(state: prayer),
-              'umrah' => const UmrahGuideView(),
-              _ => const RemindersContent(),
+              _ => const SizedBox.shrink(),
             };
             await tester.pumpWidget(
               MultiBlocProvider(
                 providers: [
                   BlocProvider<TasbihBloc>.value(value: tasbih),
-                  BlocProvider<HadithCubit>.value(value: hadith),
                   BlocProvider<SettingsScreenBloc>.value(value: settings),
-                  BlocProvider<RemindersBloc>.value(value: reminders),
-                  BlocProvider<UmrahGuideBloc>.value(value: umrah),
                   BlocProvider(create: (_) => ThemeBloc()),
                   BlocProvider(create: (_) => LanguageBloc()),
                 ],
@@ -301,17 +205,6 @@ void main() {
                 contains('salawat'),
               );
             }
-            if (page == 'hadith') {
-              await tester.enterText(
-                find.byType(TextField),
-                'no-such-hadith-123',
-              );
-              await tester.pumpAndSettle();
-              expect(
-                find.text(AppLocalizationsLookup.instance.ui_no_results),
-                findsOneWidget,
-              );
-            }
             final scroll = find.byType(Scrollable).last;
             if (scroll.evaluate().isNotEmpty) {
               await tester.drag(scroll, const Offset(0, -1400));
@@ -320,10 +213,7 @@ void main() {
             }
             await tester.pumpWidget(const SizedBox());
             await tasbih.close();
-            await hadith.close();
             await settings.close();
-            await reminders.close();
-            await umrah.close();
           });
         }
       }

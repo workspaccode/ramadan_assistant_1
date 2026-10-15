@@ -11,14 +11,18 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
     private var features: MethodChannel? = null
+    private var overlay: MethodChannel? = null
     private lateinit var calendar: NativeCalendarBridge
-    private val shortcutIds = setOf("tasbih", "prayers", "worship", "planner", "umrah", "library")
+    private val shortcutIds = setOf("tasbih", "prayers", "worship", "planner", "library")
     private var pendingShortcut: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         pendingShortcut = readShortcut(intent)
         calendar = NativeCalendarBridge(this)
+        val overlayBridge = ReaderOverlayBridge(this)
+        overlay = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.tawabti/overlay")
+        overlay!!.setMethodCallHandler { call, result -> overlayBridge.handle(call, result) }
         features = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.tawabti/features")
         features!!.setMethodCallHandler { call, result ->
             try {
@@ -107,6 +111,8 @@ class MainActivity: FlutterActivity() {
         if (::calendar.isInitialized) calendar.dispose()
         features?.setMethodCallHandler(null)
         features = null
+        overlay?.setMethodCallHandler(null)
+        overlay = null
         super.onDestroy()
     }
 }

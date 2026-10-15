@@ -4,13 +4,6 @@ Add the following audio files to this folder:
 
 ## Required Files:
 
-### Adhan (أذان)
-- `adhan.mp3` - Standard Adhan recitation
-- `adhan_fajr.mp3` - Fajr Adhan (optional, uses adhan.mp3 if not present)
-
-### Iqama (إقامة)
-- `iqama_reminder.mp3` - Iqama reminder sound
-
 ### Tasbih Sounds
 - `tasbih_click.mp3` - Click sound for tasbih counter
 - `tasbih_complete.mp3` - Sound when reaching tasbih goal

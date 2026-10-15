@@ -130,12 +130,6 @@ abstract class AppLocalizations {
   /// **'Change'**
   String get change;
 
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -153,12 +147,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
-
-  /// No description provided for @got_it.
-  ///
-  /// In en, this message translates to:
-  /// **'Got it'**
-  String get got_it;
 
   /// No description provided for @got_it_continue.
   ///
@@ -214,24 +202,6 @@ abstract class AppLocalizations {
   /// **'Appearance'**
   String get appearance;
 
-  /// No description provided for @umrah_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah Guide'**
-  String get umrah_title;
-
-  /// No description provided for @umrah_progress_label.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah Progress'**
-  String get umrah_progress_label;
-
-  /// No description provided for @current_stage.
-  ///
-  /// In en, this message translates to:
-  /// **'Current Stage'**
-  String get current_stage;
-
   /// No description provided for @completed.
   ///
   /// In en, this message translates to:
@@ -244,383 +214,17 @@ abstract class AppLocalizations {
   /// **'Ongoing'**
   String get ongoing;
 
-  /// No description provided for @tajweed_enabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Color Tajweed Enabled'**
-  String get tajweed_enabled;
-
-  /// No description provided for @tajweed_disabled.
-  ///
-  /// In en, this message translates to:
-  /// **'Color Tajweed Disabled'**
-  String get tajweed_disabled;
-
-  /// No description provided for @tajweed_rules.
-  ///
-  /// In en, this message translates to:
-  /// **'Tajweed Rules'**
-  String get tajweed_rules;
-
-  /// No description provided for @play_recitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Play Recitation'**
-  String get play_recitation;
-
-  /// No description provided for @stop_recitation.
-  ///
-  /// In en, this message translates to:
-  /// **'Stop Recitation'**
-  String get stop_recitation;
-
   /// No description provided for @waiting.
   ///
   /// In en, this message translates to:
   /// **'Waiting'**
   String get waiting;
 
-  /// No description provided for @complete_button.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as Completed'**
-  String get complete_button;
-
-  /// No description provided for @next_step.
-  ///
-  /// In en, this message translates to:
-  /// **'Next Step'**
-  String get next_step;
-
-  /// No description provided for @guidelines_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Guidelines'**
-  String get guidelines_title;
-
-  /// No description provided for @adhkar_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Adhkar'**
-  String get adhkar_title;
-
-  /// No description provided for @step_ihram.
-  ///
-  /// In en, this message translates to:
-  /// **'Ihram'**
-  String get step_ihram;
-
-  /// No description provided for @guide_ihram_1.
-  ///
-  /// In en, this message translates to:
-  /// **'Niyyah (Intention)'**
-  String get guide_ihram_1;
-
-  /// No description provided for @guide_ihram_2.
-  ///
-  /// In en, this message translates to:
-  /// **'Miqat (Boundary)'**
-  String get guide_ihram_2;
-
-  /// No description provided for @guide_ihram_3.
-  ///
-  /// In en, this message translates to:
-  /// **'Taharah (Purification)'**
-  String get guide_ihram_3;
-
-  /// No description provided for @guide_ihram_4.
-  ///
-  /// In en, this message translates to:
-  /// **'Ihram Clothing'**
-  String get guide_ihram_4;
-
-  /// No description provided for @guide_ihram_5.
-  ///
-  /// In en, this message translates to:
-  /// **'Talbiyah'**
-  String get guide_ihram_5;
-
-  /// No description provided for @guide_ihram_6.
-  ///
-  /// In en, this message translates to:
-  /// **'Dua at Ihram'**
-  String get guide_ihram_6;
-
-  /// No description provided for @ishtirat_dua.
-  ///
-  /// In en, this message translates to:
-  /// **'Istikhara Dua'**
-  String get ishtirat_dua;
-
-  /// No description provided for @dua_ihram_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'O Allah, I intend to perform Umrah, so make it easy for me and accept it from me'**
-  String get dua_ihram_trans;
-
-  /// No description provided for @ihram_dua_instruction.
-  ///
-  /// In en, this message translates to:
-  /// **'Say this when intending to enter Ihram'**
-  String get ihram_dua_instruction;
-
-  /// No description provided for @step_entrance.
-  ///
-  /// In en, this message translates to:
-  /// **'Entering the Haram Mosque'**
-  String get step_entrance;
-
-  /// No description provided for @guide_entrance_1.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter with the right foot'**
-  String get guide_entrance_1;
-
-  /// No description provided for @guide_entrance_2.
-  ///
-  /// In en, this message translates to:
-  /// **'Say: Allahumma salli ala Muhammad'**
-  String get guide_entrance_2;
-
-  /// No description provided for @guide_entrance_3.
-  ///
-  /// In en, this message translates to:
-  /// **'Dua upon entering the mosque'**
-  String get guide_entrance_3;
-
   /// No description provided for @step_tawaf.
   ///
   /// In en, this message translates to:
   /// **'Tawaf (Circumambulation)'**
   String get step_tawaf;
-
-  /// No description provided for @guide_tawaf_1.
-  ///
-  /// In en, this message translates to:
-  /// **'Start from the Black Stone'**
-  String get guide_tawaf_1;
-
-  /// No description provided for @guide_tawaf_2.
-  ///
-  /// In en, this message translates to:
-  /// **'Circumambulate seven times'**
-  String get guide_tawaf_2;
-
-  /// No description provided for @guide_tawaf_3.
-  ///
-  /// In en, this message translates to:
-  /// **'Touch the Stone or Yemeni Corner if possible'**
-  String get guide_tawaf_3;
-
-  /// No description provided for @guide_tawaf_4.
-  ///
-  /// In en, this message translates to:
-  /// **'Supplications during circumambulation'**
-  String get guide_tawaf_4;
-
-  /// No description provided for @guide_tawaf_5.
-  ///
-  /// In en, this message translates to:
-  /// **'Pray two Rak\'ahs behind Maqam Ibrahim'**
-  String get guide_tawaf_5;
-
-  /// No description provided for @dua_tawaf_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'Our Lord, give us in this world that which is good...'**
-  String get dua_tawaf_trans;
-
-  /// No description provided for @tawaf_done.
-  ///
-  /// In en, this message translates to:
-  /// **'✨ Seven laps completed!'**
-  String get tawaf_done;
-
-  /// No description provided for @complete_tawaf_first.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete first Tawaf'**
-  String get complete_tawaf_first;
-
-  /// No description provided for @step_sai.
-  ///
-  /// In en, this message translates to:
-  /// **'Sa\'i (Walking between Safa & Marwa)'**
-  String get step_sai;
-
-  /// No description provided for @guide_sai_1.
-  ///
-  /// In en, this message translates to:
-  /// **'Walk between Safa and Marwa'**
-  String get guide_sai_1;
-
-  /// No description provided for @guide_sai_2.
-  ///
-  /// In en, this message translates to:
-  /// **'Start from Safa as per Sunnah'**
-  String get guide_sai_2;
-
-  /// No description provided for @guide_sai_3.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete seven laps in total'**
-  String get guide_sai_3;
-
-  /// No description provided for @guide_sai_4.
-  ///
-  /// In en, this message translates to:
-  /// **'Supplications on Safa and Marwa'**
-  String get guide_sai_4;
-
-  /// No description provided for @guide_sai_5.
-  ///
-  /// In en, this message translates to:
-  /// **'Jog between the green markers'**
-  String get guide_sai_5;
-
-  /// No description provided for @dua_sai_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'Indeed, Safa and Marwa are among the symbols of Allah'**
-  String get dua_sai_trans;
-
-  /// No description provided for @sai_done.
-  ///
-  /// In en, this message translates to:
-  /// **'✨ Seven laps of Sa\'i done!'**
-  String get sai_done;
-
-  /// No description provided for @sai_lap_count.
-  ///
-  /// In en, this message translates to:
-  /// **'Lap {current} of {total}'**
-  String sai_lap_count(String current, String total);
-
-  /// No description provided for @going_to_marwa.
-  ///
-  /// In en, this message translates to:
-  /// **'Going to Marwa'**
-  String get going_to_marwa;
-
-  /// No description provided for @going_to_safa.
-  ///
-  /// In en, this message translates to:
-  /// **'Going to Safa'**
-  String get going_to_safa;
-
-  /// No description provided for @auto_tracking_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto-tracking for Sa\'i'**
-  String get auto_tracking_title;
-
-  /// No description provided for @auto_tracking_active.
-  ///
-  /// In en, this message translates to:
-  /// **'Tracking your location between Safa and Marwa'**
-  String get auto_tracking_active;
-
-  /// No description provided for @auto_tracking_inactive.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable tracking to count laps automatically'**
-  String get auto_tracking_inactive;
-
-  /// No description provided for @dhikr_standing.
-  ///
-  /// In en, this message translates to:
-  /// **'Dhikr While Standing'**
-  String get dhikr_standing;
-
-  /// No description provided for @dhikr_safa_marwa_standing_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'Allah is Greatest, Allah is Greatest, Allah is Greatest. There is no god but Allah alone, He has no partner...'**
-  String get dhikr_safa_marwa_standing_trans;
-
-  /// No description provided for @dhikr_walking.
-  ///
-  /// In en, this message translates to:
-  /// **'Dhikr While Walking'**
-  String get dhikr_walking;
-
-  /// No description provided for @dua_rabbana_atina_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'Our Lord, give us in this world that which is good and in the Hereafter that which is good, and protect us from the punishment of the Fire'**
-  String get dua_rabbana_atina_trans;
-
-  /// No description provided for @dua_rabbi_ighfir_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'My Lord, forgive and have mercy, and pass over what You know, for You are the Most Mighty, the Most Noble'**
-  String get dua_rabbi_ighfir_trans;
-
-  /// No description provided for @dua_allahumma_inni_asaluka_trans.
-  ///
-  /// In en, this message translates to:
-  /// **'O Allah, I ask You for guidance, piety, chastity and wealth'**
-  String get dua_allahumma_inni_asaluka_trans;
-
-  /// No description provided for @step_tahlul.
-  ///
-  /// In en, this message translates to:
-  /// **'Tahlul (Hair Cutting/Shaving)'**
-  String get step_tahlul;
-
-  /// No description provided for @guide_tahlul_1.
-  ///
-  /// In en, this message translates to:
-  /// **'Full shaving for men (highly recommended)'**
-  String get guide_tahlul_1;
-
-  /// No description provided for @guide_tahlul_2.
-  ///
-  /// In en, this message translates to:
-  /// **'Shortening the hair for men'**
-  String get guide_tahlul_2;
-
-  /// No description provided for @guide_tahlul_3.
-  ///
-  /// In en, this message translates to:
-  /// **'Clipping a small portion for women'**
-  String get guide_tahlul_3;
-
-  /// No description provided for @fixed_tawaf_sai_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Fixed Tawaf and Sa\'i Duas'**
-  String get fixed_tawaf_sai_duas;
-
-  /// No description provided for @comprehensive_tawaf_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Comprehensive Tawaf Duas'**
-  String get comprehensive_tawaf_duas;
-
-  /// No description provided for @comprehensive_sai_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Comprehensive Sa\'i Duas'**
-  String get comprehensive_sai_duas;
-
-  /// No description provided for @may_allah_accept_umrah.
-  ///
-  /// In en, this message translates to:
-  /// **'May Allah accept your Umrah 🤲'**
-  String get may_allah_accept_umrah;
-
-  /// No description provided for @accept_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Allah accept from you!'**
-  String get accept_title;
-
-  /// No description provided for @accept_message.
-  ///
-  /// In en, this message translates to:
-  /// **'Congratulations! You have completed the Umrah rituals. May Allah accept it from you.'**
-  String get accept_message;
 
   /// No description provided for @version.
   ///
@@ -652,17 +256,11 @@ abstract class AppLocalizations {
   /// **'Tasbih'**
   String get tab_tasbih;
 
-  /// No description provided for @tab_reminders.
+  /// No description provided for @tab_adhkar.
   ///
   /// In en, this message translates to:
   /// **'Reminders'**
-  String get tab_reminders;
-
-  /// No description provided for @tab_umrah.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah'**
-  String get tab_umrah;
+  String get tab_adhkar;
 
   /// No description provided for @features.
   ///
@@ -736,35 +334,11 @@ abstract class AppLocalizations {
   /// **'Visit Website'**
   String get visit_site;
 
-  /// No description provided for @no_active_reminders.
-  ///
-  /// In en, this message translates to:
-  /// **'No active reminders'**
-  String get no_active_reminders;
-
-  /// No description provided for @reminders.
-  ///
-  /// In en, this message translates to:
-  /// **'Reminders'**
-  String get reminders;
-
   /// No description provided for @daily_hadith.
   ///
   /// In en, this message translates to:
   /// **'Daily Hadith'**
   String get daily_hadith;
-
-  /// No description provided for @hadith_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Hadith Library'**
-  String get hadith_title;
-
-  /// No description provided for @quran.
-  ///
-  /// In en, this message translates to:
-  /// **'Quran'**
-  String get quran;
 
   /// No description provided for @prayer_times_title.
   ///
@@ -1150,12 +724,6 @@ abstract class AppLocalizations {
   /// **'Tasbih'**
   String get tasbih;
 
-  /// No description provided for @umrah.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah'**
-  String get umrah;
-
   /// No description provided for @prayer_times.
   ///
   /// In en, this message translates to:
@@ -1360,60 +928,6 @@ abstract class AppLocalizations {
   /// **'Weekly Activity'**
   String get wird_weekly_activity;
 
-  /// No description provided for @reminders_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Smart Reminders'**
-  String get reminders_title;
-
-  /// No description provided for @add_reminder.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Reminder'**
-  String get add_reminder;
-
-  /// No description provided for @no_reminders.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminders yet'**
-  String get no_reminders;
-
-  /// No description provided for @tap_add_dhikr.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap + to add a dhikr reminder'**
-  String get tap_add_dhikr;
-
-  /// No description provided for @schedule_reminder.
-  ///
-  /// In en, this message translates to:
-  /// **'Schedule Reminder'**
-  String get schedule_reminder;
-
-  /// No description provided for @interval.
-  ///
-  /// In en, this message translates to:
-  /// **'Interval'**
-  String get interval;
-
-  /// No description provided for @select_multiple.
-  ///
-  /// In en, this message translates to:
-  /// **'Select multiple (audio will play with slight delay)'**
-  String get select_multiple;
-
-  /// No description provided for @offset_seconds.
-  ///
-  /// In en, this message translates to:
-  /// **'Delay'**
-  String get offset_seconds;
-
-  /// No description provided for @seconds_after.
-  ///
-  /// In en, this message translates to:
-  /// **'seconds delay'**
-  String get seconds_after;
-
   /// No description provided for @settings_title.
   ///
   /// In en, this message translates to:
@@ -1516,42 +1030,6 @@ abstract class AppLocalizations {
   /// **'Unknown'**
   String get unknown;
 
-  /// No description provided for @audio_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Audio Settings'**
-  String get audio_settings;
-
-  /// No description provided for @fajr_adhan.
-  ///
-  /// In en, this message translates to:
-  /// **'Fajr Adhan'**
-  String get fajr_adhan;
-
-  /// No description provided for @other_adhan.
-  ///
-  /// In en, this message translates to:
-  /// **'Other Adhans'**
-  String get other_adhan;
-
-  /// No description provided for @fajr_iqama.
-  ///
-  /// In en, this message translates to:
-  /// **'Fajr Iqama'**
-  String get fajr_iqama;
-
-  /// No description provided for @other_iqama.
-  ///
-  /// In en, this message translates to:
-  /// **'Other Iqamas'**
-  String get other_iqama;
-
-  /// No description provided for @select_sound.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Sound'**
-  String get select_sound;
-
   /// No description provided for @app_icon.
   ///
   /// In en, this message translates to:
@@ -1563,12 +1041,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Icon'**
   String get select_icon;
-
-  /// No description provided for @standard.
-  ///
-  /// In en, this message translates to:
-  /// **'Standard'**
-  String get standard;
 
   /// No description provided for @ramadanClassic.
   ///
@@ -1623,48 +1095,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Iqama'**
   String get iqama;
-
-  /// No description provided for @iqama_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Iqama Settings'**
-  String get iqama_settings;
-
-  /// No description provided for @iqama_system.
-  ///
-  /// In en, this message translates to:
-  /// **'Iqama System'**
-  String get iqama_system;
-
-  /// No description provided for @system_manual.
-  ///
-  /// In en, this message translates to:
-  /// **'Manual (Custom deltas)'**
-  String get system_manual;
-
-  /// No description provided for @system_preset.
-  ///
-  /// In en, this message translates to:
-  /// **'Preset (By region)'**
-  String get system_preset;
-
-  /// No description provided for @iqama_preset.
-  ///
-  /// In en, this message translates to:
-  /// **'Iqama Preset'**
-  String get iqama_preset;
-
-  /// No description provided for @preset_saudi.
-  ///
-  /// In en, this message translates to:
-  /// **'Saudi Calendar'**
-  String get preset_saudi;
-
-  /// No description provided for @preset_egypt.
-  ///
-  /// In en, this message translates to:
-  /// **'Egypt Calendar'**
-  String get preset_egypt;
 
   /// No description provided for @other_prayers.
   ///
@@ -1729,7 +1159,7 @@ abstract class AppLocalizations {
   /// No description provided for @reset_confirmation_msg.
   ///
   /// In en, this message translates to:
-  /// **'Restore prayer, alert and appearance settings? Worship records, appointments and Umrah progress will be kept.'**
+  /// **'Restore prayer, alert and appearance settings? Worship records and appointments will be kept.'**
   String get reset_confirmation_msg;
 
   /// No description provided for @about.
@@ -1755,18 +1185,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Terms of Service'**
   String get terms_of_service;
-
-  /// No description provided for @prayer_nearing_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Prayer Time Nearing'**
-  String get prayer_nearing_title;
-
-  /// No description provided for @prayer_nearing_body.
-  ///
-  /// In en, this message translates to:
-  /// **'It\'s almost time for {prayer} prayer'**
-  String prayer_nearing_body(String prayer);
 
   /// No description provided for @next.
   ///
@@ -2032,36 +1450,6 @@ abstract class AppLocalizations {
   /// **'Maximum'**
   String get maximum;
 
-  /// No description provided for @minute.
-  ///
-  /// In en, this message translates to:
-  /// **'Minute'**
-  String get minute;
-
-  /// No description provided for @continuous.
-  ///
-  /// In en, this message translates to:
-  /// **'Continuous'**
-  String get continuous;
-
-  /// No description provided for @audio.
-  ///
-  /// In en, this message translates to:
-  /// **'Audio'**
-  String get audio;
-
-  /// No description provided for @repeat.
-  ///
-  /// In en, this message translates to:
-  /// **'Repeat'**
-  String get repeat;
-
-  /// No description provided for @select_dhikr_prompt.
-  ///
-  /// In en, this message translates to:
-  /// **'Select the dhikr you want to repeat'**
-  String get select_dhikr_prompt;
-
   /// No description provided for @notifications_title.
   ///
   /// In en, this message translates to:
@@ -2080,54 +1468,6 @@ abstract class AppLocalizations {
   /// **'You will see your update history and alerts here'**
   String get no_notifications_desc;
 
-  /// No description provided for @stop_adhan.
-  ///
-  /// In en, this message translates to:
-  /// **'Stop Adhan'**
-  String get stop_adhan;
-
-  /// No description provided for @notification_adhan_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Time for {prayer} prayer'**
-  String notification_adhan_title(String prayer);
-
-  /// No description provided for @notification_adhan_body.
-  ///
-  /// In en, this message translates to:
-  /// **'It is time for the {prayer} prayer.'**
-  String notification_adhan_body(String prayer);
-
-  /// No description provided for @open_adhan_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Adhan'**
-  String get open_adhan_btn;
-
-  /// No description provided for @dismiss_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Dismiss'**
-  String get dismiss_btn;
-
-  /// No description provided for @notification_iqama_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Iqama Reminder'**
-  String get notification_iqama_title;
-
-  /// No description provided for @notification_iqama_body.
-  ///
-  /// In en, this message translates to:
-  /// **'It is time for {prayer} Iqama.'**
-  String notification_iqama_body(String prayer);
-
-  /// No description provided for @notification_dhikr_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Dhikr Reminder'**
-  String get notification_dhikr_title;
-
   /// No description provided for @notification_wird_title.
   ///
   /// In en, this message translates to:
@@ -2140,131 +1480,11 @@ abstract class AppLocalizations {
   /// **'Do not forget to read your {pages} pages for {prayer} prayer.'**
   String notification_wird_body(String pages, String prayer);
 
-  /// No description provided for @audio_not_available.
-  ///
-  /// In en, this message translates to:
-  /// **'Sorry, recitation is currently unavailable for this reciter (coming soon)'**
-  String get audio_not_available;
-
-  /// No description provided for @ayah_highlighting_not_available.
-  ///
-  /// In en, this message translates to:
-  /// **'Ayah-by-ayah highlighting is currently unavailable for this reciter (coming soon)'**
-  String get ayah_highlighting_not_available;
-
-  /// No description provided for @select_reciter.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Reciter'**
-  String get select_reciter;
-
-  /// No description provided for @surahs.
-  ///
-  /// In en, this message translates to:
-  /// **'Surahs'**
-  String get surahs;
-
-  /// No description provided for @juzs.
-  ///
-  /// In en, this message translates to:
-  /// **'Juzs'**
-  String get juzs;
-
-  /// No description provided for @juz_number.
-  ///
-  /// In en, this message translates to:
-  /// **'Juz {number}'**
-  String juz_number(String number);
-
-  /// No description provided for @verses_count.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} Verses'**
-  String verses_count(String count);
-
-  /// No description provided for @umrah_date_picker_help.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Umrah Start Date'**
-  String get umrah_date_picker_help;
-
-  /// No description provided for @umrah_time_picker_help.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Umrah Start Time'**
-  String get umrah_time_picker_help;
-
   /// No description provided for @back.
   ///
   /// In en, this message translates to:
   /// **'Back'**
   String get back;
-
-  /// No description provided for @start_trip.
-  ///
-  /// In en, this message translates to:
-  /// **'Start Trip'**
-  String get start_trip;
-
-  /// No description provided for @umrah_and_hajj_rites.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah & Hajj Rites'**
-  String get umrah_and_hajj_rites;
-
-  /// No description provided for @main_services.
-  ///
-  /// In en, this message translates to:
-  /// **'Main Services'**
-  String get main_services;
-
-  /// No description provided for @umrah_in_progress.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah in Progress'**
-  String get umrah_in_progress;
-
-  /// No description provided for @start_new_umrah.
-  ///
-  /// In en, this message translates to:
-  /// **'Start a New Umrah Trip'**
-  String get start_new_umrah;
-
-  /// No description provided for @hajj.
-  ///
-  /// In en, this message translates to:
-  /// **'Hajj'**
-  String get hajj;
-
-  /// No description provided for @visiting_madinah.
-  ///
-  /// In en, this message translates to:
-  /// **'Visiting Madinah'**
-  String get visiting_madinah;
-
-  /// No description provided for @trip_history.
-  ///
-  /// In en, this message translates to:
-  /// **'Trip History'**
-  String get trip_history;
-
-  /// No description provided for @umrah_trip.
-  ///
-  /// In en, this message translates to:
-  /// **'Umrah Trip'**
-  String get umrah_trip;
-
-  /// No description provided for @start_prefix.
-  ///
-  /// In en, this message translates to:
-  /// **'Start: {start}'**
-  String start_prefix(String start);
-
-  /// No description provided for @end_prefix.
-  ///
-  /// In en, this message translates to:
-  /// **'End: {end}'**
-  String end_prefix(String end);
 
   /// No description provided for @new_update.
   ///
@@ -2295,18 +1515,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close_btn;
-
-  /// No description provided for @time_for_dhikr.
-  ///
-  /// In en, this message translates to:
-  /// **'Time for Dhikr'**
-  String get time_for_dhikr;
-
-  /// No description provided for @notification_dhikr_body.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to view Dhikr and start Tasbih'**
-  String get notification_dhikr_body;
 
   /// No description provided for @category_all.
   ///
@@ -2350,60 +1558,6 @@ abstract class AppLocalizations {
   /// **'General'**
   String get category_general;
 
-  /// No description provided for @manage_alerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Alerts'**
-  String get manage_alerts;
-
-  /// No description provided for @prayer_alerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Prayer Alerts'**
-  String get prayer_alerts;
-
-  /// No description provided for @adhan_alerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Adhan Alerts'**
-  String get adhan_alerts;
-
-  /// No description provided for @adhan_alerts_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Play Adhan when prayer time starts'**
-  String get adhan_alerts_desc;
-
-  /// No description provided for @iqama_alerts.
-  ///
-  /// In en, this message translates to:
-  /// **'Iqama Alerts'**
-  String get iqama_alerts;
-
-  /// No description provided for @iqama_alerts_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Alert when Iqama time is near'**
-  String get iqama_alerts_desc;
-
-  /// No description provided for @dhikr_reminders.
-  ///
-  /// In en, this message translates to:
-  /// **'Dhikr Reminders'**
-  String get dhikr_reminders;
-
-  /// No description provided for @dhikr_reminders_desc.
-  ///
-  /// In en, this message translates to:
-  /// **'Periodic reminders for Dhikr and Duas'**
-  String get dhikr_reminders_desc;
-
-  /// No description provided for @alerts_settings_footer.
-  ///
-  /// In en, this message translates to:
-  /// **'You can control each type of alert separately to ensure your peace and focus.'**
-  String get alerts_settings_footer;
-
   /// No description provided for @search_hint.
   ///
   /// In en, this message translates to:
@@ -2415,18 +1569,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All'**
   String get all;
-
-  /// No description provided for @comprehensive_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Comprehensive Duas'**
-  String get comprehensive_duas;
-
-  /// No description provided for @browse_100_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Browse 100+ Duas'**
-  String get browse_100_duas;
 
   /// No description provided for @update_screen_title.
   ///
@@ -2566,125 +1708,11 @@ abstract class AppLocalizations {
   /// **'Couldn\'t open this page. Please check your internet connection and try again later.'**
   String get couldnt_open_page;
 
-  /// No description provided for @sai_header_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Sa\'i between Safa and Marwa'**
-  String get sai_header_title;
-
-  /// No description provided for @tap_to_start_dua.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap here to start and make dua'**
-  String get tap_to_start_dua;
-
-  /// No description provided for @completed_praise.
-  ///
-  /// In en, this message translates to:
-  /// **'Completed, all praise to Allah'**
-  String get completed_praise;
-
   /// No description provided for @undo.
   ///
   /// In en, this message translates to:
   /// **'Undo'**
   String get undo;
-
-  /// No description provided for @from_safa_to_marwa.
-  ///
-  /// In en, this message translates to:
-  /// **'From Safa to Marwa'**
-  String get from_safa_to_marwa;
-
-  /// No description provided for @from_marwa_to_safa.
-  ///
-  /// In en, this message translates to:
-  /// **'From Marwa to Safa'**
-  String get from_marwa_to_safa;
-
-  /// No description provided for @sai_completed_snackbar.
-  ///
-  /// In en, this message translates to:
-  /// **'Sa\'i completed, all praise to Allah'**
-  String get sai_completed_snackbar;
-
-  /// No description provided for @complete_sai_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete Sa\'i'**
-  String get complete_sai_btn;
-
-  /// No description provided for @complete_lap_next_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete this lap and move to the next'**
-  String get complete_lap_next_btn;
-
-  /// No description provided for @tawaf_header_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Tawaf around the Kaaba'**
-  String get tawaf_header_title;
-
-  /// No description provided for @tap_to_open_duas.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap to open duas and dhikr'**
-  String get tap_to_open_duas;
-
-  /// No description provided for @done_status.
-  ///
-  /// In en, this message translates to:
-  /// **'Done ✓'**
-  String get done_status;
-
-  /// No description provided for @pending_status.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending'**
-  String get pending_status;
-
-  /// No description provided for @duas_round_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Duas and dhikr for this round'**
-  String get duas_round_subtitle;
-
-  /// No description provided for @complete_round_next_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete {round} and move to the next'**
-  String complete_round_next_btn(String round);
-
-  /// No description provided for @complete_tawaf_btn.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete Tawaf'**
-  String get complete_tawaf_btn;
-
-  /// No description provided for @tawaf_completed_snackbar.
-  ///
-  /// In en, this message translates to:
-  /// **'Tawaf completed, all praise to Allah'**
-  String get tawaf_completed_snackbar;
-
-  /// No description provided for @follow_sunnah_fallback.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow the Sunnah.'**
-  String get follow_sunnah_fallback;
-
-  /// No description provided for @reset_umrah_confirm_title.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Umrah?'**
-  String get reset_umrah_confirm_title;
-
-  /// No description provided for @reset_umrah_confirm_body.
-  ///
-  /// In en, this message translates to:
-  /// **'This will reset all steps and progress counters (Tawaf, Sa\'i, Maqam, Zamzam). Continue?'**
-  String get reset_umrah_confirm_body;
 
   /// No description provided for @ui_home.
   ///
@@ -2745,24 +1773,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dhikr & duas'**
   String get ui_adhkar_library;
-
-  /// No description provided for @ui_reminders_intro.
-  ///
-  /// In en, this message translates to:
-  /// **'Gentle reminders throughout your day. Choose a dhikr and a time that suits you.'**
-  String get ui_reminders_intro;
-
-  /// No description provided for @ui_hadith_intro.
-  ///
-  /// In en, this message translates to:
-  /// **'Read and reflect. Search the library and choose a book to read.'**
-  String get ui_hadith_intro;
-
-  /// No description provided for @ui_hadith_search.
-  ///
-  /// In en, this message translates to:
-  /// **'Search hadith or narrator'**
-  String get ui_hadith_search;
 
   /// No description provided for @ui_no_results.
   ///
@@ -2847,30 +1857,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dua'**
   String get ui_dua_category;
-
-  /// No description provided for @ui_quran_download_prompt.
-  ///
-  /// In en, this message translates to:
-  /// **'Download the Quran once to read offline.'**
-  String get ui_quran_download_prompt;
-
-  /// No description provided for @ui_quran_download_action.
-  ///
-  /// In en, this message translates to:
-  /// **'Download Quran'**
-  String get ui_quran_download_action;
-
-  /// No description provided for @ui_quran_preparing.
-  ///
-  /// In en, this message translates to:
-  /// **'Preparing Tajweed…'**
-  String get ui_quran_preparing;
-
-  /// No description provided for @ui_quran_empty_page.
-  ///
-  /// In en, this message translates to:
-  /// **'No verses are available on this page.'**
-  String get ui_quran_empty_page;
 
   /// No description provided for @ui_tasbih_save_failed.
   ///
@@ -3015,12 +2001,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read source'**
   String get library_source;
-
-  /// No description provided for @library_hadith_books.
-  ///
-  /// In en, this message translates to:
-  /// **'Open hadith books'**
-  String get library_hadith_books;
 
   /// No description provided for @library_read_aloud.
   ///
@@ -3459,24 +2439,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid meeting link such as https://meet.google.com/abc-defg-hij'**
   String get planner_invalid_meet;
-
-  /// No description provided for @features_complete_round.
-  ///
-  /// In en, this message translates to:
-  /// **'Finish a circuit'**
-  String get features_complete_round;
-
-  /// No description provided for @features_read_round.
-  ///
-  /// In en, this message translates to:
-  /// **'Read circuit supplications'**
-  String get features_read_round;
-
-  /// No description provided for @features_counter_save_failed.
-  ///
-  /// In en, this message translates to:
-  /// **'Counter could not be saved. Your count is kept here; retry before closing the app.'**
-  String get features_counter_save_failed;
 
   /// No description provided for @worship_choose_date.
   ///
@@ -3963,6 +2925,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not stop the alarm. Try again, or use Stop in its alarm notification.'**
   String get planner_alarm_stop_failed;
+
+  /// No description provided for @sync_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Data sync'**
+  String get sync_title;
+
+  /// No description provided for @sync_intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your data to your own server automatically when online. Stays off until you save a URL and token.'**
+  String get sync_intro;
+
+  /// No description provided for @sync_url_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL (https)'**
+  String get sync_url_label;
+
+  /// No description provided for @sync_token_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Access token'**
+  String get sync_token_label;
+
+  /// No description provided for @sync_https_required.
+  ///
+  /// In en, this message translates to:
+  /// **'The URL must start with https://'**
+  String get sync_https_required;
+
+  /// No description provided for @sync_token_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the access token'**
+  String get sync_token_required;
+
+  /// No description provided for @sync_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and enable'**
+  String get sync_save;
+
+  /// No description provided for @sync_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync enabled'**
+  String get sync_saved;
+
+  /// No description provided for @sync_disable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off sync'**
+  String get sync_disable;
+
+  /// No description provided for @sync_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync turned off'**
+  String get sync_disabled;
+
+  /// No description provided for @sync_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get sync_now;
+
+  /// No description provided for @sync_uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} records uploaded'**
+  String sync_uploaded(int count);
+
+  /// No description provided for @sync_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed. It will retry when you are back online.'**
+  String get sync_failed;
+
+  /// No description provided for @sync_not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is not enabled yet'**
+  String get sync_not_configured;
+
+  /// No description provided for @library_video_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Play video here'**
+  String get library_video_play;
+
+  /// No description provided for @library_video_hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide video'**
+  String get library_video_hide;
+
+  /// No description provided for @library_video_open_external.
+  ///
+  /// In en, this message translates to:
+  /// **'Open video link'**
+  String get library_video_open_external;
+
+  /// No description provided for @library_video_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'This video could not play here. Try opening it in another app.'**
+  String get library_video_failed;
 }
 
 class _AppLocalizationsDelegate

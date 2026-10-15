@@ -99,16 +99,12 @@ class AppLocalizationsLookup {
         return instance.today;
       case 'change':
         return instance.change;
-      case 'save':
-        return instance.save;
       case 'cancel':
         return instance.cancel;
       case 'close':
         return instance.close;
       case 'retry':
         return instance.retry;
-      case 'got_it':
-        return instance.got_it;
       case 'got_it_continue':
         return instance.got_it_continue;
       case 'skip_for_now':
@@ -127,142 +123,14 @@ class AppLocalizationsLookup {
         return instance.location;
       case 'appearance':
         return instance.appearance;
-      case 'umrah_title':
-        return instance.umrah_title;
-      case 'umrah_progress_label':
-        return instance.umrah_progress_label;
-      case 'current_stage':
-        return instance.current_stage;
       case 'completed':
         return instance.completed;
       case 'ongoing':
         return instance.ongoing;
-      case 'tajweed_enabled':
-        return instance.tajweed_enabled;
-      case 'tajweed_disabled':
-        return instance.tajweed_disabled;
-      case 'tajweed_rules':
-        return instance.tajweed_rules;
-      case 'play_recitation':
-        return instance.play_recitation;
-      case 'stop_recitation':
-        return instance.stop_recitation;
       case 'waiting':
         return instance.waiting;
-      case 'complete_button':
-        return instance.complete_button;
-      case 'next_step':
-        return instance.next_step;
-      case 'guidelines_title':
-        return instance.guidelines_title;
-      case 'adhkar_title':
-        return instance.adhkar_title;
-      case 'step_ihram':
-        return instance.step_ihram;
-      case 'guide_ihram_1':
-        return instance.guide_ihram_1;
-      case 'guide_ihram_2':
-        return instance.guide_ihram_2;
-      case 'guide_ihram_3':
-        return instance.guide_ihram_3;
-      case 'guide_ihram_4':
-        return instance.guide_ihram_4;
-      case 'guide_ihram_5':
-        return instance.guide_ihram_5;
-      case 'guide_ihram_6':
-        return instance.guide_ihram_6;
-      case 'ishtirat_dua':
-        return instance.ishtirat_dua;
-      case 'dua_ihram_trans':
-        return instance.dua_ihram_trans;
-      case 'ihram_dua_instruction':
-        return instance.ihram_dua_instruction;
-      case 'step_entrance':
-        return instance.step_entrance;
-      case 'guide_entrance_1':
-        return instance.guide_entrance_1;
-      case 'guide_entrance_2':
-        return instance.guide_entrance_2;
-      case 'guide_entrance_3':
-        return instance.guide_entrance_3;
       case 'step_tawaf':
         return instance.step_tawaf;
-      case 'guide_tawaf_1':
-        return instance.guide_tawaf_1;
-      case 'guide_tawaf_2':
-        return instance.guide_tawaf_2;
-      case 'guide_tawaf_3':
-        return instance.guide_tawaf_3;
-      case 'guide_tawaf_4':
-        return instance.guide_tawaf_4;
-      case 'guide_tawaf_5':
-        return instance.guide_tawaf_5;
-      case 'dua_tawaf_trans':
-        return instance.dua_tawaf_trans;
-      case 'tawaf_done':
-        return instance.tawaf_done;
-      case 'complete_tawaf_first':
-        return instance.complete_tawaf_first;
-      case 'step_sai':
-        return instance.step_sai;
-      case 'guide_sai_1':
-        return instance.guide_sai_1;
-      case 'guide_sai_2':
-        return instance.guide_sai_2;
-      case 'guide_sai_3':
-        return instance.guide_sai_3;
-      case 'guide_sai_4':
-        return instance.guide_sai_4;
-      case 'guide_sai_5':
-        return instance.guide_sai_5;
-      case 'dua_sai_trans':
-        return instance.dua_sai_trans;
-      case 'sai_done':
-        return instance.sai_done;
-      case 'sai_lap_count':
-        return instance.sai_lap_count(args?[0] ?? '', args?[1] ?? '');
-      case 'going_to_marwa':
-        return instance.going_to_marwa;
-      case 'going_to_safa':
-        return instance.going_to_safa;
-      case 'auto_tracking_title':
-        return instance.auto_tracking_title;
-      case 'auto_tracking_active':
-        return instance.auto_tracking_active;
-      case 'auto_tracking_inactive':
-        return instance.auto_tracking_inactive;
-      case 'dhikr_standing':
-        return instance.dhikr_standing;
-      case 'dhikr_safa_marwa_standing_trans':
-        return instance.dhikr_safa_marwa_standing_trans;
-      case 'dhikr_walking':
-        return instance.dhikr_walking;
-      case 'dua_rabbana_atina_trans':
-        return instance.dua_rabbana_atina_trans;
-      case 'dua_rabbi_ighfir_trans':
-        return instance.dua_rabbi_ighfir_trans;
-      case 'dua_allahumma_inni_asaluka_trans':
-        return instance.dua_allahumma_inni_asaluka_trans;
-      case 'step_tahlul':
-        return instance.step_tahlul;
-      case 'guide_tahlul_1':
-        return instance.guide_tahlul_1;
-      case 'guide_tahlul_2':
-        return instance.guide_tahlul_2;
-      case 'guide_tahlul_3':
-        return instance.guide_tahlul_3;
-      case 'fixed_tawaf_sai_duas':
-        return instance.fixed_tawaf_sai_duas;
-      case 'comprehensive_tawaf_duas':
-        return instance.comprehensive_tawaf_duas;
-      case 'comprehensive_sai_duas':
-        return instance.comprehensive_sai_duas;
-      case 'may_allah_accept_umrah':
-        return instance.may_allah_accept_umrah;
-      case 'accept_title':
-        return instance.accept_title;
-      case 'accept_message':
-        return instance.accept_message;
       case 'version':
         return instance.version;
       case 'something_went_wrong':
@@ -273,10 +141,8 @@ class AppLocalizationsLookup {
         return instance.tab_prayers;
       case 'tab_tasbih':
         return instance.tab_tasbih;
-      case 'tab_reminders':
-        return instance.tab_reminders;
-      case 'tab_umrah':
-        return instance.tab_umrah;
+      case 'tab_adhkar':
+        return instance.tab_adhkar;
       case 'features':
         return instance.features;
       case 'daily_progress':
@@ -301,16 +167,8 @@ class AppLocalizationsLookup {
         return instance.hijri_new_year_message;
       case 'visit_site':
         return instance.visit_site;
-      case 'no_active_reminders':
-        return instance.no_active_reminders;
-      case 'reminders':
-        return instance.reminders;
       case 'daily_hadith':
         return instance.daily_hadith;
-      case 'hadith_title':
-        return instance.hadith_title;
-      case 'quran':
-        return instance.quran;
       case 'prayer_times_title':
         return instance.prayer_times_title;
       case 'next_prayer':
@@ -439,8 +297,6 @@ class AppLocalizationsLookup {
         return instance.qibla;
       case 'tasbih':
         return instance.tasbih;
-      case 'umrah':
-        return instance.umrah;
       case 'prayer_times':
         return instance.prayer_times;
       case 'tasbih_title':
@@ -509,24 +365,6 @@ class AppLocalizationsLookup {
         return instance.wird_total_pages;
       case 'wird_weekly_activity':
         return instance.wird_weekly_activity;
-      case 'reminders_title':
-        return instance.reminders_title;
-      case 'add_reminder':
-        return instance.add_reminder;
-      case 'no_reminders':
-        return instance.no_reminders;
-      case 'tap_add_dhikr':
-        return instance.tap_add_dhikr;
-      case 'schedule_reminder':
-        return instance.schedule_reminder;
-      case 'interval':
-        return instance.interval;
-      case 'select_multiple':
-        return instance.select_multiple;
-      case 'offset_seconds':
-        return instance.offset_seconds;
-      case 'seconds_after':
-        return instance.seconds_after;
       case 'settings_title':
         return instance.settings_title;
       case 'settings':
@@ -562,25 +400,11 @@ class AppLocalizationsLookup {
         return instance.current_location;
       case 'unknown':
         return instance.unknown;
-      case 'audio_settings':
-        return instance.audio_settings;
-      case 'fajr_adhan':
-        return instance.fajr_adhan;
-      case 'other_adhan':
-        return instance.other_adhan;
-      case 'fajr_iqama':
-        return instance.fajr_iqama;
-      case 'other_iqama':
-        return instance.other_iqama;
-      case 'select_sound':
-        return instance.select_sound;
       case 'app_icon':
         return instance.app_icon;
       case 'select_icon':
         return instance.select_icon;
       case 'Standard':
-      case 'standard':
-        return instance.standard;
       case 'Ramadan Classic':
       case 'ramadanClassic':
         return instance.ramadanClassic;
@@ -600,20 +424,6 @@ class AppLocalizationsLookup {
         return instance.adhan;
       case 'iqama':
         return instance.iqama;
-      case 'iqama_settings':
-        return instance.iqama_settings;
-      case 'iqama_system':
-        return instance.iqama_system;
-      case 'system_manual':
-        return instance.system_manual;
-      case 'system_preset':
-        return instance.system_preset;
-      case 'iqama_preset':
-        return instance.iqama_preset;
-      case 'preset_saudi':
-        return instance.preset_saudi;
-      case 'preset_egypt':
-        return instance.preset_egypt;
       case 'other_prayers':
         return instance.other_prayers;
       case 'ramadan_kareem':
@@ -644,10 +454,6 @@ class AppLocalizationsLookup {
         return instance.privacy_policy;
       case 'terms_of_service':
         return instance.terms_of_service;
-      case 'prayer_nearing_title':
-        return instance.prayer_nearing_title;
-      case 'prayer_nearing_body':
-        return instance.prayer_nearing_body(args?[0] ?? '');
       case 'next':
         return instance.next;
       case 'fajr_dua_1':
@@ -741,84 +547,18 @@ class AppLocalizationsLookup {
         return instance.minimum;
       case 'maximum':
         return instance.maximum;
-      case 'minute':
-        return instance.minute;
-      case 'continuous':
-        return instance.continuous;
-      case 'audio':
-        return instance.audio;
-      case 'repeat':
-        return instance.repeat;
-      case 'select_dhikr_prompt':
-        return instance.select_dhikr_prompt;
       case 'notifications_title':
         return instance.notifications_title;
       case 'no_notifications':
         return instance.no_notifications;
       case 'no_notifications_desc':
         return instance.no_notifications_desc;
-      case 'stop_adhan':
-        return instance.stop_adhan;
-      case 'notification_adhan_title':
-        return instance.notification_adhan_title(args?[0] ?? '');
-      case 'notification_adhan_body':
-        return instance.notification_adhan_body(args?[0] ?? '');
-      case 'open_adhan_btn':
-        return instance.open_adhan_btn;
-      case 'dismiss_btn':
-        return instance.dismiss_btn;
-      case 'notification_iqama_title':
-        return instance.notification_iqama_title;
-      case 'notification_iqama_body':
-        return instance.notification_iqama_body(args?[0] ?? '');
-      case 'notification_dhikr_title':
-        return instance.notification_dhikr_title;
       case 'notification_wird_title':
         return instance.notification_wird_title;
       case 'notification_wird_body':
         return instance.notification_wird_body(args?[0] ?? '', args?[1] ?? '');
-      case 'audio_not_available':
-        return instance.audio_not_available;
-      case 'ayah_highlighting_not_available':
-        return instance.ayah_highlighting_not_available;
-      case 'select_reciter':
-        return instance.select_reciter;
-      case 'surahs':
-        return instance.surahs;
-      case 'juzs':
-        return instance.juzs;
-      case 'juz_number':
-        return instance.juz_number(args?[0] ?? '');
-      case 'verses_count':
-        return instance.verses_count(args?[0] ?? '');
-      case 'umrah_date_picker_help':
-        return instance.umrah_date_picker_help;
-      case 'umrah_time_picker_help':
-        return instance.umrah_time_picker_help;
       case 'back':
         return instance.back;
-      case 'start_trip':
-        return instance.start_trip;
-      case 'umrah_and_hajj_rites':
-        return instance.umrah_and_hajj_rites;
-      case 'main_services':
-        return instance.main_services;
-      case 'umrah_in_progress':
-        return instance.umrah_in_progress;
-      case 'start_new_umrah':
-        return instance.start_new_umrah;
-      case 'hajj':
-        return instance.hajj;
-      case 'visiting_madinah':
-        return instance.visiting_madinah;
-      case 'trip_history':
-        return instance.trip_history;
-      case 'umrah_trip':
-        return instance.umrah_trip;
-      case 'start_prefix':
-        return instance.start_prefix(args?[0] ?? '');
-      case 'end_prefix':
-        return instance.end_prefix(args?[0] ?? '');
       case 'new_update':
         return instance.new_update;
       case 'new_features':
@@ -829,10 +569,6 @@ class AppLocalizationsLookup {
         return instance.update_now_btn;
       case 'close_btn':
         return instance.close_btn;
-      case 'time_for_dhikr':
-        return instance.time_for_dhikr;
-      case 'notification_dhikr_body':
-        return instance.notification_dhikr_body;
       case 'category_all':
         return instance.category_all;
       case 'category_auto_update':
@@ -847,32 +583,10 @@ class AppLocalizationsLookup {
         return instance.category_exclusive;
       case 'category_general':
         return instance.category_general;
-      case 'manage_alerts':
-        return instance.manage_alerts;
-      case 'prayer_alerts':
-        return instance.prayer_alerts;
-      case 'adhan_alerts':
-        return instance.adhan_alerts;
-      case 'adhan_alerts_desc':
-        return instance.adhan_alerts_desc;
-      case 'iqama_alerts':
-        return instance.iqama_alerts;
-      case 'iqama_alerts_desc':
-        return instance.iqama_alerts_desc;
-      case 'dhikr_reminders':
-        return instance.dhikr_reminders;
-      case 'dhikr_reminders_desc':
-        return instance.dhikr_reminders_desc;
-      case 'alerts_settings_footer':
-        return instance.alerts_settings_footer;
       case 'search_hint':
         return instance.search_hint;
       case 'all':
         return instance.all;
-      case 'comprehensive_duas':
-        return instance.comprehensive_duas;
-      case 'browse_100_duas':
-        return instance.browse_100_duas;
       case 'update_screen_title':
         return instance.update_screen_title;
       case 'update_available_desc':
@@ -919,46 +633,8 @@ class AppLocalizationsLookup {
         return instance.permissions_rationale_body;
       case 'couldnt_open_page':
         return instance.couldnt_open_page;
-      case 'sai_header_title':
-        return instance.sai_header_title;
-      case 'tap_to_start_dua':
-        return instance.tap_to_start_dua;
-      case 'completed_praise':
-        return instance.completed_praise;
       case 'undo':
         return instance.undo;
-      case 'from_safa_to_marwa':
-        return instance.from_safa_to_marwa;
-      case 'from_marwa_to_safa':
-        return instance.from_marwa_to_safa;
-      case 'sai_completed_snackbar':
-        return instance.sai_completed_snackbar;
-      case 'complete_sai_btn':
-        return instance.complete_sai_btn;
-      case 'complete_lap_next_btn':
-        return instance.complete_lap_next_btn;
-      case 'tawaf_header_title':
-        return instance.tawaf_header_title;
-      case 'tap_to_open_duas':
-        return instance.tap_to_open_duas;
-      case 'done_status':
-        return instance.done_status;
-      case 'pending_status':
-        return instance.pending_status;
-      case 'duas_round_subtitle':
-        return instance.duas_round_subtitle;
-      case 'complete_round_next_btn':
-        return instance.complete_round_next_btn(namedArgs?['round'] ?? '');
-      case 'complete_tawaf_btn':
-        return instance.complete_tawaf_btn;
-      case 'tawaf_completed_snackbar':
-        return instance.tawaf_completed_snackbar;
-      case 'follow_sunnah_fallback':
-        return instance.follow_sunnah_fallback;
-      case 'reset_umrah_confirm_title':
-        return instance.reset_umrah_confirm_title;
-      case 'reset_umrah_confirm_body':
-        return instance.reset_umrah_confirm_body;
       default:
         return key;
     }

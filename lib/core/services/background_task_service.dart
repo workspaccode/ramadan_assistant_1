@@ -1,24 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/platform/feature_platform.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/core/services/audio_service.dart';
-import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/core/services/notification_service.dart';
-import 'package:ramadan_assistant/core/services/prayer_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
-import 'package:ramadan_assistant/presentation/screens/iqama_screen/iqama_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/update_details_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
 final _logger = Logger();
@@ -28,28 +21,9 @@ final _logger = Logger();
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
-      if (task == 'prayerUpdateTask' || task == Workmanager.iOSBackgroundTask) {
-        final locationService = LocationService();
-        final prayerService = PrayerService();
-
-        // Use the last-known (cached) position instead of requesting a fresh
-        // GPS fix in the background — avoids ACCESS_BACKGROUND_LOCATION,
-        // which requires a sensitive-permission declaration on Google Play.
-        final position = await locationService.getCachedPosition().timeout(
-          const Duration(seconds: 30),
-        );
-
-        if (position == null) {
-          // No location has ever been cached (user never granted permission).
-          // Retry on the next periodic run instead of failing hard.
-          _logger.w('No cached position available — skipping this run');
-          return false;
-        }
-
-        await _scheduleDayPrayerNotifications(
-          position,
-          prayerService,
-        ).timeout(const Duration(minutes: 2));
+      if (task == BackgroundTaskService.dailyExtrasTask ||
+          task == Workmanager.iOSBackgroundTask) {
+        await _scheduleDailyExtras().timeout(const Duration(minutes: 2));
       } else if (task == 'tasbihReportTask') {
         await _sendIntelligentTasbihReport().timeout(
           const Duration(minutes: 1),
@@ -63,140 +37,29 @@ void callbackDispatcher() {
   });
 }
 
-Future<void> _scheduleDayPrayerNotifications(
-  Position position,
-  PrayerService prayerService,
-) async {
-  final prefs = await SharedPreferences.getInstance();
-  final iqamaSystem = prefs.getString('iqama_system') ?? 'manual';
-  final iqamaPreset = prefs.getString('iqama_preset') ?? 'saudi';
-  final manualDelay = prefs.getInt('iqama_delay') ?? 10;
-
-  final prayerData = await prayerService.getCurrentPrayerData(position);
-  final prayerTimes = prayerData.prayerTimes;
+/// Schedules the two daily, prayer-independent notifications: the Islamic tip
+/// (10:00, repeating) and the evening tasbih report (21:00 one-off task).
+Future<void> _scheduleDailyExtras() async {
   final now = DateTime.now();
 
-  final prayers = [
-    {'name': 'Fajr', 'time': prayerTimes.fajr.toLocal(), 'id': 1},
-    {'name': 'Dhuhr', 'time': prayerTimes.dhuhr.toLocal(), 'id': 2},
-    {'name': 'Asr', 'time': prayerTimes.asr.toLocal(), 'id': 3},
-    {'name': 'Maghrib', 'time': prayerTimes.maghrib.toLocal(), 'id': 4},
-    {'name': 'Isha', 'time': prayerTimes.isha.toLocal(), 'id': 5},
-  ];
+  // Daily Islamic Tip (10 AM, repeats every day).
+  await NotificationService.scheduleIslamicTip(
+    id: 500,
+    tipTitle: 'Islamic Pearl of the Day'.tr(),
+    tipBody: 'Today is a gift from Allah. Make the most of it with Dhikr.'.tr(),
+    scheduleTime: DateTime(now.year, now.month, now.day, 10, 0),
+  );
 
-  final delaysJson = prefs.getString('iqama_delays_map');
-  final Map<String, int> delays = delaysJson != null
-      ? Map<String, int>.from(jsonDecode(delaysJson))
-      : {'fajr': 20, 'dhuhr': 15, 'asr': 15, 'maghrib': 5, 'isha': 10};
-
-  for (final prayer in prayers) {
-    final prayerTime = prayer['time'] as DateTime;
-    final prayerId = prayer['id'] as int;
-    final prayerName = prayer['name'] as String;
-
-    int delay = delays[prayerName.toLowerCase()] ?? manualDelay;
-
-    if (iqamaSystem == 'preset') {
-      if (iqamaPreset == 'saudi') {
-        switch (prayerName) {
-          case 'Fajr':
-            delay = 15;
-            break;
-          case 'Dhuhr':
-            delay = 12;
-            break;
-          case 'Asr':
-            delay = 10;
-            break;
-          case 'Maghrib':
-            delay = 7;
-            break;
-          case 'Isha':
-            delay = 15;
-            break;
-        }
-      } else if (iqamaPreset == 'egypt') {
-        switch (prayerName) {
-          case 'Fajr':
-            delay = 10;
-            break;
-          case 'Dhuhr':
-            delay = 10;
-            break;
-          case 'Asr':
-            delay = 8;
-            break;
-          case 'Maghrib':
-            delay = 5;
-            break;
-          case 'Isha':
-            delay = 10;
-            break;
-        }
-      }
-    }
-
-    // Schedule Adhan alert and notifications if enabled
-    if (prayerTime.isAfter(now)) {
-      final adhanEnabled = prefs.getBool('adhan_enabled') ?? true;
-      final iqamaEnabled = prefs.getBool('iqama_enabled') ?? true;
-
-      // 1. Prayer Nearing Reminder (10 mins before) - Only if Adhan is enabled
-      if (adhanEnabled) {
-        await NotificationService.schedulePrayerNearing(
-          id: prayerId,
-          prayerName: prayerName,
-          prayerTime: prayerTime,
-        );
-      }
-
-      // 2. Adhan Alarm (full-length audio via alarm package)
-      if (adhanEnabled) {
-        await AdhanAlarmService.scheduleAdhan(
-          id: prayerId,
-          prayerName: prayerName,
-          dateTime: prayerTime,
-          iqamaDelay: delay,
-        );
-      }
-
-      // 3. Iqama Reminder
-      if (iqamaEnabled) {
-        final iqamaTime = prayerTime.add(Duration(minutes: delay));
-        await NotificationService.scheduleIqamaReminder(
-          id: prayerId + 100, // Offset ID for Iqama
-          prayerName: prayerName,
-          iqamaTime: iqamaTime,
-        );
-      }
-    }
-  }
-
-  // Daily Islamic Tip (e.g., at 10 AM)
-  final tipTime = DateTime(now.year, now.month, now.day, 10, 0);
-  if (tipTime.isAfter(now)) {
-    await NotificationService.scheduleIslamicTip(
-      id: 500,
-      tipTitle: 'Islamic Pearl of the Day'.tr(),
-      tipBody: 'Today is a gift from Allah. Make the most of it with Dhikr.'
-          .tr(),
-      scheduleTime: tipTime,
-    );
-  }
-
-  // Daily Summary & Tasbih Report (Post-Isha)
-  final ishaEntry = prayers.firstWhere((p) => p['name'] == 'Isha');
-  final ishaTime = ishaEntry['time'] as DateTime;
-  if (ishaTime.isAfter(now)) {
-    final summaryTime = ishaTime.add(const Duration(hours: 1));
-    final delay = summaryTime.difference(now);
-
+  // Daily Tasbih Report (21:00).
+  final reportTime = DateTime(now.year, now.month, now.day, 21, 0);
+  if (reportTime.isAfter(now)) {
     // Register a one-off task for the intelligent report
-    Workmanager().registerOneOffTask(
+    await Workmanager().registerOneOffTask(
       'daily-tasbih-report',
       'tasbihReportTask',
-      initialDelay: delay,
+      initialDelay: reportTime.difference(now),
       constraints: Constraints(networkType: NetworkType.connected),
+      existingWorkPolicy: ExistingWorkPolicy.replace,
     );
   }
 }
@@ -257,51 +120,27 @@ class BackgroundTaskService {
     await Workmanager().initialize(callbackDispatcher);
   }
 
+  static const String dailyExtrasTask = 'dailyExtrasTask';
+
+  /// Registers the daily job that (re)schedules the tip + tasbih report, and
+  /// cancels the retired prayer-notification job left by older versions.
   static Future<void> scheduleDailyUpdate() async {
-    // Run at midnight to schedule next day's prayers
+    await Workmanager().cancelByUniqueName('daily-prayer-update');
     await Workmanager().registerPeriodicTask(
-      'daily-prayer-update',
-      'prayerUpdateTask',
+      'daily-extras-update',
+      dailyExtrasTask,
       frequency: const Duration(hours: 24),
       initialDelay: const Duration(seconds: 10),
-      constraints: Constraints(
-        // No network needed — prayer times are computed offline
-        networkType: NetworkType.notRequired,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-      ),
+      constraints: Constraints(networkType: NetworkType.notRequired),
     );
   }
 
-  /// Manually trigger prayer notification scheduling (for initial load)
-  static Future<void> scheduleNotificationsNow({
-    bool useCachedLocationOnly = false,
-  }) async {
-    final locationService = LocationService();
-    final prayerService = PrayerService();
-
+  /// Manually (re)schedule today's tip + tasbih report (initial load).
+  static Future<void> scheduleDailyExtrasNow() async {
     try {
-      Position? position;
-      try {
-        position = useCachedLocationOnly
-            ? await locationService.getCachedPosition()
-            : await locationService.getCurrentLocation().timeout(
-                const Duration(seconds: 30),
-              );
-      } catch (_) {
-        // Permission not yet granted / location services off — fall back to
-        // the last-known position so prayer alerts are still scheduled.
-        position = await locationService.getCachedPosition();
-      }
-      if (position == null) return;
-
-      await _scheduleDayPrayerNotifications(
-        position,
-        prayerService,
-      ).timeout(const Duration(minutes: 2));
+      await _scheduleDailyExtras().timeout(const Duration(minutes: 2));
     } catch (e) {
-      _logger.e('Error scheduling notifications', error: e);
+      _logger.e('Error scheduling daily notifications', error: e);
     }
   }
 
@@ -325,8 +164,6 @@ class BackgroundTaskService {
 class NotificationActionHandler {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static bool _isAdhanScreenActive = false;
-
   static Future<void> initialize() async {
     // Listen for notification actions
     await AwesomeNotifications().setListeners(
@@ -352,16 +189,7 @@ class NotificationActionHandler {
     if (payload != null) {
       final type = payload['type'];
 
-      if (type == 'adhan' && !_isAdhanScreenActive) {
-        final prayer = payload['prayer'] ?? 'Prayer';
-        final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
-
-        // Show adhan screen — sound is handled by notification channel natively
-        await _showAdhanScreen(prayer, delay);
-      }
-      // Note: adhan/iqama sounds now play via notification channel soundSource
-      // (works even when app is killed). Only dhikr still uses Dart audio.
-      if (type == 'dhikr' || type == 'tasbih_report') {
+      if (type == 'tasbih_report') {
         final audioPath = payload['audioPath'];
         if (audioPath != null && audioPath.isNotEmpty) {
           await AudioService.playDhikrInBackground(audioPath);
@@ -378,8 +206,6 @@ class NotificationActionHandler {
 
     if (payload != null) {
       final type = payload['type'];
-      final prayer = payload['prayer'];
-      final delay = int.tryParse(payload['iqamaDelay'] ?? '10') ?? 10;
 
       if (type == 'planner' || type == 'worship') {
         FeatureNavigation.request(
@@ -388,26 +214,14 @@ class NotificationActionHandler {
         return;
       }
 
-      if (receivedAction.buttonKeyPressed == 'OPEN_ADHAN') {
-        await _showAdhanScreen(prayer ?? 'Prayer', delay);
-      } else if (receivedAction.buttonKeyPressed == 'OPEN_UPDATE') {
+      if (receivedAction.buttonKeyPressed == 'OPEN_UPDATE') {
         navigatorKey.currentState?.push(
           MaterialPageRoute(builder: (_) => const UpdateScreen()),
         );
       } else if (receivedAction.buttonKeyPressed == 'DISMISS') {
-        _isAdhanScreenActive = false;
         if (receivedAction.id != null) {
           await AwesomeNotifications().cancel(receivedAction.id!);
         }
-      } else if (type == 'adhan') {
-        // Default tap on adhan notification
-        await _showAdhanScreen(prayer ?? 'Prayer', delay);
-      } else if (type == 'iqama') {
-        navigatorKey.currentState?.push<void>(
-          MaterialPageRoute<void>(
-            builder: (_) => IqamaScreen(prayerName: prayer ?? 'Prayer'),
-          ),
-        );
       } else if (type == 'update') {
         // Tapped update notification - Show rich details dialog
         final context = navigatorKey.currentContext;
@@ -436,19 +250,6 @@ class NotificationActionHandler {
   static Future<void> onDismissActionReceivedMethod(
     ReceivedAction receivedAction,
   ) async {
-    _isAdhanScreenActive = false;
-  }
-
-  static Future<void> _showAdhanScreen(
-    String prayerName,
-    int iqamaDelay,
-  ) async {
-    final navigator = navigatorKey.currentState;
-    if (navigator == null) return;
-    await AdhanAlarmService.presentAdhan(navigator, prayerName: prayerName);
-  }
-
-  static void markAdhanScreenClosed() {
-    _isAdhanScreenActive = false;
+    // No per-notification state to reset.
   }
 }

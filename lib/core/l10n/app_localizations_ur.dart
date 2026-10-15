@@ -24,9 +24,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get change => 'تبدیل کریں';
 
   @override
-  String get save => 'محفوظ کریں';
-
-  @override
   String get cancel => 'منسوخ';
 
   @override
@@ -34,9 +31,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get retry => 'دوبارہ کوشش';
-
-  @override
-  String get got_it => 'ٹھیک ہے';
 
   @override
   String get got_it_continue => 'ٹھیک ہے، جاری رکھیں';
@@ -66,217 +60,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get appearance => 'ظہور';
 
   @override
-  String get umrah_title => 'عمرہ گائیڈ';
-
-  @override
-  String get umrah_progress_label => 'عمرہ کی پیشرفت';
-
-  @override
-  String get current_stage => 'موجودہ مرحلہ';
-
-  @override
   String get completed => 'مکمل';
 
   @override
   String get ongoing => 'جاری';
 
   @override
-  String get tajweed_enabled => 'رنگین تجوید فعال کر دی گئی';
-
-  @override
-  String get tajweed_disabled => 'رنگین تجوید غیر فعال کر دی گئی';
-
-  @override
-  String get tajweed_rules => 'تجوید کے قواعد';
-
-  @override
-  String get play_recitation => 'تلاوت شروع کریں';
-
-  @override
-  String get stop_recitation => 'تلاوت روکیں';
-
-  @override
   String get waiting => 'انتظار';
 
   @override
-  String get complete_button => 'اس مرحلے کو مکمل کریں';
-
-  @override
-  String get next_step => 'اگلا مرحلہ';
-
-  @override
-  String get guidelines_title => 'ہدایات';
-
-  @override
-  String get adhkar_title => 'اذکار';
-
-  @override
-  String get step_ihram => 'احرام';
-
-  @override
-  String get guide_ihram_1 => 'نیت: عمرہ کرنے کی نیت';
-
-  @override
-  String get guide_ihram_2 => 'میقات: احرام کے لیے مقررہ شدہ مقامات';
-
-  @override
-  String get guide_ihram_3 => 'طہارت: احرام سے پہلے مکمل وضو';
-
-  @override
-  String get guide_ihram_4 => 'احرام کے کپڑے: سفید ازار اور ردا';
-
-  @override
-  String get guide_ihram_5 => 'تلبیہ: لبیک اللہم لبیک';
-
-  @override
-  String get guide_ihram_6 => 'احرام کے وقت دعا';
-
-  @override
-  String get ishtirat_dua => 'احرام ختم کرنے کی دعا (اشتراط)';
-
-  @override
-  String get dua_ihram_trans => 'اللہم لبیک عمرہ';
-
-  @override
-  String get ihram_dua_instruction =>
-      'احرام میں داخل ہونے کی نیت کرتے وقت یہ کہیں';
-
-  @override
-  String get step_entrance => 'حرم مسجد میں داخل ہونا';
-
-  @override
-  String get guide_entrance_1 => 'دائیں پاؤں سے داخل ہونا';
-
-  @override
-  String get guide_entrance_2 => 'کہیں: اللہم صل علی محمد';
-
-  @override
-  String get guide_entrance_3 => 'مسجد میں داخل ہونے کی دعا';
-
-  @override
   String get step_tawaf => 'طواف';
-
-  @override
-  String get guide_tawaf_1 => 'کالا پتھر سے شروع کریں';
-
-  @override
-  String get guide_tawaf_2 => 'سات چکر مکمل کریں';
-
-  @override
-  String get guide_tawaf_3 => 'کالا پتھر اور یمنی کونے چھونا';
-
-  @override
-  String get guide_tawaf_4 => 'طواف کے دوران دعا';
-
-  @override
-  String get guide_tawaf_5 => 'مقام ابراہیم کے پیچھے نماز';
-
-  @override
-  String get dua_tawaf_trans => 'ربنا آتنا فی الدنیا حسنہ';
-
-  @override
-  String get tawaf_done => '✨ سات چکر مکمل ہو گئے!';
-
-  @override
-  String get complete_tawaf_first => 'پہلا طواف مکمل کریں';
-
-  @override
-  String get step_sai => 'سعی';
-
-  @override
-  String get guide_sai_1 => 'صفا اور مروہ کے درمیان سعی';
-
-  @override
-  String get guide_sai_2 => 'صفا سے شروع کریں';
-
-  @override
-  String get guide_sai_3 => 'سات چکر مکمل کریں';
-
-  @override
-  String get guide_sai_4 => 'صفا اور مروہ پر دعا';
-
-  @override
-  String get guide_sai_5 => 'ہرے نشانوں کے درمیان دوڑنا';
-
-  @override
-  String get dua_sai_trans => 'بیشک صفا اور مروہ اللہ کی نشانیوں میں سے ہیں';
-
-  @override
-  String get sai_done => '✨ سعی کے سات چکر مکمل ہو گئے!';
-
-  @override
-  String sai_lap_count(String current, String total) {
-    return 'چکر $current از $total';
-  }
-
-  @override
-  String get going_to_marwa => 'مروہ کی طرف جا رہے ہیں';
-
-  @override
-  String get going_to_safa => 'صفا کی طرف جا رہے ہیں';
-
-  @override
-  String get auto_tracking_title => 'سعی کے لیے خودکار ٹریکنگ';
-
-  @override
-  String get auto_tracking_active =>
-      'صفا اور مروہ کے درمیان آپ کے مقام کی ٹریکنگ جاری ہے';
-
-  @override
-  String get auto_tracking_inactive =>
-      'چکروں کو خود بخود گننے کے لیے ٹریکنگ فعال کریں';
-
-  @override
-  String get dhikr_standing => 'کھڑے ہوئے ذکر';
-
-  @override
-  String get dhikr_safa_marwa_standing_trans => 'ربنا آتنا فی الدنیا حسنہ';
-
-  @override
-  String get dhikr_walking => 'چلتے ہوئے ذکر';
-
-  @override
-  String get dua_rabbana_atina_trans => 'ربنا آتنا فی الدنیا حسنہ';
-
-  @override
-  String get dua_rabbi_ighfir_trans => 'رب اغفر وارحم';
-
-  @override
-  String get dua_allahumma_inni_asaluka_trans => 'اللہم انی اسالک الجنہ';
-
-  @override
-  String get step_tahlul => 'حلق یا قصر (بال کٹوانا)';
-
-  @override
-  String get guide_tahlul_1 =>
-      'مردوں کے لیے حلق (بہتر ہے کہ پورے سر کے بال مونڈے جائیں)';
-
-  @override
-  String get guide_tahlul_2 =>
-      'مردوں کے لیے قصر (بال چھوٹے کرنا، کم از کم ایک انگلی کے پور کے برابر)';
-
-  @override
-  String get guide_tahlul_3 =>
-      'خواتین کے لیے بالوں کے سرے سے ایک انگلی کے پور کے برابر کاٹنا';
-
-  @override
-  String get fixed_tawaf_sai_duas => 'طواف اور سعی کی مقررہ دعائیں';
-
-  @override
-  String get comprehensive_tawaf_duas => 'طواف کی جامع دعائیں';
-
-  @override
-  String get comprehensive_sai_duas => 'سعی کی جامع دعائیں';
-
-  @override
-  String get may_allah_accept_umrah => 'اللہ آپ کی عمرہ قبول فرمائے 🤲';
-
-  @override
-  String get accept_title => 'اللہ آپ کا عمرہ قبول فرمائے!';
-
-  @override
-  String get accept_message =>
-      'مبارک ہو! آپ نے عمرہ کے مناسک مکمل کرلیے ہیں۔ اللہ تعالیٰ آپ کی عبادت قبول فرمائے۔';
 
   @override
   String get version => 'ورژن';
@@ -296,10 +89,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tab_tasbih => 'تسبیح';
 
   @override
-  String get tab_reminders => 'اذکار';
-
-  @override
-  String get tab_umrah => 'عمرہ';
+  String get tab_adhkar => 'اذکار';
 
   @override
   String get features => 'خصوصیات';
@@ -341,19 +131,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get visit_site => 'ویب سائٹ ملاحظہ کریں';
 
   @override
-  String get no_active_reminders => 'کوئی فعال ذکر نہیں ہے';
-
-  @override
-  String get reminders => 'یاد دہانیاں';
-
-  @override
   String get daily_hadith => 'آج کی حدیث';
-
-  @override
-  String get hadith_title => 'حدیث لائبریری';
-
-  @override
-  String get quran => 'قرآن';
 
   @override
   String get prayer_times_title => 'نماز کے اوقات';
@@ -551,9 +329,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get tasbih => 'تسبیح';
 
   @override
-  String get umrah => 'عمرہ';
-
-  @override
   String get prayer_times => 'نماز کے اوقات';
 
   @override
@@ -668,34 +443,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get wird_weekly_activity => 'ہفتہ وار سرگرمی';
 
   @override
-  String get reminders_title => 'سمارٹ یاد دہانی';
-
-  @override
-  String get add_reminder => 'یاد دہانی شامل کریں';
-
-  @override
-  String get no_reminders => 'ابھی تک کوئی یاد دہانی نہیں ہے';
-
-  @override
-  String get tap_add_dhikr => 'ذکر کی یاد دہانی شامل کرنے کے لیے + پر ٹیپ کریں';
-
-  @override
-  String get schedule_reminder => 'یاد دہانی کا وقت طے کریں';
-
-  @override
-  String get interval => 'وقفہ';
-
-  @override
-  String get select_multiple =>
-      'متعدداذکار منتخب کریں (آوازیں تھوڑی دیر کے ساتھ بجیں گی)';
-
-  @override
-  String get offset_seconds => 'فرق';
-
-  @override
-  String get seconds_after => 'سیکنڈ بعد';
-
-  @override
   String get settings_title => 'ترتیبات';
 
   @override
@@ -747,31 +494,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get unknown => 'نامعلوم';
 
   @override
-  String get audio_settings => 'آواز کی ترتیبات';
-
-  @override
-  String get fajr_adhan => 'فجر کی اذان';
-
-  @override
-  String get other_adhan => 'دیگر اذانیں';
-
-  @override
-  String get fajr_iqama => 'فجر کی اقامت';
-
-  @override
-  String get other_iqama => 'دیگر اقامتیں';
-
-  @override
-  String get select_sound => 'آواز منتخب کریں';
-
-  @override
   String get app_icon => 'ایپ آئیکن';
 
   @override
   String get select_icon => 'آئیکن منتخب کریں';
-
-  @override
-  String get standard => 'معیاری';
 
   @override
   String get ramadanClassic => 'رمضان کلاسک';
@@ -801,27 +527,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get iqama => 'اقامت';
-
-  @override
-  String get iqama_settings => 'اقامت کی ترتیبات';
-
-  @override
-  String get iqama_system => 'اقامت کا نظام';
-
-  @override
-  String get system_manual => 'دستی (اپنی مرضی کے مطابق)';
-
-  @override
-  String get system_preset => 'پہلے سے طے شدہ';
-
-  @override
-  String get iqama_preset => 'اقامت کی ترتیبات';
-
-  @override
-  String get preset_saudi => 'سعودی تقویم';
-
-  @override
-  String get preset_egypt => 'مصری تقویم';
 
   @override
   String get other_prayers => 'دیگر نمازیں';
@@ -858,7 +563,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get reset_confirmation_msg =>
-      'نماز، اطلاع اور ظاہری ترتیبات بحال کریں؟ عبادات، اوقات اور عمرہ کی پیش رفت محفوظ رہیں گے۔';
+      'نماز، اطلاع اور ظاہری ترتیبات بحال کریں؟ عبادات اور اوقات محفوظ رہیں گے۔';
 
   @override
   String get about => 'ایپ کے بارے میں';
@@ -871,14 +576,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get terms_of_service => 'سروس کی شرائط';
-
-  @override
-  String get prayer_nearing_title => 'نماز کا وقت قریب ہے';
-
-  @override
-  String prayer_nearing_body(String prayer) {
-    return '$prayer نماز کا وقت قریب ہے';
-  }
 
   @override
   String get next => 'اگلا';
@@ -1018,21 +715,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get maximum => 'زیادہ سے';
 
   @override
-  String get minute => 'منٹ';
-
-  @override
-  String get continuous => 'مسلسل';
-
-  @override
-  String get audio => 'آڈیو';
-
-  @override
-  String get repeat => 'دہرائی';
-
-  @override
-  String get select_dhikr_prompt => 'وہ ذکر منتخب کریں جسے آپ دہرانا چاہتے ہیں';
-
-  @override
   String get notifications_title => 'اطلاعات';
 
   @override
@@ -1043,36 +725,6 @@ class AppLocalizationsUr extends AppLocalizations {
       'آپ کو اپنی اپ ڈیٹ کی تاریخ اور الرٹس یہاں ملیں گے';
 
   @override
-  String get stop_adhan => 'اذان بند کریں';
-
-  @override
-  String notification_adhan_title(String prayer) {
-    return '$prayer نماز کا وقت';
-  }
-
-  @override
-  String notification_adhan_body(String prayer) {
-    return 'یہ $prayer نماز کا وقت ہے۔';
-  }
-
-  @override
-  String get open_adhan_btn => 'اذان کھولیں';
-
-  @override
-  String get dismiss_btn => 'خارج کریں';
-
-  @override
-  String get notification_iqama_title => 'اقامت کی یاد دہانی';
-
-  @override
-  String notification_iqama_body(String prayer) {
-    return 'یہ $prayer کی اقامت کا وقت ہے۔';
-  }
-
-  @override
-  String get notification_dhikr_title => 'ذکر کی یاد دہانی';
-
-  @override
   String get notification_wird_title => 'روزانہ ورد کی یاد دہانی';
 
   @override
@@ -1081,77 +733,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get audio_not_available =>
-      'معذرت، اس قاری کے لیے تلاوت فی الحال دستیاب نہیں ہے (جلد آرہی ہے)';
-
-  @override
-  String get ayah_highlighting_not_available =>
-      'اس قاری کے لیے آیت بہ آیت ہائی لائٹنگ فی الحال دستیاب نہیں ہے (جلد آرہی ہے)';
-
-  @override
-  String get select_reciter => 'قاری منتخب کریں';
-
-  @override
-  String get surahs => 'سورتیں';
-
-  @override
-  String get juzs => 'پارے';
-
-  @override
-  String juz_number(String number) {
-    return 'پارہ $number';
-  }
-
-  @override
-  String verses_count(String count) {
-    return '$count آیات';
-  }
-
-  @override
-  String get umrah_date_picker_help => 'عمرہ شروع کرنے کی تاریخ منتخب کریں';
-
-  @override
-  String get umrah_time_picker_help => 'عمرہ شروع کرنے کا وقت منتخب کریں';
-
-  @override
   String get back => 'واپس';
-
-  @override
-  String get start_trip => 'سفر شروع کریں';
-
-  @override
-  String get umrah_and_hajj_rites => 'مناسک عمرہ و حج';
-
-  @override
-  String get main_services => 'بنیادی خدمات';
-
-  @override
-  String get umrah_in_progress => 'عمرہ جاری ہے';
-
-  @override
-  String get start_new_umrah => 'نیا عمرہ سفر شروع کریں';
-
-  @override
-  String get hajj => 'حج';
-
-  @override
-  String get visiting_madinah => 'مدینہ کی زیارت';
-
-  @override
-  String get trip_history => 'سفر کی تاریخ';
-
-  @override
-  String get umrah_trip => 'عمرہ کا سفر';
-
-  @override
-  String start_prefix(String start) {
-    return 'آغاز: $start';
-  }
-
-  @override
-  String end_prefix(String end) {
-    return 'اختتام: $end';
-  }
 
   @override
   String get new_update => 'نیا اپ ڈیٹ دستیاب ہے';
@@ -1167,13 +749,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get close_btn => 'بند کریں';
-
-  @override
-  String get time_for_dhikr => 'ذکر کا وقت';
-
-  @override
-  String get notification_dhikr_body =>
-      'ذکر دیکھنے اور تسبیح شروع کرنے کے لیے دبائیں';
 
   @override
   String get category_all => 'سب';
@@ -1197,45 +772,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get category_general => 'عام';
 
   @override
-  String get manage_alerts => 'الرٹس کا انتظام کریں';
-
-  @override
-  String get prayer_alerts => 'نماز کے الرٹس';
-
-  @override
-  String get adhan_alerts => 'اذان کے الرٹس';
-
-  @override
-  String get adhan_alerts_desc => 'نماز کا وقت شروع ہونے پر اذان چلائیں';
-
-  @override
-  String get iqama_alerts => 'اقامت کے الرٹس';
-
-  @override
-  String get iqama_alerts_desc => 'اقامت کا وقت قریب ہونے پر الرٹ کریں';
-
-  @override
-  String get dhikr_reminders => 'ذکر کی یاد دہانیاں';
-
-  @override
-  String get dhikr_reminders_desc =>
-      'ذکر اور دعاؤں کے لیے وقفے وقفے سے یاد دہانیاں';
-
-  @override
-  String get alerts_settings_footer =>
-      'آپ اپنے سکون اور توجہ کو یقینی بنانے کے لیے ہر قسم کے الرٹ کو الگ الگ کنٹرول کر سکتے ہیں۔';
-
-  @override
   String get search_hint => 'دعا یا ذکر تلاش کریں...';
 
   @override
   String get all => 'سب';
-
-  @override
-  String get comprehensive_duas => 'جامع دعائیں';
-
-  @override
-  String get browse_100_duas => '100 سے زیادہ دعائیں دیکھیں';
 
   @override
   String get update_screen_title => 'ایپ اپڈیٹ';
@@ -1314,67 +854,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'صفحہ کھولا نہیں جا سکا۔ براہ کرم اپنا انٹرنیٹ کنکشن چیک کریں اور بعد میں دوبارہ کوشش کریں۔';
 
   @override
-  String get sai_header_title => 'صفا اور مروہ کے درمیان سعی';
-
-  @override
-  String get tap_to_start_dua => 'شروع کرنے اور دعا کے لیے یہاں دبائیں';
-
-  @override
-  String get completed_praise => 'مکمل، اللہ کا شکر ہے';
-
-  @override
   String get undo => 'واپس';
-
-  @override
-  String get from_safa_to_marwa => 'صفا سے مروہ تک';
-
-  @override
-  String get from_marwa_to_safa => 'مروہ سے صفا تک';
-
-  @override
-  String get sai_completed_snackbar => 'سعی مکمل ہوئی، اللہ کا شکر ہے';
-
-  @override
-  String get complete_sai_btn => 'سعی مکمل کریں';
-
-  @override
-  String get complete_lap_next_btn => 'اس شوط کو مکمل کریں اور اگلے پر جائیں';
-
-  @override
-  String get tawaf_header_title => 'کعبہ کا طواف';
-
-  @override
-  String get tap_to_open_duas => 'دعائیں اور اذکار کھولنے کے لیے دبائیں';
-
-  @override
-  String get done_status => 'مکمل ✓';
-
-  @override
-  String get pending_status => 'انتظار میں';
-
-  @override
-  String get duas_round_subtitle => 'اس شوط کی دعائیں اور اذکار';
-
-  @override
-  String complete_round_next_btn(String round) {
-    return '$round مکمل کریں اور اگلے پر جائیں';
-  }
-
-  @override
-  String get complete_tawaf_btn => 'طواف مکمل کریں';
-
-  @override
-  String get tawaf_completed_snackbar => 'طواف مکمل ہو گیا، اللہ کا شکر ہے';
-
-  @override
-  String get follow_sunnah_fallback => 'سنت کی پیروی کریں۔';
-
-  @override
-  String get reset_umrah_confirm_title => 'عمرہ ری سیٹ کریں؟';
-
-  @override
-  String get reset_umrah_confirm_body =>
-      'تمام مراحل اور پیش رفت کے کاؤنٹرز (طواف، سعی، مقام، زمزم) ری سیٹ ہو جائیں گے۔ جاری رکھیں؟';
 
   @override
   String get ui_home => 'ہوم';
@@ -1405,17 +885,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get ui_adhkar_library => 'اذکار اور دعائیں';
-
-  @override
-  String get ui_reminders_intro =>
-      'اپنے دن میں ذکر کی یاددہانی کے لیے مناسب وقت منتخب کریں۔';
-
-  @override
-  String get ui_hadith_intro =>
-      'مطالعہ اور غور کریں۔ کتب میں تلاش کریں اور اپنی پسند کی کتاب منتخب کریں۔';
-
-  @override
-  String get ui_hadith_search => 'حدیث یا راوی تلاش کریں';
 
   @override
   String get ui_no_results => 'اس تلاش کے لیے کوئی نتیجہ نہیں';
@@ -1458,19 +927,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get ui_dua_category => 'دعا';
-
-  @override
-  String get ui_quran_download_prompt =>
-      'آف لائن مطالعہ کے لیے قرآن ایک بار ڈاؤن لوڈ کریں۔';
-
-  @override
-  String get ui_quran_download_action => 'قرآن ڈاؤن لوڈ کریں';
-
-  @override
-  String get ui_quran_preparing => 'تجوید کے قواعد تیار ہو رہے ہیں…';
-
-  @override
-  String get ui_quran_empty_page => 'اس صفحے پر کوئی آیت دستیاب نہیں ہے۔';
 
   @override
   String get ui_tasbih_save_failed =>
@@ -1552,9 +1008,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get library_source => 'اصل حوالہ پڑھیں';
-
-  @override
-  String get library_hadith_books => 'حدیث کی کتابیں کھولیں';
 
   @override
   String get library_read_aloud => 'آلے کی آواز سے متن سنیں';
@@ -1796,16 +1249,6 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get planner_invalid_meet =>
       'درست میٹنگ لنک درج کریں، جیسے https://meet.google.com/abc-defg-hij';
-
-  @override
-  String get features_complete_round => 'ایک چکر مکمل';
-
-  @override
-  String get features_read_round => 'چکر کی دعائیں پڑھیں';
-
-  @override
-  String get features_counter_save_failed =>
-      'گنتی محفوظ نہیں ہوئی۔ تعداد یہاں موجود ہے؛ ایپ بند کرنے سے پہلے دوبارہ محفوظ کریں۔';
 
   @override
   String get worship_choose_date => 'تاریخ منتخب کریں';
@@ -2075,4 +1518,63 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get planner_alarm_stop_failed =>
       'الارم نہیں رک سکا۔ دوبارہ کوشش کریں، یا الارم کی اطلاع میں روکنے کا بٹن استعمال کریں۔';
+
+  @override
+  String get sync_title => 'ڈیٹا ہم آہنگی';
+
+  @override
+  String get sync_intro =>
+      'انٹرنیٹ ہونے پر اپنا ڈیٹا اپنے سرور پر خود بخود بھیجیں۔ یو آر ایل اور ٹوکن محفوظ کرنے تک بند رہتی ہے۔';
+
+  @override
+  String get sync_url_label => 'سرور یو آر ایل (https)';
+
+  @override
+  String get sync_token_label => 'رسائی ٹوکن';
+
+  @override
+  String get sync_https_required => 'یو آر ایل https:// سے شروع ہونا چاہیے';
+
+  @override
+  String get sync_token_required => 'رسائی ٹوکن درج کریں';
+
+  @override
+  String get sync_save => 'محفوظ کریں اور فعال کریں';
+
+  @override
+  String get sync_saved => 'ہم آہنگی فعال ہو گئی';
+
+  @override
+  String get sync_disable => 'ہم آہنگی بند کریں';
+
+  @override
+  String get sync_disabled => 'ہم آہنگی بند ہو گئی';
+
+  @override
+  String get sync_now => 'ابھی بھیجیں';
+
+  @override
+  String sync_uploaded(int count) {
+    return '$count ریکارڈ بھیجے گئے';
+  }
+
+  @override
+  String get sync_failed =>
+      'بھیجنا ناکام رہا۔ انٹرنیٹ واپس آنے پر دوبارہ کوشش ہوگی۔';
+
+  @override
+  String get sync_not_configured => 'ہم آہنگی ابھی فعال نہیں';
+
+  @override
+  String get library_video_play => 'ویڈیو یہیں چلائیں';
+
+  @override
+  String get library_video_hide => 'ویڈیو چھپائیں';
+
+  @override
+  String get library_video_open_external => 'ویڈیو لنک کھولیں';
+
+  @override
+  String get library_video_failed =>
+      'یہ ویڈیو یہاں نہیں چل سکی۔ اسے کسی اور ایپ میں کھول کر دیکھیں۔';
 }

@@ -48,7 +48,6 @@ class _ShortcutsScreenState extends State<ShortcutsScreen> {
       AppShortcut.prayers: context.loc.prayer_times,
       AppShortcut.worship: context.loc.features_worship,
       AppShortcut.planner: context.loc.features_planner,
-      AppShortcut.umrah: context.loc.umrah,
       AppShortcut.library: context.loc.features_library,
     };
     const icons = [
@@ -56,7 +55,6 @@ class _ShortcutsScreenState extends State<ShortcutsScreen> {
       Icons.access_time_rounded,
       Icons.bookmark_outline_rounded,
       Icons.calendar_month_outlined,
-      Icons.route_outlined,
       Icons.library_books_outlined,
     ];
     return Scaffold(

@@ -9,8 +9,8 @@
          never microphone input. Sensitive permissions trigger extra Play Console review. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- NOTE: Background location intentionally REMOVED. Background prayer scheduling
-         uses the last-known (cached) position saved during foreground use. Avoids the
+    <!-- NOTE: Background location intentionally REMOVED. Prayer times are computed in the
+         foreground only (no prayer notifications/alarms are scheduled). Avoids the
          Play Console background-location declaration + video review entirely. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -21,9 +21,13 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <!-- NOTE: SYSTEM_ALERT_WINDOW (draw-over overlay) intentionally REMOVED — the adhan
-         alert is now shown via the full-screen intent activity (USE_FULL_SCREEN_INTENT),
-         which covers locked screens AND foreground apps without a sensitive permission. -->
+    <!-- Optional "reading helper" bubble over the user's chosen Quran app (off by default).
+         SYSTEM_ALERT_WINDOW is requested only after an in-app explanation and only when the
+         user enables the helper. PACKAGE_USAGE_STATS is a separate opt-in used solely to hide
+         the bubble when the chosen app leaves the foreground. Nothing is recorded or sent. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
 
     <application android:label="توبتى" android:name="${applicationName}" android:icon="@mipmap/launcher_icon" android:enableOnBackInvokedCallback="true" android:allowBackup="false" android:fullBackupContent="false">
 
@@ -52,18 +56,10 @@
         <service android:name="io.github.tastelessjolt.flutter_dynamic_icon_plus.FlutterDynamicIconPlusService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true">
         </service>
 
-        <!-- Audio Service -->
-        <service android:name="com.ryanheise.audioservice.AudioService" android:foregroundServiceType="mediaPlayback" android:exported="true" tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
+        <service android:name=".ReaderOverlayService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Draggable bubble over the user-selected Quran reader app showing the daily reading target; stops when closed, on timeout, or when the app leaves the foreground." />
         </service>
-
-        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver" android:exported="true" tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

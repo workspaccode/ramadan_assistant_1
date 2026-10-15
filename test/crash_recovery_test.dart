@@ -1,13 +1,9 @@
 import 'package:drift/native.dart';
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ramadan_assistant/core/services/location_service.dart';
 import 'package:ramadan_assistant/data/local/database/app_database.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_bloc.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_event.dart';
-import 'package:ramadan_assistant/presentation/blocs/umrah_guide_state.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/bloc/tasbih_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,38 +27,6 @@ void main() {
     await bloc.close();
     await database.close();
     expect(bloc.state.count, 1);
-  });
-
-  test('Umrah reset completes before subsequent counter update', () async {
-    SharedPreferences.setMockInitialValues({'umrah_tawaf_circuits': 6});
-    final database = AppDatabase.forTesting(NativeDatabase.memory());
-    final bloc = UmrahGuideBloc(database);
-    addTearDown(() async {
-      await bloc.close();
-      await database.close();
-    });
-    final loaded = bloc.stream.firstWhere((state) => state is UmrahGuideLoaded);
-    bloc.add(LoadUmrahProgress());
-    await loaded;
-    final restarted = bloc.stream.firstWhere(
-      (state) => state is UmrahGuideLoaded && state.tawafCircuits == 1,
-    );
-    bloc
-      ..add(ResetUmrahProgress())
-      ..add(const UpdateTawafCircuits(1));
-    await restarted.timeout(const Duration(seconds: 5));
-    // Closing drains the queue, including the last persisted counter write.
-    await bloc.close();
-    final prefs = await SharedPreferences.getInstance();
-    expect(
-      (jsonDecode(prefs.getString('umrah_counter_snapshot_v1')!)
-          as Map)['tawaf'],
-      1,
-    );
-    expect((bloc.state as UmrahGuideLoaded).tawafCircuits, 1);
-    final rows = await database.select(database.umrahProgress).get();
-    expect(rows, hasLength(5));
-    expect(rows.every((row) => !row.completed), isTrue);
   });
 
   test(

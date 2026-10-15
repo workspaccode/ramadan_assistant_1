@@ -29,17 +29,27 @@ class WirdPlan {
     required this.nextPage,
     this.reminderMinute,
     this.readerAppId,
+    this.overlayEnabled = false,
+    this.overlayAutoHide = false,
   });
   final int dailyPages;
   final int nextPage;
   final int? reminderMinute;
   final String? readerAppId;
+
+  /// Opt-in floating helper over the reader app; never implies reading.
+  final bool overlayEnabled;
+
+  /// Opt-in (needs Usage Access): hide the helper when the reader leaves the foreground.
+  final bool overlayAutoHide;
   int get endPage => ((nextPage - 1 + dailyPages - 1) % 604) + 1;
   WirdPlan advance() => WirdPlan(
     dailyPages: dailyPages,
     nextPage: ((nextPage - 1 + dailyPages) % 604) + 1,
     reminderMinute: reminderMinute,
     readerAppId: readerAppId,
+    overlayEnabled: overlayEnabled,
+    overlayAutoHide: overlayAutoHide,
   );
   void validate() {
     if (dailyPages < 1 ||

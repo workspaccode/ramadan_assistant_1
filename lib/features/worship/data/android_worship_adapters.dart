@@ -27,6 +27,52 @@ class AndroidQuranReader implements QuranReaderPort {
       false;
 }
 
+class AndroidReaderOverlay implements ReaderOverlayPort {
+  AndroidReaderOverlay({
+    this.channel = const MethodChannel('app.tawabti/overlay'),
+  });
+  final MethodChannel channel;
+
+  @override
+  Future<OverlayStatus> status() async {
+    final data = await channel.invokeMapMethod<String, Object?>(
+      'overlay.status',
+    );
+    return OverlayStatus(
+      canDraw: data?['canDraw'] == true,
+      usageAccess: data?['usageAccess'] == true,
+    );
+  }
+
+  @override
+  Future<void> openOverlaySettings() =>
+      channel.invokeMethod<void>('overlay.openSettings');
+
+  @override
+  Future<void> openUsageSettings() =>
+      channel.invokeMethod<void>('overlay.openUsageSettings');
+
+  @override
+  Future<bool> show(ReaderOverlayRequest request) async =>
+      await channel.invokeMethod<bool>('overlay.show', {
+        'packageName': request.packageName,
+        'title': request.title,
+        'body': request.body,
+        'doneLabel': request.doneLabel,
+        'closeLabel': request.closeLabel,
+        'autoHide': request.autoHide,
+        'timeoutMs': request.timeout.inMilliseconds,
+      }) ??
+      false;
+
+  @override
+  Future<void> hide() => channel.invokeMethod<void>('overlay.hide');
+
+  @override
+  Future<bool> takePendingDone() async =>
+      await channel.invokeMethod<bool>('overlay.takePendingDone') ?? false;
+}
+
 class AwesomeWorshipReminder implements WorshipReminderPort {
   static const notificationId = 2000000;
   @override

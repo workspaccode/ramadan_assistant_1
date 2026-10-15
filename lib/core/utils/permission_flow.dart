@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/core/services/background_task_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Requests location + notification permissions in-context, with a rationale
@@ -11,11 +10,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// start — explain the value to the user and let them opt in. This flow:
 ///   1. (first launch only) shows a rationale dialog with Allow / Skip;
 ///   2. if allowed, requests location (needed for prayer times);
-///   3. then requests notifications (needed for adhan alerts);
-///   4. once granted, (re)schedules today's prayer notifications.
+///   3. then requests notifications (needed for planner / wird reminders).
 ///
 /// Users who decline are never nagged again — they can grant permissions later
-/// from system Settings or the app's Alerts settings.
+/// from system Settings.
 class PermissionFlow {
   static const String _rationaleShownKey = 'permission_rationale_shown';
 
@@ -54,24 +52,10 @@ class PermissionFlow {
     }
     if (!context.mounted) return locationStatus.isGranted;
 
-    // --- Notifications (adhan / iqama / dhikr alerts) ---
+    // --- Notifications (planner / wird reminders) ---
     final notifStatus = await Permission.notification.status;
-    var granted = notifStatus.isGranted;
     if (notifStatus.isDenied) {
-      final result = await Permission.notification.request();
-      granted = result.isGranted;
-    } else if (notifStatus.isPermanentlyDenied) {
-      granted = false;
-    }
-
-    // If anything was just granted, make sure today's prayer alerts are
-    // actually scheduled (the startup attempt may have skipped them).
-    if (granted) {
-      try {
-        await BackgroundTaskService.scheduleNotificationsNow();
-      } catch (e) {
-        debugPrint('PermissionFlow: scheduling notifications failed: $e');
-      }
+      await Permission.notification.request();
     }
     return locationStatus.isGranted;
   }

@@ -1,6 +1,5 @@
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:ramadan_assistant/core/navigation/feature_routes.dart';
-import 'package:ramadan_assistant/data/models/dhikr_presets.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
@@ -10,23 +9,16 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/core/services/preferences_service.dart';
-import 'package:ramadan_assistant/core/services/quran_database_service.dart';
 import 'package:ramadan_assistant/core/theme/ramadan_theme_extension.dart';
 import 'package:ramadan_assistant/core/utils/permission_flow.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_event.dart';
-import 'package:ramadan_assistant/presentation/screens/hadith_screen/hadith_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/main_screen/widgets/rotating_hadith_card.dart';
 import 'package:ramadan_assistant/presentation/screens/notifications_screen/notifications_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/prayer_times_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/quran_screen/download_quran_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/quran_screen/quran_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/bloc/reminders_bloc.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/tasbih_screen/tasbih_screen.dart';
-import 'package:ramadan_assistant/presentation/screens/umrah_guide_screen/umrah_hub_screen.dart';
 
 class NormalHomeContent extends StatefulWidget {
   const NormalHomeContent({super.key, this.isRamadan = false});
@@ -107,14 +99,6 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
                 _buildFeaturesGrid(context),
                 const SizedBox(height: 24),
                 const RotatingHadithCard(),
-                const SizedBox(height: 32),
-                _buildSectionHeader(
-                  context,
-                  'reminders'.tr(),
-                  Icons.notifications_active_rounded,
-                ),
-                const SizedBox(height: 16),
-                _buildRemindersSummary(context),
                 SizedBox(height: 32 + MediaQuery.paddingOf(context).bottom),
               ]),
             ),
@@ -410,39 +394,11 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
     final features = <Widget>[
       _buildFeatureCard(
         context,
-        'quran'.tr(),
-        Icons.menu_book_rounded,
-        () async {
-          final dbExists = await QuranDatabaseService.instance
-              .isDatabaseExists();
-          if (context.mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => dbExists
-                    ? const QuranScreen()
-                    : const DownloadQuranScreen(),
-              ),
-            );
-          }
-        },
-      ),
-      _buildFeatureCard(
-        context,
         'tasbih'.tr(),
         Icons.touch_app_rounded,
         () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const TasbihScreen()),
-        ),
-      ),
-      _buildFeatureCard(
-        context,
-        'reminders'.tr(),
-        Icons.notifications_active_rounded,
-        () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const RemindersScreen()),
         ),
       ),
       _buildFeatureCard(
@@ -461,24 +417,6 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
         () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => FeatureRoutes.planner()),
-        ),
-      ),
-      _buildFeatureCard(
-        context,
-        'umrah'.tr(),
-        Icons.map_rounded,
-        () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const UmrahHubScreen()),
-        ),
-      ),
-      _buildFeatureCard(
-        context,
-        'hadith_title'.tr(),
-        Icons.library_books_rounded,
-        () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const HadithScreen()),
         ),
       ),
       _buildFeatureCard(
@@ -585,151 +523,6 @@ class _NormalHomeContentState extends State<NormalHomeContent> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildRemindersSummary(BuildContext context) {
-    final theme = context.ramadanTheme;
-    return BlocBuilder<RemindersBloc, RemindersState>(
-      builder: (context, state) {
-        if (state is RemindersLoaded && state.reminders.isNotEmpty) {
-          final activeReminders = state.reminders
-              .where((r) => r.isActive)
-              .toList();
-
-          if (activeReminders.isEmpty) {
-            return _buildEmptyReminders(context);
-          }
-
-          return SizedBox(
-            height:
-                110 +
-                (MediaQuery.textScalerOf(context).scale(14) / 14 - 1).clamp(
-                      0,
-                      2,
-                    ) *
-                    36,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              separatorBuilder: (_, _) => const SizedBox(width: 16),
-              itemCount: activeReminders.length,
-              itemBuilder: (context, index) {
-                final reminder = activeReminders[index];
-                return Container(
-                  width: 220,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: theme.cardSurface,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: theme.borderColor.withValues(alpha: 0.1),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.secondary.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: theme.secondary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.notifications_active_rounded,
-                          color: theme.secondary,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              DhikrPresets.getTranslation(
-                                DhikrPresets.dhikrList.firstWhere(
-                                  (entry) =>
-                                      entry['id'] ==
-                                      reminder.reminderTypes.split(',').first,
-                                  orElse: () => {
-                                    'arabic': 'reminders'.tr(),
-                                    'translation': 'reminders'.tr(),
-                                  },
-                                ),
-                                context.locale.languageCode,
-                              ),
-                              style: TextStyle(
-                                color: theme.textPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                letterSpacing: 0.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${'interval'.tr()}: ${reminder.intervalMinutes} ${'minutes'.tr()}',
-                              style: TextStyle(
-                                color: theme.textSecondary,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        }
-        return _buildEmptyReminders(context);
-      },
-    );
-  }
-
-  Widget _buildEmptyReminders(BuildContext context) {
-    final theme = context.ramadanTheme;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 30),
-      decoration: BoxDecoration(
-        color: theme.cardSurface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: theme.borderColor.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.notifications_none_rounded,
-            color: theme.textDim,
-            size: 32,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'no_active_reminders'.tr(),
-            style: TextStyle(color: theme.textSecondary),
-          ),
-          const SizedBox(height: 12),
-          TextButton.icon(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const RemindersScreen()),
-            ),
-            icon: const Icon(Icons.add),
-            label: Text('add_reminder'.tr()),
-          ),
-        ],
       ),
     );
   }

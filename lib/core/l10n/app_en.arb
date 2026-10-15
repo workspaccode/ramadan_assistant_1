@@ -5,11 +5,9 @@
   "upcoming": "Upcoming",
   "today": "Today",
   "change": "Change",
-  "save": "Save",
   "cancel": "Cancel",
   "close": "Close",
   "retry": "Retry",
-  "got_it": "Got it",
   "got_it_continue": "Got it, Continue",
   "skip_for_now": "Skip for now",
   "coming_soon": "Coming soon",
@@ -19,84 +17,10 @@
   "times": "times",
   "location": "Location",
   "appearance": "Appearance",
-  "umrah_title": "Umrah Guide",
-  "umrah_progress_label": "Umrah Progress",
-  "current_stage": "Current Stage",
   "completed": "Completed",
   "ongoing": "Ongoing",
-  "tajweed_enabled": "Color Tajweed Enabled",
-  "tajweed_disabled": "Color Tajweed Disabled",
-  "tajweed_rules": "Tajweed Rules",
-  "play_recitation": "Play Recitation",
-  "stop_recitation": "Stop Recitation",
   "waiting": "Waiting",
-  "complete_button": "Mark as Completed",
-  "next_step": "Next Step",
-  "guidelines_title": "Guidelines",
-  "adhkar_title": "Adhkar",
-  "step_ihram": "Ihram",
-  "guide_ihram_1": "Niyyah (Intention)",
-  "guide_ihram_2": "Miqat (Boundary)",
-  "guide_ihram_3": "Taharah (Purification)",
-  "guide_ihram_4": "Ihram Clothing",
-  "guide_ihram_5": "Talbiyah",
-  "guide_ihram_6": "Dua at Ihram",
-  "ishtirat_dua": "Istikhara Dua",
-  "dua_ihram_trans": "O Allah, I intend to perform Umrah, so make it easy for me and accept it from me",
-  "ihram_dua_instruction": "Say this when intending to enter Ihram",
-  "step_entrance": "Entering the Haram Mosque",
-  "guide_entrance_1": "Enter with the right foot",
-  "guide_entrance_2": "Say: Allahumma salli ala Muhammad",
-  "guide_entrance_3": "Dua upon entering the mosque",
   "step_tawaf": "Tawaf (Circumambulation)",
-  "guide_tawaf_1": "Start from the Black Stone",
-  "guide_tawaf_2": "Circumambulate seven times",
-  "guide_tawaf_3": "Touch the Stone or Yemeni Corner if possible",
-  "guide_tawaf_4": "Supplications during circumambulation",
-  "guide_tawaf_5": "Pray two Rak'ahs behind Maqam Ibrahim",
-  "dua_tawaf_trans": "Our Lord, give us in this world that which is good...",
-  "tawaf_done": "✨ Seven laps completed!",
-  "complete_tawaf_first": "Complete first Tawaf",
-  "step_sai": "Sa'i (Walking between Safa & Marwa)",
-  "guide_sai_1": "Walk between Safa and Marwa",
-  "guide_sai_2": "Start from Safa as per Sunnah",
-  "guide_sai_3": "Complete seven laps in total",
-  "guide_sai_4": "Supplications on Safa and Marwa",
-  "guide_sai_5": "Jog between the green markers",
-  "dua_sai_trans": "Indeed, Safa and Marwa are among the symbols of Allah",
-  "sai_done": "✨ Seven laps of Sa'i done!",
-  "sai_lap_count": "Lap {current} of {total}",
-  "@sai_lap_count": {
-    "placeholders": {
-      "current": {
-        "type": "String"
-      },
-      "total": {
-        "type": "String"
-      }
-    }
-  },
-  "going_to_marwa": "Going to Marwa",
-  "going_to_safa": "Going to Safa",
-  "auto_tracking_title": "Auto-tracking for Sa'i",
-  "auto_tracking_active": "Tracking your location between Safa and Marwa",
-  "auto_tracking_inactive": "Enable tracking to count laps automatically",
-  "dhikr_standing": "Dhikr While Standing",
-  "dhikr_safa_marwa_standing_trans": "Allah is Greatest, Allah is Greatest, Allah is Greatest. There is no god but Allah alone, He has no partner...",
-  "dhikr_walking": "Dhikr While Walking",
-  "dua_rabbana_atina_trans": "Our Lord, give us in this world that which is good and in the Hereafter that which is good, and protect us from the punishment of the Fire",
-  "dua_rabbi_ighfir_trans": "My Lord, forgive and have mercy, and pass over what You know, for You are the Most Mighty, the Most Noble",
-  "dua_allahumma_inni_asaluka_trans": "O Allah, I ask You for guidance, piety, chastity and wealth",
-  "step_tahlul": "Tahlul (Hair Cutting/Shaving)",
-  "guide_tahlul_1": "Full shaving for men (highly recommended)",
-  "guide_tahlul_2": "Shortening the hair for men",
-  "guide_tahlul_3": "Clipping a small portion for women",
-  "fixed_tawaf_sai_duas": "Fixed Tawaf and Sa'i Duas",
-  "comprehensive_tawaf_duas": "Comprehensive Tawaf Duas",
-  "comprehensive_sai_duas": "Comprehensive Sa'i Duas",
-  "may_allah_accept_umrah": "May Allah accept your Umrah 🤲",
-  "accept_title": "Allah accept from you!",
-  "accept_message": "Congratulations! You have completed the Umrah rituals. May Allah accept it from you.",
   "version": "Version",
   "something_went_wrong": "Something went wrong",
   "error_prefix": "Error: {error}",
@@ -109,8 +33,7 @@
   },
   "tab_prayers": "Prayers",
   "tab_tasbih": "Tasbih",
-  "tab_reminders": "Reminders",
-  "tab_umrah": "Umrah",
+  "tab_adhkar": "Reminders",
   "features": "Features",
   "daily_progress": "Daily Progress",
   "days_streak": "Days Streak",
@@ -123,11 +46,7 @@
   "hijri_new_year_title": "Happy Hijri New Year!",
   "hijri_new_year_message": "Wishing you a year filled with peace, prosperity, and blessings. May it bring us closer to Allah.",
   "visit_site": "Visit Website",
-  "no_active_reminders": "No active reminders",
-  "reminders": "Reminders",
   "daily_hadith": "Daily Hadith",
-  "hadith_title": "Hadith Library",
-  "quran": "Quran",
   "prayer_times_title": "Prayer Times",
   "next_prayer": "Next Prayer",
   "time_remaining": "Time Remaining",
@@ -192,7 +111,6 @@
   "west": "West",
   "qibla": "Qibla",
   "tasbih": "Tasbih",
-  "umrah": "Umrah",
   "prayer_times": "Prayer Times",
   "tasbih_title": "Tasbih Counter",
   "target": "Target",
@@ -272,15 +190,6 @@
   "wird_streak": "Current Streak",
   "wird_total_pages": "Total Pages",
   "wird_weekly_activity": "Weekly Activity",
-  "reminders_title": "Smart Reminders",
-  "add_reminder": "Add Reminder",
-  "no_reminders": "No reminders yet",
-  "tap_add_dhikr": "Tap + to add a dhikr reminder",
-  "schedule_reminder": "Schedule Reminder",
-  "interval": "Interval",
-  "select_multiple": "Select multiple (audio will play with slight delay)",
-  "offset_seconds": "Delay",
-  "seconds_after": "seconds delay",
   "settings_title": "Settings",
   "settings": "Settings",
   "language": "Language",
@@ -298,15 +207,8 @@
   "font_size_preview": "Bismillah - Font Size Preview",
   "current_location": "Current Location",
   "unknown": "Unknown",
-  "audio_settings": "Audio Settings",
-  "fajr_adhan": "Fajr Adhan",
-  "other_adhan": "Other Adhans",
-  "fajr_iqama": "Fajr Iqama",
-  "other_iqama": "Other Iqamas",
-  "select_sound": "Select Sound",
   "app_icon": "App Icon",
   "select_icon": "Select Icon",
-  "standard": "Standard",
   "ramadanClassic": "Ramadan Classic",
   "notifications": "Notifications",
   "global_notifications": "Global Notifications",
@@ -323,13 +225,6 @@
   },
   "adhan": "Adhan",
   "iqama": "Iqama",
-  "iqama_settings": "Iqama Settings",
-  "iqama_system": "Iqama System",
-  "system_manual": "Manual (Custom deltas)",
-  "system_preset": "Preset (By region)",
-  "iqama_preset": "Iqama Preset",
-  "preset_saudi": "Saudi Calendar",
-  "preset_egypt": "Egypt Calendar",
   "other_prayers": "Other Prayers",
   "ramadan_kareem": "Ramadan Kareem",
   "tap_for_blessing": "Tap for blessing ✨",
@@ -347,20 +242,11 @@
   "check_for_updates": "Check for Updates",
   "checking_updates": "Checking for updates...",
   "reset_all_data": "Restore default settings",
-  "reset_confirmation_msg": "Restore prayer, alert and appearance settings? Worship records, appointments and Umrah progress will be kept.",
+  "reset_confirmation_msg": "Restore prayer, alert and appearance settings? Worship records and appointments will be kept.",
   "about": "About",
   "about_app": "About App",
   "privacy_policy": "Privacy Policy",
   "terms_of_service": "Terms of Service",
-  "prayer_nearing_title": "Prayer Time Nearing",
-  "prayer_nearing_body": "It's almost time for {prayer} prayer",
-  "@prayer_nearing_body": {
-    "placeholders": {
-      "prayer": {
-        "type": "String"
-      }
-    }
-  },
   "next": "Next",
   "fajr_dua_1": "O Allah, by Your leave we have reached the morning and by Your leave we reach the evening",
   "fajr_dua_2": "O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds",
@@ -405,43 +291,9 @@
   "duha_dua_2": "O Allah, I ask You for the good of this day and protection from evil",
   "minimum": "Minimum",
   "maximum": "Maximum",
-  "minute": "Minute",
-  "continuous": "Continuous",
-  "audio": "Audio",
-  "repeat": "Repeat",
-  "select_dhikr_prompt": "Select the dhikr you want to repeat",
   "notifications_title": "Notifications",
   "no_notifications": "No notifications yet",
   "no_notifications_desc": "You will see your update history and alerts here",
-  "stop_adhan": "Stop Adhan",
-  "notification_adhan_title": "Time for {prayer} prayer",
-  "@notification_adhan_title": {
-    "placeholders": {
-      "prayer": {
-        "type": "String"
-      }
-    }
-  },
-  "notification_adhan_body": "It is time for the {prayer} prayer.",
-  "@notification_adhan_body": {
-    "placeholders": {
-      "prayer": {
-        "type": "String"
-      }
-    }
-  },
-  "open_adhan_btn": "Open Adhan",
-  "dismiss_btn": "Dismiss",
-  "notification_iqama_title": "Iqama Reminder",
-  "notification_iqama_body": "It is time for {prayer} Iqama.",
-  "@notification_iqama_body": {
-    "placeholders": {
-      "prayer": {
-        "type": "String"
-      }
-    }
-  },
-  "notification_dhikr_title": "Dhikr Reminder",
   "notification_wird_title": "Daily Wird Reminder",
   "notification_wird_body": "Do not forget to read your {pages} pages for {prayer} prayer.",
   "@notification_wird_body": {
@@ -454,62 +306,12 @@
       }
     }
   },
-  "audio_not_available": "Sorry, recitation is currently unavailable for this reciter (coming soon)",
-  "ayah_highlighting_not_available": "Ayah-by-ayah highlighting is currently unavailable for this reciter (coming soon)",
-  "select_reciter": "Select Reciter",
-  "surahs": "Surahs",
-  "juzs": "Juzs",
-  "juz_number": "Juz {number}",
-  "@juz_number": {
-    "placeholders": {
-      "number": {
-        "type": "String"
-      }
-    }
-  },
-  "verses_count": "{count} Verses",
-  "@verses_count": {
-    "placeholders": {
-      "count": {
-        "type": "String"
-      }
-    }
-  },
-  "umrah_date_picker_help": "Select Umrah Start Date",
-  "umrah_time_picker_help": "Select Umrah Start Time",
   "back": "Back",
-  "start_trip": "Start Trip",
-  "umrah_and_hajj_rites": "Umrah & Hajj Rites",
-  "main_services": "Main Services",
-  "umrah_in_progress": "Umrah in Progress",
-  "start_new_umrah": "Start a New Umrah Trip",
-  "hajj": "Hajj",
-  "visiting_madinah": "Visiting Madinah",
-  "trip_history": "Trip History",
-  "umrah_trip": "Umrah Trip",
-  "start_prefix": "Start: {start}",
-  "@start_prefix": {
-    "placeholders": {
-      "start": {
-        "type": "String"
-      }
-    }
-  },
-  "end_prefix": "End: {end}",
-  "@end_prefix": {
-    "placeholders": {
-      "end": {
-        "type": "String"
-      }
-    }
-  },
   "new_update": "New Update Available",
   "new_features": "What's New",
   "bug_fixes": "Bug Fixes",
   "update_now_btn": "Update Now",
   "close_btn": "Close",
-  "time_for_dhikr": "Time for Dhikr",
-  "notification_dhikr_body": "Tap to view Dhikr and start Tasbih",
   "category_all": "All",
   "category_auto_update": "Auto Updates",
   "category_manual_update": "Store Updates",
@@ -517,19 +319,8 @@
   "category_greeting": "Greetings",
   "category_exclusive": "Exclusive",
   "category_general": "General",
-  "manage_alerts": "Manage Alerts",
-  "prayer_alerts": "Prayer Alerts",
-  "adhan_alerts": "Adhan Alerts",
-  "adhan_alerts_desc": "Play Adhan when prayer time starts",
-  "iqama_alerts": "Iqama Alerts",
-  "iqama_alerts_desc": "Alert when Iqama time is near",
-  "dhikr_reminders": "Dhikr Reminders",
-  "dhikr_reminders_desc": "Periodic reminders for Dhikr and Duas",
-  "alerts_settings_footer": "You can control each type of alert separately to ensure your peace and focus.",
   "search_hint": "Search for Dua or Dhikr...",
   "all": "All",
-  "comprehensive_duas": "Comprehensive Duas",
-  "browse_100_duas": "Browse 100+ Duas",
   "update_screen_title": "App Update",
   "update_available_desc": "A new update is available for the app",
   "size_label": "Size",
@@ -560,33 +351,7 @@
   "permissions_rationale_title": "Enable Prayer Alerts",
   "permissions_rationale_body": "Tawabti needs your location to calculate accurate prayer times and Qibla direction, and notification permission to alert you with adhan on time. You can change these anytime in Settings.",
   "couldnt_open_page": "Couldn't open this page. Please check your internet connection and try again later.",
-  "sai_header_title": "Sa'i between Safa and Marwa",
-  "tap_to_start_dua": "Tap here to start and make dua",
-  "completed_praise": "Completed, all praise to Allah",
   "undo": "Undo",
-  "from_safa_to_marwa": "From Safa to Marwa",
-  "from_marwa_to_safa": "From Marwa to Safa",
-  "sai_completed_snackbar": "Sa'i completed, all praise to Allah",
-  "complete_sai_btn": "Complete Sa'i",
-  "complete_lap_next_btn": "Complete this lap and move to the next",
-  "tawaf_header_title": "Tawaf around the Kaaba",
-  "tap_to_open_duas": "Tap to open duas and dhikr",
-  "done_status": "Done ✓",
-  "pending_status": "Pending",
-  "duas_round_subtitle": "Duas and dhikr for this round",
-  "complete_round_next_btn": "Complete {round} and move to the next",
-  "@complete_round_next_btn": {
-    "placeholders": {
-      "round": {
-        "type": "String"
-      }
-    }
-  },
-  "complete_tawaf_btn": "Complete Tawaf",
-  "tawaf_completed_snackbar": "Tawaf completed, all praise to Allah",
-  "follow_sunnah_fallback": "Follow the Sunnah.",
-  "reset_umrah_confirm_title": "Reset Umrah?",
-  "reset_umrah_confirm_body": "This will reset all steps and progress counters (Tawaf, Sa'i, Maqam, Zamzam). Continue?",
   "ui_home": "Home",
   "ui_brand": "Tawabti",
   "ui_tasbih_activity": "Tasbih & activity",
@@ -597,9 +362,6 @@
   "ui_total_sessions": "Saved sessions",
   "ui_completed_sessions": "Completed sessions",
   "ui_adhkar_library": "Dhikr & duas",
-  "ui_reminders_intro": "Gentle reminders throughout your day. Choose a dhikr and a time that suits you.",
-  "ui_hadith_intro": "Read and reflect. Search the library and choose a book to read.",
-  "ui_hadith_search": "Search hadith or narrator",
   "ui_no_results": "No results for this search",
   "ui_all": "All",
   "ui_copied": "Dhikr copied",
@@ -614,10 +376,6 @@
   "ui_tawheed_category": "Tawheed",
   "ui_istighfar_category": "Istighfar",
   "ui_dua_category": "Dua",
-  "ui_quran_download_prompt": "Download the Quran once to read offline.",
-  "ui_quran_download_action": "Download Quran",
-  "ui_quran_preparing": "Preparing Tajweed…",
-  "ui_quran_empty_page": "No verses are available on this page.",
   "ui_tasbih_save_failed": "Could not save this session. Your current count is unchanged.",
   "ui_daily_tools": "Daily tools",
   "features_worship": "Wird & worship",
@@ -642,7 +400,6 @@
   "library_search": "Search titles or text",
   "library_summary_note": "A summary of the meaning; read the full narration at its source.",
   "library_source": "Read source",
-  "library_hadith_books": "Open hadith books",
   "library_read_aloud": "Read aloud with device voice",
   "library_stop": "Stop listening",
   "library_media": "Attached media",
@@ -716,9 +473,6 @@
   "planner_invalid_title": "Enter an appointment title, up to 160 characters.",
   "planner_invalid_dates": "The end must be after the start.",
   "planner_invalid_meet": "Enter a valid meeting link such as https://meet.google.com/abc-defg-hij",
-  "features_complete_round": "Finish a circuit",
-  "features_read_round": "Read circuit supplications",
-  "features_counter_save_failed": "Counter could not be saved. Your count is kept here; retry before closing the app.",
   "worship_choose_date": "Choose date",
   "worship_title": "My worship",
   "worship_today": "Today",
@@ -799,5 +553,30 @@
   "planner_alarm_description": "The short built-in tone repeats and the device vibrates until you press Stop alarm. Regular reminders remain a single notification.",
   "planner_personal_alarm": "Appointment alarm",
   "planner_alarm_stop": "Stop alarm",
-  "planner_alarm_stop_failed": "Could not stop the alarm. Try again, or use Stop in its alarm notification."
+  "planner_alarm_stop_failed": "Could not stop the alarm. Try again, or use Stop in its alarm notification.",
+  "sync_title": "Data sync",
+  "sync_intro": "Upload your data to your own server automatically when online. Stays off until you save a URL and token.",
+  "sync_url_label": "Server URL (https)",
+  "sync_token_label": "Access token",
+  "sync_https_required": "The URL must start with https://",
+  "sync_token_required": "Enter the access token",
+  "sync_save": "Save and enable",
+  "sync_saved": "Sync enabled",
+  "sync_disable": "Turn off sync",
+  "sync_disabled": "Sync turned off",
+  "sync_now": "Sync now",
+  "sync_uploaded": "{count} records uploaded",
+  "@sync_uploaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sync_failed": "Upload failed. It will retry when you are back online.",
+  "sync_not_configured": "Sync is not enabled yet",
+  "library_video_play": "Play video here",
+  "library_video_hide": "Hide video",
+  "library_video_open_external": "Open video link",
+  "library_video_failed": "This video could not play here. Try opening it in another app."
 }

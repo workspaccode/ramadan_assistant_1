@@ -151,9 +151,6 @@ class DhikrPresets {
 
   /// Audio file names for different sounds
   static const Map<String, String> audioFiles = {
-    'adhan': 'azan8.mp3',
-    'adhan_fajr': 'azanfajr.mp3',
-    'iqama': 'MakkahIQamah.mp3',
     'tasbih_click': 'tasbih_click.wav',
     'tasbih_complete': 'tasbih_complete.mp3',
   };

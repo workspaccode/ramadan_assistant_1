@@ -25,7 +25,7 @@ void main() {
   tearDown(() => database.close());
 
   test(
-    'version five migration preserves prayer logs and adds feature storage',
+    'version five migration preserves prayer logs, adds feature storage and drops retired tables',
     () async {
       await database.close();
       database = AppDatabase.forTesting(
@@ -39,6 +39,8 @@ void main() {
             sql.execute(
               "INSERT INTO prayer_logs(prayer_name, prayer_time, completed) VALUES ('fajr', 1000, 1)",
             );
+            sql.execute('CREATE TABLE umrah_progress(id INTEGER PRIMARY KEY)');
+            sql.execute('CREATE TABLE reminders(id INTEGER PRIMARY KEY)');
             sql.execute('PRAGMA user_version=5');
           },
         ),
@@ -53,8 +55,14 @@ void main() {
       expect(
         (await database.customSelect('PRAGMA user_version').get()).single
             .read<int>('user_version'),
-        6,
+        8,
       );
+      final legacy = await database
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE name IN ('umrah_progress', 'reminders')",
+          )
+          .get();
+      expect(legacy, isEmpty);
     },
   );
 

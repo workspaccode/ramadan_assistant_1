@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
 import 'package:ramadan_assistant/data/models/dhikr_presets.dart';
-import 'package:ramadan_assistant/presentation/screens/reminders_screen/reminders_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 class DhikrScreen extends StatefulWidget {
@@ -70,7 +69,7 @@ class _DhikrScreenState extends State<DhikrScreen> {
   }
 
   void _onTabChanged() {
-    if (AppTabNavigation.index.value != 3 && (_playing != null || _audioBusy)) {
+    if (AppTabNavigation.index.value != 2 && (_playing != null || _audioBusy)) {
       _audioRequest++;
       unawaited(_stopAudio());
       if (mounted) setState(() => _playing = null);
@@ -187,18 +186,8 @@ class _DhikrScreenState extends State<DhikrScreen> {
       appBar: AppBar(
         title: Text(context.loc.ui_adhkar_library),
         automaticallyImplyLeading: !AppShellScope.contains(context),
-        actions: [
-          IconButton(
-            tooltip: 'reminders_title'.tr(),
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const RemindersScreen()),
-            ),
-          ),
-        ],
       ),
-      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 3),
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 2),
       body: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,

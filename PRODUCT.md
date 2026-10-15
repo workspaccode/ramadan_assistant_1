@@ -7,7 +7,7 @@ product
 ## Users
 
 Muslims using an Arabic-first mobile companion for prayer times, Quran, dhikr,
-reminders and Umrah guidance. English and Urdu remain supported.
+reminders. English and Urdu remain supported.
 
 ## Product Purpose
 

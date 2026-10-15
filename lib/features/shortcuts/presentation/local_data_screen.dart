@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
+import 'package:ramadan_assistant/core/persistence/auto_sync_service.dart';
 import 'package:ramadan_assistant/core/persistence/document_store.dart';
+import 'package:ramadan_assistant/core/persistence/prefs_sync_endpoint.dart';
+import 'package:ramadan_assistant/features/shortcuts/presentation/sync_settings_card.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 
 class LocalDataScreen extends StatefulWidget {
-  const LocalDataScreen({super.key, required this.store});
+  const LocalDataScreen({
+    super.key,
+    required this.store,
+    required this.endpoint,
+    required this.sync,
+  });
   final DocumentStore store;
+  final PrefsSyncEndpointSource endpoint;
+  final AutoSyncService sync;
   @override
   State<LocalDataScreen> createState() => _LocalDataScreenState();
 }
@@ -37,6 +47,13 @@ class _LocalDataScreenState extends State<LocalDataScreen> {
                 Text(context.loc.features_local_intro),
               ],
             ),
+          ),
+          const SizedBox(height: 16),
+          SyncSettingsCard(
+            endpoint: widget.endpoint,
+            sync: widget.sync,
+            onChanged: () =>
+                setState(() => _pending = widget.store.pendingSync()),
           ),
           const SizedBox(height: 24),
           FutureBuilder<List<StoredDocument>>(

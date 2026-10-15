@@ -8,9 +8,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/settings_screen.dart';
 import 'package:ramadan_assistant/presentation/widgets/sakina_ui.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/core/services/adhan_alarm_service.dart';
 import 'package:ramadan_assistant/presentation/screens/prayer_times_screen/bloc/prayer_times_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 typedef PrayerEntry = ({String name, DateTime time});
 
@@ -28,16 +26,6 @@ PrayerEntry nextObligatoryPrayer(PrayerTimes times, DateTime now) =>
       orElse: () => (name: 'fajr', time: times.fajrAfter.toLocal()),
     );
 
-PrayerEntry? dueObligatoryPrayer(PrayerTimes times, DateTime now) {
-  for (final prayer in obligatoryPrayers(times)) {
-    final elapsed = now.difference(prayer.time);
-    if (!elapsed.isNegative && elapsed <= const Duration(seconds: 2)) {
-      return prayer;
-    }
-  }
-  return null;
-}
-
 class PrayerTimesContent extends StatefulWidget {
   final PrayerTimesLoaded state;
 
@@ -49,8 +37,6 @@ class PrayerTimesContent extends StatefulWidget {
 
 class _PrayerTimesContentState extends State<PrayerTimesContent>
     with WidgetsBindingObserver {
-  bool _isAdhanScreenShowing = false;
-  String? _lastTriggeredPrayer;
   late DateTime _localCurrentTime;
   Timer? _localTimer;
   PrayerTimes? _dailyTimes;
@@ -82,12 +68,6 @@ class _PrayerTimesContentState extends State<PrayerTimesContent>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _localCurrentTime = DateTime.now();
-    // Defer the adhan check to after the widget is mounted
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _checkAndShowAdhan();
-      }
-    });
   }
 
   @override
@@ -121,7 +101,6 @@ class _PrayerTimesContentState extends State<PrayerTimesContent>
         setState(() {
           _localCurrentTime = DateTime.now();
         });
-        _checkAndShowAdhan();
       }
     });
   }
@@ -131,44 +110,6 @@ class _PrayerTimesContentState extends State<PrayerTimesContent>
     _localTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-  }
-
-  void _checkAndShowAdhan() {
-    if (_isAdhanScreenShowing ||
-        !AppShellScope.isActive(context, 1) ||
-        ModalRoute.of(context)?.isCurrent == false ||
-        WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
-      return;
-    }
-    final due = dueObligatoryPrayer(_times, _localCurrentTime);
-    if (due == null) return;
-    final trigger = '${due.name}:${due.time.millisecondsSinceEpoch}';
-    if (_lastTriggeredPrayer == trigger) return;
-    _lastTriggeredPrayer = trigger;
-    _showAdhanScreen(due.name);
-  }
-
-  Future<void> _showAdhanScreen(String prayerKey) async {
-    if (_isAdhanScreenShowing) return;
-    _isAdhanScreenShowing = true;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (!mounted ||
-          !(prefs.getBool('adhan_enabled') ?? true) ||
-          !AppShellScope.isActive(context, 1) ||
-          ModalRoute.of(context)?.isCurrent == false ||
-          WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
-        return;
-      }
-      await AdhanAlarmService.presentAdhan(
-        Navigator.of(context),
-        prayerName: prayerKey,
-      );
-    } catch (error) {
-      debugPrint('Could not open Adhan: $error');
-    } finally {
-      if (mounted) _isAdhanScreenShowing = false;
-    }
   }
 
   // Calculate Duha prayer time (10:30 AM to 30 minutes before Dhuhr)

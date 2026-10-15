@@ -231,7 +231,7 @@ void main() {
                             itemId: 'abu_bakr_cave',
                             mediaEngine: engine,
                           )
-                        : LibraryScreen(onOpenHadith: () {});
+                        : const LibraryScreen();
                   },
                 ),
               ),
@@ -263,7 +263,7 @@ void main() {
           home: Builder(
             builder: (context) {
               AppLocalizationsLookup.init(context);
-              return LibraryScreen(onOpenHadith: () {});
+              return const LibraryScreen();
             },
           ),
         ),
@@ -475,7 +475,7 @@ void main() {
                               itemId: 'abu_bakr_cave',
                               mediaEngine: _Engine(),
                             )
-                          : LibraryScreen(onOpenHadith: () {}),
+                          : const LibraryScreen(),
                     );
                   },
                 ),

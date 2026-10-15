@@ -39,7 +39,7 @@ class _TasbihViewState extends State<TasbihView> {
           ),
         ],
       ),
-      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 4),
+      bottomNavigationBar: const SakinaBottomBar(selectedIndex: 3),
       body: BlocBuilder<TasbihBloc, TasbihState>(
         builder: (context, state) {
           final progress = state.target <= 0

@@ -1,18 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:ramadan_assistant/core/extensions/context_extensions.dart';
-import 'package:ramadan_assistant/core/services/test_service.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/language_state.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_bloc.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_event.dart';
 import 'package:ramadan_assistant/presentation/blocs/theme_state.dart';
-import 'package:ramadan_assistant/presentation/screens/settings_screen/alerts_settings_screen.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/bloc/settings_screen_bloc.dart';
 import 'package:ramadan_assistant/presentation/screens/settings_screen/widgets/settings_dialogs.dart';
 import 'package:ramadan_assistant/presentation/screens/update_screen/update_screen.dart';
@@ -61,11 +58,7 @@ class SettingsScreenContent extends StatelessWidget {
                         _buildNotificationsSection(context, state),
                         _buildHijriSection(context, state),
                         _buildPrayerSection(context, state),
-                        _buildIqamaSection(context, state),
-                        _buildAudioSection(context, state),
                         _buildAdminSection(context, state),
-                        // Developer-only test tiles must never appear in release builds
-                        if (kDebugMode) _buildTestSection(context),
                         _buildFooter(context),
                         const SizedBox(height: 40),
                       ]),
@@ -266,21 +259,6 @@ class SettingsScreenContent extends StatelessWidget {
           (val) =>
               context.read<SettingsScreenBloc>().add(ToggleNotifications(val)),
         ),
-        SakinaSettingsTile(
-          title: Text('manage_alerts'.tr()),
-          trailing: const Icon(Icons.chevron_right, size: 14),
-          onTap: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (_) => BlocProvider.value(
-                  value: context.read<SettingsScreenBloc>(),
-                  child: const AlertsSettingsScreen(),
-                ),
-              ),
-            );
-          },
-        ),
       ],
     );
   }
@@ -389,91 +367,6 @@ class SettingsScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildIqamaSection(BuildContext context, SettingsScreenLoaded state) {
-    return SakinaSettingsSection(
-      header: Text('iqama_settings'.tr().toUpperCase()),
-      children: [
-        _buildDropdownTile(
-          context,
-          'iqama_system'.tr(),
-          state.iqamaSystem,
-          ['manual', 'preset'],
-          (val) =>
-              context.read<SettingsScreenBloc>().add(UpdateIqamaSystem(val)),
-          displayValues: {
-            'manual': 'system_manual'.tr(),
-            'preset': 'system_preset'.tr(),
-          },
-        ),
-        if (state.iqamaSystem == 'preset')
-          _buildDropdownTile(
-            context,
-            'iqama_preset'.tr(),
-            state.iqamaPreset,
-            ['saudi', 'egypt'],
-            (val) =>
-                context.read<SettingsScreenBloc>().add(UpdateIqamaPreset(val)),
-            displayValues: {
-              'saudi': 'preset_saudi'.tr(),
-              'egypt': 'preset_egypt'.tr(),
-            },
-          ),
-        if (state.iqamaSystem == 'manual')
-          ...state.iqamaDelays.entries.map(
-            (e) => _buildNumberInputTile(
-              context,
-              e.key.tr(),
-              'minutes'.tr(),
-              e.value,
-              (val) => context.read<SettingsScreenBloc>().add(
-                UpdateIqamaDelay(e.key, val),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildAudioSection(BuildContext context, SettingsScreenLoaded state) {
-    return SakinaSettingsSection(
-      header: Text('audio_settings'.tr().toUpperCase()),
-      children: [
-        _buildAudioTile(
-          context,
-          'fajr_adhan'.tr(),
-          state.fajrAdhanSound,
-          (s) => context.read<SettingsScreenBloc>().add(
-            UpdateAdhanSound(isFajr: true, sound: s),
-          ),
-        ),
-        _buildAudioTile(
-          context,
-          'other_adhan'.tr(),
-          state.otherAdhanSound,
-          (s) => context.read<SettingsScreenBloc>().add(
-            UpdateAdhanSound(isFajr: false, sound: s),
-          ),
-        ),
-        _buildAudioTile(
-          context,
-          'fajr_iqama'.tr(),
-          state.fajrIqamaSound,
-          (s) => context.read<SettingsScreenBloc>().add(
-            UpdateIqamaSound(isFajr: true, sound: s),
-          ),
-        ),
-        _buildAudioTile(
-          context,
-          'other_iqama'.tr(),
-          state.otherIqamaSound,
-          (s) => context.read<SettingsScreenBloc>().add(
-            UpdateIqamaSound(isFajr: false, sound: s),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildAdminSection(BuildContext context, SettingsScreenLoaded state) {
     return SakinaSettingsSection(
       header: Text('admin'.tr().toUpperCase()),
@@ -501,53 +394,6 @@ class SettingsScreenContent extends StatelessWidget {
             style: const TextStyle(color: CupertinoColors.destructiveRed),
           ),
           onTap: () => _showResetConfirmation(context),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTestSection(BuildContext context) {
-    return SakinaSettingsSection(
-      header: const Text('DEVELOPER TESTING'),
-      children: [
-        SakinaSettingsTile(
-          leading: const Icon(CupertinoIcons.bell, color: Color(0xFFD4AF37)),
-          title: const Text('Test Adhan (10s)'),
-          onTap: () async {
-            await TestService.triggerAdhanNow();
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Adhan scheduled in 10s')),
-            );
-          },
-        ),
-        SakinaSettingsTile(
-          leading: const Icon(
-            CupertinoIcons.time,
-            color: CupertinoColors.activeBlue,
-          ),
-          title: const Text('Test Iqama (15s)'),
-          onTap: () async {
-            await TestService.triggerIqamaNow();
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Iqama scheduled in 15s')),
-            );
-          },
-        ),
-        SakinaSettingsTile(
-          leading: const Icon(
-            CupertinoIcons.infinite,
-            color: CupertinoColors.activeGreen,
-          ),
-          title: const Text('Test Dhikr Alarm (12s)'),
-          onTap: () async {
-            await TestService.triggerDhikrNow();
-            if (!context.mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Dhikr alarm scheduled in 12s')),
-            );
-          },
         ),
       ],
     );
@@ -774,105 +620,6 @@ class SettingsScreenContent extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildNumberInputTile(
-    BuildContext context,
-    String title,
-    String subtitle,
-    int currentValue,
-    Function(int) onChanged,
-  ) {
-    return SakinaSettingsTile(
-      title: Text(title),
-      additionalInfo: Text('$currentValue $subtitle'),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          builder: (ctx) => Container(
-            height: 300,
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemBackground.resolveFrom(context),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                children: [
-                  // Drag handle
-                  Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    width: 36,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.systemGrey3.resolveFrom(context),
-                      borderRadius: BorderRadius.circular(2.5),
-                    ),
-                  ),
-                  // Title + Done button
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 8, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: CupertinoColors.label.resolveFrom(context),
-                          ),
-                        ),
-                        CupertinoButton(
-                          child: Text('done'.tr()),
-                          onPressed: () => Navigator.pop(ctx),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 1),
-                  Expanded(
-                    child: CupertinoPicker(
-                      scrollController: FixedExtentScrollController(
-                        initialItem: currentValue - 1,
-                      ),
-                      itemExtent: 32,
-                      onSelectedItemChanged: (index) {
-                        onChanged(index + 1);
-                      },
-                      children: List.generate(
-                        60,
-                        (i) => Center(child: Text('${i + 1}')),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAudioTile(
-    BuildContext context,
-    String title,
-    String currentSound,
-    Function(String) onSelect,
-  ) {
-    final options = ['zanfajr.mp3', 'azan8.mp3', 'MakkahIQamah.mp3'];
-    return _buildDropdownTile(
-      context,
-      title,
-      currentSound,
-      options,
-      onSelect,
-      translateOptions: false,
     );
   }
 }

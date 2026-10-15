@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 
-enum AppShortcut { tasbih, prayers, worship, planner, umrah, library }
+enum AppShortcut { tasbih, prayers, worship, planner, library }
 
 /// Retains notification destinations until the app's first usable frame.
 class FeatureNavigation {

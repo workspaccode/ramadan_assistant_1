@@ -1,30 +1,162 @@
 {
-  "library_title": {"ar":"مكتبة المعرفة","en":"Knowledge library","ur":"علمی کتب خانہ"},
-  "library_intro": {"ar":"قصص مختصرة من مصادر موثقة، ومعاني أحاديث قصيرة للقراءة والاستماع.","en":"Brief sourced stories and short hadith summaries to read or listen to.","ur":"مستند حوالوں سے مختصر واقعات اور احادیث کے خلاصے پڑھیں یا سنیں۔"},
-  "library_companions": {"ar":"قصص الصحابة","en":"Companion stories","ur":"صحابہ کے واقعات"},
-  "library_short_hadith": {"ar":"معاني أحاديث قصيرة","en":"Short hadith summaries","ur":"مختصر حدیث کے معانی"},
-  "library_favorites": {"ar":"المفضلة","en":"Favorites","ur":"پسندیدہ"},
-  "library_search": {"ar":"ابحث في العنوان أو النص","en":"Search titles or text","ur":"عنوان یا متن تلاش کریں"},
-  "library_summary_note": {"ar":"ملخص للمعنى؛ اقرأ الرواية الكاملة في المصدر.","en":"A summary of the meaning; read the full narration at its source.","ur":"یہ مفہوم کا خلاصہ ہے؛ مکمل روایت اصل حوالے پر پڑھیں۔"},
-  "library_source": {"ar":"قراءة المصدر","en":"Read source","ur":"اصل حوالہ پڑھیں"},
-  "library_hadith_books": {"ar":"فتح كتب الحديث","en":"Open hadith books","ur":"حدیث کی کتابیں کھولیں"},
-  "library_read_aloud": {"ar":"قراءة النص بصوت الجهاز","en":"Read aloud with device voice","ur":"آلے کی آواز سے متن سنیں"},
-  "library_stop": {"ar":"إيقاف الاستماع","en":"Stop listening","ur":"سننا روکیں"},
-  "library_media": {"ar":"الوسائط المضافة","en":"Attached media","ur":"شامل کردہ میڈیا"},
-  "library_no_media": {"ar":"لم تُضف وسائط لهذا النص. يمكنك إضافة رابط صوت أو فيديو أو صورة.","en":"No media attached. Add an audio, video, or image link for this item.","ur":"کوئی میڈیا شامل نہیں۔ اس مضمون کے لیے آڈیو، ویڈیو یا تصویر کا لنک شامل کریں۔"},
-  "library_add_media": {"ar":"إضافة رابط وسائط","en":"Add media link","ur":"میڈیا لنک شامل کریں"},
-  "library_audio": {"ar":"صوت","en":"Audio","ur":"آڈیو"},
-  "library_video": {"ar":"فيديو خارجي","en":"External video","ur":"بیرونی ویڈیو"},
-  "library_image": {"ar":"صورة","en":"Image","ur":"تصویر"},
-  "library_link": {"ar":"رابط HTTPS","en":"HTTPS link","ur":"HTTPS لنک"},
-  "library_link_label": {"ar":"عنوان الرابط (اختياري)","en":"Link title (optional)","ur":"لنک کا عنوان (اختیاری)"},
-  "library_invalid_link": {"ar":"أدخل رابط HTTPS صالحًا دون اسم مستخدم أو كلمة مرور.","en":"Enter a valid HTTPS link without a username or password.","ur":"بغیر صارف نام یا پاس ورڈ کے درست HTTPS لنک درج کریں۔"},
-  "library_user_media": {"ar":"رابط أضفته أنت؛ يحتاج اتصالًا بالإنترنت.","en":"Your attached link; an internet connection is required.","ur":"آپ کا شامل کردہ لنک؛ انٹرنیٹ درکار ہے۔"},
-  "library_save_failed": {"ar":"تعذر إتمام التغيير. حاول مرة أخرى.","en":"Could not complete this change. Try again.","ur":"تبدیلی مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔"},
-  "library_playback_failed": {"ar":"تعذر تشغيل الوسائط أو صوت الجهاز. يمكنك متابعة القراءة أو المحاولة مجددًا.","en":"Media or device voice could not start. Continue reading or try again.","ur":"میڈیا یا آلے کی آواز شروع نہیں ہو سکی۔ پڑھنا جاری رکھیں یا دوبارہ کوشش کریں۔"},
-  "library_remove_media": {"ar":"حذف الرابط","en":"Remove link","ur":"لنک ہٹائیں"},
-  "library_favorite_add": {"ar":"إضافة إلى المفضلة","en":"Add to favorites","ur":"پسندیدہ میں شامل کریں"},
-  "library_favorite_remove": {"ar":"إزالة من المفضلة","en":"Remove from favorites","ur":"پسندیدہ سے ہٹائیں"},
-  "library_save": {"ar":"حفظ الرابط","en":"Save link","ur":"لنک محفوظ کریں"},
-  "library_no_favorites": {"ar":"لا توجد عناصر مفضلة بعد. أضف نصًا باستخدام رمز القلب.","en":"No favorites yet. Use the heart on an item to save it here.","ur":"ابھی کوئی پسندیدہ مضمون نہیں۔ محفوظ کرنے کے لیے دل کا نشان دبائیں۔"}
+  "library_title": {
+    "ar": "مكتبة المعرفة",
+    "en": "Knowledge library",
+    "ur": "علمی کتب خانہ"
+  },
+  "library_intro": {
+    "ar": "قصص مختصرة من مصادر موثقة، ومعاني أحاديث قصيرة للقراءة والاستماع.",
+    "en": "Brief sourced stories and short hadith summaries to read or listen to.",
+    "ur": "مستند حوالوں سے مختصر واقعات اور احادیث کے خلاصے پڑھیں یا سنیں۔"
+  },
+  "library_companions": {
+    "ar": "قصص الصحابة",
+    "en": "Companion stories",
+    "ur": "صحابہ کے واقعات"
+  },
+  "library_short_hadith": {
+    "ar": "معاني أحاديث قصيرة",
+    "en": "Short hadith summaries",
+    "ur": "مختصر حدیث کے معانی"
+  },
+  "library_favorites": {
+    "ar": "المفضلة",
+    "en": "Favorites",
+    "ur": "پسندیدہ"
+  },
+  "library_search": {
+    "ar": "ابحث في العنوان أو النص",
+    "en": "Search titles or text",
+    "ur": "عنوان یا متن تلاش کریں"
+  },
+  "library_summary_note": {
+    "ar": "ملخص للمعنى؛ اقرأ الرواية الكاملة في المصدر.",
+    "en": "A summary of the meaning; read the full narration at its source.",
+    "ur": "یہ مفہوم کا خلاصہ ہے؛ مکمل روایت اصل حوالے پر پڑھیں۔"
+  },
+  "library_source": {
+    "ar": "قراءة المصدر",
+    "en": "Read source",
+    "ur": "اصل حوالہ پڑھیں"
+  },
+  "library_hadith_books": {
+    "ar": "فتح كتب الحديث",
+    "en": "Open hadith books",
+    "ur": "حدیث کی کتابیں کھولیں"
+  },
+  "library_read_aloud": {
+    "ar": "قراءة النص بصوت الجهاز",
+    "en": "Read aloud with device voice",
+    "ur": "آلے کی آواز سے متن سنیں"
+  },
+  "library_stop": {
+    "ar": "إيقاف الاستماع",
+    "en": "Stop listening",
+    "ur": "سننا روکیں"
+  },
+  "library_media": {
+    "ar": "الوسائط المضافة",
+    "en": "Attached media",
+    "ur": "شامل کردہ میڈیا"
+  },
+  "library_no_media": {
+    "ar": "لم تُضف وسائط لهذا النص. يمكنك إضافة رابط صوت أو فيديو أو صورة.",
+    "en": "No media attached. Add an audio, video, or image link for this item.",
+    "ur": "کوئی میڈیا شامل نہیں۔ اس مضمون کے لیے آڈیو، ویڈیو یا تصویر کا لنک شامل کریں۔"
+  },
+  "library_add_media": {
+    "ar": "إضافة رابط وسائط",
+    "en": "Add media link",
+    "ur": "میڈیا لنک شامل کریں"
+  },
+  "library_audio": {
+    "ar": "صوت",
+    "en": "Audio",
+    "ur": "آڈیو"
+  },
+  "library_video": {
+    "ar": "فيديو خارجي",
+    "en": "External video",
+    "ur": "بیرونی ویڈیو"
+  },
+  "library_image": {
+    "ar": "صورة",
+    "en": "Image",
+    "ur": "تصویر"
+  },
+  "library_link": {
+    "ar": "رابط HTTPS",
+    "en": "HTTPS link",
+    "ur": "HTTPS لنک"
+  },
+  "library_link_label": {
+    "ar": "عنوان الرابط (اختياري)",
+    "en": "Link title (optional)",
+    "ur": "لنک کا عنوان (اختیاری)"
+  },
+  "library_invalid_link": {
+    "ar": "أدخل رابط HTTPS صالحًا دون اسم مستخدم أو كلمة مرور.",
+    "en": "Enter a valid HTTPS link without a username or password.",
+    "ur": "بغیر صارف نام یا پاس ورڈ کے درست HTTPS لنک درج کریں۔"
+  },
+  "library_user_media": {
+    "ar": "رابط أضفته أنت؛ يحتاج اتصالًا بالإنترنت.",
+    "en": "Your attached link; an internet connection is required.",
+    "ur": "آپ کا شامل کردہ لنک؛ انٹرنیٹ درکار ہے۔"
+  },
+  "library_save_failed": {
+    "ar": "تعذر إتمام التغيير. حاول مرة أخرى.",
+    "en": "Could not complete this change. Try again.",
+    "ur": "تبدیلی مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+  },
+  "library_playback_failed": {
+    "ar": "تعذر تشغيل الوسائط أو صوت الجهاز. يمكنك متابعة القراءة أو المحاولة مجددًا.",
+    "en": "Media or device voice could not start. Continue reading or try again.",
+    "ur": "میڈیا یا آلے کی آواز شروع نہیں ہو سکی۔ پڑھنا جاری رکھیں یا دوبارہ کوشش کریں۔"
+  },
+  "library_remove_media": {
+    "ar": "حذف الرابط",
+    "en": "Remove link",
+    "ur": "لنک ہٹائیں"
+  },
+  "library_favorite_add": {
+    "ar": "إضافة إلى المفضلة",
+    "en": "Add to favorites",
+    "ur": "پسندیدہ میں شامل کریں"
+  },
+  "library_favorite_remove": {
+    "ar": "إزالة من المفضلة",
+    "en": "Remove from favorites",
+    "ur": "پسندیدہ سے ہٹائیں"
+  },
+  "library_save": {
+    "ar": "حفظ الرابط",
+    "en": "Save link",
+    "ur": "لنک محفوظ کریں"
+  },
+  "library_no_favorites": {
+    "ar": "لا توجد عناصر مفضلة بعد. أضف نصًا باستخدام رمز القلب.",
+    "en": "No favorites yet. Use the heart on an item to save it here.",
+    "ur": "ابھی کوئی پسندیدہ مضمون نہیں۔ محفوظ کرنے کے لیے دل کا نشان دبائیں۔"
+  },
+  "library_video_play": {
+    "ar": "شغّل الفيديو هنا",
+    "en": "Play video here",
+    "ur": "ویڈیو یہیں چلائیں"
+  },
+  "library_video_hide": {
+    "ar": "إخفاء الفيديو",
+    "en": "Hide video",
+    "ur": "ویڈیو چھپائیں"
+  },
+  "library_video_open_external": {
+    "ar": "افتح رابط الفيديو",
+    "en": "Open video link",
+    "ur": "ویڈیو لنک کھولیں"
+  },
+  "library_video_failed": {
+    "ar": "تعذّر تشغيل الفيديو هنا. جرّب فتحه في تطبيق آخر.",
+    "en": "This video could not play here. Try opening it in another app.",
+    "ur": "یہ ویڈیو یہاں نہیں چل سکی۔ اسے کسی اور ایپ میں کھول کر دیکھیں۔"
+  }
 }
